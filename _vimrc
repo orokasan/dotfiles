@@ -38,6 +38,7 @@ set runtimepath+=~\vimfiles\dein/repos\github.com\kana\vim-operator-user
 set runtimepath+=~\vimfiles\dein/repos\github.com\deton\jasegment.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\iwataka/minidown.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\tpope/vim-fugitive
+set runtimepath+=~\vimfiles\dein/repos\github.com\cohama/lexima.vim
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
 "3.5と3.6が両方必要
 set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
@@ -177,6 +178,7 @@ call dein#add('kana/vim-operator-user')
 call dein#add('neoclide/denite-git')
 call dein#add('iwataka/minidown.vim')
 call dein#add('tpope/vim-fugitive')
+call dein#add('cohama/lexima.vim')
 "Python3.6が必要================================
 call dein#add('Shougo/defx.nvim')
 if !has('nvim')
@@ -304,7 +306,7 @@ nnoremap <silent> <leader>e :<C-u>Defx
 call defx#custom#option('_', {
             \ 'winwidth': 40,
             \ 'split': 'vertical',
-            \ 'direction': 'topleft',
+            \ 'direction': 'botright',
             \ 'columns': 'mark:filename:type:size:time',
             \ })
 
