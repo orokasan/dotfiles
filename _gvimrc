@@ -1,0 +1,154 @@
+"" クリップボードにコピー（GUI)
+set clipboard=unnamed
+
+set runtimepath+=~/vimfiles\dein\repos\github.com\vim-airline
+set runtimepath+=~/vimfiles\dein\repos\github.com\vim-airline-themes
+  
+"cygwinとvimのターミナルが干渉するのを防ぐ
+set shell=cmd.exe
+set shellcmdflag=/C
+"=========================================================================================
+" 見た目系
+"
+"ツールバー非表示
+  set guioptions-=T
+  set guioptions-=m
+  set guioptions-=r
+  set guioptions-=R
+  set guioptions-=l
+  set guioptions-=L
+  set guioptions-=b
+
+" gVimでもテキストベースのタブページを使う
+set guioptions-=e
+set showtabline=2 " 常にタブラインを表示
+
+"タブラインのカラー変更(smart_tabline.vim)
+"augroup AutoColor
+"	autocmd!
+"	autocmd Colorscheme * highlight TabLine ctermbg=none 
+"	autocmd Colorscheme * highlight TabLineSel ctermbg=none
+"	autocmd Colorscheme * highlight TabLineFill cterm=none ctermbg=none
+"augroup END
+"augroup AutoColor
+" autocmd!
+" autocmd Colorscheme * highlight! link TabLine normal
+" autocmd Colorscheme * highlight! link TabLineSel normal
+"augroup END
+" ウィンドウの縦幅
+set lines=50
+" ウィンドウの横幅
+set columns=150
+" ウィンドウの起動時の位置
+winpos 10 30
+
+"" 行番号を表示
+set number
+" 現在の行を強調表示
+set cursorline
+" 行末の1文字先までカーソルを移動できるように
+set virtualedit=onemore
+" インデントはスマートインデント
+set smartindent
+" ビープ音を可視化
+set visualbell
+" 括弧入力時の対応する括弧を表示
+set showmatch
+" ステータスラインを常に表示
+set laststatus=2
+" コマンドラインの補完
+"set wildmode=list:longest
+
+"=========================================================================================
+"vim-airline
+"入れないとPowerline文字が化ける
+set ambiwidth=single
+
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+"let g:airline_section_b = "%t %M"
+"let g:airline_section_c = ''
+"let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
+"let g:airline_section_y = '%3p%%'
+let g:airline#extensions#whitespace#enabled = 0
+let g:Powerline_symbols = 'compatible'
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+"let g:airline_left_alt_sep = ''
+"let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = '☰'
+let g:airline_symbols.maxlinenr = ''
+ " or copy paste the following into your vimrc for shortform text
+  let g:airline_mode_map = {
+      \ '__' : '-',
+      \ 'c'  : 'C',
+      \ 'i'  : 'I',
+      \ 'ic' : 'I',
+      \ 'ix' : 'I',
+      \ 'n'  : 'N',
+      \ 'ni' : 'N',
+      \ 'no' : 'N',
+      \ 'R'  : 'R',
+      \ 'Rv' : 'R',
+      \ 's'  : 'S',
+      \ 'S'  : 'S',
+      \ '' : 'S',
+      \ 't'  : 'T',
+      \ 'v'  : 'V',
+      \ 'V'  : 'V',
+      \ '' : 'V',
+      \ }
+
+"=========================================================================================
+"カラースキーマを設定
+syntax on
+"molokai
+"colorscheme molokai
+"let g:molokai_original = 1
+"let g:rehash256 = 1
+
+"PaperColor
+set t_Co=256   " This is may or may not needed.
+set background=light
+colorscheme PaperColor
+let g:airline_theme='PaperColor'
+
+"=======================================================================================
+"フォント
+"ConsolasにPowerlineSymbolsをパッチしてある
+"https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
+set guifont=Consolas:h12:cDEFAULT
+"全角文字の設定
+set guifontwide=MS_Gothic:h13:cDEFAULT
+"
+".gvimrc カラー設定
+"カラー設定した後にCursorIMを定義する方法
+if has('multi_byte_ime')
+  highlight CursorIM guifg=NONE guibg=Purple
+endif
+
+"全角スペースを表示
+""""""""""""""""""""""""""""""
+"コメント以外で全角スペースを指定しているので scriptencodingと、
+"このファイルのエンコードが一致するよう注意！
+"全角スペースが強調表示されない場合、ここでscriptencodingを指定すると良い。
+
+"デフォルトのZenkakuSpaceを定義
+function! ZenkakuSpace()
+  highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
+endfunction
+
+if has('syntax')
+  augroup ZenkakuSpace
+    autocmd!
+    " ZenkakuSpaceをカラーファイルで設定するなら次の行は削除
+    autocmd ColorScheme       * call ZenkakuSpace()
+    " 全角スペースのハイライト指定
+    autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
+    autocmd VimEnter,WinEnter * match ZenkakuSpace '\%u3000'
+  augroup END
+  call ZenkakuSpace()
+endif
