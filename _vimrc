@@ -448,4 +448,10 @@ let g:operator#surround#blocks['-'] = [
     \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
     \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
     \ ]
-
+"lexima
+call lexima#add_rule({
+  \ 'char': '「', 'input': '「', 'input_after': '」'
+  \ 'char': '『', 'input': '『', 'input_after': '』'
+  \ 'char': '【', 'input': '【', 'input_after': '】'
+  \ 'char': '（', 'input': '（', 'input_after': '）'
+})
