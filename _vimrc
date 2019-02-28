@@ -210,7 +210,7 @@ nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
       \ -direction=dynamicbottom -cursor-wrap=true 
-      \ -mode=normal file <CR>
+      \ file <CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite -direction=dynamicbottom -cursor-wrap=true -mode=normal buffer<CR>
 "レジスタ一覧
