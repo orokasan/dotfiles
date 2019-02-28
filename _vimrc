@@ -1,3 +1,4 @@
+"ork's _vimrc for Windows
 "========================================================================
 ""文字入力系
 "========================================================================
@@ -36,6 +37,7 @@ set runtimepath+=~\vimfiles\dein/repos\github.com\rhysd\vim-operator-surround
 set runtimepath+=~\vimfiles\dein/repos\github.com\kana\vim-operator-user
 set runtimepath+=~\vimfiles\dein/repos\github.com\deton\jasegment.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\iwataka/minidown.vim
+set runtimepath+=~\vimfiles\dein/repos\github.com\tpope/vim-fugitive
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
 "3.5と3.6が両方必要
 set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
@@ -174,6 +176,7 @@ call dein#add('rhysd/vim-operator-surround')
 call dein#add('kana/vim-operator-user')
 call dein#add('neoclide/denite-git')
 call dein#add('iwataka/minidown.vim')
+call dein#add('tpope/vim-fugitive')
 "Python3.6が必要================================
 call dein#add('Shougo/defx.nvim')
 if !has('nvim')
