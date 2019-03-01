@@ -21,6 +21,7 @@ set showcmd
 "typo対策
 iabbrev adn and
 iabbrev teh the
+
 "========================================================================
 "ランタイムパスの設定
 "========================================================================
@@ -43,6 +44,7 @@ set runtimepath+=~\vimfiles\dein/repos\github.com\cohama/lexima.vim
 "3.5と3.6が両方必要
 set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
 let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python36\python.exe')
+
 "========================================================================
 "Key mapping
 "========================================================================
@@ -82,7 +84,6 @@ nnoremap k gk
 nnoremap <silent><C-i> i<C-^>
 " 「日本語入力固定モード」の切替キー
 inoremap <silent> <C-j> <C-^>
-
 " <ESC>でのIME状態保存を無効化
 inoremap <silent> <ESC> <ESC>
 inoremap <silent> <C-[> <ESC>
@@ -138,16 +139,15 @@ nnoremap <Leader><CR> <C-u>:%s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
 nnoremap <Leader>pmd <C-u>:Minidown<CR>
 "Markdown Docx出力
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
+
 "========================================================================
 "dein Scripts-----------------------------
 "========================================================================
 if &compatible
   set nocompatible               
 endif
-
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
 call dein#begin(expand('~/vimfiles/dein'))
-
 call dein#add('Shougo/dein.vim')
 "call dein#add('Shougo/vimproc.vim', {'build': 'make'})
 call dein#add('Shougo/neosnippet-snippets')
@@ -185,11 +185,10 @@ if !has('nvim')
   call dein#add('roxma/nvim-yarp')
   call dein#add('roxma/vim-hug-neovim-rpc')
 call dein#add('kmnk/denite-dirmark')
-
 endif
 call dein#end()
-
 filetype plugin indent on
+
 "========================================================================
 "Denite
 "========================================================================
@@ -202,7 +201,6 @@ filetype plugin indent on
 "kaoriya-vimのpython3.5に揃える
 "64bit版を使用する
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/denite.nvim
-
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 "現在開いているファイルのディレクトリ下のファイル一覧。
@@ -272,6 +270,7 @@ nmap <Leader>da    <SID>(dirmark-add)
 nnoremap <silent> <SID>(dirmark) :<C-u>Denite -default-action=cd dirmark<CR> 
 nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand('%:p:h') .  '<CR>' 
 let g:vimproc#download_windows_dll = 1
+
 "========================================================================
 "vim-markdown設定
 "========================================================================
@@ -280,6 +279,7 @@ augroup vimrc_markdown
   autocmd! FileType markdown hi! def link markdownItalic Normal
   autocmd FileType markdown set commentstring=<\!--\ %s\ -->
 augroup END
+
 "========================================================================
 "Vaffle設定
 "========================================================================
@@ -297,6 +297,7 @@ augroup END
 "  autocmd!
 "  autocmd FileType vaffle call s:customize_vaffle_mappings()
 "augroup END
+
 "========================================================================
 " defx Config: start -----------------
 "========================================================================
@@ -309,7 +310,6 @@ call defx#custom#option('_', {
             \ 'direction': 'botright',
             \ 'columns': 'mark:filename:type:size:time',
             \ })
-
 autocmd FileType defx call s:defx_my_settings()
     function! s:defx_my_settings() abort
      " Define mappings
@@ -364,6 +364,7 @@ autocmd FileType defx call s:defx_my_settings()
     endfunction
     
 " defx Config: end -------------------
+
 "========================================================================
 ""VimFiler
 "========================================================================
@@ -376,6 +377,7 @@ autocmd FileType defx call s:defx_my_settings()
 "
 "nmap <F2>  :VimFiler -split -horizontal -project -toggle -quit<CR>
 "autocmd FileType vimfiler nnoremap <buffer><silent>/  :<C-u>Unite file -default-action=vimfiler<CR>
+
 "========================================================================
 "Unite設定
 "========================================================================
@@ -386,6 +388,7 @@ autocmd FileType defx call s:defx_my_settings()
 "nnoremap <leader>g :<C-u>Unite grep<CR>
 "nnoremap <leader>a :<C-u>UniteBookmarkAdd<CR>
 "nnoremap <leader>m :<C-u>Unite bookmark<CR>
+
 "========================================================================
 " Tab系
 "========================================================================
@@ -415,6 +418,7 @@ map <silent> [Tag]l :tabnext<CR>
 " tl 次のタブ
 map <silent> [Tag]h :tabprevious<CR>
 " th 前のタブ
+
 "=========================================================================================
 "検索系
 "=========================================================================================
@@ -434,10 +438,8 @@ set hlsearch
 set formatoptions+=mMj
 " ESC連打でハイライト解除
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
-
 let g:jasegment#model='knbc_bunsetu'
 let g:jasentence_endpat = '[。．？！]\+'
-
 " operator mappings
 map <silent>sa <Plug>(operator-surround-append)
 map <silent>sd <Plug>(operator-surround-delete)
@@ -449,9 +451,8 @@ let g:operator#surround#blocks['-'] = [
     \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
     \ ]
 "lexima
-call lexima#add_rule({
-  \ 'char': '「', 'input': '「', 'input_after': '」'
-  \ 'char': '『', 'input': '『', 'input_after': '』'
-  \ 'char': '【', 'input': '【', 'input_after': '】'
-  \ 'char': '（', 'input': '（', 'input_after': '）'
-})
+call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
+call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
+call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
+call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
+call lexima#add_rule({'char': '<BS>', 'at': '「『【（', 'input': '<BS>', 'delete' : 1})
