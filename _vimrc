@@ -314,7 +314,7 @@ call defx#custom#option('_', {
             \ 'split': 'vertical',
             \ 'direction': 'botright',
             \ 'columns': 'mark:filename:type:size:time',
-            \ 'sort': 'time',
+            \ 'sort': 'TIME',
             \ })
 autocmd FileType defx call s:defx_my_settings()
     function! s:defx_my_settings() abort
