@@ -40,6 +40,10 @@ set runtimepath+=~\vimfiles\dein/repos\github.com\deton\jasegment.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\iwataka/minidown.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\tpope/vim-fugitive
 set runtimepath+=~\vimfiles\dein/repos\github.com\cohama/lexima.vim
+set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
+set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
+set runtimepath+=~\vimfiles\dein/repos\github.com\kmnk\denite-dirmark
+set runtimepath+=~\vimfiles\dein/repos\github.com\twitvim/twitvit
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
 "3.5と3.6が両方必要
 set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
@@ -179,6 +183,7 @@ call dein#add('neoclide/denite-git')
 call dein#add('iwataka/minidown.vim')
 call dein#add('tpope/vim-fugitive')
 call dein#add('cohama/lexima.vim')
+call dein#add('twitvim/twitvim.git')
 "Python3.6が必要================================
 call dein#add('Shougo/defx.nvim')
 if !has('nvim')
@@ -309,6 +314,7 @@ call defx#custom#option('_', {
             \ 'split': 'vertical',
             \ 'direction': 'botright',
             \ 'columns': 'mark:filename:type:size:time',
+            \ 'sort': 'time',
             \ })
 autocmd FileType defx call s:defx_my_settings()
     function! s:defx_my_settings() abort
@@ -376,6 +382,14 @@ autocmd FileType defx call s:defx_my_settings()
 "let g:vimfiler_edit_action = 'edit'
 "nmap <F2>  :VimFiler -split -horizontal -project -toggle -quit<CR>
 "autocmd FileType vimfiler nnoremap <buffer><silent>/  :<C-u>Unite file -default-action=vimfiler<CR>
+"========================================================================
+"Twitvim設定
+"========================================================================
+let twitvim_browser_cmd = 'open' " for Mac
+let twitvim_browser_cmd = 'C:¥Program Files¥Your_Browser_Path' " for Windows
+let twitvim_force_ssl = 1 
+let twitvim_count = 40
+let twitvim_enable_python3 = 1
 
 "========================================================================
 "Unite設定
