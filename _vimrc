@@ -374,7 +374,6 @@ autocmd FileType defx call s:defx_my_settings()
 "let g:vimfiler_safe_mode_by_default = 0
 "" Edit file by tabedit.
 "let g:vimfiler_edit_action = 'edit'
-"
 "nmap <F2>  :VimFiler -split -horizontal -project -toggle -quit<CR>
 "autocmd FileType vimfiler nnoremap <buffer><silent>/  :<C-u>Unite file -default-action=vimfiler<CR>
 
