@@ -21,7 +21,8 @@ set showcmd
 "typo対策
 iabbrev adn and
 iabbrev teh the
-
+set showmatch
+set matchtime=1
 "========================================================================
 "ランタイムパスの設定
 "========================================================================
@@ -40,8 +41,8 @@ set runtimepath+=~\vimfiles\dein/repos\github.com\deton\jasegment.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\iwataka/minidown.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\tpope/vim-fugitive
 set runtimepath+=~\vimfiles\dein/repos\github.com\cohama/lexima.vim
-set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
-set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
+"set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
+"set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
 set runtimepath+=~\vimfiles\dein/repos\github.com\kmnk\denite-dirmark
 set runtimepath+=~\vimfiles\dein/repos\github.com\twitvim/twitvit
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
@@ -104,12 +105,12 @@ nnoremap <leader>wj <C-W>j
 nnoremap <leader>wk <C-W>k
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>
-nnoremap <leader>wv :vsp<CR>
+nnoremap <leader>wv :vsp :bnext<CR>
 nnoremap <leader>wc :close<CR>
 nnoremap <leader>wn :vne<CR>
 nnoremap <leader>wo :only<CR>
-"ホームディレクトリ上の_vimrcを開く
-noremap <silent> <leader>vme :e ~/?vimrc<CR>
+"_vimrcを開く
+noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
 "開いている_vimrcを読み込む
 noremap <Leader>ss :<C-u>source %<CR>
 "コマンドライン上のマッピング
@@ -468,4 +469,12 @@ call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
 call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
 call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
 call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
-call lexima#add_rule({'char': '<BS>', 'at': '「『【（', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#)', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#"', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#''', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#]', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
