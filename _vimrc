@@ -7,14 +7,16 @@ set encoding=utf-8
 set fileencodings=utf-8,cp932
 set shellslash
 " バックアップファイルを作らない
-set nobackup
+"set nobackup
 " スワップファイルを作らない
 set noswapfile
 " 編集中のファイルが変更されたら自動で読み直す
 set autoread
 "Undoファイルをまとめる
 set undodir=~/vimfiles/undo
-" バッファが編集中でもその他のファイルを開けるように
+set backup
+set backupdir=~/vimfiles/backup
+" バッファが編集中でもその他のファイルを開けるように 
 set hidden
 " 入力中のコマンドをステータスに表示する
 set showcmd
