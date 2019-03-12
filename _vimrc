@@ -216,6 +216,7 @@ filetype plugin indent on
 "$VIMにインストールしたpythonと同じバージョンのdll(python3.dll, python35.dll, python35.zip)を入れる
 "kaoriya-vimのpython3.5に揃える
 "64bit版を使用する
+"
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/denite.nvim
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
