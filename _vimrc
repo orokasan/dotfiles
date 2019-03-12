@@ -221,21 +221,33 @@ nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
-      \ -direction=dynamicbottom -cursor-wrap=true 
-      \ -mode=normal file<CR>
+      \ -direction=botright -cursor-wrap=true 
+      \ -winheight=15
+      \ file<CR>
+"      \ -auto-resize 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
-      \ -direction=dynamicbottom -cursor-wrap=true 
+      \ -direction=botright -cursor-wrap=true 
+      \ -winheight=15
       \ file <CR>
 "バッファ一覧
-nnoremap <silent> [denite]b :<C-u>Denite -direction=dynamicbottom -cursor-wrap=true -mode=normal buffer<CR>
+nnoremap <silent> [denite]b :<C-u>Denite 
+      \ -direction=botright -cursor-wrap=true 
+      \ -winheight=15
+      \ -mode=normal buffer<CR>
 "レジスタ一覧
-nnoremap <silent> [denite]r :<C-u>Denite -direction=dynamicbottom -cursor-wrap=true -buffer-name=register -mode=normal register<CR>
+nnoremap <silent> [denite]r :<C-u>Denite 
+      \ -direction=botright -cursor-wrap=true 
+      \ -winheight=15
+      \ -buffer-name=register -mode=normal register<CR>
 "メニュー
 nnoremap <silent> [denite]u :Denite menu<CR>
 nnoremap <silent> [denite]h :Denite help<CR>
 "最近使用したファイル一覧
-nnoremap <silent> [denite]n :<C-u>Denite -direction=dynamicbottom -cursor-wrap=true -mode=normal file_mru<CR>
+nnoremap <silent> [denite]n :<C-u>Denite 
+      \ -direction=botright -cursor-wrap=true 
+      \ -winheight=15
+      \ -mode=normal file_mru<CR>
 "ブックマーク(Unite経由) 
 "nnoremap <silent> [denite]m :Denite unite:bookmark<CR> 
 "nnoremap <silent> [denite]a :Denite unite:BookmarkAdd<CR> 
@@ -300,10 +312,9 @@ augroup END
 "TweetVim設定
 "========================================================================
 nnoremap <silent> <Leader>tws  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>
+nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>:res -2<CR>
 nnoremap <silent> <Leader>twm :TweetVimMentions<CR>
 nnoremap <silent> <Leader>twu :Unite tweetvim<CR>
-
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
 let g:tweetvim_open_buffer_cmd = 'botright split'
@@ -311,7 +322,7 @@ let g:tweetvim_display_separator = 0
 let g:tweetvim_empty_separator = 0
 let g:tweetvim_async_post = 1
 let g:tweetvim_display_username = 1
-let g:tweetvim_tweet_limit = 280
+let g:tweetvim_tweet_limit = 560
 augroup TweetVimSetting
     autocmd!
     " マッピング
@@ -321,6 +332,8 @@ augroup TweetVimSetting
     " 各種アクション
     autocmd FileType tweetvim     nnoremap <buffer>s                :<C-u>TweetVimSay<CR>
     autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
+    autocmd FileType tweetvim     nnoremap <buffer><Leader>h        :<C-u>TweetVimHomeTimeline<CR>
+    autocmd FileType tweetvim     nnoremap <buffer><Leader>u        :<C-u>:Unite tweetvim<CR>
     autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
     autocmd FileType tweetvim     nnoremap <buffer>t                :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
     autocmd FileType tweetvim     nmap     <buffer><Leader>F        <Plug>(tweetvim_action_remove_favorite)
