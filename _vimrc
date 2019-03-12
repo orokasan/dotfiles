@@ -46,7 +46,7 @@ set runtimepath+=~\vimfiles\dein/repos\github.com\cohama/lexima.vim
 "set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
 "set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
 set runtimepath+=~\vimfiles\dein/repos\github.com\kmnk\denite-dirmark
-set runtimepath+=~\vimfiles\dein/repos\github.com\twitvim/twitvit
+set runtimepath+=~\vimfiles\dein/repos\github.com\twitvim/twitvim.git
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
 "3.5と3.6が両方必要
 set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
@@ -110,6 +110,8 @@ nnoremap <leader>ws :sp<CR>
 nnoremap <leader>wv :vsp :bnext<CR>
 nnoremap <leader>wc :close<CR>
 nnoremap <leader>wn :vne<CR>
+nnoremap <leader>w+ :res +2<CR>
+nnoremap <leader>w- :res -2<CR>
 nnoremap <leader>wo :only<CR>
 "_vimrcを開く
 noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
@@ -142,6 +144,7 @@ noremap <leader>dm :<C-u>set ft=markdown<cr>
 nnoremap <Leader>nr <C-u>A  <Esc>
 "文字数カウント
 nnoremap <Leader><CR> <C-u>:%s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
+vnoremap <Leader><CR> :s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
 "Minidown(Markdownプレビュー)
 nnoremap <Leader>pmd <C-u>:Minidown<CR>
 "Markdown Docx出力
@@ -187,6 +190,11 @@ call dein#add('iwataka/minidown.vim')
 call dein#add('tpope/vim-fugitive')
 call dein#add('cohama/lexima.vim')
 call dein#add('twitvim/twitvim.git')
+"webapi-vim
+call dein#add('mattn/webapi-vim')
+call dein#add('basyura/twibill.vim')
+call dein#add('tyru/open-browser.vim')
+call dein#add('basyura/TweetVim')
 "Python3.6が必要================================
 call dein#add('Shougo/defx.nvim')
 if !has('nvim')
@@ -288,6 +296,61 @@ augroup vimrc_markdown
   autocmd FileType markdown set commentstring=<\!--\ %s\ -->
 augroup END
 
+"========================================================================
+"TweetVim設定
+"========================================================================
+nnoremap <silent> <Leader>tws  :<C-u>TweetVimSay<CR>
+nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>
+nnoremap <silent> <Leader>twm :TweetVimMentions<CR>
+nnoremap <silent> <Leader>twu :Unite tweetvim<CR>
+
+let g:tweetvim_include_rts    = 1
+let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
+let g:tweetvim_open_buffer_cmd = 'botright split'
+let g:tweetvim_display_separator = 0
+let g:tweetvim_empty_separator = 0
+let g:tweetvim_async_post = 1
+let g:tweetvim_display_username = 1
+let g:tweetvim_tweet_limit = 280
+augroup TweetVimSetting
+    autocmd!
+    " マッピング
+    " 挿入・通常モードでsayバッファを閉じる
+    autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
+    autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
+    " 各種アクション
+    autocmd FileType tweetvim     nnoremap <buffer>s                :<C-u>TweetVimSay<CR>
+    autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
+    autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
+    autocmd FileType tweetvim     nnoremap <buffer>t                :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
+    autocmd FileType tweetvim     nmap     <buffer><Leader>F        <Plug>(tweetvim_action_remove_favorite)
+    autocmd FileType tweetvim     nmap     <buffer><Leader>d        <Plug>(tweetvim_action_remove_status)
+    autocmd FileType tweetvim     nmap     <buffer>o        <Plug>(tweetvim_action_open_links)
+
+    " リロード
+    autocmd FileType tweetvim     nmap     <buffer><Tab>            <Plug>(tweetvim_action_reload)
+    " ページの先頭に戻ったときにリロード
+    autocmd FileType tweetvim     nmap     <buffer><silent>gg       gg<Plug>(tweetvim_action_reload)
+    " ページ移動を ff/bb から f/b に
+    autocmd FileType tweetvim     nmap     <buffer>f                <Plug>(tweetvim_action_page_next)
+    autocmd FileType tweetvim     nmap     <buffer>b                <Plug>(tweetvim_action_page_previous)
+  " 縦移動（カーソルを常に中央にする）
+  "  autocmd FileType tweetvim     nnoremap <buffer><silent>j        :<C-u>call <SID>tweetvim_vertical_move("gj")<CR>zz
+  " autocmd FileType tweetvim     nnoremap <buffer><silent>k        :<C-u>call <SID>tweetvim_vertical_move("gk")<CR>zz
+    " 不要なマップを除去
+    autocmd FileType tweetvim     nunmap   <buffer>ff
+    autocmd FileType tweetvim     nunmap   <buffer>bb
+    " tweetvim バッファに移動したときに自動リロード
+    autocmd BufEnter * call <SID>tweetvim_reload()
+augroup END
+
+" セパレータを飛ばして移動する
+" filetype が tweetvim ならツイートをリロード
+function! s:tweetvim_reload()
+    if &filetype ==# "tweetvim"
+        call feedkeys("\<Plug>(tweetvim_action_reload)")
+    endif
+endfunction
 "========================================================================
 "Vaffle設定
 "========================================================================
