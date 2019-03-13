@@ -393,8 +393,8 @@ endfunction
 " defx Config: start -----------------
 "========================================================================
 nnoremap <silent> <C-e> :<C-u>Defx 
-      \ -toggle
-      \<CR>
+       \<CR>:set nonumber<CR>
+"      \ -toggle
 call defx#custom#option('_', {
             \ 'winwidth': 45,
             \ 'split': 'vertical',
