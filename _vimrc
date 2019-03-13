@@ -43,9 +43,13 @@ set runtimepath+=~\vimfiles\dein/repos\github.com\deton\jasegment.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\iwataka/minidown.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\tpope/vim-fugitive
 set runtimepath+=~\vimfiles\dein/repos\github.com\cohama/lexima.vim
-"set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
-"set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
+set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
+set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
 set runtimepath+=~\vimfiles\dein/repos\github.com\kmnk\denite-dirmark
+set runtimepath+=~\vimfiles\dein/repos\github.com\mattn\webapi-vim
+set runtimepath+=~\vimfiles\dein/repos\github.com\basyura\twibill.vim
+set runtimepath+=~\vimfiles\dein/repos\github.com\tyru\open-browser.vim
+set runtimepath+=~\vimfiles\dein/repos\github.com\basyura\TweetVim
 set runtimepath+=~\vimfiles\dein/repos\github.com\twitvim/twitvim.git
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
 "3.5と3.6が両方必要
@@ -107,7 +111,7 @@ nnoremap <leader>wj <C-W>j
 nnoremap <leader>wk <C-W>k
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>
-nnoremap <leader>wv :vsp :bnext<CR>
+nnoremap <leader>wv :vsp<CR>:bprev<CR>
 nnoremap <leader>wc :close<CR>
 nnoremap <leader>wn :vne<CR>
 nnoremap <leader>w+ :res +2<CR>
@@ -189,7 +193,6 @@ call dein#add('neoclide/denite-git')
 call dein#add('iwataka/minidown.vim')
 call dein#add('tpope/vim-fugitive')
 call dein#add('cohama/lexima.vim')
-call dein#add('twitvim/twitvim.git')
 "webapi-vim
 call dein#add('mattn/webapi-vim')
 call dein#add('basyura/twibill.vim')
@@ -388,14 +391,24 @@ endfunction
 "========================================================================
 nnoremap <silent> <leader>e :<C-u>Defx 
      \<CR>
- "    \ -direction=topleft -winwidth=40 -split=vertical 
 call defx#custom#option('_', {
             \ 'winwidth': 40,
             \ 'split': 'vertical',
             \ 'direction': 'botright',
-            \ 'columns': 'mark:filename:type:size:time',
+            \ 'columns':'mark:filename:type:size:time',
             \ 'sort': 'TIME',
             \ })
+call defx#custom#column('filename', {
+      \ 'directory_icon': '▸',
+      \ 'opened_icon': '▾',
+      \ 'root_icon': ' ',
+      \ 'min_width': 40,
+      \ 'max_width': 40,
+      \ })
+call defx#custom#column('mark', {
+      \ 'readonly_icon': '✗',
+      \ 'selected_icon': '✓',
+      \ })
 autocmd FileType defx call s:defx_my_settings()
     function! s:defx_my_settings() abort
      " Define mappings
@@ -423,6 +436,8 @@ autocmd FileType defx call s:defx_my_settings()
      \ defx#do_action('rename')
       nnoremap <silent><buffer><expr> x
      \ defx#do_action('execute_system')
+      nnoremap <silent><buffer><expr> f
+     \ defx#do_action('open_or_close_tree')
       nnoremap <silent><buffer><expr> yy
      \ defx#do_action('yank_path')
       nnoremap <silent><buffer><expr> .
@@ -433,7 +448,7 @@ autocmd FileType defx call s:defx_my_settings()
      \ defx#do_action('cd')
       nnoremap <silent><buffer><expr> q
      \ defx#do_action('quit')
-      nnoremap <silent><buffer><expr> <Space>
+      nnoremap <silent><buffer><expr> i
      \ defx#do_action('toggle_select') . 'j'
       nnoremap <silent><buffer><expr> *
      \ defx#do_action('toggle_select_all')
