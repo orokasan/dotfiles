@@ -110,7 +110,7 @@ nnoremap <leader>wl <C-W>l
 nnoremap <leader>wj <C-W>j
 nnoremap <leader>wk <C-W>k
 "画面分割マッピング
-nnoremap <leader>ws :sp<CR>
+nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
 nnoremap <leader>wc :close<CR>
 nnoremap <leader>wn :vne<CR>
@@ -141,7 +141,10 @@ cnoremap <M-b> <S-Left>
 cnoremap <M-f> <S-Right>
 nnoremap <silent> <C-h> :bprev<CR>
 nnoremap <silent> <C-l> :bnext<CR>
-nnoremap <silent> <C-p> :bd<CR>
+"バッファを閉じてもウィンドウが閉じないようにする
+"プラグインが必要
+"https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
+nnoremap <silent> <C-p> :Bclose<CR>
 " markdownをよく使うようになったので
 noremap <leader>dm :<C-u>set ft=markdown<cr>
 "Markdownの改行タグ
@@ -389,10 +392,11 @@ endfunction
 "========================================================================
 " defx Config: start -----------------
 "========================================================================
-nnoremap <silent> <leader>e :<C-u>Defx 
-     \<CR>
+nnoremap <silent> <C-e> :<C-u>Defx 
+      \ -toggle
+      \<CR>
 call defx#custom#option('_', {
-            \ 'winwidth': 40,
+            \ 'winwidth': 45,
             \ 'split': 'vertical',
             \ 'direction': 'botright',
             \ 'columns':'mark:filename:type:size:time',
@@ -402,8 +406,8 @@ call defx#custom#column('filename', {
       \ 'directory_icon': '▸',
       \ 'opened_icon': '▾',
       \ 'root_icon': ' ',
-      \ 'min_width': 40,
-      \ 'max_width': 40,
+      \ 'min_width': 45,
+      \ 'max_width': 45,
       \ })
 call defx#custom#column('mark', {
       \ 'readonly_icon': '✗',
@@ -450,6 +454,8 @@ autocmd FileType defx call s:defx_my_settings()
      \ defx#do_action('quit')
       nnoremap <silent><buffer><expr> i
      \ defx#do_action('toggle_select') . 'j'
+      nnoremap <silent><buffer><expr> I
+     \ defx#do_action('clear_select_all')
       nnoremap <silent><buffer><expr> *
      \ defx#do_action('toggle_select_all')
       nnoremap <silent><buffer><expr> j
