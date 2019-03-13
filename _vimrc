@@ -228,46 +228,45 @@ nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
-      \ -direction=botright -cursor-wrap=true 
-      \ -winheight=15
       \ file<CR>
-"      \ -auto-resize 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
-      \ -direction=botright -cursor-wrap=true 
-      \ -winheight=15
-      \ file <CR>
+      \ file<CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite 
-      \ -direction=botright -cursor-wrap=true 
-      \ -winheight=15
-      \ -mode=normal buffer<CR>
+      \ -mode=normal
+      \ buffer<CR>
 "レジスタ一覧
 nnoremap <silent> [denite]r :<C-u>Denite 
-      \ -direction=botright -cursor-wrap=true 
-      \ -winheight=15
-      \ -buffer-name=register -mode=normal register<CR>
+      \ -buffer-name=register -mode=normal 
+      \ register<CR>
 "メニュー
 nnoremap <silent> [denite]u :Denite menu<CR>
 nnoremap <silent> [denite]h :Denite help<CR>
 "最近使用したファイル一覧
 nnoremap <silent> [denite]n :<C-u>Denite 
-      \ -direction=botright -cursor-wrap=true 
-      \ -winheight=15
       \ -mode=normal file_mru<CR>
 "ブックマーク(Unite経由) 
 "nnoremap <silent> [denite]m :Denite unite:bookmark<CR> 
 "nnoremap <silent> [denite]a :Denite unite:BookmarkAdd<CR> 
 ""C-N,C-Pで上下移動
+call denite#custom#option('_', {
+      \ 'prompt': '»',
+      \ 'cursor_wrap': v:true,
+      \ 'winheight': 15,
+      \ 'highlight_mode_insert': 'WildMenu'
+      \ })
 call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
 call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
 "C-J,C-Kでsplitで開く
 call denite#custom#map('insert', '<C-j>', '<denite:do_action:split>', 'noremap')
 call denite#custom#map('insert', '<C-k>', '<denite:do_action:vsplit>', 'noremap')
+"C-h,C-lでディレクトリ移動
+call denite#custom#map('insert', '<C-l>', '<denite:do_action:default>', 'noremap')
+call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
 "h,lでディレクトリ上下移動
 call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
- 
 call denite#custom#var('file_rec', 'command',
 \ ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
 " Ag command on grep source
