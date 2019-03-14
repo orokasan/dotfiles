@@ -258,6 +258,10 @@ nnoremap <silent> [denite]b :<C-u>Denite
 nnoremap <silent> [denite]r :<C-u>Denite 
       \ -buffer-name=register -mode=normal 
       \ register<CR>
+"neoyank起動
+nnoremap <silent> [denite]y :<C-u>Denite 
+      \ -mode=normal 
+      \ neoyank<CR>
 "メニュー
 nnoremap <silent> [denite]u :Denite menu<CR>
 nnoremap <silent> [denite]h :Denite help<CR>
