@@ -17,8 +17,7 @@ syntax match tweetvim_status_id "\[\d\{-1,}\]$" display
 syntax match tweetvim_screen_name "^\s\=\w\{-1,} " display
 
 syntax match tweetvim_at_screen_name "@\w\+" display
-
-"syntax match tweetvim_username ".\+(?=@)" display
+"added username syntax
 syntax match tweetvim_username ".*\ze\s@" display
 
 "syntax match tweetvim_link "\<https\?://\S\+"
@@ -65,14 +64,14 @@ if get(g:, 'tweetvim_original_hi', 0)
   highlight default tweetvim_notify_mentions  guifg=#e86840
   highlight def link tweetvim_around_search   Search
 
-else
-
+else 
+"for Papercolor
   hi def link tweetvim_title           Title
   hi def link tweetvim_status_id       Special
   hi def link tweetvim_created_at      NonText
-  hi def link tweetvim_screen_name     String
-  hi def link tweetvim_at_screen_name  String
-  hi def link tweetvim_username        Constant
+  hi def link tweetvim_screen_name     PreCondit
+  hi def link tweetvim_at_screen_name  PreCondit
+  hi def link tweetvim_username        Structure
   hi def link tweetvim_link            Underlined
   hi def link tweetvim_hash_tag        Constant
   hi def link tweetvim_separator       Ignore
@@ -80,7 +79,7 @@ else
   hi def link tweetvim_new_separator   Conditional
   hi def link tweetvim_star            Conditional
   hi def link tweetvim_reload          Constant
-  hi def link tweetvim_rt_count        Question
+  hi def link tweetvim_rt_count        Typedef
   hi def link tweetvim_rt_over         Question
   hi def link tweetvim_reply           PmenuSel
   hi def link tweetvim_appendix        Comment
@@ -89,6 +88,29 @@ else
   hi def link tweetvim_notify_fav      Constant
   hi def link tweetvim_notify_unfav    Ignore
   hi def link tweetvim_notify_mentions Special
+
+"  hi def link tweetvim_title           Title
+"  hi def link tweetvim_status_id       Special
+"  hi def link tweetvim_created_at      NonText
+"  hi def link tweetvim_screen_name     String
+"  hi def link tweetvim_at_screen_name  String
+"  hi def link tweetvim_username        Constant
+"  hi def link tweetvim_link            Underlined
+"  hi def link tweetvim_hash_tag        Constant
+"  hi def link tweetvim_separator       Ignore
+"  hi def link tweetvim_separator_title Ignore
+"  hi def link tweetvim_new_separator   Conditional
+"  hi def link tweetvim_star            Conditional
+"  hi def link tweetvim_reload          Constant
+"  hi def link tweetvim_rt_count        Question
+"  hi def link tweetvim_rt_over         Question
+"  hi def link tweetvim_reply           PmenuSel
+"  hi def link tweetvim_appendix        Comment
+"  hi def link tweetvim_around_search   Search
+"  hi def link tweetvim_notify_rt       Search
+"  hi def link tweetvim_notify_fav      Constant
+"  hi def link tweetvim_notify_unfav    Ignore
+"  hi def link tweetvim_notify_mentions Special
 
 endif
 
