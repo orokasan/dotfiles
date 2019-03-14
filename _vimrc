@@ -38,6 +38,12 @@ set smarttab
 "ランタイムパスの設定
 "========================================================================
 "なぜかランタイム直下のプラグインが読み込まれないため、ワイルドカードで対応
+for s:path in split(glob($HOME\vimfiles\dein\repos\github.com.'/plugins/*'), '\n')
+  if s:path !~# '\~$' && isdirectory(s:path)
+    let &runtimepath = &runtimepath.','.s:path
+  end
+endfor
+unlet s:path
 set runtimepath+=~\vimfiles
 set runtimepath+=~\vimfiles\dein\repos\github.com\Shougo\defx.nvim
 set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
