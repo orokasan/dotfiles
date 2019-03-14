@@ -1,9 +1,5 @@
 "" クリップボードにコピー（GUI)
 set clipboard=unnamed
-
-set runtimepath+=~/vimfiles\dein\repos\github.com\vim-airline
-set runtimepath+=~/vimfiles\dein\repos\github.com\vim-airline-themes
-  
 "cygwinとvimのターミナルが干渉するのを防ぐ
 set shell=cmd.exe
 set shellcmdflag=/C
@@ -22,18 +18,6 @@ set shellcmdflag=/C
 " gVimでもテキストベースのタブページを使う
 set guioptions-=e
 set showtabline=2 " 常にタブラインを表示
-
-"タブラインのカラー変更(smart_tabline.vim)
-"augroup AutoColor
-"	autocmd!
-"	autocmd Colorscheme * highlight TabLine ctermbg=none 
-"	autocmd Colorscheme * highlight TabLineSel ctermbg=none
-"	autocmd Colorscheme * highlight TabLineFill cterm=none ctermbg=none
-"augroup END
-"augroup AutoColor
-" autocmd!
-" autocmd Colorscheme * highlight! link TabLine normal
-" autocmd Colorscheme * highlight! link TabLineSel normal
 "augroup END
 " ウィンドウの縦幅
 set lines=50
@@ -41,7 +25,6 @@ set lines=50
 set columns=150
 " ウィンドウの起動時の位置
 winpos 10 30
-
 "" 行番号を表示
 set number
 " 現在の行を強調表示
@@ -56,6 +39,8 @@ set visualbell
 set showmatch
 " ステータスラインを常に表示
 set laststatus=2
+"コマンドライン行数の設定
+set cmdheight=1
 " コマンドラインの補完
 "set wildmode=list:longest
 
@@ -123,19 +108,16 @@ let g:airline_theme='PaperColor'
 set guifont=Consolas:h12:cDEFAULT
 "全角文字の設定
 set guifontwide=MS_Gothic:h13:cDEFAULT
-"
 ".gvimrc カラー設定
 "カラー設定した後にCursorIMを定義する方法
 if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
 endif
-
 "全角スペースを表示
 """"""""""""""""""""""""""""""
 "コメント以外で全角スペースを指定しているので scriptencodingと、
 "このファイルのエンコードが一致するよう注意！
 "全角スペースが強調表示されない場合、ここでscriptencodingを指定すると良い。
-
 "デフォルトのZenkakuSpaceを定義
 function! ZenkakuSpace()
   highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
