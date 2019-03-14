@@ -7,6 +7,13 @@ scriptencoding utf-8			" vimrcのエンコーディング
 set encoding=utf-8			" vim 内部のエンコーディグ
 set fileencoding=utf-8			" 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932"
+" ------------------------------------------------------------------------------
+" reset vimrc autocmd group
+" ------------------------------------------------------------------------------
+augroup vimrc
+  autocmd!
+augroup END
+
 " バックアップファイルを作らない
 "set nobackup
 " スワップファイルを作らない
@@ -84,8 +91,6 @@ nnoremap <Leader>/ a/<Esc>
 nnoremap <Leader>\ a\<Esc>
 nnoremap <Leader><Space> a <Esc>
 nnoremap <Leader><S-Space> a…<Esc>
-" インサートモード中の^hに対応して^lで<del>させる様に
-inoremap <C-l> <del>
 "上書きペースト
 nnoremap <silent>cp ve"8d"0p
 " 折り返し時に表示行単位での移動できるようにする
@@ -104,11 +109,6 @@ inoremap <silent><C-c> <ESC>
 :imap <c-s> <Esc>:w<CR>a
 "CTRL-qでclose
 nnoremap <silent> <C-q> :close<CR>
-" A better for me window management system... inspired by Spacemacs!
-nnoremap <leader>wh <C-W>h
-nnoremap <leader>wl <C-W>l
-nnoremap <leader>wj <C-W>j
-nnoremap <leader>wk <C-W>k
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -121,6 +121,25 @@ nnoremap <leader>wo :only<CR>
 noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
 "開いている_vimrcを読み込む
 noremap <Leader>ss :<C-u>source %<CR>
+" インサートモード時は emacs like なキーバインド (あまり使わない)
+inoremap <C-f> <Right>|			" C-f で左へ移動
+inoremap <C-b> <Left>|			" C-b で右へ移動
+inoremap <C-p> <Up>|			" C-p で上へ移動
+inoremap <C-n> <Down>|			" C-n で下へ移動
+inoremap <C-a> <Home>|			" C-a で行頭へ移動
+inoremap <C-e> <End>|			" C-e で行末へ移動
+inoremap <C-h> <BS>|			" C-h でバックスペース
+inoremap <C-d> <Del>|			" C-d でデリート
+inoremap <C-m> <CR>|			" C-m で改行
+inoremap <C-l> <del>
+"window移動
+nnoremap <C-h> <C-w>h|			" Ctrl + hjkl でウィンドウ間を移動
+nnoremap <C-j> <C-w>j|			" Ctrl + hjkl でウィンドウ間を移動
+nnoremap <C-k> <C-w>k|			" Ctrl + hjkl でウィンドウ間を移動
+nnoremap <C-l> <C-w>l|			" Ctrl + hjkl でウィンドウ間を移動
+"バッファ移動
+nnoremap <silent><Leader>wh :bprev<CR>|
+nnoremap <silent><Leader>wl :bnext<CR>|
 "コマンドライン上のマッピング
 cnoremap <C-a> <Home>
 " 一文字戻る
@@ -139,8 +158,6 @@ cnoremap <C-p> <Up>
 cnoremap <M-b> <S-Left>
 " 次の単語へ移動
 cnoremap <M-f> <S-Right>
-nnoremap <silent> <C-h> :bprev<CR>
-nnoremap <silent> <C-l> :bnext<CR>
 "バッファを閉じてもウィンドウが閉じないようにする
 "プラグインが必要
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
