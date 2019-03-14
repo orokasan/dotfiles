@@ -2,10 +2,11 @@
 "========================================================================
 ""文字入力系
 "========================================================================
-"文字コードをUFT-8に設定
-set encoding=utf-8
-set fileencodings=utf-8,cp932
-set shellslash
+set nocompatible			" vi 非互換(宣言)
+scriptencoding utf-8			" vimrcのエンコーディング
+set encoding=utf-8			" vim 内部のエンコーディグ
+set fileencoding=utf-8			" 既定のファイル保存エンコーディング
+set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932"
 " バックアップファイルを作らない
 "set nobackup
 " スワップファイルを作らない
@@ -25,6 +26,7 @@ iabbrev adn and
 iabbrev teh the
 set showmatch
 set matchtime=1
+set smarttab
 "========================================================================
 "ランタイムパスの設定
 "========================================================================

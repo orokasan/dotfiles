@@ -50,46 +50,61 @@ augroup END
 "=========================================================================================
 "vim-airline
 "入れないとPowerline文字が化ける
+"set ambiwidth=double
 set ambiwidth=single
-
+let g:airline_detect_iminsert=1
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#cursormode#enabled = 1
+let g:cursormode_mode_func = 'mode'
+  let g:cursormode_color_map = {
+    \   "i": g:airline#themes#{g:airline_theme}#palette.insert.airline_a[1],
+    \   "R": g:airline#themes#{g:airline_theme}#palette.replace.airline_a[1],
+    \   "v": g:airline#themes#{g:airline_theme}#palette.visual.airline_a[1],
+    \   "V": g:airline#themes#{g:airline_theme}#palette.visual.airline_a[1],
+    \   "\<C-V>": g:airline#themes#{g:airline_theme}#palette.visual.airline_a[1],
+    \ }
 "let g:airline_section_b = "%t %M"
 "let g:airline_section_c = ''
 "let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
 "let g:airline_section_y = '%3p%%'
-let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#whitespace#enabled = 1
+let g:airline#extensions#whitespace#mixed_indent_algo = 1
+
 let g:Powerline_symbols = 'compatible'
 let g:airline_left_sep = ''
 let g:airline_right_sep = ''
-"let g:airline_left_alt_sep = ''
-"let g:airline_right_alt_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = '☰'
+"let g:airline_symbols.linenr = '☰'
 let g:airline_symbols.maxlinenr = ''
- " or copy paste the following into your vimrc for shortform text
-  let g:airline_mode_map = {
-      \ '__' : '-',
-      \ 'c'  : 'C',
-      \ 'i'  : 'I',
-      \ 'ic' : 'I',
-      \ 'ix' : 'I',
-      \ 'n'  : 'N',
-      \ 'ni' : 'N',
-      \ 'no' : 'N',
-      \ 'R'  : 'R',
-      \ 'Rv' : 'R',
-      \ 's'  : 'S',
-      \ 'S'  : 'S',
-      \ '' : 'S',
-      \ 't'  : 'T',
-      \ 'v'  : 'V',
-      \ 'V'  : 'V',
-      \ '' : 'V',
-      \ }
-
+" " or copy paste the following into your vimrc for shortform text
+"  let g:airline_mode_map = {
+"      \ '__' : '-',
+"      \ 'c'  : 'C',
+"      \ 'i'  : 'I',
+"      \ 'ic' : 'I',
+"      \ 'ix' : 'I',
+"      \ 'n'  : 'N',
+"      \ 'ni' : 'N',
+"      \ 'no' : 'N',
+"      \ 'R'  : 'R',
+"      \ 'Rv' : 'R',
+"      \ 's'  : 'S',
+"      \ 'S'  : 'S',
+"      \ '' : 'S',
+"      \ 't'  : 'T',
+"      \ 'v'  : 'V',
+"      \ 'V'  : 'V',
+"      \ '' : 'V',
+"      \ }
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
 "=========================================================================================
 "カラースキーマを設定
 syntax on
