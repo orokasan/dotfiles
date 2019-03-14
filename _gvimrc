@@ -27,8 +27,6 @@ set columns=150
 winpos 10 30
 "" 行番号を表示
 set number
-" 現在の行を強調表示
-set cursorline
 " 行末の1文字先までカーソルを移動できるように
 set virtualedit=onemore
 " インデントはスマートインデント
@@ -43,7 +41,12 @@ set laststatus=2
 set cmdheight=1
 " コマンドラインの補完
 "set wildmode=list:longest
-
+"放置したときだけCursorline強調
+augroup vimrc-auto-cursorline
+  autocmd!
+  autocmd CursorMoved,CursorMovedI,WinLeave * setlocal nocursorline
+  autocmd CursorHold,CursorHoldI * setlocal cursorline
+augroup END
 "=========================================================================================
 "vim-airline
 "入れないとPowerline文字が化ける
