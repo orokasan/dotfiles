@@ -43,8 +43,8 @@ set runtimepath+=~\vimfiles\dein/repos\github.com\deton\jasegment.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\iwataka/minidown.vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\tpope/vim-fugitive
 set runtimepath+=~\vimfiles\dein/repos\github.com\cohama/lexima.vim
-set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
-set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
+"set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
+"set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
 set runtimepath+=~\vimfiles\dein/repos\github.com\kmnk\denite-dirmark
 set runtimepath+=~\vimfiles\dein/repos\github.com\mattn\webapi-vim
 set runtimepath+=~\vimfiles\dein/repos\github.com\basyura\twibill.vim
@@ -71,8 +71,6 @@ nnoremap <leader>k O<ESC>j
 nnoremap ; :
  " Enter normal mode
 inoremap jk <esc>
-"qでクローズ
-nnoremap <leader>q :close<CR>
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "句読点を強引に挿入
@@ -102,8 +100,8 @@ inoremap <silent><C-c> <ESC>
 "CTRL-sで保存！
 :nmap <c-s> :w<CR>
 :imap <c-s> <Esc>:w<CR>a
-"CTRL-qでquit
-nnoremap <silent> <C-q> :q<CR>
+"CTRL-qでclose
+nnoremap <silent> <C-q> :close<CR>
 " A better for me window management system... inspired by Spacemacs!
 nnoremap <leader>wh <C-W>h
 nnoremap <leader>wl <C-W>l
@@ -395,23 +393,23 @@ nnoremap <silent> <C-e> :<C-u>Defx
        \<CR>:set nonumber<CR>
 "      \ -toggle
 call defx#custom#option('_', {
-            \ 'winwidth': 45,
+            \ 'winwidth': 40,
             \ 'split': 'vertical',
             \ 'direction': 'botright',
             \ 'columns':'mark:filename:type:size:time',
             \ 'sort': 'TIME',
             \ })
-call defx#custom#column('filename', {
-      \ 'directory_icon': '▸',
-      \ 'opened_icon': '▾',
-      \ 'root_icon': ' ',
-      \ 'min_width': 45,
-      \ 'max_width': 45,
-      \ })
-call defx#custom#column('mark', {
-      \ 'readonly_icon': '✗',
-      \ 'selected_icon': '✓',
-      \ })
+"call defx#custom#column('filename', {
+"      \ 'directory_icon': '▸',
+"      \ 'opened_icon': '▾',
+"      \ 'root_icon': ' ',
+"      \ 'min_width': 45,
+"      \ 'max_width': 45,
+"      \ })
+"call defx#custom#column('mark', {
+"      \ 'readonly_icon': '✗',
+"      \ 'selected_icon': '✓',
+"      \ })
 autocmd FileType defx call s:defx_my_settings()
     function! s:defx_my_settings() abort
      " Define mappings
