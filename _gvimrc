@@ -50,14 +50,7 @@ augroup END
 "=========================================================================================
 "vim-airline
 "入れないとPowerline文字が化ける
-"set ambiwidth=double
 set ambiwidth=single
-let g:airline_detect_iminsert=1
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline#extensions#cursormode#enabled = 1
-let g:cursormode_mode_func = 'mode'
   let g:cursormode_color_map = {
     \   "i": g:airline#themes#{g:airline_theme}#palette.insert.airline_a[1],
     \   "R": g:airline#themes#{g:airline_theme}#palette.replace.airline_a[1],
@@ -66,12 +59,17 @@ let g:cursormode_mode_func = 'mode'
     \   "\<C-V>": g:airline#themes#{g:airline_theme}#palette.visual.airline_a[1],
     \ }
 "let g:airline_section_b = "%t %M"
-"let g:airline_section_c = ''
-"let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
-"let g:airline_section_y = '%3p%%'
+let g:airline_section_y = g:airline_section_c
+let g:airline_section_c ="%{IMStatus('[JP-Lock]')}"
+let g:airline_section_error = ''
+let g:airline_section_warning = ''
 let g:airline#extensions#whitespace#enabled = 1
 let g:airline#extensions#whitespace#mixed_indent_algo = 1
 
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
 let g:Powerline_symbols = 'compatible'
 let g:airline_left_sep = ''
 let g:airline_right_sep = ''
@@ -79,8 +77,9 @@ let g:airline_left_alt_sep = ''
 let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
-"let g:airline_symbols.linenr = '☰'
+let g:airline_symbols.linenr = '='
 let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.whitespace = 'Ξ'
 " " or copy paste the following into your vimrc for shortform text
 "  let g:airline_mode_map = {
 "      \ '__' : '-',
@@ -101,10 +100,6 @@ let g:airline_symbols.maxlinenr = ''
 "      \ 'V'  : 'V',
 "      \ '' : 'V',
 "      \ }
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
-let g:airline_symbols.space = "\ua0"
 "=========================================================================================
 "カラースキーマを設定
 syntax on
@@ -123,9 +118,9 @@ let g:airline_theme='PaperColor'
 "フォント
 "ConsolasにPowerlineSymbolsをパッチしてある
 "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
-set guifont=Consolas:h12:cDEFAULT
+set guifont=Consolas:h11:cDEFAULT
 "全角文字の設定
-set guifontwide=MS_Gothic:h13:cDEFAULT
+set guifontwide=MS_Gothic:h12:cDEFAULT
 ".gvimrc カラー設定
 "カラー設定した後にCursorIMを定義する方法
 if has('multi_byte_ime')

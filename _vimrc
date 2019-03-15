@@ -3,7 +3,7 @@
 ""文字入力系
 "========================================================================
 set nocompatible			" vi 非互換(宣言)
-scriptencoding utf-8,cp932			" vimrcのエンコーディング
+scriptencoding utf-8,cp932		" vimrcのエンコーディング
 set encoding=utf-8			" vim 内部のエンコーディグ
 set fileencoding=utf-8			" 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932"
@@ -41,9 +41,14 @@ set runtimepath+=~\vimfiles
 set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
 "dein用プラグイン読み込みラインタイムパス
 "できれば消したい
+"これを試す
+"call map(dein#check_clean(), "delete(v:val, 'rf')")
+"call dein#recache_runtimepath()
+"
 "let $DEIN = expand('~\vimfiles\dein\repos\github.com')
 "set runtimepath+=$DEIN\Shougo\defx.nvim,
 "      \$DEIN/Shougo/neomru.vim
+"      \$DEIN/Shougo/denite.nvim
 "      \$DEIN/cocopon/vaffle.vim,
 "      \$DEIN/Shougo/Unite.vim,
 "      \$DEIN/vim-airline/vim-airline,
@@ -66,7 +71,8 @@ set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
 "3.5と3.6が両方必要
 set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
 let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python36\python.exe')
-
+"vimprocのダウンロード(for Win)
+let g:vimproc#download_windows_dll = 1
 "========================================================================
 "Key mapping
 "========================================================================
@@ -96,8 +102,8 @@ nnoremap <Leader><S-Space> a…<Esc>
 "上書きペースト
 nnoremap <silent>cp ve"8d"0p
 " 折り返し時に表示行単位での移動できるようにする
-nnoremap j gj
-nnoremap k gk
+nnoremap <silent> j gj
+nnoremap <silent> k gk
 "IMEオンでinsertに入る
 nnoremap <silent><C-i> i<C-^>
 " 「日本語入力固定モード」の切替キー
@@ -193,18 +199,7 @@ call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/denite.nvim')
 call dein#add('Shougo/unite.vim')
 call dein#add('Shougo/neoyank.vim')
-"call dein#add('cocopon/vaffle.vim')
-"call dein#add('Shougo/vimfiler')
 call dein#add('lambdalisue/vim-rplugin')
-call dein#add('Shougo/vimproc.vim', {
-      \ 'build': {
-      \     'windows' : 'tools\\update-dll-mingw',
-      \     'cygwin'  : 'make -f make_cygwin.mak',
-      \     'mac'     : 'make -f make_mac.mak',
-      \     'linux'   : 'make',
-      \     'unix'    : 'gmake',
-      \    },
-      \ })
 call dein#add('NLKNguyen/papercolor-theme')
 call dein#add('rakr/vim-one')
 call dein#add('vim-airline/vim-airline')
@@ -212,7 +207,6 @@ call dein#add('vim-airline/vim-airline-themes')
 call dein#add('deton/jasegment.vim')
 call dein#add('rhysd/vim-operator-surround')
 call dein#add('kana/vim-operator-user')
-call dein#add('neoclide/denite-git')
 call dein#add('iwataka/minidown.vim')
 call dein#add('tpope/vim-fugitive')
 call dein#add('cohama/lexima.vim')
@@ -244,7 +238,6 @@ filetype plugin indent on
 "kaoriya-vimのpython3.5に揃える
 "64bit版を使用する
 "
-set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/denite.nvim
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 "現在開いているファイルのディレクトリ下のファイル一覧。
@@ -328,7 +321,6 @@ nmap <Leader>dd    <SID>(dirmark)
 nmap <Leader>da    <SID>(dirmark-add) 
 nnoremap <silent> <SID>(dirmark) :<C-u>Denite -default-action=cd dirmark<CR> 
 nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand('%:p:h') .  '<CR>' 
-let g:vimproc#download_windows_dll = 1
 
 "========================================================================
 "vim-markdown設定
@@ -343,12 +335,12 @@ augroup END
 "TweetVim設定
 "========================================================================
 nnoremap <silent> <Leader>tws  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>:res -2<CR>
+nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>
 nnoremap <silent> <Leader>twm :TweetVimMentions<CR>
 nnoremap <silent> <Leader>twu :Unite tweetvim<CR>
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-let g:tweetvim_open_buffer_cmd = 'botright split'
+let g:tweetvim_open_buffer_cmd = 'botright vsplit'
 let g:tweetvim_display_separator = 0
 let g:tweetvim_empty_separator = 0
 let g:tweetvim_async_post = 1
@@ -603,3 +595,27 @@ call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
+
+"vim-airline
+let g:airline#extensions#disable_rtp_load = 1
+let g:airline_extensions = ['branch', 'tabline','cursormode', 'whitespace']
+let g:airline_detect_iminsert=1
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#cursormode#enabled = 1
+let g:airline#extensions#whitespace#enabled = 1
+let g:airline#extensions#whitespace#mixed_indent_algo = 1
+
+" 「日本語入力固定モード」の動作モード
+let IM_CtrlMode = 4
+" 「日本語入力固定モード」切替キー
+inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+
+" 「日本語入力固定モード」がオンの場合、ステータス行にメッセージ表示
+set statusline+=%{IMStatus('[JP-Lock]')}
+
+" im_control.vimがない環境でもエラーを出さないためのダミー関数
+function! IMStatus(...)
+  return ''
+endfunction
