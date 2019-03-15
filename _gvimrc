@@ -59,6 +59,8 @@ set ambiwidth=single
     \   "\<C-V>": g:airline#themes#{g:airline_theme}#palette.visual.airline_a[1],
     \ }
 "let g:airline_section_b = "%t %M"
+call airline#parts#define_function('Gina', 'gina#component#repo#branch')
+let g:airline_section_b = g:airline#section#create(['hunks', g:airline_symbols.branch,'Gina'])
 let g:airline_section_y = g:airline_section_c
 let g:airline_section_c ="%{IMStatus('[JP-Lock]')}"
 let g:airline_section_error = ''
