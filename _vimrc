@@ -41,7 +41,8 @@ set runtimepath+=~\vimfiles
 set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
 "dein用プラグイン読み込みラインタイムパス
 "できれば消したい
-"これを試す
+"これを試す:scriptnames
+"これも試す
 "call map(dein#check_clean(), "delete(v:val, 'rf')")
 "call dein#recache_runtimepath()
 "
@@ -215,6 +216,8 @@ call dein#add('mattn/webapi-vim')
 call dein#add('basyura/twibill.vim')
 call dein#add('tyru/open-browser.vim')
 call dein#add('basyura/TweetVim')
+call dein#add('lambdalisue/gina.vim')
+
 "Python3.6が必要================================
 call dein#add('Shougo/defx.nvim')
 if !has('nvim')
@@ -237,7 +240,8 @@ filetype plugin indent on
 "$VIMにインストールしたpythonと同じバージョンのdll(python3.dll, python35.dll, python35.zip)を入れる
 "kaoriya-vimのpython3.5に揃える
 "64bit版を使用する
-"
+"test
+
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 "現在開いているファイルのディレクトリ下のファイル一覧。
