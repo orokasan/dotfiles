@@ -37,36 +37,31 @@ set smarttab
 "========================================================================
 "ランタイムパスの設定
 "========================================================================
-"なぜかランタイム直下のプラグインが読み込まれないため、ワイルドカードで対応
-for s:path in split(glob($HOME\vimfiles\dein\repos\github.com.'/plugins/*'), '\n')
-  if s:path !~# '\~$' && isdirectory(s:path)
-    let &runtimepath = &runtimepath.','.s:path
-  end
-endfor
-unlet s:path
-
 set runtimepath+=~\vimfiles
-set runtimepath+=~\vimfiles\dein\repos\github.com\Shougo\defx.nvim
 set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
-set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/neomru.vim
-set runtimepath+=~/vimfiles/dein/repos/github.com/cocopon/vaffle.vim
-set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/Unite.vim
-set runtimepath+=~/vimfiles/dein/repos/github.com/vim-airline/vim-airline
-set runtimepath+=~/vimfiles/dein/repos/github.com/vim-airline/vim-airline-themes
-set runtimepath+=~\vimfiles\dein/repos\github.com\rhysd\vim-operator-surround
-set runtimepath+=~\vimfiles\dein/repos\github.com\kana\vim-operator-user
-set runtimepath+=~\vimfiles\dein/repos\github.com\deton\jasegment.vim
-set runtimepath+=~\vimfiles\dein/repos\github.com\iwataka/minidown.vim
-set runtimepath+=~\vimfiles\dein/repos\github.com\tpope/vim-fugitive
-set runtimepath+=~\vimfiles\dein/repos\github.com\cohama/lexima.vim
-"set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\nvim-yarp
-"set runtimepath+=~\vimfiles\dein/repos\github.com\roxma\vim-hug-neovim-rpc
-set runtimepath+=~\vimfiles\dein/repos\github.com\kmnk\denite-dirmark
-set runtimepath+=~\vimfiles\dein/repos\github.com\mattn\webapi-vim
-set runtimepath+=~\vimfiles\dein/repos\github.com\basyura\twibill.vim
-set runtimepath+=~\vimfiles\dein/repos\github.com\tyru\open-browser.vim
-set runtimepath+=~\vimfiles\dein/repos\github.com\basyura\TweetVim
-set runtimepath+=~\vimfiles\dein/repos\github.com\twitvim/twitvim.git
+"dein用プラグイン読み込みラインタイムパス
+"できれば消したい
+"let $DEIN = expand('~\vimfiles\dein\repos\github.com')
+"set runtimepath+=$DEIN\Shougo\defx.nvim,
+"      \$DEIN/Shougo/neomru.vim
+"      \$DEIN/cocopon/vaffle.vim,
+"      \$DEIN/Shougo/Unite.vim,
+"      \$DEIN/vim-airline/vim-airline,
+"      \$DEIN/vim-airline/vim-airline-themes,
+"      \$DEIN\rhysd\vim-operator-surround,
+"      \$DEIN\kana\vim-operator-user,
+"      \$DEIN\deton\jasegment.vim,
+"      \$DEIN\iwataka/minidown.vim,
+"      \$DEIN\tpope/vim-fugitive,
+"      \$DEIN\cohama/lexima.vim,
+"      \$DEIN\roxma\nvim-yarp,
+"      \$DEIN\roxma\vim-hug-neovim-rpc,
+"      \$DEIN\kmnk\denite-dirmark,
+"      \$DEIN\mattn\webapi-vim,
+"      \$DEIN\basyura\twibill.vim,
+"      \$DEIN\tyru\open-browser.vim,
+"      \$DEIN\basyura\TweetVim,
+"      \$DEIN\twitvim/twitvim.git,
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
 "3.5と3.6が両方必要
 set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
@@ -188,9 +183,9 @@ if &compatible
   set nocompatible               
 endif
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
+call dein#load_state(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 call dein#begin(expand('~/vimfiles/dein'))
-call dein#add('Shougo/dein.vim')
-"call dein#add('Shougo/vimproc.vim', {'build': 'make'})
+call dein#add(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 call dein#add('Shougo/neosnippet-snippets')
 call dein#add('Shougo/neocomplete.vim')
 call dein#add('Shougo/neomru.vim')
@@ -234,6 +229,7 @@ if !has('nvim')
 call dein#add('kmnk/denite-dirmark')
 endif
 call dein#end()
+call dein#save_state()
 filetype plugin indent on
 
 "========================================================================
@@ -535,18 +531,16 @@ let twitvim_enable_python3 = 1
 " Tab系
 "========================================================================
 " 不可視文字を可視化(タブが「?-」と表示される)
-set list listchars=tab:\?\-
-" Tab文字を半角スペースにする
-set expandtab
-" 行頭以外のTab文字の表示幅（スペースいくつ分）
-set tabstop=2
-" 行頭でのTab文字の表示幅
-set shiftwidth=2
-"bufferの開き方指定
-"set switchbuf=useopen,vsplit
+set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
+"" Tab文字を半角スペースにする
+"set expandtab
+"" 行頭以外のTab文字の表示幅（スペースいくつ分）
+"set tabstop=2
+"" 行頭でのTab文字の表示幅
+"set shiftwidth=2
 " The prefix key.
 nnoremap    [Tag]   <Nop>
-nmap   t [Tag]
+nmap   <C-t> [Tag]
 " Tab jump
 for n in range(1, 9)
   execute 'nnoremap <silent> [Tag]'.n  ':<C-u>tabnext'.n.'<CR>'
@@ -606,3 +600,6 @@ call lexima#add_rule({'char': '<TAB>', 'at': '\%#"', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#''', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#]', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
