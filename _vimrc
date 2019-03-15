@@ -203,8 +203,8 @@ call dein#add('Shougo/neoyank.vim')
 call dein#add('lambdalisue/vim-rplugin')
 call dein#add('NLKNguyen/papercolor-theme')
 call dein#add('rakr/vim-one')
-call dein#add('vim-airline/vim-airline')
-call dein#add('vim-airline/vim-airline-themes')
+"call dein#add('vim-airline/vim-airline')
+"call dein#add('vim-airline/vim-airline-themes')
 call dein#add('deton/jasegment.vim')
 call dein#add('rhysd/vim-operator-surround')
 call dein#add('kana/vim-operator-user')
@@ -217,7 +217,7 @@ call dein#add('basyura/twibill.vim')
 call dein#add('tyru/open-browser.vim')
 call dein#add('basyura/TweetVim')
 call dein#add('lambdalisue/gina.vim')
-
+call dein#add('itchyny/lightline.vim')
 "Python3.6が必要================================
 call dein#add('Shougo/defx.nvim')
 if !has('nvim')
@@ -241,7 +241,7 @@ filetype plugin indent on
 "kaoriya-vimのpython3.5に揃える
 "64bit版を使用する
 "test
-
+let g:neomru#file_mru_ignore_pattern = 'gina://'
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 "現在開いているファイルのディレクトリ下のファイル一覧。
@@ -319,6 +319,8 @@ call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
       \ 'images/', '*.o', '*.make',
       \ '*.min.*',
       \ 'img/', 'fonts/'])
+call denite#custom#var('file_mru', 'command',
+	\ ['gina://*', "--ignore=''"])
 ""Dirmark設定
 "Python3.6が必要
 nmap <Leader>dd    <SID>(dirmark) 
@@ -600,16 +602,80 @@ call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
 
-"vim-airline
-let g:airline#extensions#disable_rtp_load = 1
-let g:airline_extensions = ['branch', 'tabline','cursormode', 'whitespace']
-let g:airline_detect_iminsert=1
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline#extensions#cursormode#enabled = 1
-let g:airline#extensions#whitespace#enabled = 1
-let g:airline#extensions#whitespace#mixed_indent_algo = 1
+""vim-airline
+"let g:airline#extensions#disable_rtp_load = 1
+"let g:airline_extensions = ['branch', 'tabline','cursormode', 'whitespace']
+"let g:airline_detect_iminsert=1
+"let g:airline_powerline_fonts = 1
+"let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#tabline#buffer_idx_mode = 1
+"let g:airline#extensions#cursormode#enabled = 1
+"let g:airline#extensions#whitespace#enabled = 1
+"let g:airline#extensions#whitespace#mixed_indent_algo = 1
+let g:lightline = {
+        \ 'colorscheme': 'PaperColor',
+        \ 'mode_map': {'c': 'NORMAL'},
+        \ 'active': {
+        \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+        \ },
+        \ 'component_function': {
+        \   'modified': 'LightlineModified',
+        \   'readonly': 'LightlineReadonly',
+        \   'fugitive': 'LightlineFugitive',
+        \   'filename': 'LightlineFilename',
+        \   'fileformat': 'LightlineFileformat',
+        \   'filetype': 'LightlineFiletype',
+        \   'fileencoding': 'LightlineFileencoding',
+        \   'mode': 'LightlineMode'
+        \ }
+        \ }
+
+let g:lightline.tabline = {
+    \ 'left': [ [ 'tabs' ] ],
+    \ 'right': [ [ 'close' ] ] }
+let g:lightline.tab = {
+    \ 'active': [ 'tabnum', 'filename', 'modified' ],
+    \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
+function! LightlineModified()
+  return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+
+function! LightlineReadonly()
+  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+endfunction
+
+function! LightlineFilename()
+  return ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \  &ft == 'unite' ? unite#get_status_string() :
+        \  &ft == 'vimshell' ? vimshell#get_status_string() :
+        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+endfunction
+
+function! LightlineFugitive()
+  if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
+    return fugitive#head()
+  else
+    return ''
+  endif
+endfunction
+
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightlineFileencoding()
+  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+endfunction
+
+function! LightlineMode()
+  return winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
 
 " 「日本語入力固定モード」の動作モード
 let IM_CtrlMode = 4
