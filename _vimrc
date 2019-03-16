@@ -1,6 +1,6 @@
 "ork's _vimrc for Windows
 "========================================================================
-""文字入力系
+"encode設定
 "========================================================================
 set nocompatible			" vi 非互換(宣言)
 scriptencoding utf-8,cp932		" vimrcのエンコーディング
@@ -13,82 +13,63 @@ set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932"
 augroup vimrc
   autocmd!
 augroup END
-
-" バックアップファイルを作らない
-"set nobackup
+"========================================================================
+"config-file
+"========================================================================
 " スワップファイルを作らない
 set noswapfile
 " 編集中のファイルが変更されたら自動で読み直す
 set autoread
 "Undoファイルをまとめる
 set undodir=~/vimfiles/undo
+"backupファイルを作成
 set backup
 set backupdir=~/vimfiles/backup
 " バッファが編集中でもその他のファイルを開けるように 
 set hidden
 " 入力中のコマンドをステータスに表示する
-set showcmd
-"typo対策
-iabbrev adn and
-iabbrev teh the
-set showmatch
-set matchtime=1
-set smarttab
+set noshowcmd
 "========================================================================
-"ランタイムパスの設定
+"runtimepath
 "========================================================================
 set runtimepath+=~\vimfiles
 set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
-"dein用プラグイン読み込みラインタイムパス
-"できれば消したい
-"これを試す:scriptnames
-"これも試す
-"call map(dein#check_clean(), "delete(v:val, 'rf')")
-"call dein#recache_runtimepath()
-"
-"let $DEIN = expand('~\vimfiles\dein\repos\github.com')
-"set runtimepath+=$DEIN\Shougo\defx.nvim,
-"      \$DEIN/Shougo/neomru.vim
-"      \$DEIN/Shougo/denite.nvim
-"      \$DEIN/cocopon/vaffle.vim,
-"      \$DEIN/Shougo/Unite.vim,
-"      \$DEIN/vim-airline/vim-airline,
-"      \$DEIN/vim-airline/vim-airline-themes,
-"      \$DEIN\rhysd\vim-operator-surround,
-"      \$DEIN\kana\vim-operator-user,
-"      \$DEIN\deton\jasegment.vim,
-"      \$DEIN\iwataka/minidown.vim,
-"      \$DEIN\tpope/vim-fugitive,
-"      \$DEIN\cohama/lexima.vim,
-"      \$DEIN\roxma\nvim-yarp,
-"      \$DEIN\roxma\vim-hug-neovim-rpc,
-"      \$DEIN\kmnk\denite-dirmark,
-"      \$DEIN\mattn\webapi-vim,
-"      \$DEIN\basyura\twibill.vim,
-"      \$DEIN\tyru\open-browser.vim,
-"      \$DEIN\basyura\TweetVim,
-"      \$DEIN\twitvim/twitvim.git,
+"========================================================================
+"Python,vimproc
+"========================================================================
+"メモ
+"インストールはAll Userで
+"pipからneovim, greenletを導入 Visual Studio C++ 14.0が必要
+"greenletは同じpythonのバージョンでコンパイルする
+"参考:https://gammasoft.jp/python/python-version-management/
+"$VIMにインストールしたpythonと同じバージョンのdll(python3.dll, python35.dll, python35.zip)を入れる
+"kaoriya-vimのpython3.5に揃える
+"64bit版を使用する
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
 "3.5と3.6が両方必要
 set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
 let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python36\python.exe')
 "vimprocのダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
+"=========================================================================================
+"Visual
+"=========================================================================================
+" 常にタブラインを表示
+set showtabline=2 
+" 括弧入力時の対応する括弧を表示
+set showmatch
+set matchtime=1
+" ステータスラインを常に表示
+set laststatus=2
+"コマンドライン行数の設定
+set cmdheight=1
+" ESC連打でハイライト解除
+nmap <Esc><Esc> :nohlsearch<CR><Esc>
+"日本語の行の連結時には空白を入力しない。
+set formatoptions+=mMj
 "========================================================================
-"Key mapping
+"入力系
 "========================================================================
-"数字のプラスマイナス
-nnoremap + <C-a>
-nnoremap - <C-x>
-"LeaderをSpaceキーに
-let mapleader = "\<Space>"
-" Create a blank line above/below current line
-nnoremap <leader>j o<ESC>k
-nnoremap <leader>k O<ESC>j
-" Convenience key for getting to command mode
-nnoremap ; :
- " Enter normal mode
-inoremap jk <esc>
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "句読点を強引に挿入
@@ -100,19 +81,42 @@ nnoremap <Leader>/ a/<Esc>
 nnoremap <Leader>\ a\<Esc>
 nnoremap <Leader><Space> a <Esc>
 nnoremap <Leader><S-Space> a…<Esc>
+" <ESC>でのIME状態保存を無効化
+inoremap <silent> <ESC> <ESC>
+inoremap <silent> <C-[> <ESC>
+inoremap <silent><C-c> <ESC>  
+"日本語入力固定モード
+"IM-control.vimが必要
+"https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
+let IM_CtrlMode = 4
+" 「日本語入力固定モード」切替キー
+inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+" 「日本語入力固定モード」がオンの場合、ステータス行にメッセージ表示
+set statusline+=%{IMStatus('[JP-Lock]')}
+" im_control.vimがない環境でもエラーを出さないためのダミー関数
+function! IMStatus(...)
+  return ''
+endfunction
+"========================================================================
+"Key mapping
+"========================================================================
+"!!!!!!!!!!LeaderをSpaceキーに!!!!!!!!!!!!!!!
+let mapleader = "\<Space>"
+"数字のプラスマイナス
+nnoremap + <C-a>
+nnoremap - <C-x>
+" Create a blank line above/below current line
+nnoremap <leader>j o<ESC>k
+nnoremap <leader>k O<ESC>j
+" Convenience key for getting to command mode
+nnoremap ; :
+ " Enter normal mode
+inoremap jk <esc>
 "上書きペースト
 nnoremap <silent>cp ve"8d"0p
 " 折り返し時に表示行単位での移動できるようにする
 nnoremap <silent> j gj
 nnoremap <silent> k gk
-"IMEオンでinsertに入る
-nnoremap <silent><C-i> i<C-^>
-" 「日本語入力固定モード」の切替キー
-inoremap <silent> <C-j> <C-^>
-" <ESC>でのIME状態保存を無効化
-inoremap <silent> <ESC> <ESC>
-inoremap <silent> <C-[> <ESC>
-inoremap <silent><C-c> <ESC>  
 "CTRL-sで保存！
 :nmap <c-s> :w<CR>
 :imap <c-s> <Esc>:w<CR>a
@@ -130,7 +134,7 @@ nnoremap <leader>wo :only<CR>
 noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
 "開いている_vimrcを読み込む
 noremap <Leader>ss :<C-u>source %<CR>
-" インサートモード時は emacs like なキーバインド (あまり使わない)
+" インサートモード時は emacs like なキーバインド
 inoremap <C-f> <Right>|			" C-f で左へ移動
 inoremap <C-b> <Left>|			" C-b で右へ移動
 inoremap <C-p> <Up>|			" C-p で上へ移動
@@ -168,31 +172,74 @@ cnoremap <M-b> <S-Left>
 " 次の単語へ移動
 cnoremap <M-f> <S-Right>
 "バッファを閉じてもウィンドウが閉じないようにする
-"プラグインが必要
+"need-Bclose
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
 nnoremap <silent> <C-p> :Bclose<CR>
-" markdownをよく使うようになったので
+"filetypeをmarkdownに（今はいらない？）
 noremap <leader>dm :<C-u>set ft=markdown<cr>
 "Markdownの改行タグ
 nnoremap <Leader>nr <C-u>A  <Esc>
 "文字数カウント
 nnoremap <Leader><CR> <C-u>:%s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
 vnoremap <Leader><CR> :s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
-"Minidown(Markdownプレビュー)
-nnoremap <Leader>pmd <C-u>:Minidown<CR>
 "Markdown Docx出力
+"pandocが必要
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
-
 "========================================================================
-"dein Scripts-----------------------------
+" Tab系
+"========================================================================
+set smarttab
+" 不可視文字を可視化(タブが「?-」と表示される)
+set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
+"" 行頭でのTab文字の表示幅
+"set shiftwidth=2
+" The prefix key.
+nnoremap    [Tag]   <Nop>
+nmap   <C-t> [Tag]
+" Tab jump
+for n in range(1, 9)
+  execute 'nnoremap <silent> [Tag]'.n  ':<C-u>tabnext'.n.'<CR>'
+endfor
+" t1 で1番左のタブ、t2 で1番左から2番目のタブにジャンプ
+map <silent> [Tag]p :tablast <bar> tabnew<CR>
+" tp 新しいタブを一番右に作る
+map <silent> [Tag]i :tabclose<CR>
+" ti タブを閉じる
+map <silent> [Tag]l :tabnext<CR>
+" tl 次のタブ
+map <silent> [Tag]h :tabprevious<CR>
+" th 前のタブ
+"=========================================================================================
+"検索系
+"=========================================================================================
+"type S, then type what you're looking for, a /, and what to replace it with
+nmap S :%s//g<LEFT><LEFT>
+" 検索文字列が小文字の場合は大文字小文字を区別なく検索する
+set ignorecase
+" 検索文字列に大文字が含まれている場合は区別して検索する
+set smartcase
+" 検索文字列入力時に順次対象文字列にヒットさせる
+set incsearch
+" 検索時に最後まで行ったら最初に戻る
+set wrapscan
+" 検索語をハイライト表示
+set hlsearch
+"========================================================================
+"dein initialize-----------------------------
 "========================================================================
 if &compatible
   set nocompatible               
 endif
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
-call dein#load_state(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
+if dein#load_state(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
+
 call dein#begin(expand('~/vimfiles/dein'))
 call dein#add(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
+
+"||||||||dein scripts||||||||
+"-----------------------------------------------------------------------
+"Denite
+call dein#add('lambdalisue/vim-rplugin')
 call dein#add('Shougo/neosnippet-snippets')
 call dein#add('Shougo/neocomplete.vim')
 call dein#add('Shougo/neomru.vim')
@@ -200,48 +247,8 @@ call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/denite.nvim')
 call dein#add('Shougo/unite.vim')
 call dein#add('Shougo/neoyank.vim')
-call dein#add('lambdalisue/vim-rplugin')
-call dein#add('NLKNguyen/papercolor-theme')
-call dein#add('rakr/vim-one')
-"call dein#add('vim-airline/vim-airline')
-"call dein#add('vim-airline/vim-airline-themes')
-call dein#add('deton/jasegment.vim')
-call dein#add('rhysd/vim-operator-surround')
-call dein#add('kana/vim-operator-user')
-call dein#add('iwataka/minidown.vim')
-call dein#add('tpope/vim-fugitive')
-call dein#add('cohama/lexima.vim')
-"webapi-vim
-call dein#add('mattn/webapi-vim')
-call dein#add('basyura/twibill.vim')
-call dein#add('tyru/open-browser.vim')
-call dein#add('basyura/TweetVim')
-call dein#add('lambdalisue/gina.vim')
-call dein#add('itchyny/lightline.vim')
-"Python3.6が必要================================
-call dein#add('Shougo/defx.nvim')
-if !has('nvim')
-  call dein#add('roxma/nvim-yarp')
-  call dein#add('roxma/vim-hug-neovim-rpc')
-call dein#add('kmnk/denite-dirmark')
-endif
-call dein#end()
-call dein#save_state()
-filetype plugin indent on
-
-"========================================================================
-"Denite
-"========================================================================
-"Python関連メモ
-"インストールはAll Userで
-"pipからneovim, greenletを導入 Visual Studio C++ 14.0が必要
-"greenletは同じpythonのバージョンでコンパイルする
-"参考:https://gammasoft.jp/python/python-version-management/
-"$VIMにインストールしたpythonと同じバージョンのdll(python3.dll, python35.dll, python35.zip)を入れる
-"kaoriya-vimのpython3.5に揃える
-"64bit版を使用する
-"test
-let g:neomru#file_mru_ignore_pattern = 'gina://'
+"-----------------------------------------------------------------------
+"need-Python3.6
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 "現在開いているファイルのディレクトリ下のファイル一覧。
@@ -268,16 +275,14 @@ nnoremap <silent> [denite]h :Denite help<CR>
 "最近使用したファイル一覧
 nnoremap <silent> [denite]n :<C-u>Denite 
       \ -mode=normal file_mru<CR>
-"ブックマーク(Unite経由) 
-"nnoremap <silent> [denite]m :Denite unite:bookmark<CR> 
-"nnoremap <silent> [denite]a :Denite unite:BookmarkAdd<CR> 
-""C-N,C-Pで上下移動
+"denite-default option
 call denite#custom#option('_', {
       \ 'prompt': '»',
       \ 'cursor_wrap': v:true,
       \ 'winheight': 15,
       \ 'highlight_mode_insert': 'WildMenu'
       \ })
+""C-N,C-Pで上下移動
 call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
 call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
 "C-J,C-Kでsplitで開く
@@ -319,101 +324,25 @@ call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
       \ 'images/', '*.o', '*.make',
       \ '*.min.*',
       \ 'img/', 'fonts/'])
-call denite#custom#var('file_mru', 'command',
-	\ ['gina://*', "--ignore=''"])
-""Dirmark設定
-"Python3.6が必要
+
+"-----------------------------------------------------------------------
+"Dirmark
+call dein#add('kmnk/denite-dirmark')
+"-----------------------------------------------------------------------
 nmap <Leader>dd    <SID>(dirmark) 
 nmap <Leader>da    <SID>(dirmark-add) 
 nnoremap <silent> <SID>(dirmark) :<C-u>Denite -default-action=cd dirmark<CR> 
 nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand('%:p:h') .  '<CR>' 
 
-"========================================================================
-"vim-markdown設定
-"========================================================================
-augroup vimrc_markdown
-  autocmd BufRead,BufNewFile *.{md} set filetype=markdown
-  autocmd! FileType markdown hi! def link markdownItalic Normal
-  autocmd FileType markdown set commentstring=<\!--\ %s\ -->
-augroup END
-
-"========================================================================
-"TweetVim設定
-"========================================================================
-nnoremap <silent> <Leader>tws  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>
-nnoremap <silent> <Leader>twm :TweetVimMentions<CR>
-nnoremap <silent> <Leader>twu :Unite tweetvim<CR>
-let g:tweetvim_include_rts    = 1
-let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-let g:tweetvim_open_buffer_cmd = 'botright vsplit'
-let g:tweetvim_display_separator = 0
-let g:tweetvim_empty_separator = 0
-let g:tweetvim_async_post = 1
-let g:tweetvim_display_username = 1
-let g:tweetvim_tweet_limit = 560
-augroup TweetVimSetting
-    autocmd!
-    " マッピング
-    " 挿入・通常モードでsayバッファを閉じる
-    autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
-    autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
-    " 各種アクション
-    autocmd FileType tweetvim     nnoremap <buffer>s                :<C-u>TweetVimSay<CR>
-    autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
-    autocmd FileType tweetvim     nnoremap <buffer><Leader>h        :<C-u>TweetVimHomeTimeline<CR>
-    autocmd FileType tweetvim     nnoremap <buffer><Leader>u        :<C-u>:Unite tweetvim<CR>
-    autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
-    autocmd FileType tweetvim     nnoremap <buffer>t                :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
-    autocmd FileType tweetvim     nmap     <buffer><Leader>F        <Plug>(tweetvim_action_remove_favorite)
-    autocmd FileType tweetvim     nmap     <buffer><Leader>d        <Plug>(tweetvim_action_remove_status)
-    autocmd FileType tweetvim     nmap     <buffer>o        <Plug>(tweetvim_action_open_links)
-
-    " リロード
-    autocmd FileType tweetvim     nmap     <buffer><Tab>            <Plug>(tweetvim_action_reload)
-    " ページの先頭に戻ったときにリロード
-    autocmd FileType tweetvim     nmap     <buffer><silent>gg       gg<Plug>(tweetvim_action_reload)
-    " ページ移動を ff/bb から f/b に
-    autocmd FileType tweetvim     nmap     <buffer>f                <Plug>(tweetvim_action_page_next)
-    autocmd FileType tweetvim     nmap     <buffer>b                <Plug>(tweetvim_action_page_previous)
-  " 縦移動（カーソルを常に中央にする）
-  "  autocmd FileType tweetvim     nnoremap <buffer><silent>j        :<C-u>call <SID>tweetvim_vertical_move("gj")<CR>zz
-  " autocmd FileType tweetvim     nnoremap <buffer><silent>k        :<C-u>call <SID>tweetvim_vertical_move("gk")<CR>zz
-    " 不要なマップを除去
-    autocmd FileType tweetvim     nunmap   <buffer>ff
-    autocmd FileType tweetvim     nunmap   <buffer>bb
-    " tweetvim バッファに移動したときに自動リロード
-    autocmd BufEnter * call <SID>tweetvim_reload()
-augroup END
-
-" セパレータを飛ばして移動する
-" filetype が tweetvim ならツイートをリロード
-function! s:tweetvim_reload()
-    if &filetype ==# "tweetvim"
-        call feedkeys("\<Plug>(tweetvim_action_reload)")
-    endif
-endfunction
-"========================================================================
-"Vaffle設定
-"========================================================================
-"nnoremap <leader>e :<C-u>Vaffle<CR>
-"function! s:customize_vaffle_mappings() abort
-"  " Customize key mappings here
-"  nmap <buffer> <Bslash> <Plug>(vaffle-open-root)
-"  nmap <buffer> L <Plug>(vaffle-open-selected-split)
-"  nmap <buffer> C <Plug>(vaffle-fill-cmdline)
-"  nmap <buffer> r <Plug>(vaffle-open-home)
-"endfunction
-"let g:vaffle_auto_cd = 1
-"let g:vaffle_open_selected_split_position = 'rightbelow'
-"augroup vimrc_vaffle
-"  autocmd!
-"  autocmd FileType vaffle call s:customize_vaffle_mappings()
-"augroup END
-
-"========================================================================
-" defx Config: start -----------------
-"========================================================================
+"-----------------------------------------------------------------------
+"Defx
+call dein#add('Shougo/defx.nvim') "ファイラー
+if !has('nvim')
+  call dein#add('roxma/nvim-yarp')
+  call dein#add('roxma/vim-hug-neovim-rpc')
+endif
+"-----------------------------------------------------------------------
+"ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e> :<C-u>Defx 
        \<CR>:set nonumber<CR>
 "      \ -toggle
@@ -438,6 +367,8 @@ call defx#custom#option('_', {
 autocmd FileType defx call s:defx_my_settings()
     function! s:defx_my_settings() abort
      " Define mappings
+      nnoremap <silent><buffer><expr> <C-c>
+     \ <Nop>
       nnoremap <silent><buffer><expr> <CR>
      \ defx#do_action('drop')
       nnoremap <silent><buffer><expr> c
@@ -491,100 +422,55 @@ autocmd FileType defx call s:defx_my_settings()
       nnoremap <silent><buffer><expr> cd
      \ defx#do_action('change_vim_cwd')
     endfunction
-    
-" defx Config: end -------------------
 
-"========================================================================
-""VimFiler
-"========================================================================
-""ファイル削除のためGnuWin32からいろいろ持ってくる必要がある
-"nnoremap <leader>e :<C-u>VimFiler<CR>
-"let g:vimfiler_as_default_explorer = 1
-"let g:vimfiler_safe_mode_by_default = 0
-"" Edit file by tabedit.
-"let g:vimfiler_edit_action = 'edit'
-"nmap <F2>  :VimFiler -split -horizontal -project -toggle -quit<CR>
-"autocmd FileType vimfiler nnoremap <buffer><silent>/  :<C-u>Unite file -default-action=vimfiler<CR>
-"========================================================================
-"Twitvim設定
-"========================================================================
-let twitvim_browser_cmd = 'open' " for Mac
-let twitvim_browser_cmd = 'C:¥Program Files¥Your_Browser_Path' " for Windows
-let twitvim_force_ssl = 1 
-let twitvim_count = 40
-let twitvim_enable_python3 = 1
+"-----------------------------------------------------------------------
+"gina.vim
+call dein#add('lambdalisue/gina.vim') "git管理
+"-----------------------------------------------------------------------
+"denite-neomruでginaを無視
+let g:neomru#file_mru_ignore_pattern = 'gina://'
 
-"========================================================================
-"Unite設定
-"========================================================================
-"let g:unite_source_file_mru_limit = 200
-"nnoremap <leader>f :<C-u>Unite file<CR>
-"nnoremap <leader>r :<C-u>Unite file_rec<CR>
-"nnoremap <leader>b :<C-u>Unite buffer<CR>
-"nnoremap <leader>g :<C-u>Unite grep<CR>
-"nnoremap <leader>a :<C-u>UniteBookmarkAdd<CR>
-"nnoremap <leader>m :<C-u>Unite bookmark<CR>
+"-----------------------------------------------------------------------
+"vim-markdow
+call dein#add('iwataka/minidown.vim')
+"-----------------------------------------------------------------------
+augroup vimrc_markdown
+  autocmd BufRead,BufNewFile *.{md} set filetype=markdown
+  autocmd! FileType markdown hi! def link markdownItalic Normal
+  autocmd FileType markdown set commentstring=<\!--\ %s\ -->
+augroup END
+"mapping
+nnoremap <Leader>pmd <C-u>:Minidown<CR>
 
-"========================================================================
-" Tab系
-"========================================================================
-" 不可視文字を可視化(タブが「?-」と表示される)
-set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
-"" Tab文字を半角スペースにする
-"set expandtab
-"" 行頭以外のTab文字の表示幅（スペースいくつ分）
-"set tabstop=2
-"" 行頭でのTab文字の表示幅
-"set shiftwidth=2
-" The prefix key.
-nnoremap    [Tag]   <Nop>
-nmap   <C-t> [Tag]
-" Tab jump
-for n in range(1, 9)
-  execute 'nnoremap <silent> [Tag]'.n  ':<C-u>tabnext'.n.'<CR>'
-endfor
-" t1 で1番左のタブ、t2 で1番左から2番目のタブにジャンプ
-map <silent> [Tag]p :tablast <bar> tabnew<CR>
-" tp 新しいタブを一番右に作る
-map <silent> [Tag]i :tabclose<CR>
-" ti タブを閉じる
-map <silent> [Tag]l :tabnext<CR>
-" tl 次のタブ
-map <silent> [Tag]h :tabprevious<CR>
-" th 前のタブ
-
-"=========================================================================================
-"検索系
-"=========================================================================================
-"type S, then type what you're looking for, a /, and what to replace it with
-nmap S :%s//g<LEFT><LEFT>
-" 検索文字列が小文字の場合は大文字小文字を区別なく検索する
-set ignorecase
-" 検索文字列に大文字が含まれている場合は区別して検索する
-set smartcase
-" 検索文字列入力時に順次対象文字列にヒットさせる
-set incsearch
-" 検索時に最後まで行ったら最初に戻る
-set wrapscan
-" 検索語をハイライト表示
-set hlsearch
-"日本語の行の連結時には空白を入力しない。
-set formatoptions+=mMj
-" ESC連打でハイライト解除
-nmap <Esc><Esc> :nohlsearch<CR><Esc>
+"-----------------------------------------------------------------------------------------
+"jasegment
+call dein#add('deton/jasegment.vim') "W,E,Bで日本語でも分節移動ができるように
+"-----------------------------------------------------------------------------------------
 let g:jasegment#model='knbc_bunsetu'
 let g:jasentence_endpat = '[。．？！]\+'
+
+"-----------------------------------------------------------------------------------------
 " operator mappings
+call dein#add('rhysd/vim-operator-surround') "選択範囲に括弧を追加
+call dein#add('kana/vim-operator-user')
+"-----------------------------------------------------------------------------------------
+"mapping
 map <silent>sa <Plug>(operator-surround-append)
 map <silent>sd <Plug>(operator-surround-delete)
 map <silent>sr <Plug>(operator-surround-replace)
+"2バイト括弧を追加
 let g:operator#surround#blocks = {}
 let g:operator#surround#blocks['-'] = [
     \   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
     \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
     \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
     \ ]
+
+"-----------------------------------------------------------------------------------------
 "lexima
+call dein#add('cohama/lexima.vim') "括弧を補完
+"-----------------------------------------------------------------------------------------
+"2バイト括弧を追加
 call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
 call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
 call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
@@ -602,21 +488,80 @@ call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
 
-""vim-airline
-"let g:airline#extensions#disable_rtp_load = 1
-"let g:airline_extensions = ['branch', 'tabline','cursormode', 'whitespace']
-"let g:airline_detect_iminsert=1
-"let g:airline_powerline_fonts = 1
-"let g:airline#extensions#tabline#enabled = 1
-"let g:airline#extensions#tabline#buffer_idx_mode = 1
-"let g:airline#extensions#cursormode#enabled = 1
-"let g:airline#extensions#whitespace#enabled = 1
-"let g:airline#extensions#whitespace#mixed_indent_algo = 1
+"-----------------------------------------------------------------------
+"TweetVim
+call dein#add('mattn/webapi-vim')
+call dein#add('basyura/twibill.vim')
+call dein#add('tyru/open-browser.vim')
+call dein#add('basyura/TweetVim') "Vimでもツイッター
+"-----------------------------------------------------------------------
+nnoremap <silent> <Leader>tws  :<C-u>TweetVimSay<CR>
+nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>
+nnoremap <silent> <Leader>twm :TweetVimMentions<CR>
+nnoremap <silent> <Leader>twu :Unite tweetvim<CR>
+let g:tweetvim_include_rts    = 1
+let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
+let g:tweetvim_open_buffer_cmd = 'botright vsplit'
+let g:tweetvim_display_separator = 0
+let g:tweetvim_empty_separator = 0
+let g:tweetvim_async_post = 1
+let g:tweetvim_display_username = 1
+let g:tweetvim_tweet_limit = 560
+augroup TweetVimSetting
+    autocmd!
+    " マッピング
+    " 挿入・通常モードでsayバッファを閉じる
+    autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
+    autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
+    " 各種アクション
+    autocmd FileType tweetvim     nnoremap <buffer>s                :<C-u>TweetVimSay<CR>
+    autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
+    autocmd FileType tweetvim     nnoremap <buffer><Leader>h        :<C-u>TweetVimHomeTimeline<CR>
+    autocmd FileType tweetvim     nnoremap <buffer><Leader>u        :<C-u>:Unite tweetvim<CR>
+    autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
+    autocmd FileType tweetvim     nnoremap <buffer>t                :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
+    autocmd FileType tweetvim     nmap     <buffer><Leader>F        <Plug>(tweetvim_action_remove_favorite)
+    autocmd FileType tweetvim     nmap     <buffer><Leader>d        <Plug>(tweetvim_action_remove_status)
+    autocmd FileType tweetvim     nmap     <buffer>o        <Plug>(tweetvim_action_open_links)
+
+    " リロード
+    autocmd FileType tweetvim     nmap     <buffer><Tab>            <Plug>(tweetvim_action_reload)
+    " ページの先頭に戻ったときにリロード
+    autocmd FileType tweetvim     nmap     <buffer><silent>gg       gg<Plug>(tweetvim_action_reload)
+    " ページ移動を ff/bb から f/b に
+    autocmd FileType tweetvim     nmap     <buffer>f                <Plug>(tweetvim_action_page_next)
+    autocmd FileType tweetvim     nmap     <buffer>b                <Plug>(tweetvim_action_page_previous)
+  " 縦移動（カーソルを常に中央にする）
+  "  autocmd FileType tweetvim     nnoremap <buffer><silent>j        :<C-u>call <SID>tweetvim_vertical_move("gj")<CR>zz
+  " autocmd FileType tweetvim     nnoremap <buffer><silent>k        :<C-u>call <SID>tweetvim_vertical_move("gk")<CR>zz
+    " 不要なマップを除去
+    autocmd FileType tweetvim     nunmap   <buffer>ff
+    autocmd FileType tweetvim     nunmap   <buffer>bb
+    " tweetvim バッファに移動したときに自動リロード
+    autocmd BufEnter * call <SID>tweetvim_reload()
+augroup END
+" セパレータを飛ばして移動する
+" filetype が tweetvim ならツイートをリロード
+function! s:tweetvim_reload()
+    if &filetype ==# "tweetvim"
+        call feedkeys("\<Plug>(tweetvim_action_reload)")
+    endif
+endfunction
+
+"-----------------------------------------------------------------------
+"lightline
+call dein#add('itchyny/lightline.vim') "statuslineをかっこよく
+"lightline-bufferline
+call dein#add('mengelbrecht/lightline-bufferline') "tablineにバッファー表示
+"-----------------------------------------------------------------------
 let g:lightline = {
-        \ 'colorscheme': 'PaperColor',
+        \ 'colorscheme': 'one',
         \ 'mode_map': {'c': 'NORMAL'},
         \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+        \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+	\ 'right': [ [ 'lineinfo' ],
+        \            [ 'percent' ],
+        \            [  'filetype' ] ] 
         \ },
         \ 'component_function': {
         \   'modified': 'LightlineModified',
@@ -627,21 +572,23 @@ let g:lightline = {
         \   'filetype': 'LightlineFiletype',
         \   'fileencoding': 'LightlineFileencoding',
         \   'mode': 'LightlineMode'
-        \ }
+        \ },
+	\ 'separator': { 'left': '', 'right': '' },
+	\ 'subseparator': { 'left': '', 'right': '' }
         \ }
 
-let g:lightline.tabline = {
-    \ 'left': [ [ 'tabs' ] ],
-    \ 'right': [ [ 'close' ] ] }
-let g:lightline.tab = {
-    \ 'active': [ 'tabnum', 'filename', 'modified' ],
-    \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
+let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
+let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
+let g:lightline.component_type   = {'buffers': 'tabsel'}
+let g:lightline#bufferline#show_number = 1
+let g:lightline#bufferline#unnamed = '[unnamed]'
+
 function! LightlineModified()
   return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
 endfunction
 
 function! LightlineReadonly()
-  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? 'x' : ''
+  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '' : ''
 endfunction
 
 function! LightlineFilename()
@@ -659,6 +606,11 @@ function! LightlineFugitive()
   else
     return ''
   endif
+	if exists('*fugitive#head')
+		let branch = fugitive#head()
+		return branch !=# '' ? ' '.branch : ''
+	endif
+	return ''
 endfunction
 
 function! LightlineFileformat()
@@ -676,16 +628,13 @@ endfunction
 function! LightlineMode()
   return winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
-
-" 「日本語入力固定モード」の動作モード
-let IM_CtrlMode = 4
-" 「日本語入力固定モード」切替キー
-inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
-
-" 「日本語入力固定モード」がオンの場合、ステータス行にメッセージ表示
-set statusline+=%{IMStatus('[JP-Lock]')}
-
-" im_control.vimがない環境でもエラーを出さないためのダミー関数
-function! IMStatus(...)
-  return ''
-endfunction
+"-----------------------------------------------------------------------
+"colorscheme-plugin
+call dein#add('NLKNguyen/papercolor-theme')
+call dein#add('rakr/vim-one')
+call dein#add('hzchirs/vim-material')
+"-----------------------------------------------------------------------
+call dein#end()
+call dein#save_state()
+endif
+"||||||||dein scripts end||||||||
