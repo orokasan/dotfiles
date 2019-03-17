@@ -1,11 +1,13 @@
 "" クリップボードにコピー（GUI)
 set clipboard=unnamed
-"cygwinとvimのターミナルが干渉するのを防ぐ
-set shell=cmd.exe
-set shellcmdflag=/C
 "=========================================================================================
 " 見た目系
-"
+"!!!!!!!!!!!!!colorscheme!!!!!!!!!!!!!!!
+syntax on
+colorscheme one
+set t_Co=256   " This is may or may not needed.
+set background=light
+
 "ツールバー非表示
   set guioptions-=T
   set guioptions-=m
@@ -14,7 +16,6 @@ set shellcmdflag=/C
   set guioptions-=l
   set guioptions-=L
   set guioptions-=b
-
 " gVimでもテキストベースのタブページを使う
 set guioptions-=e
 " ウィンドウの縦幅
@@ -25,6 +26,8 @@ set columns=150
 winpos 10 30
 "" 行番号を表示
 set number
+"コマンドライン行数の設定
+set cmdheight=1
 " 行末の1文字先までカーソルを移動できるように
 set virtualedit=onemore
 " インデントはスマートインデント
@@ -33,82 +36,23 @@ set smartindent
 set visualbell
 " コマンドラインの補完
 "set wildmode=list:longest
-"N秒後にカーソル点滅開始
-set guicursor=n:blinkwait1200
-"Insertでは高速点滅
-set guicursor=i:blinkwait500-blinkon300-blinkoff150
+""N秒後にカーソル点滅開始
+"set guicursor=n:blinkwait2000
+""Insertでは高速点滅
+"set guicursor=i:blinkwait500-blinkon300-blinkoff150
 "放置したときだけCursorline強調
 augroup vimrc-auto-cursorline
   autocmd!
   autocmd CursorMoved,CursorMovedI,WinLeave * setlocal nocursorline
   autocmd CursorHold,CursorHoldI * setlocal cursorline
 augroup END
+"cygwinとvimのターミナルが干渉するのを防ぐ
+set shell=cmd.exe
+set shellcmdflag=/C
 "=========================================================================================
-"vim-airline
-"入れないとPowerline文字が化ける
+"lightline
+"powerlineフォント対応（Doubleが適正のはずがsingleで動作する)
 set ambiwidth=single
-"  let g:cursormode_color_map = {
-"    \   "i": g:airline#themes#{g:airline_theme}#palette.insert.airline_a[1],
-"    \   "R": g:airline#themes#{g:airline_theme}#palette.replace.airline_a[1],
-"    \   "v": g:airline#themes#{g:airline_theme}#palette.visual.airline_a[1],
-"    \   "V": g:airline#themes#{g:airline_theme}#palette.visual.airline_a[1],
-"    \   "\<C-V>": g:airline#themes#{g:airline_theme}#palette.visual.airline_a[1],
-"    \ }
-""let g:airline_section_b = "%t %M"
-"call airline#parts#define_function('Gina', 'gina#component#repo#branch')
-"let g:airline_section_b = g:airline#section#create(['hunks', g:airline_symbols.branch,'Gina'])
-"let g:airline_section_y = g:airline_section_c
-"let g:airline_section_c ="%{IMStatus('[JP-Lock]')}"
-"let g:airline_section_error = ''
-"let g:airline_section_warning = ''
-"let g:airline#extensions#whitespace#enabled = 1
-"let g:airline#extensions#whitespace#mixed_indent_algo = 1
-"
-"if !exists('g:airline_symbols')
-"  let g:airline_symbols = {}
-"endif
-"let g:airline_symbols.space = "\ua0"
-"let g:Powerline_symbols = 'compatible'
-"let g:airline_left_sep = ''
-"let g:airline_right_sep = ' '
-"let g:airline_left_alt_sep = ''
-"let g:airline_right_alt_sep = ''
-"let g:airline_symbols.branch = ''
-"let g:airline_symbols.readonly = ''
-"let g:airline_symbols.linenr = '='
-"let g:airline_symbols.maxlinenr = ''
-"let g:airline_symbols.whitespace = 'Ξ'
-" " or copy paste the following into your vimrc for shortform text
-"  let g:airline_mode_map = {
-"      \ '__' : '-',
-"      \ 'c'  : 'C',
-"      \ 'i'  : 'I',
-"      \ 'ic' : 'I',
-"      \ 'ix' : 'I',
-"      \ 'n'  : 'N',
-"      \ 'ni' : 'N',
-"      \ 'no' : 'N',
-"      \ 'R'  : 'R',
-"      \ 'Rv' : 'R',
-"      \ 's'  : 'S',
-"      \ 'S'  : 'S',
-"      \ '' : 'S',
-"      \ 't'  : 'T',
-"      \ 'v'  : 'V',
-"      \ 'V'  : 'V',
-"      \ '' : 'V',
-"      \ }
-"=========================================================================================
-"カラースキーマを設定
-syntax on
-"molokai
-"colorscheme molokai
-"let g:molokai_original = 1
-"let g:rehash256 = 1
-
-set t_Co=256   " This is may or may not needed.
-colorscheme one
-set background=light
 "=======================================================================================
 "フォント
 "ConsolasにPowerlineSymbolsをパッチしてある
@@ -117,15 +61,14 @@ set guifont=Consolas:h11:cDEFAULT
 "全角文字の設定
 set guifontwide=MS_Gothic:h12:cDEFAULT
 ".gvimrc カラー設定
-"カラー設定した後にCursorIMを定義する方法
+"IME状態でカーソルカラー変更
 if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
 endif
+"=========================================================================================
 "全角スペースを表示
-""""""""""""""""""""""""""""""
 "コメント以外で全角スペースを指定しているので scriptencodingと、
 "このファイルのエンコードが一致するよう注意！
-"全角スペースが強調表示されない場合、ここでscriptencodingを指定すると良い。
 "デフォルトのZenkakuSpaceを定義
 function! ZenkakuSpace()
   highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey

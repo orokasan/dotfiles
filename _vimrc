@@ -29,6 +29,8 @@ set backupdir=~/vimfiles/backup
 set hidden
 " 入力中のコマンドをステータスに表示する
 set noshowcmd
+"モードを表示しない
+set noshowmode
 "========================================================================
 "runtimepath
 "========================================================================
@@ -61,8 +63,6 @@ set showmatch
 set matchtime=1
 " ステータスラインを常に表示
 set laststatus=2
-"コマンドライン行数の設定
-set cmdheight=1
 " ESC連打でハイライト解除
 nmap <Esc><Esc> :nohlsearch<CR><Esc>
 "日本語の行の連結時には空白を入力しない。
@@ -92,7 +92,7 @@ let IM_CtrlMode = 4
 " 「日本語入力固定モード」切替キー
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 " 「日本語入力固定モード」がオンの場合、ステータス行にメッセージ表示
-set statusline+=%{IMStatus('[JP-Lock]')}
+"set statusline+=%{IMStatus('[JP-Lock]')}
 " im_control.vimがない環境でもエラーを出さないためのダミー関数
 function! IMStatus(...)
   return ''
@@ -115,8 +115,8 @@ inoremap jk <esc>
 "上書きペースト
 nnoremap <silent>cp ve"8d"0p
 " 折り返し時に表示行単位での移動できるようにする
-nnoremap <silent> j gj
-nnoremap <silent> k gk
+nnoremap  j gj
+nnoremap  k gk
 "CTRL-sで保存！
 :nmap <c-s> :w<CR>
 :imap <c-s> <Esc>:w<CR>a
@@ -227,12 +227,14 @@ set hlsearch
 "========================================================================
 "dein initialize-----------------------------
 "========================================================================
+"環境によってはcacheファイル生成で呼び出されるROBOCOPYの/MTオプションがエラーを出す
+"Shougo\dein.vim\autoload\dein\install.vimの777行目から/MTを消すことで解決
 if &compatible
   set nocompatible               
 endif
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
-if dein#load_state(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 
+if dein#load_state(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 call dein#begin(expand('~/vimfiles/dein'))
 call dein#add(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 
@@ -241,9 +243,9 @@ call dein#add(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 "Denite
 call dein#add('lambdalisue/vim-rplugin')
 call dein#add('Shougo/neosnippet-snippets')
-call dein#add('Shougo/neocomplete.vim')
+"call dein#add('Shougo/neocomplete.vim')
 call dein#add('Shougo/neomru.vim')
-call dein#add('Shougo/neosnippet')
+"call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/denite.nvim')
 call dein#add('Shougo/unite.vim')
 call dein#add('Shougo/neoyank.vim')
@@ -314,6 +316,7 @@ call denite#custom#var('grep', 'default_opts', [])
 call denite#custom#var('grep', 'recursive_opts', [])
  
 call denite#custom#option('default', 'prompt', '>')
+call denite#custom#option('default', 'statusline', v:false)
  
 " customize ignore globs
 call denite#custom#source('file_rec', 'matchers', ['matcher_fuzzy','matcher_ignore_globs'])
@@ -426,6 +429,64 @@ autocmd FileType defx call s:defx_my_settings()
 "-----------------------------------------------------------------------
 "gina.vim
 call dein#add('lambdalisue/gina.vim') "git管理
+call dein#add('tpope/vim-fugitive') "git管理
+"docのexampleをコピペ
+call gina#custom#command#alias('branch', 'br')
+call gina#custom#command#option('br', '-v', 'v')
+call gina#custom#command#option(
+      \ '/\%(log\|reflog\)',
+      \ '--opener', 'vsplit'
+      \)
+call gina#custom#command#option(
+      \ 'log', '--group', 'log-viewer'
+      \)
+call gina#custom#command#option(
+      \ 'reflog', '--group', 'reflog-viewer'
+      \)
+call gina#custom#command#option(
+      \ 'commit', '-v|--verbose'
+      \)
+call gina#custom#command#option(
+      \ '/\%(status\|commit\)',
+      \ '-u|--untracked-files'
+      \)
+call gina#custom#command#option(
+      \ '/\%(status\|changes\)',
+      \ '--ignore-submodules'
+      \)
+
+call gina#custom#action#alias(
+      \ 'branch', 'track',
+      \ 'checkout:track'
+      \)
+call gina#custom#action#alias(
+      \ 'branch', 'merge',
+      \ 'commit:merge'
+      \)
+call gina#custom#action#alias(
+      \ 'branch', 'rebase',
+      \ 'commit:rebase'
+      \)
+
+call gina#custom#mapping#nmap(
+      \ 'branch', 'g<CR>',
+      \ '<Plug>(gina-commit-checkout-track)'
+      \)
+call gina#custom#mapping#nmap(
+      \ 'status', '<C-^>',
+      \ ':<C-u>Gina commit<CR>',
+      \ {'noremap': 1, 'silent': 1}
+      \)
+call gina#custom#mapping#nmap(
+      \ 'commit', '<C-^>',
+      \ ':<C-u>Gina status<CR>',
+      \ {'noremap': 1, 'silent': 1}
+      \)
+
+call gina#custom#execute(
+      \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+      \ 'setlocal winfixheight',
+      \)
 "-----------------------------------------------------------------------
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
@@ -553,29 +614,29 @@ endfunction
 call dein#add('itchyny/lightline.vim') "statuslineをかっこよく
 "lightline-bufferline
 call dein#add('mengelbrecht/lightline-bufferline') "tablineにバッファー表示
+call dein#add('itchyny/vim-gitbranch')
 "-----------------------------------------------------------------------
 let g:lightline = {
         \ 'colorscheme': 'one',
-        \ 'mode_map': {'c': 'NORMAL'},
         \ 'active': {
-        \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
-	\ 'right': [ [ 'lineinfo' ],
-        \            [ 'percent' ],
-        \            [  'filetype' ] ] 
+	\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
+	\ 'right': [ [ 'lineinfo' ],[  ], [ 'filetype', 'percent'] ] 
         \ },
+	\ 'inactive': {
+	\ 'left': [['Inactivefn']]
+	\},
         \ 'component_function': {
-        \   'modified': 'LightlineModified',
-        \   'readonly': 'LightlineReadonly',
-        \   'fugitive': 'LightlineFugitive',
-        \   'filename': 'LightlineFilename',
-        \   'fileformat': 'LightlineFileformat',
-        \   'filetype': 'LightlineFiletype',
-        \   'fileencoding': 'LightlineFileencoding',
-        \   'mode': 'LightlineMode'
+	\'readonly':'LightlineReadonly',
+        \'gitbranch': 'LightLineFugitive',
+        \'filetype': 'LightlineFiletype',
+	\'Inactivefn':'MyInactiveFilename',
+	\'relativepath':'MyFilepath',
+        \'mode': 'LightlineMode'
         \ },
 	\ 'separator': { 'left': '', 'right': '' },
 	\ 'subseparator': { 'left': '', 'right': '' }
         \ }
+let g:lightline.component = {'lineinfo': '%3l[%L]:%-2v'}
 
 let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
@@ -583,51 +644,64 @@ let g:lightline.component_type   = {'buffers': 'tabsel'}
 let g:lightline#bufferline#show_number = 1
 let g:lightline#bufferline#unnamed = '[unnamed]'
 
-function! LightlineModified()
-  return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+function! LightlineMode()
+return    &filetype ==# 'unite' ? 'Unite' :
+        \ &filetype ==# 'denite' ? MyMode() :
+	\ &filetype ==# 'help' ? 'Help' :
+        \ &filetype ==# 'defx' ? 'Defx' :
+	\ lightline#mode()
 endfunction
 
-function! LightlineReadonly()
-  return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '' : ''
+function! MyInactiveFilename()
+return &filetype !~# '\v(help|denite|defx)' ? expand('%:t') : LightlineMode()
 endfunction
 
-function! LightlineFilename()
-  return ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
-        \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
-        \  &ft == 'unite' ? unite#get_status_string() :
-        \  &ft == 'vimshell' ? vimshell#get_status_string() :
-        \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
-        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
-endfunction
-
-function! LightlineFugitive()
-  if &ft !~? 'vimfiler\|gundo' && exists('*fugitive#head')
-    return fugitive#head()
+function! MyMode()
+  if &ft == 'denite'
+    " deniteは自分でinsertモード normalモードを管理しているので
+    " lightlineのハイライト関数をdeniteのモードに合わせた値(-- NORMAL -- ならn)
+    " にしてハイライト関数を呼ぶ
+    let mode_str = substitute(denite#get_status("mode"), "-\\| ", "", "g")
+    call lightline#link(tolower(mode_str[0]))
+    return mode_str
   else
-    return ''
+    return winwidth('.') > 60 ? lightline#mode() : ''
   endif
-	if exists('*fugitive#head')
-		let branch = fugitive#head()
-		return branch !=# '' ? ' '.branch : ''
-	endif
-	return ''
 endfunction
 
-function! LightlineFileformat()
-  return winwidth(0) > 70 ? &fileformat : ''
+function! LightLineFugitive()
+  try
+    if &ft !~? 'vimfiler\|gundo' && exists('*gitbranch#name') && winwidth(0) > 55
+      let _ = gitbranch#name()
+      return strlen(_) ? ' '._ : ''
+    endif
+  catch
+  endtry
+  return ''
+endfunction
+
+function! MyFilepath()
+  if &ft == 'denite'
+    return DeniteSources()
+  else
+    let filename = winwidth(0) > 70 ? expand('%:~') :
+	       \ winwidth(0) > 45 ? expand('%:t') : ''
+    let modified = &modified ? '[+]' : ''
+    return filename . modified
+  endif
+endfunction
+
+function! DeniteSources()
+    let filename = denite#get_status("sources")
+    return 'Denite ['. filename . ']'
 endfunction
 
 function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 
-function! LightlineFileencoding()
-  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
-endfunction
-
-function! LightlineMode()
-  return winwidth(0) > 60 ? lightline#mode() : ''
-endfunction
+"function! LightlineMode()
+"endfunction
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
@@ -638,3 +712,5 @@ call dein#end()
 call dein#save_state()
 endif
 "||||||||dein scripts end||||||||
+filetype plugin indent on
+syntax enable
