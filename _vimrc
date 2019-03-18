@@ -135,7 +135,7 @@ nnoremap <Leader><S-Space> a…<Esc>
 " <ESC>でのIME状態保存を無効化
 inoremap <silent> <ESC> <ESC>
 inoremap <silent> <C-[> <ESC>
-inoremap <silent><C-c> <ESC>  
+inoremap <silent><C-c> <ESC>
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
@@ -146,11 +146,12 @@ function! IMStatus(...)
   return ''
 endfunction
 
-set virtualedit=all     " カーソルを文字が存在しない部分でも動けるようにする
+set virtualedit=block     " カーソルを文字が存在しない部分でも動けるようにする
 
 "Tab系
 set smarttab
-set list                " 不可視文字の可視化
+"不可視文字の可視化
+set list           
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 "" 行頭でのTab文字の表示幅
 "set shiftwidth=2
@@ -198,7 +199,7 @@ nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
 " Convenience key for getting to command mode
 nnoremap ; :
- " Enter normal mode
+" Enter normal mode
 inoremap jk <esc>
 "上書きペースト
 nnoremap <silent>cp ve"8d"0p
@@ -264,6 +265,9 @@ cnoremap <C-p> <Up>
 cnoremap <M-b> <S-Left>
 " 次の単語へ移動
 cnoremap <M-f> <S-Right>
+" TABにて対応ペアにジャンプ
+nnoremap <Tab> %
+vnoremap <Tab> %
 "バッファを閉じてもウィンドウが閉じないようにする
 "need-Bclose
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
@@ -286,7 +290,7 @@ nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "環境によってはcacheファイル生成で呼び出されるROBOCOPYの/MTオプションがエラーを出す
 "Shougo\dein.vim\autoload\dein\install.vimの777行目から/MTを消すことで解決
 if &compatible
-  set nocompatible               
+set nocompatible               
 endif
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
 
@@ -308,38 +312,38 @@ call dein#add('Shougo/neoyank.vim')
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
-      \ source<CR>
+\ source<CR>
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
-      \ file<CR>
+\ file<CR>
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
-      \ file<CR>
+\ file<CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite 
-      \ -mode=normal
-      \ buffer<CR>
+\ -mode=normal
+\ buffer<CR>
 "レジスタ一覧
 nnoremap <silent> [denite]r :<C-u>Denite 
-      \ -buffer-name=register -mode=normal 
-      \ register<CR>
+\ -buffer-name=register -mode=normal 
+\ register<CR>
 "neoyank起動
 nnoremap <silent> [denite]y :<C-u>Denite 
-      \ -mode=normal 
-      \ neoyank<CR>
+\ -mode=normal 
+\ neoyank<CR>
 "メニュー
 nnoremap <silent> [denite]u :Denite menu<CR>
 nnoremap <silent> [denite]h :Denite help<CR>
 "最近使用したファイル一覧
 nnoremap <silent> [denite]n :<C-u>Denite 
-      \ -mode=normal file_mru<CR>
+\ -mode=normal file_mru<CR>
 "denite-default option
 call denite#custom#option('_', {
-      \ 'prompt': '»',
-      \ 'cursor_wrap': v:true,
-      \ 'winheight': 15,
-      \ 'highlight_mode_insert': 'WildMenu'
-      \ })
+\ 'prompt': '»',
+\ 'cursor_wrap': v:true,
+\ 'winheight': 15,
+\ 'highlight_mode_insert': 'WildMenu'
+\ })
 ""C-N,C-Pで上下移動
 call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
 call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
@@ -371,28 +375,28 @@ call denite#custom#source(
 let s:menus = {}
 
 let s:menus.zsh = {
-	\ 'description': 'Edit your import zsh configuration'
-	\ }
+\ 'description': 'Edit your import zsh configuration'
+\ }
 let s:menus.zsh.file_candidates = [
-	\ ['zshrc', '~/.config/zsh/.zshrc'],
-	\ ['zshenv', '~/.zshenv'],
-	\ ]
+\ ['zshrc', '~/.config/zsh/.zshrc'],
+\ ['zshenv', '~/.zshenv'],
+\ ]
 
 let s:menus.my_commands = {
-	\ 'description': 'Example commands'
-	\ }
+\ 'description': 'Example commands'
+\ }
 let s:menus.my_commands.command_candidates = [
-	\ ['Split the window', 'vnew'],
-	\ ['Open zsh menu', 'Denite menu:zsh'],
-	\ ['Format code', 'FormatCode', 'go,python'],
-	\ ]
+\ ['Split the window', 'vnew'],
+\ ['Open zsh menu', 'Denite menu:zsh'],
+\ ['Format code', 'FormatCode', 'go,python'],
+\ ]
 
 call denite#custom#var('menu', 'menus', s:menus)
 
 " Ag command on grep source
 call denite#custom#var('grep', 'command', ['ag'])
 call denite#custom#var('grep', 'default_opts',
-		\ ['-i', '--vimgrep'])
+	\ ['-i', '--vimgrep'])
 call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'pattern_opt', [])
 call denite#custom#var('grep', 'separator', ['--'])
@@ -400,7 +404,7 @@ call denite#custom#var('grep', 'final_opts', [])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#var('file/rec/git', 'command',
-      \ ['git', 'ls-files', '-co', '--exclude-standard'])
+\ ['git', 'ls-files', '-co', '--exclude-standard'])
 
 call denite#custom#alias('source', 'file/rec/py', 'file/rec')
 call denite#custom#var('file/rec/py', 'command',['scantree.py'])
@@ -410,8 +414,8 @@ call denite#custom#option('default', 'prompt', '>')
 
 " Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-      \ [ '.git/', '.ropeproject/', '__pycache__/',
-      \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+\ [ '.git/', '.ropeproject/', '__pycache__/',
+\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 "}}}
 "-----------------------------------------------------------------------
 "Dirmark
@@ -427,22 +431,22 @@ nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand
 "Defx
 call dein#add('Shougo/defx.nvim') "ファイラー
 if !has('nvim')
-  call dein#add('roxma/nvim-yarp')
-  call dein#add('roxma/vim-hug-neovim-rpc')
+call dein#add('roxma/nvim-yarp')
+call dein#add('roxma/vim-hug-neovim-rpc')
 endif
 "-----------------------------------------------------------------------
 "{{{
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e> :<C-u>Defx 
-       \<CR>:set nonumber<CR>
+\<CR>:set nonumber<CR>
 "      \ -toggle
 call defx#custom#option('_', {
-            \ 'winwidth': 40,
-            \ 'split': 'vertical',
-            \ 'direction': 'botright',
-            \ 'columns':'mark:filename:type:size:time',
-            \ 'sort': 'TIME',
-            \ })
+    \ 'winwidth': 40,
+    \ 'split': 'vertical',
+    \ 'direction': 'botright',
+    \ 'columns':'mark:filename:type:size:time',
+    \ 'sort': 'TIME',
+    \ })
 "call defx#custom#column('filename', {
 "      \ 'directory_icon': '▸',
 "      \ 'opened_icon': '▾',
@@ -455,63 +459,63 @@ call defx#custom#option('_', {
 "      \ 'selected_icon': '✓',
 "      \ })
 autocmd FileType defx call s:defx_my_settings()
-    function! s:defx_my_settings() abort
-     " Define mappings
-      nnoremap <silent><buffer><expr> <C-c>
-     \ <Nop>
-      nnoremap <silent><buffer><expr> <CR>
-     \ defx#do_action('drop')
-      nnoremap <silent><buffer><expr> c
-     \ defx#do_action('copy')
-      nnoremap <silent><buffer><expr> m
-     \ defx#do_action('move')
-      nnoremap <silent><buffer><expr> p
-     \ defx#do_action('paste')
-      nnoremap <silent><buffer><expr> l
-     \ defx#do_action('open')
-      nnoremap <silent><buffer><expr> E
-     \ defx#do_action('open', 'vsplit')
-      nnoremap <silent><buffer><expr> P
-     \ defx#do_action('open', 'pedit')
-      nnoremap <silent><buffer><expr> K
-     \ defx#do_action('new_directory')
-      nnoremap <silent><buffer><expr> N
-     \ defx#do_action('new_file')
-      nnoremap <silent><buffer><expr> d
-     \ defx#do_action('remove')
-      nnoremap <silent><buffer><expr> r
-     \ defx#do_action('rename')
-      nnoremap <silent><buffer><expr> x
-     \ defx#do_action('execute_system')
-      nnoremap <silent><buffer><expr> f
-     \ defx#do_action('open_or_close_tree')
-      nnoremap <silent><buffer><expr> yy
-     \ defx#do_action('yank_path')
-      nnoremap <silent><buffer><expr> .
-     \ defx#do_action('toggle_ignored_files')
-      nnoremap <silent><buffer><expr> h
-     \ defx#do_action('cd', ['..'])
-      nnoremap <silent><buffer><expr> ~
-     \ defx#do_action('cd')
-      nnoremap <silent><buffer><expr> q
-     \ defx#do_action('quit')
-      nnoremap <silent><buffer><expr> i
-     \ defx#do_action('toggle_select') . 'j'
-      nnoremap <silent><buffer><expr> I
-     \ defx#do_action('clear_select_all')
-      nnoremap <silent><buffer><expr> *
-     \ defx#do_action('toggle_select_all')
-      nnoremap <silent><buffer><expr> j
-     \ line('.') == line('$') ? 'gg' : 'j'
-      nnoremap <silent><buffer><expr> k
-     \ line('.') == 1 ? 'G' : 'k'
-      nnoremap <silent><buffer><expr> <C-l>
-     \ defx#do_action('redraw')
-      nnoremap <silent><buffer><expr> <C-g>
-     \ defx#do_action('print')
-      nnoremap <silent><buffer><expr> cd
-     \ defx#do_action('change_vim_cwd')
-    endfunction
+function! s:defx_my_settings() abort
+" Define mappings
+nnoremap <silent><buffer><expr> <C-c>
+\ <Nop>
+nnoremap <silent><buffer><expr> <CR>
+\ defx#do_action('drop')
+nnoremap <silent><buffer><expr> c
+\ defx#do_action('copy')
+nnoremap <silent><buffer><expr> m
+\ defx#do_action('move')
+nnoremap <silent><buffer><expr> p
+\ defx#do_action('paste')
+nnoremap <silent><buffer><expr> l
+\ defx#do_action('open')
+nnoremap <silent><buffer><expr> E
+\ defx#do_action('open', 'vsplit')
+nnoremap <silent><buffer><expr> P
+\ defx#do_action('open', 'pedit')
+nnoremap <silent><buffer><expr> K
+\ defx#do_action('new_directory')
+nnoremap <silent><buffer><expr> N
+\ defx#do_action('new_file')
+nnoremap <silent><buffer><expr> d
+\ defx#do_action('remove')
+nnoremap <silent><buffer><expr> r
+\ defx#do_action('rename')
+nnoremap <silent><buffer><expr> x
+\ defx#do_action('execute_system')
+nnoremap <silent><buffer><expr> f
+\ defx#do_action('open_or_close_tree')
+nnoremap <silent><buffer><expr> yy
+\ defx#do_action('yank_path')
+nnoremap <silent><buffer><expr> .
+\ defx#do_action('toggle_ignored_files')
+nnoremap <silent><buffer><expr> h
+\ defx#do_action('cd', ['..'])
+nnoremap <silent><buffer><expr> ~
+\ defx#do_action('cd')
+nnoremap <silent><buffer><expr> q
+\ defx#do_action('quit')
+nnoremap <silent><buffer><expr> i
+\ defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> I
+\ defx#do_action('clear_select_all')
+nnoremap <silent><buffer><expr> *
+\ defx#do_action('toggle_select_all')
+nnoremap <silent><buffer><expr> j
+\ line('.') == line('$') ? 'gg' : 'j'
+nnoremap <silent><buffer><expr> k
+\ line('.') == 1 ? 'G' : 'k'
+nnoremap <silent><buffer><expr> <C-l>
+\ defx#do_action('redraw')
+nnoremap <silent><buffer><expr> <C-g>
+\ defx#do_action('print')
+nnoremap <silent><buffer><expr> cd
+\ defx#do_action('change_vim_cwd')
+endfunction
 "}}}
 "-----------------------------------------------------------------------
 "gina.vim
@@ -523,62 +527,62 @@ call dein#add('tpope/vim-fugitive') "git管理
 call gina#custom#command#alias('branch', 'br')
 call gina#custom#command#option('br', '-v', 'v')
 call gina#custom#command#option(
-      \ '/\%(log\|reflog\)',
-      \ '--opener', 'vsplit'
-      \)
+\ '/\%(log\|reflog\)',
+\ '--opener', 'vsplit'
+\)
 call gina#custom#command#option(
-      \ 'log', '--group', 'log-viewer'
-      \)
+\ 'log', '--group', 'log-viewer'
+\)
 call gina#custom#command#option(
-      \ 'status', '--group', 'status-viewer'
-      \)
+\ 'status', '--group', 'status-viewer'
+\)
 call gina#custom#command#option(
-      \ 'reflog', '--group', 'reflog-viewer'
-      \)
+\ 'reflog', '--group', 'reflog-viewer'
+\)
 call gina#custom#command#option(
-      \ 'commit', '-v|--verbose'
-      \)
+\ 'commit', '-v|--verbose'
+\)
 call gina#custom#command#option(
-      \ '/\%(status\|commit\)',
-      \ '-u|--untracked-files'
-      \)
+\ '/\%(status\|commit\)',
+\ '-u|--untracked-files'
+\)
 call gina#custom#command#option(
-      \ '/\%(status\|changes\)',
-      \ '--ignore-submodules'
-      \)
+\ '/\%(status\|changes\)',
+\ '--ignore-submodules'
+\)
 
 call gina#custom#action#alias(
-      \ 'branch', 'track',
-      \ 'checkout:track'
-      \)
+\ 'branch', 'track',
+\ 'checkout:track'
+\)
 call gina#custom#action#alias(
-      \ 'branch', 'merge',
-      \ 'commit:merge'
-      \)
+\ 'branch', 'merge',
+\ 'commit:merge'
+\)
 call gina#custom#action#alias(
-      \ 'branch', 'rebase',
-      \ 'commit:rebase'
-      \)
+\ 'branch', 'rebase',
+\ 'commit:rebase'
+\)
 
 call gina#custom#mapping#nmap(
-      \ 'branch', 'g<CR>',
-      \ '<Plug>(gina-commit-checkout-track)'
-      \)
+\ 'branch', 'g<CR>',
+\ '<Plug>(gina-commit-checkout-track)'
+\)
 call gina#custom#mapping#nmap(
-      \ 'status', '<C-^>',
-      \ ':<C-u>Gina commit<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
+\ 'status', '<C-^>',
+\ ':<C-u>Gina commit<CR>',
+\ {'noremap': 1, 'silent': 1}
+\)
 call gina#custom#mapping#nmap(
-      \ 'commit', '<C-^>',
-      \ ':<C-u>Gina status<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
+\ 'commit', '<C-^>',
+\ ':<C-u>Gina status<CR>',
+\ {'noremap': 1, 'silent': 1}
+\)
 
 call gina#custom#execute(
-      \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-      \ 'setlocal winfixheight',
-      \)
+\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+\ 'setlocal winfixheight',
+\)
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
 "}}}
@@ -588,9 +592,9 @@ call dein#add('iwataka/minidown.vim')
 "-----------------------------------------------------------------------
 "{{{
 augroup vimrc_markdown
-  autocmd BufRead,BufNewFile *.{md} set filetype=markdown
-  autocmd! FileType markdown hi! def link markdownItalic Normal
-  autocmd FileType markdown set commentstring=<\!--\ %s\ -->
+autocmd BufRead,BufNewFile *.{md} set filetype=markdown
+autocmd! FileType markdown hi! def link markdownItalic Normal
+autocmd FileType markdown set commentstring=<\!--\ %s\ -->
 augroup END
 "mapping
 nnoremap <Leader>pmd <C-u>:Minidown<CR>
@@ -615,10 +619,10 @@ map <silent>sr <Plug>(operator-surround-replace)
 "2バイト括弧を追加
 let g:operator#surround#blocks = {}
 let g:operator#surround#blocks['-'] = [
-    \   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
-    \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
-    \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
-    \ ]
+\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
+\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
+\   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
+\ ]
 "}}}
 "-----------------------------------------------------------------------------------------
 "lexima
@@ -745,9 +749,9 @@ let g:lightline#bufferline#unnamed = '[unnamed]'
 
 function! LightlineMode()
 return    &filetype ==# 'unite' ? 'Unite' :
-        \ &filetype ==# 'denite' ? MyMode() :
+	\ &filetype ==# 'denite' ? MyMode() :
 	\ &filetype ==# 'help' ? 'Help' :
-        \ &filetype ==# 'defx' ? 'Defx' :
+	\ &filetype ==# 'defx' ? 'Defx' :
 	\ lightline#mode()
 endfunction
 
@@ -786,9 +790,9 @@ function! MyFilepath()
     let l:ll_filepath = expand('%:~')
     let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
-    let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-30 ? pathshorten(l:ll_filepath) : 
-	       \ winwidth(0) > 70 ? l:ll_filepath  :
-	       \ winwidth(0) > 45 ? l:ll_filename  : ''
+    let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-30 ? pathshorten(l:ll_filepath) :
+	\ winwidth(0) > 70 ? l:ll_filepath  :
+	\ winwidth(0) > 45 ? l:ll_filename  : ''
     let l:ll_modified = &modified ? '[+]' : ''
     return l:ll_fn . l:ll_modified
   endif
@@ -848,6 +852,18 @@ if has('conceal')
 endif
 "}}}
 "-----------------------------------------------------------------------
+"Gundo
+call dein#add('sjl/gundo.vim')
+"-----------------------------------------------------------------------
+let g:gundo_prefer_python3 = 1
+let g:gundo_help = 0
+let g:gundo_width = 45
+let g:gundo_preview_height = 10
+nmap U :<C-u>GundoToggle<CR>
+"-----------------------------------------------------------------------
+call dein#add('nathanaelkane/vim-indent-guides')
+"-----------------------------------------------------------------------
+let g:indent_guides_exclude_filetypes = ['help', 'defx']
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
 call dein#add('rakr/vim-one')
