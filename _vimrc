@@ -1,14 +1,14 @@
 "ork's _vimrc for Windows
 "========================================================================
-"encode設定
+"基本設定
 "========================================================================
 "{{{
+"encode
 set nocompatible			" vi 非互換(宣言)
 scriptencoding utf-8,cp932		" vimrcのエンコーディング
 set encoding=utf-8			" vim 内部のエンコーディグ
 set fileencoding=utf-8			" 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
-"}}}
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 " ------------------------------------------------------------------------------
@@ -18,7 +18,6 @@ augroup END
 "========================================================================
 "config-file
 "========================================================================
-" {{{
 " スワップファイルを作らない
 set noswapfile
 " 編集中のファイルが変更されたら自動で読み直す
@@ -34,20 +33,57 @@ set hidden
 set noshowcmd
 "モードを表示しない
 set noshowmode
+"日本語の行の連結時には空白を入力しない。
+set formatoptions+=mMj
 "folding設定
 setlocal foldmethod=marker
-"}}}
+"いい感じに折りたたみ状態を保存
+function! s:is_view_available() abort " {{{
+  if !&buflisted || &buftype !=# ''
+    return 0
+  elseif !filewritable(expand('%:p'))
+    return 0
+  endif
+  return 1
+endfunction " }}}
+function! s:mkview() abort " {{{
+  if s:is_view_available()
+    silent! mkview
+  endif
+endfunction " }}}
+function! s:loadview() abort " {{{
+  if s:is_view_available()
+    silent! loadview
+  endif
+endfunction " }}}
+augroup MyAutoCmd
+  autocmd MyAutoCmd BufWinLeave ?* call s:mkview()
+  autocmd MyAutoCmd BufReadPost ?* call s:loadview()
+augroup END
+"使わないプリセットプラグインを読み込まない
+let g:loaded_gzip              = 1
+let g:loaded_tar               = 1
+let g:loaded_tarPlugin         = 1
+let g:loaded_zip               = 1
+let g:loaded_zipPlugin         = 1
+let g:loaded_rrhelper          = 1
+let g:loaded_2html_plugin      = 1
+let g:loaded_vimball           = 1
+let g:loaded_vimballPlugin     = 1
+let g:loaded_getscript         = 1
+let g:loaded_getscriptPlugin   = 1
+let g:loaded_netrw             = 1
+let g:loaded_netrwPlugin       = 1
+let g:loaded_netrwSettings     = 1
+let g:loaded_netrwFileHandlers = 1
 "========================================================================
 "runtimepath
 "========================================================================
-"{{{
 set runtimepath+=~\vimfiles
 set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
-"}}}
 "========================================================================
 "Python,vimproc
 "========================================================================
-"{{{
 "メモ
 "インストールはAll Userで
 "pipからneovim, greenletを導入 Visual Studio C++ 14.0が必要
@@ -64,10 +100,10 @@ let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python36\pytho
 let g:vimproc#download_windows_dll = 1
 "}}}
 "=========================================================================================
-"Visual
+"外観
 "=========================================================================================
 "{{{
-" 常にタブラインを表示
+"常にタブラインを表示
 set showtabline=2 
 " 括弧入力時の対応する括弧を表示
 set showmatch
@@ -77,11 +113,12 @@ set laststatus=2
 " ESC連打でハイライト解除
 nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
 nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
-"日本語の行の連結時には空白を入力しない。
-set formatoptions+=mMj
+"モードライン設定
+set modeline
+:set modelines=5
 "}}}
 "========================================================================
-"入力系
+"入力・編集
 "========================================================================
 "{{{
 "日本語の文章構造に対応するやつ
@@ -108,6 +145,45 @@ inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 function! IMStatus(...)
   return ''
 endfunction
+
+set virtualedit=all     " カーソルを文字が存在しない部分でも動けるようにする
+
+"Tab系
+set smarttab
+set list                " 不可視文字の可視化
+set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
+"" 行頭でのTab文字の表示幅
+"set shiftwidth=2
+" The prefix key.
+nnoremap    [Tag]   <Nop>
+nmap   <C-t> [Tag]
+" Tab jump
+for n in range(1, 9)
+  execute 'nnoremap <silent> [Tag]'.n  ':<C-u>tabnext'.n.'<CR>'
+endfor
+" t1 で1番左のタブ、t2 で1番左から2番目のタブにジャンプ
+map <silent> [Tag]p :tablast <bar> tabnew<CR>
+" tp 新しいタブを一番右に作る
+map <silent> [Tag]i :tabclose<CR>
+" ti タブを閉じる
+map <silent> [Tag]l :tabnext<CR>
+" tl 次のタブ
+map <silent> [Tag]h :tabprevious<CR>
+" th 前のタブ
+
+"検索系
+"type S, then type what you're looking for, a /, and what to replace it with
+nmap S :%s//g<LEFT><LEFT>
+" 検索文字列が小文字の場合は大文字小文字を区別なく検索する
+set ignorecase
+" 検索文字列に大文字が含まれている場合は区別して検索する
+set smartcase
+" 検索文字列入力時に順次対象文字列にヒットさせる
+set incsearch
+" 検索時に最後まで行ったら最初に戻る
+set wrapscan
+" 検索語をハイライト表示
+set hlsearch
 "}}}
 "========================================================================
 "Key mapping
@@ -115,9 +191,8 @@ endfunction
 "{{{
 "!!!!!!!!!!LeaderをSpaceキーに!!!!!!!!!!!!!!!
 let mapleader = "\<Space>"
-"数字のプラスマイナス
-nnoremap + <C-a>
-nnoremap - <C-x>
+nnoremap + <C-a> "数字のプラス
+nnoremap - <C-x> "マイナス
 " Create a blank line above/below current line
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
@@ -163,6 +238,11 @@ nnoremap <C-h> <C-w>h|			" Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-j> <C-w>j|			" Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-k> <C-w>k|			" Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-l> <C-w>l|			" Ctrl + hjkl でウィンドウ間を移動
+"windowサイズ変更
+nnoremap <S-Left>  <C-w><<CR>
+nnoremap <S-Right> <C-w>><CR>
+nnoremap <S-Up>    <C-w>-<CR>
+nnoremap <S-Down>  <C-w>+<CR>
 "バッファ移動
 nnoremap <silent><Leader>wh :bprev<CR>|
 nnoremap <silent><Leader>wl :bnext<CR>|
@@ -198,49 +278,6 @@ vnoremap <Leader><CR> :s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
 "Markdown Docx出力
 "pandocが必要
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
-"}}}
-"========================================================================
-" Tab系
-"========================================================================
-"{{{
-set smarttab
-" 不可視文字を可視化(タブが「?-」と表示される)
-set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
-"" 行頭でのTab文字の表示幅
-"set shiftwidth=2
-" The prefix key.
-nnoremap    [Tag]   <Nop>
-nmap   <C-t> [Tag]
-" Tab jump
-for n in range(1, 9)
-  execute 'nnoremap <silent> [Tag]'.n  ':<C-u>tabnext'.n.'<CR>'
-endfor
-" t1 で1番左のタブ、t2 で1番左から2番目のタブにジャンプ
-map <silent> [Tag]p :tablast <bar> tabnew<CR>
-" tp 新しいタブを一番右に作る
-map <silent> [Tag]i :tabclose<CR>
-" ti タブを閉じる
-map <silent> [Tag]l :tabnext<CR>
-" tl 次のタブ
-map <silent> [Tag]h :tabprevious<CR>
-" th 前のタブ
-"}}}
-"=========================================================================================
-"検索系
-"=========================================================================================
-"{{{
-"type S, then type what you're looking for, a /, and what to replace it with
-nmap S :%s//g<LEFT><LEFT>
-" 検索文字列が小文字の場合は大文字小文字を区別なく検索する
-set ignorecase
-" 検索文字列に大文字が含まれている場合は区別して検索する
-set smartcase
-" 検索文字列入力時に順次対象文字列にヒットさせる
-set incsearch
-" 検索時に最後まで行ったら最初に戻る
-set wrapscan
-" 検索語をハイライト表示
-set hlsearch
 "}}}
 "========================================================================
 "dein initialize-----------------------------
@@ -822,3 +859,4 @@ endif
 "||||||||dein scripts end||||||||
 filetype plugin indent on
 syntax enable
+" vim:set foldmethod=marker:
