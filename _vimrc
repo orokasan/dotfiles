@@ -2,11 +2,13 @@
 "========================================================================
 "encode設定
 "========================================================================
+"{{{
 set nocompatible			" vi 非互換(宣言)
 scriptencoding utf-8,cp932		" vimrcのエンコーディング
 set encoding=utf-8			" vim 内部のエンコーディグ
 set fileencoding=utf-8			" 既定のファイル保存エンコーディング
-set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932"
+set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
+"}}}
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 " ------------------------------------------------------------------------------
@@ -16,6 +18,7 @@ augroup END
 "========================================================================
 "config-file
 "========================================================================
+" {{{
 " スワップファイルを作らない
 set noswapfile
 " 編集中のファイルが変更されたら自動で読み直す
@@ -31,14 +34,20 @@ set hidden
 set noshowcmd
 "モードを表示しない
 set noshowmode
+"folding設定
+setlocal foldmethod=marker
+"}}}
 "========================================================================
 "runtimepath
 "========================================================================
+"{{{
 set runtimepath+=~\vimfiles
 set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
+"}}}
 "========================================================================
 "Python,vimproc
 "========================================================================
+"{{{
 "メモ
 "インストールはAll Userで
 "pipからneovim, greenletを導入 Visual Studio C++ 14.0が必要
@@ -53,9 +62,11 @@ set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
 let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python36\python.exe')
 "vimprocのダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
+"}}}
 "=========================================================================================
 "Visual
 "=========================================================================================
+"{{{
 " 常にタブラインを表示
 set showtabline=2 
 " 括弧入力時の対応する括弧を表示
@@ -64,12 +75,15 @@ set matchtime=1
 " ステータスラインを常に表示
 set laststatus=2
 " ESC連打でハイライト解除
-nmap <Esc><Esc> :nohlsearch<CR><Esc>
+nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
+nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
 "日本語の行の連結時には空白を入力しない。
 set formatoptions+=mMj
+"}}}
 "========================================================================
 "入力系
 "========================================================================
+"{{{
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "句読点を強引に挿入
@@ -94,9 +108,11 @@ inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 function! IMStatus(...)
   return ''
 endfunction
+"}}}
 "========================================================================
 "Key mapping
 "========================================================================
+"{{{
 "!!!!!!!!!!LeaderをSpaceキーに!!!!!!!!!!!!!!!
 let mapleader = "\<Space>"
 "数字のプラスマイナス
@@ -182,9 +198,11 @@ vnoremap <Leader><CR> :s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
 "Markdown Docx出力
 "pandocが必要
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
+"}}}
 "========================================================================
 " Tab系
 "========================================================================
+"{{{
 set smarttab
 " 不可視文字を可視化(タブが「?-」と表示される)
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
@@ -206,9 +224,11 @@ map <silent> [Tag]l :tabnext<CR>
 " tl 次のタブ
 map <silent> [Tag]h :tabprevious<CR>
 " th 前のタブ
+"}}}
 "=========================================================================================
 "検索系
 "=========================================================================================
+"{{{
 "type S, then type what you're looking for, a /, and what to replace it with
 nmap S :%s//g<LEFT><LEFT>
 " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
@@ -221,9 +241,11 @@ set incsearch
 set wrapscan
 " 検索語をハイライト表示
 set hlsearch
+"}}}
 "========================================================================
 "dein initialize-----------------------------
 "========================================================================
+"{{{
 "環境によってはcacheファイル生成で呼び出されるROBOCOPYの/MTオプションがエラーを出す
 "Shougo\dein.vim\autoload\dein\install.vimの777行目から/MTを消すことで解決
 if &compatible
@@ -234,22 +256,22 @@ set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
 if dein#load_state(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 call dein#begin(expand('~/vimfiles/dein'))
 call dein#add(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
-
+"}}}
 "||||||||dein scripts||||||||
 "-----------------------------------------------------------------------
 "Denite
 call dein#add('lambdalisue/vim-rplugin')
-"call dein#add('Shougo/neosnippet-snippets')
-"call dein#add('Shougo/neocomplete.vim')
 call dein#add('Shougo/neomru.vim')
-"call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/denite.nvim')
 call dein#add('Shougo/unite.vim')
 call dein#add('Shougo/neoyank.vim')
 "-----------------------------------------------------------------------
+"{{{
 "need-Python3.6
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
+nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+      \ source<CR>
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
       \ file<CR>
@@ -293,47 +315,77 @@ call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
 "h,lでディレクトリ上下移動
 call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
-call denite#custom#var('file_rec', 'command',
-\ ['ag', '--follow', '--nocolor', '--nogroup', '--hidden', '-g', ''])
+
+" Change file/rec command.
+call denite#custom#var('file/rec', 'command',
+\ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+
+" Change matchers.
+call denite#custom#source(
+\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
+call denite#custom#source(
+\ 'file/rec', 'matchers', ['matcher/cpsm'])
+
+" Change sorters.
+call denite#custom#source(
+\ 'file/rec', 'sorters', ['sorter/sublime'])
+
+" Add custom menus
+let s:menus = {}
+
+let s:menus.zsh = {
+	\ 'description': 'Edit your import zsh configuration'
+	\ }
+let s:menus.zsh.file_candidates = [
+	\ ['zshrc', '~/.config/zsh/.zshrc'],
+	\ ['zshenv', '~/.zshenv'],
+	\ ]
+
+let s:menus.my_commands = {
+	\ 'description': 'Example commands'
+	\ }
+let s:menus.my_commands.command_candidates = [
+	\ ['Split the window', 'vnew'],
+	\ ['Open zsh menu', 'Denite menu:zsh'],
+	\ ['Format code', 'FormatCode', 'go,python'],
+	\ ]
+
+call denite#custom#var('menu', 'menus', s:menus)
+
 " Ag command on grep source
 call denite#custom#var('grep', 'command', ['ag'])
 call denite#custom#var('grep', 'default_opts',
-    \ ['-i', '--vimgrep'])
+		\ ['-i', '--vimgrep'])
 call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'pattern_opt', [])
 call denite#custom#var('grep', 'separator', ['--'])
 call denite#custom#var('grep', 'final_opts', [])
-" use rg"
-" if executable('rg')
-  " call denite#custom#var('file_rec', 'command',
-        " \ ['rg', '--files', '--glob', '!.git'])
-  " call denite#custom#var('grep', 'command', ['rg'])
-" endif
-call denite#custom#var('grep', 'default_opts', [])
-call denite#custom#var('grep', 'recursive_opts', [])
- 
-call denite#custom#option('default', 'prompt', '>')
-call denite#custom#option('default', 'statusline', v:false)
- 
-" customize ignore globs
-call denite#custom#source('file_rec', 'matchers', ['matcher_fuzzy','matcher_ignore_globs'])
-call denite#custom#source('directory_rec', 'matchers', ['matcher_fuzzy','matcher_ignore_globs'])
-call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
-      \ [
-      \ '.git/', 'build/', '__pycache__/',
-      \ 'images/', '*.o', '*.make',
-      \ '*.min.*',
-      \ 'img/', 'fonts/'])
+" Define alias
+call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+call denite#custom#var('file/rec/git', 'command',
+      \ ['git', 'ls-files', '-co', '--exclude-standard'])
 
+call denite#custom#alias('source', 'file/rec/py', 'file/rec')
+call denite#custom#var('file/rec/py', 'command',['scantree.py'])
+
+" Change default prompt
+call denite#custom#option('default', 'prompt', '>')
+
+" Change ignore_globs
+call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
+      \ [ '.git/', '.ropeproject/', '__pycache__/',
+      \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+"}}}
 "-----------------------------------------------------------------------
 "Dirmark
 call dein#add('kmnk/denite-dirmark')
 "-----------------------------------------------------------------------
+"{{{
 nmap <Leader>dd    <SID>(dirmark) 
 nmap <Leader>da    <SID>(dirmark-add) 
 nnoremap <silent> <SID>(dirmark) :<C-u>Denite -default-action=cd dirmark<CR> 
 nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand('%:p:h') .  '<CR>' 
-
+"}}}
 "-----------------------------------------------------------------------
 "Defx
 call dein#add('Shougo/defx.nvim') "ファイラー
@@ -342,6 +394,7 @@ if !has('nvim')
   call dein#add('roxma/vim-hug-neovim-rpc')
 endif
 "-----------------------------------------------------------------------
+"{{{
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e> :<C-u>Defx 
        \<CR>:set nonumber<CR>
@@ -422,79 +475,81 @@ autocmd FileType defx call s:defx_my_settings()
       nnoremap <silent><buffer><expr> cd
      \ defx#do_action('change_vim_cwd')
     endfunction
-
+"}}}
 "-----------------------------------------------------------------------
 "gina.vim
 call dein#add('lambdalisue/gina.vim') "git管理
 call dein#add('tpope/vim-fugitive') "git管理
-""docのexampleをコピペ
-"call gina#custom#command#alias('branch', 'br')
-"call gina#custom#command#option('br', '-v', 'v')
-"call gina#custom#command#option(
-"      \ '/\%(log\|reflog\)',
-"      \ '--opener', 'vsplit'
-"      \)
-"call gina#custom#command#option(
-"      \ 'log', '--group', 'log-viewer'
-"      \)
-"call gina#custom#command#option(
-"      \ 'status', '--group', 'status-viewer'
-"      \)
-"call gina#custom#command#option(
-"      \ 'reflog', '--group', 'reflog-viewer'
-"      \)
-"call gina#custom#command#option(
-"      \ 'commit', '-v|--verbose'
-"      \)
-"call gina#custom#command#option(
-"      \ '/\%(status\|commit\)',
-"      \ '-u|--untracked-files'
-"      \)
-"call gina#custom#command#option(
-"      \ '/\%(status\|changes\)',
-"      \ '--ignore-submodules'
-"      \)
-"
-"call gina#custom#action#alias(
-"      \ 'branch', 'track',
-"      \ 'checkout:track'
-"      \)
-"call gina#custom#action#alias(
-"      \ 'branch', 'merge',
-"      \ 'commit:merge'
-"      \)
-"call gina#custom#action#alias(
-"      \ 'branch', 'rebase',
-"      \ 'commit:rebase'
-"      \)
-"
-"call gina#custom#mapping#nmap(
-"      \ 'branch', 'g<CR>',
-"      \ '<Plug>(gina-commit-checkout-track)'
-"      \)
-"call gina#custom#mapping#nmap(
-"      \ 'status', '<C-^>',
-"      \ ':<C-u>Gina commit<CR>',
-"      \ {'noremap': 1, 'silent': 1}
-"      \)
-"call gina#custom#mapping#nmap(
-"      \ 'commit', '<C-^>',
-"      \ ':<C-u>Gina status<CR>',
-"      \ {'noremap': 1, 'silent': 1}
-"      \)
-"
-"call gina#custom#execute(
-"      \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-"      \ 'setlocal winfixheight',
-"      \)
 "-----------------------------------------------------------------------
+"{{{
+""docのexampleをコピペ
+call gina#custom#command#alias('branch', 'br')
+call gina#custom#command#option('br', '-v', 'v')
+call gina#custom#command#option(
+      \ '/\%(log\|reflog\)',
+      \ '--opener', 'vsplit'
+      \)
+call gina#custom#command#option(
+      \ 'log', '--group', 'log-viewer'
+      \)
+call gina#custom#command#option(
+      \ 'status', '--group', 'status-viewer'
+      \)
+call gina#custom#command#option(
+      \ 'reflog', '--group', 'reflog-viewer'
+      \)
+call gina#custom#command#option(
+      \ 'commit', '-v|--verbose'
+      \)
+call gina#custom#command#option(
+      \ '/\%(status\|commit\)',
+      \ '-u|--untracked-files'
+      \)
+call gina#custom#command#option(
+      \ '/\%(status\|changes\)',
+      \ '--ignore-submodules'
+      \)
+
+call gina#custom#action#alias(
+      \ 'branch', 'track',
+      \ 'checkout:track'
+      \)
+call gina#custom#action#alias(
+      \ 'branch', 'merge',
+      \ 'commit:merge'
+      \)
+call gina#custom#action#alias(
+      \ 'branch', 'rebase',
+      \ 'commit:rebase'
+      \)
+
+call gina#custom#mapping#nmap(
+      \ 'branch', 'g<CR>',
+      \ '<Plug>(gina-commit-checkout-track)'
+      \)
+call gina#custom#mapping#nmap(
+      \ 'status', '<C-^>',
+      \ ':<C-u>Gina commit<CR>',
+      \ {'noremap': 1, 'silent': 1}
+      \)
+call gina#custom#mapping#nmap(
+      \ 'commit', '<C-^>',
+      \ ':<C-u>Gina status<CR>',
+      \ {'noremap': 1, 'silent': 1}
+      \)
+
+call gina#custom#execute(
+      \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+      \ 'setlocal winfixheight',
+      \)
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
-
+"}}}
 "-----------------------------------------------------------------------
 "vim-markdow
 call dein#add('iwataka/minidown.vim')
 "-----------------------------------------------------------------------
+"{{{
 augroup vimrc_markdown
   autocmd BufRead,BufNewFile *.{md} set filetype=markdown
   autocmd! FileType markdown hi! def link markdownItalic Normal
@@ -502,7 +557,7 @@ augroup vimrc_markdown
 augroup END
 "mapping
 nnoremap <Leader>pmd <C-u>:Minidown<CR>
-
+"}}}
 "-----------------------------------------------------------------------------------------
 "jasegment
 call dein#add('deton/jasegment.vim') "W,E,Bで日本語でも分節移動ができるように
@@ -515,6 +570,7 @@ let g:jasentence_endpat = '[。．？！]\+'
 call dein#add('rhysd/vim-operator-surround') "選択範囲に括弧を追加
 call dein#add('kana/vim-operator-user')
 "-----------------------------------------------------------------------------------------
+"{{{
 "mapping
 map <silent>sa <Plug>(operator-surround-append)
 map <silent>sd <Plug>(operator-surround-delete)
@@ -526,11 +582,12 @@ let g:operator#surround#blocks['-'] = [
     \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
     \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
     \ ]
-
+"}}}
 "-----------------------------------------------------------------------------------------
 "lexima
 call dein#add('cohama/lexima.vim') "括弧を補完
 "-----------------------------------------------------------------------------------------
+"{{{
 "2バイト括弧を追加
 call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
 call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
@@ -548,7 +605,7 @@ call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
-
+"}}}
 "-----------------------------------------------------------------------
 "TweetVim
 call dein#add('mattn/webapi-vim')
@@ -556,6 +613,7 @@ call dein#add('basyura/twibill.vim')
 call dein#add('tyru/open-browser.vim')
 call dein#add('basyura/TweetVim') "Vimでもツイッター
 "-----------------------------------------------------------------------
+"{{{
 nnoremap <silent> <Leader>tws  :<C-u>TweetVimSay<CR>
 nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>
 nnoremap <silent> <Leader>twm :TweetVimMentions<CR>
@@ -608,7 +666,7 @@ function! s:tweetvim_reload()
         call feedkeys("\<Plug>(tweetvim_action_reload)")
     endif
 endfunction
-
+"}}}
 "-----------------------------------------------------------------------
 "lightline
 call dein#add('itchyny/lightline.vim') "statuslineをかっこよく
@@ -616,6 +674,7 @@ call dein#add('itchyny/lightline.vim') "statuslineをかっこよく
 call dein#add('mengelbrecht/lightline-bufferline') "tablineにバッファー表示
 call dein#add('itchyny/vim-gitbranch')
 "-----------------------------------------------------------------------
+"{{{
 let g:lightline = {
         \ 'colorscheme': 'deus',
         \ 'active': {
@@ -639,9 +698,8 @@ let g:lightline = {
         \ }
 let g:lightline.component = {
 	\'lineinfo': '%3l[%L]:%-2v',
-	\'IMEstatus':"%{IMStatus('[JP-Lock]')}"
+	\'IMEstatus':"%{IMStatus('-JP-')}"
 	\}
-
 let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
 let g:lightline.component_type   = {'buffers': 'tabsel'}
@@ -707,6 +765,51 @@ endfunction
 function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
+
+"}}}
+"-----------------------------------------------------------------------
+"deoplete
+call dein#add('Shougo/deoplete.nvim')
+"-----------------------------------------------------------------------
+"{{{
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+" Use smartcase.
+call deoplete#custom#option('smart_case', v:true)
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function() abort
+  return deoplete#close_popup() . "\<CR>"
+endfunction
+"}}}
+"-----------------------------------------------------------------------
+"deoplete-sources
+call dein#add('Shougo/neco-vim')
+call dein#add('Shougo/neco-syntax')
+"-----------------------------------------------------------------------
+"neosnippet
+call dein#add('Shougo/neosnippet')
+call dein#add('Shougo/neosnippet-snippets')
+"-----------------------------------------------------------------------
+"{{{
+" Plugin key-mappings.
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+" SuperTab like snippets behavior.
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+"imap <expr><TAB>
+" \ pumvisible() ? "\<C-n>" :
+" \ neosnippet#expandable_or_jumpable() ?
+" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+" For conceal markers.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
+"}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
