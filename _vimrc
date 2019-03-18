@@ -1,4 +1,5 @@
 "ork's _vimrc for Windows
+"vim:set foldmethod=marker:
 "========================================================================
 "基本設定
 "========================================================================
@@ -27,7 +28,7 @@ set undodir=~/vimfiles/undo
 "backupファイルを作成
 set backup
 set backupdir=~/vimfiles/backup
-" バッファが編集中でもその他のファイルを開けるように 
+" バッファが編集中でもその他のファイルを開けるように
 set hidden
 " 入力中のコマンドをステータスに表示する
 set noshowcmd
@@ -38,24 +39,27 @@ set formatoptions+=mMj
 "folding設定
 setlocal foldmethod=marker
 "いい感じに折りたたみ状態を保存
-function! s:is_view_available() abort " {{{
+function! s:is_view_available() abort
   if !&buflisted || &buftype !=# ''
     return 0
   elseif !filewritable(expand('%:p'))
     return 0
   endif
   return 1
-endfunction " }}}
-function! s:mkview() abort " {{{
+endfunction
+
+function! s:mkview() abort
   if s:is_view_available()
     silent! mkview
   endif
-endfunction " }}}
-function! s:loadview() abort " {{{
+endfunction
+
+function! s:loadview() abort
   if s:is_view_available()
     silent! loadview
   endif
-endfunction " }}}
+endfunction
+
 augroup MyAutoCmd
   autocmd MyAutoCmd BufWinLeave ?* call s:mkview()
   autocmd MyAutoCmd BufReadPost ?* call s:loadview()
@@ -104,7 +108,7 @@ let g:vimproc#download_windows_dll = 1
 "=========================================================================================
 "{{{
 "常にタブラインを表示
-set showtabline=2 
+set showtabline=2
 " 括弧入力時の対応する括弧を表示
 set showmatch
 set matchtime=1
@@ -121,6 +125,10 @@ set modeline
 "入力・編集
 "========================================================================
 "{{{
+" カーソルを文字が存在しない部分でも動けるようにする
+set virtualedit=block
+" 行末の1文字先までカーソルを移動できるように
+"set virtualedit=onemore
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "句読点を強引に挿入
@@ -146,32 +154,20 @@ function! IMStatus(...)
   return ''
 endfunction
 
-set virtualedit=block     " カーソルを文字が存在しない部分でも動けるようにする
-
 "Tab系
-set smarttab
 "不可視文字の可視化
-set list           
+set list
+"不可視文字の表示
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
-"" 行頭でのTab文字の表示幅
-"set shiftwidth=2
+"<TAB>を含むファイルを開いた際、<TAB>を何文字の空白に変換するかを設定
+set tabstop=4
+"キーボードで<TAB>を入力した際、<TAB>を何文字の空白に変換するかを設定
+set softtabstop=4
+"自動インデント
+set autoindent
+"vimが自動でインデントを行った際、設定する空白数
+set shiftwidth=4
 " The prefix key.
-nnoremap    [Tag]   <Nop>
-nmap   <C-t> [Tag]
-" Tab jump
-for n in range(1, 9)
-  execute 'nnoremap <silent> [Tag]'.n  ':<C-u>tabnext'.n.'<CR>'
-endfor
-" t1 で1番左のタブ、t2 で1番左から2番目のタブにジャンプ
-map <silent> [Tag]p :tablast <bar> tabnew<CR>
-" tp 新しいタブを一番右に作る
-map <silent> [Tag]i :tabclose<CR>
-" ti タブを閉じる
-map <silent> [Tag]l :tabnext<CR>
-" tl 次のタブ
-map <silent> [Tag]h :tabprevious<CR>
-" th 前のタブ
-
 "検索系
 "type S, then type what you're looking for, a /, and what to replace it with
 nmap S :%s//g<LEFT><LEFT>
@@ -223,6 +219,9 @@ nnoremap <leader>wo :only<CR>
 noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
 "開いている_vimrcを読み込む
 noremap <Leader>ss :<C-u>source %<CR>
+"Shift-l, Shift-hで行末, 行頭に移動
+nnoremap <S-l> <End>
+nnoremap <S-h> <Home>
 " インサートモード時は emacs like なキーバインド
 inoremap <C-f> <Right>|			" C-f で左へ移動
 inoremap <C-b> <Left>|			" C-b で右へ移動
@@ -231,7 +230,6 @@ inoremap <C-n> <Down>|			" C-n で下へ移動
 inoremap <C-a> <Home>|			" C-a で行頭へ移動
 inoremap <C-e> <End>|			" C-e で行末へ移動
 inoremap <C-h> <BS>|			" C-h でバックスペース
-inoremap <C-d> <Del>|			" C-d でデリート
 inoremap <C-m> <CR>|			" C-m で改行
 inoremap <C-l> <del>
 "window移動
@@ -248,23 +246,15 @@ nnoremap <S-Down>  <C-w>+<CR>
 nnoremap <silent><Leader>wh :bprev<CR>|
 nnoremap <silent><Leader>wl :bnext<CR>|
 "コマンドライン上のマッピング
-cnoremap <C-a> <Home>
-" 一文字戻る
-cnoremap <C-b> <Left>
-" カーソルの下の文字を削除
-cnoremap <C-d> <Del>
-" 行末へ移動
-cnoremap <C-e> <End>
-" 一文字進む
-cnoremap <C-f> <Right>
-" コマンドライン履歴を一つ進む
-cnoremap <C-n> <Down>
-" コマンドライン履歴を一つ戻る
-cnoremap <C-p> <Up>
-" 前の単語へ移動
-cnoremap <M-b> <S-Left>
-" 次の単語へ移動
-cnoremap <M-f> <S-Right>
+cnoremap <C-a> <Home>| " 一文字戻る
+cnoremap <C-b> <Left>| " カーソルの下の文字を削除
+cnoremap <C-d> <Del>| " 行末へ移動
+cnoremap <C-e> <End>| " 一文字進む
+cnoremap <C-f> <Right>| " コマンドライン履歴を一つ進む
+cnoremap <C-n> <Down>| " コマンドライン履歴を一つ戻る
+cnoremap <C-p> <Up>| " 前の単語へ移動
+cnoremap <M-b> <S-Left>| " 次の単語へ移動
+cnoremap <M-f> <S-Right>|" 前の単語へ移動
 " TABにて対応ペアにジャンプ
 nnoremap <Tab> %
 vnoremap <Tab> %
@@ -284,13 +274,13 @@ vnoremap <Leader><CR> :s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "}}}
 "========================================================================
-"dein initialize-----------------------------
+"DEIN INITIALIZE
 "========================================================================
 "{{{
 "環境によってはcacheファイル生成で呼び出されるROBOCOPYの/MTオプションがエラーを出す
 "Shougo\dein.vim\autoload\dein\install.vimの777行目から/MTを消すことで解決
 if &compatible
-set nocompatible               
+set nocompatible
 endif
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
 
@@ -298,7 +288,7 @@ if dein#load_state(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 call dein#begin(expand('~/vimfiles/dein'))
 call dein#add(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 "}}}
-"||||||||dein scripts||||||||
+"SCRIPTS
 "-----------------------------------------------------------------------
 "Denite
 call dein#add('lambdalisue/vim-rplugin')
@@ -312,44 +302,48 @@ call dein#add('Shougo/neoyank.vim')
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
-\ source<CR>
+	\ source<CR>
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
-\ file<CR>
+	\ file<CR>
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
-\ file<CR>
+	\ file<CR>
 "バッファ一覧
-nnoremap <silent> [denite]b :<C-u>Denite 
-\ -mode=normal
-\ buffer<CR>
-"レジスタ一覧
-nnoremap <silent> [denite]r :<C-u>Denite 
-\ -buffer-name=register -mode=normal 
-\ register<CR>
-"neoyank起動
-nnoremap <silent> [denite]y :<C-u>Denite 
-\ -mode=normal 
-\ neoyank<CR>
+nnoremap <silent> [denite]b :<C-u>Denite
+	\ -mode=normal
+	\ buffer<CR>
+nnoremap <silent> ? :<C-u>Denite
+	\ -buffer-name=search -auto-highlight
+	\ line<CR>
+nnoremap <silent> * :<C-u>DeniteCursorWord
+	\ -buffer-name=search
+	\ -auto-highlight -mode=normal line<CR>
+"register&neoyank
+nnoremap <silent> [denite]y :<C-u>Denite
+	\ -mode=normal -default-action=replace
+	\ register neoyank<CR>
+nnoremap <silent> ;g :<C-u>Denite -buffer-name=search
+      \ -no-empty -mode=normal grep<CR>
 "メニュー
 nnoremap <silent> [denite]u :Denite menu<CR>
 nnoremap <silent> [denite]h :Denite help<CR>
 "最近使用したファイル一覧
-nnoremap <silent> [denite]n :<C-u>Denite 
-\ -mode=normal file_mru<CR>
+nnoremap <silent> [denite]n :<C-u>Denite
+	\ -mode=normal file_mru<CR>
 "denite-default option
 call denite#custom#option('_', {
-\ 'prompt': '»',
-\ 'cursor_wrap': v:true,
-\ 'winheight': 15,
-\ 'highlight_mode_insert': 'WildMenu'
-\ })
+	\ 'prompt': '»',
+	\ 'cursor_wrap': v:true,
+	\ 'winheight': 15,
+	\ 'highlight_mode_insert': 'WildMenu'
+	\ })
 ""C-N,C-Pで上下移動
 call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
 call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
 "C-J,C-Kでsplitで開く
-call denite#custom#map('insert', '<C-j>', '<denite:do_action:split>', 'noremap')
-call denite#custom#map('insert', '<C-k>', '<denite:do_action:vsplit>', 'noremap')
+call denite#custom#map('insert', '<C-j>', '<denite:do_action-split>', 'noremap')
+call denite#custom#map('insert', '<C-k>', '<denite:do_action-vsplit>', 'noremap')
 "C-h,C-lでディレクトリ移動
 call denite#custom#map('insert', '<C-l>', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
@@ -359,37 +353,37 @@ call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
 
 " Change file/rec command.
 call denite#custom#var('file/rec', 'command',
-\ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+	\ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
 
 " Change matchers.
 call denite#custom#source(
-\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
+	\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
 call denite#custom#source(
-\ 'file/rec', 'matchers', ['matcher/cpsm'])
+	\ 'file/rec', 'matchers', ['matcher/cpsm'])
 
 " Change sorters.
 call denite#custom#source(
-\ 'file/rec', 'sorters', ['sorter/sublime'])
+	\ 'file/rec', 'sorters', ['sorter/sublime'])
 
 " Add custom menus
 let s:menus = {}
 
 let s:menus.zsh = {
-\ 'description': 'Edit your import zsh configuration'
-\ }
+	\ 'description': 'Edit your import zsh configuration'
+	\ }
 let s:menus.zsh.file_candidates = [
-\ ['zshrc', '~/.config/zsh/.zshrc'],
-\ ['zshenv', '~/.zshenv'],
-\ ]
+	\ ['zshrc', '~/.config/zsh/.zshrc'],
+	\ ['zshenv', '~/.zshenv'],
+	\ ]
 
 let s:menus.my_commands = {
-\ 'description': 'Example commands'
-\ }
+	\ 'description': 'Example commands'
+	\ }
 let s:menus.my_commands.command_candidates = [
-\ ['Split the window', 'vnew'],
-\ ['Open zsh menu', 'Denite menu:zsh'],
-\ ['Format code', 'FormatCode', 'go,python'],
-\ ]
+	\ ['Split the window', 'vnew'],
+	\ ['Open zsh menu', 'Denite menu:zsh'],
+	\ ['Format code', 'FormatCode', 'go,python'],
+	\ ]
 
 call denite#custom#var('menu', 'menus', s:menus)
 
@@ -404,7 +398,7 @@ call denite#custom#var('grep', 'final_opts', [])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#var('file/rec/git', 'command',
-\ ['git', 'ls-files', '-co', '--exclude-standard'])
+	\ ['git', 'ls-files', '-co', '--exclude-standard'])
 
 call denite#custom#alias('source', 'file/rec/py', 'file/rec')
 call denite#custom#var('file/rec/py', 'command',['scantree.py'])
@@ -414,18 +408,17 @@ call denite#custom#option('default', 'prompt', '>')
 
 " Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-\ [ '.git/', '.ropeproject/', '__pycache__/',
-\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+	\ [ '.git/', '.ropeproject/', '__pycache__/',
+	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 "}}}
 "-----------------------------------------------------------------------
 "Dirmark
 call dein#add('kmnk/denite-dirmark')
-"-----------------------------------------------------------------------
 "{{{
-nmap <Leader>dd    <SID>(dirmark) 
-nmap <Leader>da    <SID>(dirmark-add) 
-nnoremap <silent> <SID>(dirmark) :<C-u>Denite -default-action=cd dirmark<CR> 
-nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand('%:p:h') .  '<CR>' 
+nmap <Leader>dd    <SID>(dirmark)
+nmap <Leader>da    <SID>(dirmark-add)
+nnoremap <silent> <SID>(dirmark) :<C-u>Denite -default-action=cd dirmark<CR>
+nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand('%:p:h') .  '<CR>'
 "}}}
 "-----------------------------------------------------------------------
 "Defx
@@ -434,18 +427,17 @@ if !has('nvim')
 call dein#add('roxma/nvim-yarp')
 call dein#add('roxma/vim-hug-neovim-rpc')
 endif
-"-----------------------------------------------------------------------
 "{{{
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
-nnoremap <silent> <C-e> :<C-u>Defx 
-\<CR>:set nonumber<CR>
-"      \ -toggle
+nnoremap <silent> <C-e>
+	\ :<C-u>Defx -listed <CR>
+	\ :set nonumber<CR>
 call defx#custom#option('_', {
     \ 'winwidth': 40,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:filename:type:size:time',
-    \ 'sort': 'TIME',
+    \ 'sort': "TIME",
     \ })
 "call defx#custom#column('filename', {
 "      \ 'directory_icon': '▸',
@@ -473,8 +465,14 @@ nnoremap <silent><buffer><expr> p
 \ defx#do_action('paste')
 nnoremap <silent><buffer><expr> l
 \ defx#do_action('open')
+nnoremap <silent><buffer><expr> L
+\ defx#do_action('drop')
 nnoremap <silent><buffer><expr> E
 \ defx#do_action('open', 'vsplit')
+nnoremap <silent><buffer><expr> t
+\ defx#do_action('toggle_sort','filename')
+nnoremap <silent><buffer><expr> T
+\ defx#do_action('toggle_sort','time')
 nnoremap <silent><buffer><expr> P
 \ defx#do_action('open', 'pedit')
 nnoremap <silent><buffer><expr> K
@@ -520,8 +518,6 @@ endfunction
 "-----------------------------------------------------------------------
 "gina.vim
 call dein#add('lambdalisue/gina.vim') "git管理
-call dein#add('tpope/vim-fugitive') "git管理
-"-----------------------------------------------------------------------
 "{{{
 ""docのexampleをコピペ
 call gina#custom#command#alias('branch', 'br')
@@ -589,7 +585,6 @@ let g:neomru#file_mru_ignore_pattern = 'gina://'
 "-----------------------------------------------------------------------
 "vim-markdow
 call dein#add('iwataka/minidown.vim')
-"-----------------------------------------------------------------------
 "{{{
 augroup vimrc_markdown
 autocmd BufRead,BufNewFile *.{md} set filetype=markdown
@@ -602,15 +597,13 @@ nnoremap <Leader>pmd <C-u>:Minidown<CR>
 "-----------------------------------------------------------------------------------------
 "jasegment
 call dein#add('deton/jasegment.vim') "W,E,Bで日本語でも分節移動ができるように
-"-----------------------------------------------------------------------------------------
+
 let g:jasegment#model='knbc_bunsetu'
 let g:jasentence_endpat = '[。．？！]\+'
-
 "-----------------------------------------------------------------------------------------
 " operator mappings
 call dein#add('rhysd/vim-operator-surround') "選択範囲に括弧を追加
 call dein#add('kana/vim-operator-user')
-"-----------------------------------------------------------------------------------------
 "{{{
 "mapping
 map <silent>sa <Plug>(operator-surround-append)
@@ -627,7 +620,6 @@ let g:operator#surround#blocks['-'] = [
 "-----------------------------------------------------------------------------------------
 "lexima
 call dein#add('cohama/lexima.vim') "括弧を補完
-"-----------------------------------------------------------------------------------------
 "{{{
 "2バイト括弧を追加
 call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
@@ -653,7 +645,6 @@ call dein#add('mattn/webapi-vim')
 call dein#add('basyura/twibill.vim')
 call dein#add('tyru/open-browser.vim')
 call dein#add('basyura/TweetVim') "Vimでもツイッター
-"-----------------------------------------------------------------------
 "{{{
 nnoremap <silent> <Leader>tws  :<C-u>TweetVimSay<CR>
 nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>
@@ -714,13 +705,12 @@ call dein#add('itchyny/lightline.vim') "statuslineをかっこよく
 "lightline-bufferline
 call dein#add('mengelbrecht/lightline-bufferline') "tablineにバッファー表示
 call dein#add('itchyny/vim-gitbranch')
-"-----------------------------------------------------------------------
 "{{{
 let g:lightline = {
         \ 'colorscheme': 'deus',
         \ 'active': {
 	\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
-	\ 'right': [ [ 'lineinfo' ],['percent'], [ 'IMEstatus','filetype' ] ] 
+	\ 'right': [ [ 'lineinfo' ],['percent'], [ 'IMEstatus','filetype' ] ]
         \ },
 	\ 'inactive': {
 	\ 'left': [['Inactivefn']],
@@ -785,16 +775,16 @@ endfunction
 
 function! MyFilepath()
   if &ft == 'denite'
-    return DeniteSources()
+	return DeniteSources()
   else
-    let l:ll_filepath = expand('%:~')
-    let l:ll_filename = expand('%:t')
+	let l:ll_filepath = expand('%:~')
+	let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
-    let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-30 ? pathshorten(l:ll_filepath) :
+	let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-30 ? pathshorten(l:ll_filepath) :
 	\ winwidth(0) > 70 ? l:ll_filepath  :
 	\ winwidth(0) > 45 ? l:ll_filename  : ''
-    let l:ll_modified = &modified ? '[+]' : ''
-    return l:ll_fn . l:ll_modified
+	let l:ll_modified = &modified ? '[+]' : ''
+	return l:ll_fn . l:ll_modified
   endif
 endfunction
 
@@ -806,22 +796,103 @@ endfunction
 function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
-
 "}}}
 "-----------------------------------------------------------------------
 "deoplete
 call dein#add('Shougo/deoplete.nvim')
-"-----------------------------------------------------------------------
 "{{{
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
 " Use smartcase.
 call deoplete#custom#option('smart_case', v:true)
+" <TAB>: completion.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ deoplete#manual_complete()
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+" <S-TAB>: completion back.
+inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
+
+inoremap <expr><C-g>       deoplete#refresh()
+inoremap <expr><C-e>       deoplete#cancel_popup()
+inoremap <silent><expr><C-l>       deoplete#complete_common_string()
+
 " <CR>: close popup and save indent.
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort
-  return deoplete#close_popup() . "\<CR>"
+  return pumvisible() ? deoplete#close_popup()."\<CR>" : "\<CR>"
 endfunction
+
+" cpsm test
+" call deoplete#custom#source('_', 'matchers', ['matcher_cpsm'])
+" call deoplete#custom#source('_', 'sorters', [])
+
+call deoplete#custom#source('_', 'matchers',
+      \ ['matcher_fuzzy', 'matcher_length'])
+" call deoplete#custom#source('eskk,tabnine', 'matchers', [])
+call deoplete#custom#source('eskk', 'matchers', [])
+" call deoplete#custom#source('buffer', 'mark', '')
+" call deoplete#custom#source('_', 'matchers', ['matcher_full_fuzzy'])
+" call deoplete#custom#source('_', 'disabled_syntaxes', ['Comment', 'String'])
+" call deoplete#custom#source('buffer', 'mark', '*')
+
+call deoplete#custom#source('look', 'filetypes', ['help', 'gitcommit'])
+call deoplete#custom#option('ignore_sources',
+      \ {'_': ['around', 'buffer', 'tag', 'dictionary']})
+
+"call deoplete#custom#source('tabnine', 'rank', 300)
+"call deoplete#custom#source('tabnine', 'min_pattern_length', 2)
+" call deoplete#custom#source('tabnine', 'is_volatile', v:false)
+
+call deoplete#custom#source('zsh', 'filetypes', ['zsh', 'sh'])
+
+call deoplete#custom#source('_', 'converters', [
+      \ 'converter_remove_paren',
+      \ 'converter_remove_overlap',
+      \ 'matcher_length',
+      \ 'converter_truncate_abbr',
+      \ 'converter_truncate_menu',
+      \ 'converter_auto_delimiter',
+      \ ])
+"call deoplete#custom#source('tabnine', 'converters', [
+"      \ 'converter_remove_overlap',
+"      \ ])
+
+" call deoplete#custom#source('buffer', 'min_pattern_length', 9999)
+" call deoplete#custom#source('clang', 'input_pattern', '\.\w*|\.->\w*|\w+::\w*')
+" call deoplete#custom#source('clang', 'max_pattern_length', -1)
+
+call deoplete#custom#option('keyword_patterns', {
+      \ '_': '[a-zA-Z_]\k*\(?',
+      \ 'tex': '[^\w|\s][a-zA-Z_]\w*',
+      \ })
+
+" inoremap <silent><expr> <C-t> deoplete#manual_complete('file')
+
+call deoplete#custom#option({
+      \ 'auto_refresh_delay': 10,
+      \ 'camel_case': v:true,
+      \ 'skip_multibyte': v:true,
+      \ 'prev_completion_mode': 'length',
+      \ })
+" call deoplete#custom#option('num_processes', 0)
+
+" call deoplete#custom#option('profile', v:true)
+" call deoplete#enable_logging('DEBUG', 'deoplete.log')
+" call deoplete#custom#source('clang', 'debug_enabled', 1)
+
+call deoplete#custom#option('candidate_marks',
+      \ ['A', 'S', 'D', 'F', 'G'])
+inoremap <expr>A       deoplete#insert_candidate(0)
+inoremap <expr>S       deoplete#insert_candidate(1)
+inoremap <expr>D       deoplete#insert_candidate(2)
+inoremap <expr>F       deoplete#insert_candidate(3)
+inoremap <expr>G deoplete#insert_candidate(4)
 "}}}
 "-----------------------------------------------------------------------
 "deoplete-sources
@@ -831,7 +902,6 @@ call dein#add('Shougo/neco-syntax')
 "neosnippet
 call dein#add('Shougo/neosnippet')
 call dein#add('Shougo/neosnippet-snippets')
-"-----------------------------------------------------------------------
 "{{{
 " Plugin key-mappings.
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
@@ -864,6 +934,10 @@ nmap U :<C-u>GundoToggle<CR>
 call dein#add('nathanaelkane/vim-indent-guides')
 "-----------------------------------------------------------------------
 let g:indent_guides_exclude_filetypes = ['help', 'defx']
+"-----------------------------------------------------------------------
+"echodoc
+call dein#add('Shougo/echodoc.vim')
+"-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
 call dein#add('rakr/vim-one')
@@ -872,7 +946,8 @@ call dein#add('hzchirs/vim-material')
 call dein#end()
 call dein#save_state()
 endif
+
 "||||||||dein scripts end||||||||
 filetype plugin indent on
 syntax enable
-" vim:set foldmethod=marker:
+

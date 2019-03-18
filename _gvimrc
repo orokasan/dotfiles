@@ -29,8 +29,6 @@ winpos 10 30
 set number
 "コマンドライン行数の設定
 set cmdheight=1
-" 行末の1文字先までカーソルを移動できるように
-set virtualedit=onemore
 " インデントはスマートインデント
 set smartindent
 " ビープ音を可視化
