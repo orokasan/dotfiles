@@ -88,11 +88,8 @@ inoremap <silent><C-c> <ESC>
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
-let IM_CtrlMode = 4
 " 「日本語入力固定モード」切替キー
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
-" 「日本語入力固定モード」がオンの場合、ステータス行にメッセージ表示
-"set statusline+=%{IMStatus('[JP-Lock]')}
 " im_control.vimがない環境でもエラーを出さないためのダミー関数
 function! IMStatus(...)
   return ''
@@ -242,7 +239,7 @@ call dein#add(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 "-----------------------------------------------------------------------
 "Denite
 call dein#add('lambdalisue/vim-rplugin')
-call dein#add('Shougo/neosnippet-snippets')
+"call dein#add('Shougo/neosnippet-snippets')
 "call dein#add('Shougo/neocomplete.vim')
 call dein#add('Shougo/neomru.vim')
 "call dein#add('Shougo/neosnippet')
@@ -430,66 +427,66 @@ autocmd FileType defx call s:defx_my_settings()
 "gina.vim
 call dein#add('lambdalisue/gina.vim') "git管理
 call dein#add('tpope/vim-fugitive') "git管理
-"docのexampleをコピペ
-call gina#custom#command#alias('branch', 'br')
-call gina#custom#command#option('br', '-v', 'v')
-call gina#custom#command#option(
-      \ '/\%(log\|reflog\)',
-      \ '--opener', 'vsplit'
-      \)
-call gina#custom#command#option(
-      \ 'log', '--group', 'log-viewer'
-      \)
-call gina#custom#command#option(
-      \ 'status', '--group', 'status-viewer'
-      \)
-call gina#custom#command#option(
-      \ 'reflog', '--group', 'reflog-viewer'
-      \)
-call gina#custom#command#option(
-      \ 'commit', '-v|--verbose'
-      \)
-call gina#custom#command#option(
-      \ '/\%(status\|commit\)',
-      \ '-u|--untracked-files'
-      \)
-call gina#custom#command#option(
-      \ '/\%(status\|changes\)',
-      \ '--ignore-submodules'
-      \)
-
-call gina#custom#action#alias(
-      \ 'branch', 'track',
-      \ 'checkout:track'
-      \)
-call gina#custom#action#alias(
-      \ 'branch', 'merge',
-      \ 'commit:merge'
-      \)
-call gina#custom#action#alias(
-      \ 'branch', 'rebase',
-      \ 'commit:rebase'
-      \)
-
-call gina#custom#mapping#nmap(
-      \ 'branch', 'g<CR>',
-      \ '<Plug>(gina-commit-checkout-track)'
-      \)
-call gina#custom#mapping#nmap(
-      \ 'status', '<C-^>',
-      \ ':<C-u>Gina commit<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
-call gina#custom#mapping#nmap(
-      \ 'commit', '<C-^>',
-      \ ':<C-u>Gina status<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
-
-call gina#custom#execute(
-      \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-      \ 'setlocal winfixheight',
-      \)
+""docのexampleをコピペ
+"call gina#custom#command#alias('branch', 'br')
+"call gina#custom#command#option('br', '-v', 'v')
+"call gina#custom#command#option(
+"      \ '/\%(log\|reflog\)',
+"      \ '--opener', 'vsplit'
+"      \)
+"call gina#custom#command#option(
+"      \ 'log', '--group', 'log-viewer'
+"      \)
+"call gina#custom#command#option(
+"      \ 'status', '--group', 'status-viewer'
+"      \)
+"call gina#custom#command#option(
+"      \ 'reflog', '--group', 'reflog-viewer'
+"      \)
+"call gina#custom#command#option(
+"      \ 'commit', '-v|--verbose'
+"      \)
+"call gina#custom#command#option(
+"      \ '/\%(status\|commit\)',
+"      \ '-u|--untracked-files'
+"      \)
+"call gina#custom#command#option(
+"      \ '/\%(status\|changes\)',
+"      \ '--ignore-submodules'
+"      \)
+"
+"call gina#custom#action#alias(
+"      \ 'branch', 'track',
+"      \ 'checkout:track'
+"      \)
+"call gina#custom#action#alias(
+"      \ 'branch', 'merge',
+"      \ 'commit:merge'
+"      \)
+"call gina#custom#action#alias(
+"      \ 'branch', 'rebase',
+"      \ 'commit:rebase'
+"      \)
+"
+"call gina#custom#mapping#nmap(
+"      \ 'branch', 'g<CR>',
+"      \ '<Plug>(gina-commit-checkout-track)'
+"      \)
+"call gina#custom#mapping#nmap(
+"      \ 'status', '<C-^>',
+"      \ ':<C-u>Gina commit<CR>',
+"      \ {'noremap': 1, 'silent': 1}
+"      \)
+"call gina#custom#mapping#nmap(
+"      \ 'commit', '<C-^>',
+"      \ ':<C-u>Gina status<CR>',
+"      \ {'noremap': 1, 'silent': 1}
+"      \)
+"
+"call gina#custom#execute(
+"      \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+"      \ 'setlocal winfixheight',
+"      \)
 "-----------------------------------------------------------------------
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
@@ -620,13 +617,14 @@ call dein#add('mengelbrecht/lightline-bufferline') "tablineにバッファー表
 call dein#add('itchyny/vim-gitbranch')
 "-----------------------------------------------------------------------
 let g:lightline = {
-        \ 'colorscheme': 'one',
+        \ 'colorscheme': 'deus',
         \ 'active': {
 	\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
-	\ 'right': [ [ 'lineinfo' ],[  ], [ 'filetype', 'percent'] ] 
+	\ 'right': [ [ 'lineinfo' ],['percent'], [ 'IMEstatus','filetype' ] ] 
         \ },
 	\ 'inactive': {
-	\ 'left': [['Inactivefn']]
+	\ 'left': [['Inactivefn']],
+	\ 'right': [[ 'lineinfo' ]]
 	\},
         \ 'component_function': {
 	\'readonly':'LightlineReadonly',
@@ -639,7 +637,10 @@ let g:lightline = {
 	\ 'separator': { 'left': '', 'right': '' },
 	\ 'subseparator': { 'left': '', 'right': '' }
         \ }
-let g:lightline.component = {'lineinfo': '%3l[%L]:%-2v'}
+let g:lightline.component = {
+	\'lineinfo': '%3l[%L]:%-2v',
+	\'IMEstatus':"%{IMStatus('[JP-Lock]')}"
+	\}
 
 let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
@@ -662,8 +663,7 @@ endfunction
 function! MyMode()
   if &ft == 'denite'
     " deniteは自分でinsertモード normalモードを管理しているので
-    " lightlineのハイライト関数をdeniteのモードに合わせた値(-- NORMAL -- ならn)
-    " にしてハイライト関数を呼ぶ
+    " lightlineのハイライト関数をdeniteのモードに合わせた値(-- NORMAL -- ならn)にしてハイライト関数を呼ぶ
     let mode_str = substitute(denite#get_status("mode"), "-\\| ", "", "g")
     call lightline#link(tolower(mode_str[0]))
     return mode_str
@@ -674,9 +674,10 @@ endfunction
 
 function! LightLineFugitive()
   try
-    if &ft !~? 'vimfiler\|gundo' && exists('*gitbranch#name') && winwidth(0) > 55
+    if &ft !~? 'vimfiler\|gundo' && exists('*gitbranch#name') && winwidth(0) > 40
       let _ = gitbranch#name()
-      return strlen(_) ? ' '._ : ''
+      return strlen(_) && winwidth(0) > 100  ? ' '._ :
+	    \strlen(_) ? ' ': ''
     endif
   catch
   endtry
@@ -687,10 +688,14 @@ function! MyFilepath()
   if &ft == 'denite'
     return DeniteSources()
   else
-    let filename = winwidth(0) > 70 ? expand('%:~') :
-	       \ winwidth(0) > 45 ? expand('%:t') : ''
-    let modified = &modified ? '[+]' : ''
-    return filename . modified
+    let l:ll_filepath = expand('%:~')
+    let l:ll_filename = expand('%:t')
+"パスの文字数とウィンドウサイズに応じて表示を変える
+    let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-30 ? pathshorten(l:ll_filepath) : 
+	       \ winwidth(0) > 70 ? l:ll_filepath  :
+	       \ winwidth(0) > 45 ? l:ll_filename  : ''
+    let l:ll_modified = &modified ? '[+]' : ''
+    return l:ll_fn . l:ll_modified
   endif
 endfunction
 
@@ -702,9 +707,6 @@ endfunction
 function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
-
-"function! LightlineMode()
-"endfunction
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
