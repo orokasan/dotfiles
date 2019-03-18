@@ -441,6 +441,9 @@ call gina#custom#command#option(
       \ 'log', '--group', 'log-viewer'
       \)
 call gina#custom#command#option(
+      \ 'status', '--group', 'status-viewer'
+      \)
+call gina#custom#command#option(
       \ 'reflog', '--group', 'reflog-viewer'
       \)
 call gina#custom#command#option(
