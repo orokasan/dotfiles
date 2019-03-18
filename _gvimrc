@@ -36,7 +36,7 @@ set visualbell
 " コマンドラインの補完
 "set wildmode=list:longest
 ""N秒後にカーソル点滅開始
-"set guicursor=n:blinkwait2000
+set guicursor=n:blinkwait2000
 ""Insertでは高速点滅
 "set guicursor=i:blinkwait500-blinkon300-blinkoff150
 "放置したときだけCursorline強調

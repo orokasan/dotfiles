@@ -323,8 +323,8 @@ nnoremap <silent> * :<C-u>DeniteCursorWord
 nnoremap <silent> [denite]y :<C-u>Denite
 	\ -mode=normal -default-action=replace
 	\ register neoyank<CR>
-nnoremap <silent> ;g :<C-u>Denite -buffer-name=search
-      \ -no-empty -mode=normal grep<CR>
+"nnoremap <silent> ;g :<C-u>Denite -buffer-name=search
+"      \ -no-empty -mode=normal grep<CR>
 "メニュー
 nnoremap <silent> [denite]u :Denite menu<CR>
 nnoremap <silent> [denite]h :Denite help<CR>
@@ -336,7 +336,8 @@ call denite#custom#option('_', {
 	\ 'prompt': '»',
 	\ 'cursor_wrap': v:true,
 	\ 'winheight': 15,
-	\ 'highlight_mode_insert': 'WildMenu'
+	\ 'highlight_mode_insert': 'WildMenu',
+	\ 'statusline': v:false
 	\ })
 ""C-N,C-Pで上下移動
 call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
@@ -350,7 +351,7 @@ call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
 "h,lでディレクトリ上下移動
 call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
-
+"
 " Change file/rec command.
 call denite#custom#var('file/rec', 'command',
 	\ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
@@ -367,14 +368,6 @@ call denite#custom#source(
 
 " Add custom menus
 let s:menus = {}
-
-let s:menus.zsh = {
-	\ 'description': 'Edit your import zsh configuration'
-	\ }
-let s:menus.zsh.file_candidates = [
-	\ ['zshrc', '~/.config/zsh/.zshrc'],
-	\ ['zshenv', '~/.zshenv'],
-	\ ]
 
 let s:menus.my_commands = {
 	\ 'description': 'Example commands'
@@ -410,6 +403,7 @@ call denite#custom#option('default', 'prompt', '>')
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+
 "}}}
 "-----------------------------------------------------------------------
 "Dirmark
@@ -463,8 +457,10 @@ nnoremap <silent><buffer><expr> m
 \ defx#do_action('move')
 nnoremap <silent><buffer><expr> p
 \ defx#do_action('paste')
-nnoremap <silent><buffer><expr> l
-\ defx#do_action('open')
+nnoremap <silent><buffer><expr> l 
+\ defx#is_directory() ?
+\ defx#do_action('open') :
+\ defx#do_action('quit')
 nnoremap <silent><buffer><expr> L
 \ defx#do_action('drop')
 nnoremap <silent><buffer><expr> E
@@ -514,6 +510,9 @@ nnoremap <silent><buffer><expr> <C-g>
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
 endfunction
+
+"Deniteでカーソル下のdirをfile/rec
+nnoremap <silent><C-P> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
 "}}}
 "-----------------------------------------------------------------------
 "gina.vim
@@ -790,7 +789,8 @@ endfunction
 
 function! DeniteSources()
     let filename = denite#get_status("sources")
-    return 'Denite ['. filename . ']'
+	let filepath = denite#get_status("path")
+    return 'Denite ['. filename . ']'. filepath
 endfunction
 
 function! LightlineFiletype()
@@ -882,17 +882,6 @@ call deoplete#custom#option({
       \ })
 " call deoplete#custom#option('num_processes', 0)
 
-" call deoplete#custom#option('profile', v:true)
-" call deoplete#enable_logging('DEBUG', 'deoplete.log')
-" call deoplete#custom#source('clang', 'debug_enabled', 1)
-
-call deoplete#custom#option('candidate_marks',
-      \ ['A', 'S', 'D', 'F', 'G'])
-inoremap <expr>A       deoplete#insert_candidate(0)
-inoremap <expr>S       deoplete#insert_candidate(1)
-inoremap <expr>D       deoplete#insert_candidate(2)
-inoremap <expr>F       deoplete#insert_candidate(3)
-inoremap <expr>G deoplete#insert_candidate(4)
 "}}}
 "-----------------------------------------------------------------------
 "deoplete-sources
