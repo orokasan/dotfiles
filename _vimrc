@@ -385,6 +385,7 @@ function! ToggleSorter(sorter) abort
    let b:denite_new_context.sorters = join(sorters, ',')
    return '<denite:nop>'
 endfunction
+
 call denite#custom#map('insert', '<C-f>',
     \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
 
@@ -433,13 +434,14 @@ call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
-
+"
+"defx連携
 function! s:defx_open(context)
     let path = a:context['targets'][0]['action__path']
     let file = fnamemodify(path, ':p')
     let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
     let dir = denite#util#path2directory(path)
-    if &filetype ==# 'defx'
+	if &filetype ==# 'defx'
       call defx#call_action('cd', [dir])
       call defx#call_action('search', [path])
     else
@@ -495,14 +497,14 @@ autocmd FileType defx call s:defx_my_settings()
 
 "function! g:Denite_rec()
 "	let candidate = defx#get_candidate()
-"		if line('.') == 1
+"		if line('.) == 1
 "			let path_mod  = 'h'
 "		else
-"			let path_mod = candidate['is_directory'] ? '' : 'h'
+"			let path_mod = candidate['is_directory']  '' : 'h'
 "		endif
 "	let rowdir = fnamemodify(candidate['action__path'], '":p:' . path_mod . '"')
-"	let narrow_dir = '"' . rowdir . '"'
-"	execute('Denite -default-action=defx file/rec:' . narrow_dir)
+"	let narrow_dir = '' . rowdir . '"'
+"	execute('Denite -default-action=defx file/rec: . narrow_dir)
 "endfunction
 
 
@@ -894,10 +896,21 @@ function! DeniteMode()
   endif
 endfunction
 
+autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call LightLineGina()
+
+function! LightLineGina()
+if exists('*gitbranch#name')
+	let ginabranch = gitbranch#name()
+else
+	let ginabranch = ''
+endif
+return ginabranch
+endfunction
+
 function! LightLineFugitive()
-  try
-    if &ft !~? 'vimfiler\|gundo' && exists('*gitbranch#name') && winwidth(0) > 40
-      let _ = gitbranch#name()
+   try
+    if &ft !~? 'vimfiler\|gundo' && strlen(LightLineGina()) && winwidth(0) > 40
+      let _ = LightLineGina()
       return strlen(_) && winwidth(0) > 100  ? ' '._ :
 	    \strlen(_) ? ' ': ''
     endif
@@ -913,7 +926,7 @@ function! MyFilepath()
 	let l:ll_filepath = expand('%:~')
 	let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
-	let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-30 ? pathshorten(l:ll_filepath) :
+	let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-45 ? pathshorten(l:ll_filepath) :
 	\ winwidth(0) > 70 ? l:ll_filepath  :
 	\ winwidth(0) > 45 ? l:ll_filename  : ''
 	let l:ll_modified = &modified ? '[+]' : ''
@@ -1060,6 +1073,10 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 "-----------------------------------------------------------------------
 "echodoc
 call dein#add('Shougo/echodoc.vim')
+"-----------------------------------------------------------------------
+"Asynchronous Lint Engine
+"call dein#add('w0rp/ale')
+"let g:ale_linters = {'vim': ['vint']}
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
