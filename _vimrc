@@ -153,6 +153,7 @@ inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 function! IMStatus(...)
   return ''
 endfunction
+"
 
 "Tab系
 "不可視文字の可視化
@@ -268,7 +269,7 @@ noremap <leader>dm :<C-u>set ft=markdown<cr>
 nnoremap <Leader>nr <C-u>A  <Esc>
 "文字数カウント
 nnoremap <Leader><CR> <C-u>:%s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
-vnoremap <Leader><CR> :s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
+vnoremap <Leader><CR> :s/./&/gn<CR>:nohl<CR><C-o>:1messages<CR>
 "Markdown Docx出力
 "pandocが必要
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
@@ -636,6 +637,54 @@ call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
 "}}}
+"-----------------------------------------------------------------------------------------
+"文字数カウントスクリプト
+"{{{
+"lightlineに渡す変数の設定
+"適宜アップデートしている
+augroup CharCounter
+	autocmd!
+	autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>Update()
+augroup END
+"表示をここで変えてからLightlineにわたす
+function! s:Update()
+	let l:count = s:CharCount()
+	if l:count == 0
+		let l:shresult = '---'
+	elseif l:count < 10000
+		let l:shresult = l:count
+	else
+		let l:shresult = (l:count / 1000) . 'k'
+	endif
+	let b:charCounterCount = l:shresult
+endfunction
+"全体カウント
+function! s:CharCount()
+	let l:result = 0
+	for l:linenum in range(0, line('$'))
+		let l:line = getline(l:linenum)
+		let l:result += strlen(substitute(l:line, ".", "x", "g"))
+	endfor
+	return l:result
+endfunction
+"一行カウント
+function! s:LineChar()
+	let l:line = getline('.')
+	let l:result += strlen(substitute(l:line, ".", "x", "g"))
+	return l:result
+endfunction
+"選択範囲の行をカウント
+function! g:LineCharVCount() range
+	let l:result = 0
+	for l:linenum in range(a:firstline, a:lastline)
+		let l:line = getline(l:linenum)
+		let l:result += strlen(substitute(l:line, ".", "x", "g"))
+	endfor
+	echo '選択行の文字数 : 全体の文字数 = ' . l:result . ' : ' . s:CharCount()
+endfunction
+"呼び出す
+command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
+vnoremap<silent> <CR> :LineCharVCount<CR>"}}}
 "-----------------------------------------------------------------------
 "TweetVim
 call dein#add('mattn/webapi-vim')
@@ -656,37 +705,37 @@ let g:tweetvim_async_post = 1
 let g:tweetvim_display_username = 1
 let g:tweetvim_tweet_limit = 560
 augroup TweetVimSetting
-    autocmd!
-    " マッピング
-    " 挿入・通常モードでsayバッファを閉じる
-    autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
-    autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
-    " 各種アクション
-    autocmd FileType tweetvim     nnoremap <buffer>s                :<C-u>TweetVimSay<CR>
-    autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
-    autocmd FileType tweetvim     nnoremap <buffer><Leader>h        :<C-u>TweetVimHomeTimeline<CR>
-    autocmd FileType tweetvim     nnoremap <buffer><Leader>u        :<C-u>:Unite tweetvim<CR>
-    autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
-    autocmd FileType tweetvim     nnoremap <buffer>t                :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
-    autocmd FileType tweetvim     nmap     <buffer><Leader>F        <Plug>(tweetvim_action_remove_favorite)
-    autocmd FileType tweetvim     nmap     <buffer><Leader>d        <Plug>(tweetvim_action_remove_status)
-    autocmd FileType tweetvim     nmap     <buffer>o        <Plug>(tweetvim_action_open_links)
-
-    " リロード
-    autocmd FileType tweetvim     nmap     <buffer><Tab>            <Plug>(tweetvim_action_reload)
-    " ページの先頭に戻ったときにリロード
-    autocmd FileType tweetvim     nmap     <buffer><silent>gg       gg<Plug>(tweetvim_action_reload)
-    " ページ移動を ff/bb から f/b に
-    autocmd FileType tweetvim     nmap     <buffer>f                <Plug>(tweetvim_action_page_next)
-    autocmd FileType tweetvim     nmap     <buffer>b                <Plug>(tweetvim_action_page_previous)
-  " 縦移動（カーソルを常に中央にする）
-  "  autocmd FileType tweetvim     nnoremap <buffer><silent>j        :<C-u>call <SID>tweetvim_vertical_move("gj")<CR>zz
-  " autocmd FileType tweetvim     nnoremap <buffer><silent>k        :<C-u>call <SID>tweetvim_vertical_move("gk")<CR>zz
-    " 不要なマップを除去
-    autocmd FileType tweetvim     nunmap   <buffer>ff
-    autocmd FileType tweetvim     nunmap   <buffer>bb
-    " tweetvim バッファに移動したときに自動リロード
-    autocmd BufEnter * call <SID>tweetvim_reload()
+autocmd!
+" マッピング
+" 挿入・通常モードでsayバッファを閉じる
+autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
+autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
+" 各種アクション
+autocmd FileType tweetvim     nnoremap <buffer>s                :<C-u>TweetVimSay<CR>
+autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
+autocmd FileType tweetvim     nnoremap <buffer><Leader>h        :<C-u>TweetVimHomeTimeline<CR>
+autocmd FileType tweetvim     nnoremap <buffer><Leader>u        :<C-u>:Unite tweetvim<CR>
+autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
+autocmd FileType tweetvim     nnoremap <buffer>t                :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
+autocmd FileType tweetvim     nmap     <buffer><Leader>F        <Plug>(tweetvim_action_remove_favorite)
+autocmd FileType tweetvim     nmap     <buffer><Leader>d        <Plug>(tweetvim_action_remove_status)
+autocmd FileType tweetvim     nmap     <buffer>o        <Plug>(tweetvim_action_open_links)
+autocmd FileType tweetvim     nmap     <silent><buffer>q				:bd<CR>
+" リロード
+autocmd FileType tweetvim     nmap     <buffer><Tab>            <Plug>(tweetvim_action_reload)
+" ページの先頭に戻ったときにリロード
+autocmd FileType tweetvim     nmap     <buffer><silent>gg       gg<Plug>(tweetvim_action_reload)
+" ページ移動を ff/bb から f/b に
+autocmd FileType tweetvim     nmap     <buffer>f                <Plug>(tweetvim_action_page_next)
+autocmd FileType tweetvim     nmap     <buffer>b                <Plug>(tweetvim_action_page_previous)
+"縦移動（カーソルを常に中央にする）
+ autocmd FileType tweetvim     nnoremap <buffer><silent>j        :<C-u>call <SID>tweetvim_vertical_move("gj")<CR>zz
+autocmd FileType tweetvim     nnoremap <buffer><silent>k        :<C-u>call <SID>tweetvim_vertical_move("gk")<CR>zz
+" 不要なマップを除去
+autocmd FileType tweetvim     nunmap   <buffer>ff
+autocmd FileType tweetvim     nunmap   <buffer>bb
+" tweetvim バッファに移動したときに自動リロード
+autocmd BufEnter * call <SID>tweetvim_reload()
 augroup END
 " セパレータを飛ばして移動する
 " filetype が tweetvim ならツイートをリロード
@@ -704,29 +753,29 @@ call dein#add('mengelbrecht/lightline-bufferline') "tablineにバッファー表
 call dein#add('itchyny/vim-gitbranch')
 "{{{
 let g:lightline = {
-        \ 'colorscheme': 'deus',
-        \ 'active': {
-	\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
-	\ 'right': [ [ 'lineinfo' ],['percent'], [ 'IMEstatus','filetype' ] ]
-        \ },
+\ 'colorscheme': 'deus',
+    \ 'active': {
+		\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
+		\ 'right': [ ['charcount','lineinfo' ],['percent'], [ 'IMEstatus','filetype' ] ]
+    \ },
 	\ 'inactive': {
-	\ 'left': [['Inactivefn']],
-	\ 'right': [[ 'lineinfo' ]]
+		\ 'left': [['inactivefn']],
+		\ 'right': [[ 'lineinfo' ]]
 	\},
-        \ 'component_function': {
-	\'readonly':'LightlineReadonly',
-        \'gitbranch': 'gina#component#repo#preset',
-        \'filetype': 'LightlineFiletype',
-	\'Inactivefn':'MyInactiveFilename',
-	\'relativepath':'MyFilepath',
+    \ 'component_function': {
+		\'readonly':'LightlineReadonly',
+		\'gitbranch': 'LightLineFugitive',
+		\'filetype': 'LightlineFiletype',
+		\'inactivefn':'MyInactiveFilename',
+		\'relativepath':'MyFilepath',
         \'mode': 'LightlineMode'
-        \ },
+    \ },
 	\ 'separator': { 'left': '', 'right': '' },
 	\ 'subseparator': { 'left': '', 'right': '' }
-        \ }
+\ }
 let g:lightline.component = {
-	\'lineinfo': '%3l[%L]:%-2v',
-	\'IMEstatus':"%{IMStatus('-JP-')}"
+	\'IMEstatus':"%{IMStatus('-JP-')}",
+	\'charcount':"%{b:charCounterCount}"
 	\}
 let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
@@ -737,9 +786,13 @@ let g:lightline#bufferline#number_map = {
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
 let g:lightline#bufferline#unnamed = '[unnamed]'
 
+command! -bar LightlineUpdate    call lightline#init()|
+  \ call lightline#colorscheme()|
+  \ call lightline#update()
+
 function! LightlineMode()
-return    &filetype ==# 'unite' ? 'Unite' :
-	\ &filetype ==# 'denite' ? MyMode() :
+return &filetype ==# 'unite' ? 'Unite' :
+	\ &filetype ==# 'denite' ? DeniteMode() :
 	\ &filetype ==# 'help' ? 'Help' :
 	\ &filetype ==# 'defx' ? 'Defx' :
 	\ lightline#mode()
@@ -749,15 +802,15 @@ function! MyInactiveFilename()
 return &filetype !~# '\v(help|denite|defx)' ? expand('%:t') : LightlineMode()
 endfunction
 
-function! MyMode()
+function! DeniteMode()
   if &ft == 'denite'
     " deniteは自分でinsertモード normalモードを管理しているので
     " lightlineのハイライト関数をdeniteのモードに合わせた値(-- NORMAL -- ならn)にしてハイライト関数を呼ぶ
-    let mode_str = substitute(denite#get_status("mode"), "-\\| ", "", "g")
-    call lightline#link(tolower(mode_str[0]))
-    return mode_str
+    let l:mode_str = substitute(denite#get_status("mode"), "-\\| ", "", "g")
+    call lightline#link(tolower(l:mode_str[0]))
+    return l:mode_str
   else
-    return winwidth('.') > 60 ? lightline#mode() : ''
+    return lightline#mode()
   endif
 endfunction
 
@@ -789,9 +842,9 @@ function! MyFilepath()
 endfunction
 
 function! DeniteSources()
-    let filename = denite#get_status("sources")
-	let filepath = denite#get_status("path")
-    return 'Denite ['. filename . ']'. filepath
+    let l:filename = denite#get_status("sources")
+	let l:filepath = denite#get_status("path")
+    return 'Denite ['. l:filename . ']'. l:filepath
 endfunction
 
 function! LightlineFiletype()
