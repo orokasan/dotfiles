@@ -125,6 +125,8 @@ set modeline
 "入力・編集
 "========================================================================
 "{{{
+"自動改行をやめる
+set textwidth=0
 " カーソルを文字が存在しない部分でも動けるようにする
 set virtualedit=block
 " 行末の1文字先までカーソルを移動できるように
@@ -153,7 +155,7 @@ inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 function! IMStatus(...)
   return ''
 endfunction
-"
+
 
 "Tab系
 "不可視文字の可視化
@@ -267,9 +269,6 @@ nnoremap <silent> <C-p> :Bclose<CR>
 noremap <leader>dm :<C-u>set ft=markdown<cr>
 "Markdownの改行タグ
 nnoremap <Leader>nr <C-u>A  <Esc>
-"文字数カウント
-nnoremap <Leader><CR> <C-u>:%s/./&/g<CR>:nohl<CR><C-o>:1messages<CR>
-vnoremap <Leader><CR> :s/./&/gn<CR>:nohl<CR><C-o>:1messages<CR>
 "Markdown Docx出力
 "pandocが必要
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
@@ -680,7 +679,8 @@ function! g:LineCharVCount() range
 		let l:line = getline(l:linenum)
 		let l:result += strlen(substitute(l:line, ".", "x", "g"))
 	endfor
-	echo '選択行の文字数 : 全体の文字数 = ' . l:result . ' : ' . s:CharCount()
+	echo ' [WordCount] -- ' . l:result . ' : ' . s:CharCount() .
+				\ ' --   [選択行の字数:全体の字数]'
 endfunction
 "呼び出す
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
