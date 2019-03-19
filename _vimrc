@@ -304,7 +304,6 @@ call dein#add('Shougo/neomru.vim')
 call dein#add('Shougo/denite.nvim')
 call dein#add('Shougo/unite.vim')
 call dein#add('Shougo/neoyank.vim')
-"-----------------------------------------------------------------------
 "{{{
 "need-Python3.6
 nnoremap [denite] <Nop>
@@ -391,7 +390,8 @@ call denite#custom#map('insert', '<C-f>',
 
 "need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
-      \ ['rg', '--files', '--glob', '!.git'])
+      \ ['rg',
+	  \ '--files', '--glob', '!.git'])
 call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
 call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'final_opts', [])
@@ -434,6 +434,20 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 
+function! s:defx_open(context)
+    let path = a:context['targets'][0]['action__path']
+    let file = fnamemodify(path, ':p')
+    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
+    let dir = denite#util#path2directory(path)
+    if &filetype ==# 'defx'
+      call defx#call_action('cd', [dir])
+      call defx#call_action('search', [path])
+    else
+      execute('Defx ' . dir . file_search)
+  endif
+endfunction
+call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
+        \ function('s:defx_open'))
 "}}}
 "-----------------------------------------------------------------------
 "Dirmark
@@ -455,12 +469,12 @@ endif
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
 	\ :<C-u>Defx -listed <CR>
-	\ :set nonumber<CR>
+	\ :setlocal nonumber<CR>
 call defx#custom#option('_', {
     \ 'winwidth': 40,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
-    \ 'columns':'mark:filename:type:size:time',
+    \ 'columns':'mark:filename:time',
     \ 'sort': "TIME",
     \ })
 "call defx#custom#column('filename', {
@@ -474,116 +488,115 @@ call defx#custom#option('_', {
 "      \ 'readonly_icon': '✗',
 "      \ 'selected_icon': '✓',
 "      \ })
-augroup defx
-autocmd!
+"augroup defx
+"autocmd!
 autocmd FileType defx call s:defx_my_settings()
-function! s:defx_my_settings() abort
-" Define mappings
-nnoremap <silent><buffer><expr> <C-c>
-\ <Nop>
-nnoremap <silent><buffer><expr> <CR>
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> c
-\ defx#async_action('copy')
-nnoremap <silent><buffer><expr> m
-\ defx#async_action('move')
-nnoremap <silent><buffer><expr> p
-\ defx#async_action('paste')
-nnoremap <silent><buffer><expr> l 
-\ defx#is_directory() ?
-\ defx#do_action('open') :
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> E
-\ defx#do_action('open', 'vsplit')
-nnoremap <silent><buffer><expr> t
-\ defx#do_action('toggle_sort','filename')
-nnoremap <silent><buffer><expr> T
-\ defx#do_action('toggle_sort','time')
-nnoremap <silent><buffer><expr> P
-\ defx#do_action('open', 'pedit')
-nnoremap <silent><buffer><expr> K
-\ defx#do_action('new_directory')
-nnoremap <silent><buffer><expr> N
-\ defx#do_action('new_file')
-nnoremap <silent><buffer><expr> d
-\ defx#do_action('remove')
-nnoremap <silent><buffer><expr> r
-\ defx#do_action('rename')
-nnoremap <silent><buffer><expr> x
-\ defx#async_action('execute_system')
-nnoremap <silent><buffer><expr> f
-\ defx#do_action('open_or_close_tree')
-nnoremap <silent><buffer><expr> yy
-\ defx#do_action('yank_path')
-nnoremap <silent><buffer><expr> .
-\ defx#do_action('toggle_ignored_files')
-nnoremap <silent><buffer><expr> h
-\ defx#do_action('cd', ['..'])
-nnoremap <silent><buffer><expr> ~
-\ defx#do_action('cd')
-nnoremap <silent><buffer><expr> q
-\ defx#do_action('quit')
-nnoremap <silent><buffer><expr> i
-\ defx#do_action('toggle_select') . 'j'
-nnoremap <silent><buffer><expr> I
-\ defx#do_action('clear_select_all')
-nnoremap <silent><buffer><expr> *
-\ defx#do_action('toggle_select_all')
-nnoremap <silent><buffer><expr> j
-\ line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr> k
-\ line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <C-l>
-\ defx#do_action('redraw')
-nnoremap <silent><buffer><expr> <C-g>
-\ defx#do_action('print')
-nnoremap <silent><buffer><expr> cd
-\ defx#do_action('change_vim_cwd')
-endfunction
-augroup END
-"Deniteでカーソル下のdirをfile/rec
-"nnoremap <silent><C-CR> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
-function! s:defx_open(context)
-    let path = a:context['targets'][0]['action__path']
-    let file = fnamemodify(path, ':p')
-    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
-    let dir = denite#util#path2directory(path)
-    if &filetype ==# 'defx'
-      call defx#do_action('cd', [dir])
-      call defx#do_action('search', [path])
-    else
-      execute('Defx ' . dir . file_search)
-endfunction
-call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
-        \ function('s:defx_open'))
-augroup ps_defx
-    au!
-    au FileType defx call s:defx_settings()
-augroup END
+"augroup END
 
-function! s:defx_settings()
+"function! g:Denite_rec()
+"	let candidate = defx#get_candidate()
+"		if line('.') == 1
+"			let path_mod  = 'h'
+"		else
+"			let path_mod = candidate['is_directory'] ? '' : 'h'
+"		endif
+"	let rowdir = fnamemodify(candidate['action__path'], '":p:' . path_mod . '"')
+"	let narrow_dir = '"' . rowdir . '"'
+"	execute('Denite -default-action=defx file/rec:' . narrow_dir)
+"endfunction
+
+
+function! s:defx_my_settings() abort
+
     function! s:GetDefxBaseDir(candidate) abort
         if line('.') == 1
             let path_mod  = 'h'
         else
-            let path_mod = isdirectory(a:candidate) ? 'h:h' : 'h'
+            let path_mod = isdirectory(a:candidate) ? '' : 'h'
         endif
-        return fnamemodify(a:candidate, ':p:' . path_mod)
+        return fnamemodify(a:candidate,'":p:' . path_mod . '"')
     endfunction
-
     function! s:denite_rec(context) abort
         let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
-        execute('Denite -default-action=defx file/rec:' . narrow_dir)
+        execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
     endfunction
+	" Define mappings
+	nnoremap <silent><buffer><expr> <C-c>
+	\ <Nop>
+	nnoremap <silent><buffer><expr> <CR>
+	\ defx#do_action('drop')
+	nnoremap <silent><buffer><expr> c
+	\ defx#async_action('copy')
+	nnoremap <silent><buffer><expr> m
+	\ defx#async_action('move')
+	nnoremap <silent><buffer><expr> p
+	\ defx#async_action('paste')
+	nnoremap <silent><buffer><expr> l 
+	\ defx#is_directory() ?
+	\ defx#do_action('open') :
+	\ defx#do_action('drop')
+	nnoremap <silent><buffer><expr> E
+	\ defx#do_action('open', 'vsplit')
+	"nnoremap <silent><buffer><expr> t
+	"\ defx#do_action('toggle_sort','filename')
+	"nnoremap <silent><buffer><expr> T
+	"\ defx#do_action('toggle_sort','time')
+	nnoremap <silent><buffer><expr> P
+	\ defx#do_action('open', 'pedit')
+	nnoremap <silent><buffer><expr> K
+	\ defx#do_action('new_directory')
+	nnoremap <silent><buffer><expr> N
+	\ defx#do_action('new_file')
+	nnoremap <silent><buffer><expr> d
+	\ defx#do_action('remove')
+	nnoremap <silent><buffer><expr> r
+	\ defx#do_action('rename')
+	nnoremap <silent><buffer><expr> x
+	\ defx#async_action('execute_system')
+	nnoremap <silent><buffer><expr> f
+	\ defx#do_action('open_or_close_tree')
+	nnoremap <silent><buffer><expr> yy
+	\ defx#do_action('yank_path')
+	nnoremap <silent><buffer><expr> .
+	\ defx#do_action('toggle_ignored_files')
+	nnoremap <silent><buffer><expr> h
+	\ defx#do_action('cd', ['..'])
+	nnoremap <silent><buffer><expr> ~
+	\ defx#do_action('cd')
+	nnoremap <silent><buffer><expr> q
+	\ defx#do_action('quit')
+	nnoremap <silent><buffer><expr> i
+	\ defx#do_action('toggle_select') . 'j'
+	nnoremap <silent><buffer><expr> I
+	\ defx#do_action('clear_select_all')
+	nnoremap <silent><buffer><expr> *
+	\ defx#do_action('toggle_select_all')
+	nnoremap <silent><buffer><expr> j
+	\ line('.') == line('$') ? 'gg' : 'j'
+	nnoremap <silent><buffer><expr> k
+	\ line('.') == 1 ? 'G' : 'k'
+	nnoremap <silent><buffer><expr> <C-l>
+	\ defx#do_action('redraw')
+	nnoremap <silent><buffer><expr> <C-g>
+	\ defx#do_action('print')
+	nnoremap <silent><buffer><expr> cd
+	\ defx#do_action('change_vim_cwd')
+	nnoremap <silent><buffer><expr> <C-t>
+	\ defx#do_action('call', '<SID>denite_rec')
 
-    nnoremap <silent><buffer><expr> <CR>
-        \ defx#is_directory() ? defx#do_action('open') :
-        \ defx#do_action('multi', ['drop', 'quit'])
-    nnoremap <silent><buffer><expr> <C-t>
-                \ defx#do_action('call', '<SID>denite_rec')
+		function! Test(context) abort
+		  echomsg string(a:context.targets[0])
+		endfunction
+		nnoremap <silent><buffer><expr> T
+		\ defx#do_action('call', 'Test')
+
 endfunction
-"}}}
 
+
+"Deniteでカーソル下のdirをfile/rec
+nnoremap <silent><C-CR> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
+
+"}}}
 "-----------------------------------------------------------------------
 "gina.vim
 call dein#add('lambdalisue/gina.vim') "git管理
