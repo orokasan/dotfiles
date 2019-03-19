@@ -61,6 +61,7 @@ function! s:loadview() abort
 endfunction
 
 augroup MyAutoCmd
+  autocmd!
   autocmd MyAutoCmd BufWinLeave ?* call s:mkview()
   autocmd MyAutoCmd BufReadPost ?* call s:loadview()
 augroup END
@@ -184,6 +185,13 @@ set incsearch
 set wrapscan
 " 検索語をハイライト表示
 set hlsearch
+"Markdown用設定
+augroup vimrc_markdown
+autocmd!
+autocmd BufRead,BufNewFile *.{md} set filetype=markdown
+autocmd! FileType markdown hi! def link markdownItalic Normal
+autocmd FileType markdown set commentstring=<\!--\ %s\ -->
+augroup END
 "}}}
 "========================================================================
 "Key mapping
@@ -331,6 +339,9 @@ nnoremap <silent> [denite]h :Denite help<CR>
 "最近使用したファイル一覧
 nnoremap <silent> [denite]n :<C-u>Denite
 	\ -mode=normal file_mru<CR>
+nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
+ nnoremap <silent> [denite]j :<C-u>Denite -buffer-name=search
+        \ -resume -mode=normal -refresh<CR>
 "denite-default option
 call denite#custom#option('_', {
 	\ 'prompt': '»',
@@ -339,32 +350,60 @@ call denite#custom#option('_', {
 	\ 'highlight_mode_insert': 'WildMenu',
 	\ 'statusline': v:false
 	\ })
-""C-N,C-Pで上下移動
-call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
-call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
+" Change mappings.
+call denite#custom#map(
+      \ 'insert',
+      \ '<C-j>',
+      \ '<denite:move_to_next_line>',
+      \ 'noremap'
+      \)
+call denite#custom#map(
+      \ 'insert',
+      \ '<C-k>',
+      \ '<denite:move_to_previous_line>',
+      \ 'noremap'
+      \)
+
 "C-J,C-Kでsplitで開く
-call denite#custom#map('insert', '<C-j>', '<denite:do_action-split>', 'noremap')
-call denite#custom#map('insert', '<C-k>', '<denite:do_action-vsplit>', 'noremap')
+call denite#custom#map('insert', '<C-o>', '<denite:do_action:split>', 'noremap')
+call denite#custom#map('insert', '<C-O>', '<denite:do_action:vsplit>', 'noremap')
 "C-h,C-lでディレクトリ移動
 call denite#custom#map('insert', '<C-l>', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
 "h,lでディレクトリ上下移動
 call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
-"
-" Change file/rec command.
+
+function! ToggleSorter(sorter) abort
+   let sorters = split(b:denite_context.sorters, ',')
+   let idx = index(sorters, a:sorter)
+   if idx < 0
+       call add(sorters, a:sorter)
+   else
+       call remove(sorters, idx)
+   endif
+   let b:denite_new_context = {}
+   let b:denite_new_context.sorters = join(sorters, ',')
+   return '<denite:nop>'
+endfunction
+call denite#custom#map('insert', '<C-f>',
+    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
+
+"need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
-	\ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+      \ ['rg', '--files', '--glob', '!.git'])
+call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'final_opts', [])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'default_opts',
+      \ ['--vimgrep', '--no-heading'])
 
 " Change matchers.
 call denite#custom#source(
 	\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
 call denite#custom#source(
 	\ 'file/rec', 'matchers', ['matcher/cpsm'])
-
-" Change sorters.
-call denite#custom#source(
-	\ 'file/rec', 'sorters', ['sorter/sublime'])
 
 " Add custom menus
 let s:menus = {}
@@ -377,28 +416,19 @@ let s:menus.my_commands.command_candidates = [
 	\ ['Open zsh menu', 'Denite menu:zsh'],
 	\ ['Format code', 'FormatCode', 'go,python'],
 	\ ]
-
 call denite#custom#var('menu', 'menus', s:menus)
 
-" Ag command on grep source
-call denite#custom#var('grep', 'command', ['ag'])
-call denite#custom#var('grep', 'default_opts',
-	\ ['-i', '--vimgrep'])
-call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'pattern_opt', [])
-call denite#custom#var('grep', 'separator', ['--'])
-call denite#custom#var('grep', 'final_opts', [])
+"" Ag command on grep/filerec source
+"call denite#custom#var('file_rec', 'command',
+"    \ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+"call denite#custom#var('grep', 'command', ['ag'])
+
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#var('file/rec/git', 'command',
 	\ ['git', 'ls-files', '-co', '--exclude-standard'])
-
 call denite#custom#alias('source', 'file/rec/py', 'file/rec')
 call denite#custom#var('file/rec/py', 'command',['scantree.py'])
-
-" Change default prompt
-call denite#custom#option('default', 'prompt', '>')
-
 " Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
@@ -444,6 +474,8 @@ call defx#custom#option('_', {
 "      \ 'readonly_icon': '✗',
 "      \ 'selected_icon': '✓',
 "      \ })
+augroup defx
+autocmd!
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
 " Define mappings
@@ -508,10 +540,50 @@ nnoremap <silent><buffer><expr> <C-g>
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
 endfunction
-
+augroup END
 "Deniteでカーソル下のdirをfile/rec
-nnoremap <silent><C-CR> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
+"nnoremap <silent><C-CR> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
+function! s:defx_open(context)
+    let path = a:context['targets'][0]['action__path']
+    let file = fnamemodify(path, ':p')
+    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
+    let dir = denite#util#path2directory(path)
+    if &filetype ==# 'defx'
+      call defx#do_action('cd', [dir])
+      call defx#do_action('search', [path])
+    else
+      execute('Defx ' . dir . file_search)
+endfunction
+call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
+        \ function('s:defx_open'))
+augroup ps_defx
+    au!
+    au FileType defx call s:defx_settings()
+augroup END
+
+function! s:defx_settings()
+    function! s:GetDefxBaseDir(candidate) abort
+        if line('.') == 1
+            let path_mod  = 'h'
+        else
+            let path_mod = isdirectory(a:candidate) ? 'h:h' : 'h'
+        endif
+        return fnamemodify(a:candidate, ':p:' . path_mod)
+    endfunction
+
+    function! s:denite_rec(context) abort
+        let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
+        execute('Denite -default-action=defx file/rec:' . narrow_dir)
+    endfunction
+
+    nnoremap <silent><buffer><expr> <CR>
+        \ defx#is_directory() ? defx#do_action('open') :
+        \ defx#do_action('multi', ['drop', 'quit'])
+    nnoremap <silent><buffer><expr> <C-t>
+                \ defx#do_action('call', '<SID>denite_rec')
+endfunction
 "}}}
+
 "-----------------------------------------------------------------------
 "gina.vim
 call dein#add('lambdalisue/gina.vim') "git管理
@@ -583,11 +655,6 @@ let g:neomru#file_mru_ignore_pattern = 'gina://'
 "vim-markdow
 call dein#add('iwataka/minidown.vim')
 "{{{
-augroup vimrc_markdown
-autocmd BufRead,BufNewFile *.{md} set filetype=markdown
-autocmd! FileType markdown hi! def link markdownItalic Normal
-autocmd FileType markdown set commentstring=<\!--\ %s\ -->
-augroup END
 "mapping
 nnoremap <Leader>pmd <C-u>:Minidown<CR>
 "}}}
