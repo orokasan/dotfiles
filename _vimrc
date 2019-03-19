@@ -452,16 +452,14 @@ nnoremap <silent><buffer><expr> <C-c>
 nnoremap <silent><buffer><expr> <CR>
 \ defx#do_action('drop')
 nnoremap <silent><buffer><expr> c
-\ defx#do_action('copy')
+\ defx#async_action('copy')
 nnoremap <silent><buffer><expr> m
-\ defx#do_action('move')
+\ defx#async_action('move')
 nnoremap <silent><buffer><expr> p
-\ defx#do_action('paste')
+\ defx#async_action('paste')
 nnoremap <silent><buffer><expr> l 
 \ defx#is_directory() ?
 \ defx#do_action('open') :
-\ defx#do_action('quit')
-nnoremap <silent><buffer><expr> L
 \ defx#do_action('drop')
 nnoremap <silent><buffer><expr> E
 \ defx#do_action('open', 'vsplit')
@@ -480,7 +478,7 @@ nnoremap <silent><buffer><expr> d
 nnoremap <silent><buffer><expr> r
 \ defx#do_action('rename')
 nnoremap <silent><buffer><expr> x
-\ defx#do_action('execute_system')
+\ defx#async_action('execute_system')
 nnoremap <silent><buffer><expr> f
 \ defx#do_action('open_or_close_tree')
 nnoremap <silent><buffer><expr> yy
@@ -512,7 +510,7 @@ nnoremap <silent><buffer><expr> cd
 endfunction
 
 "Deniteでカーソル下のdirをfile/rec
-nnoremap <silent><C-P> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
+nnoremap <silent><C-CR> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
 "}}}
 "-----------------------------------------------------------------------
 "gina.vim
@@ -717,7 +715,7 @@ let g:lightline = {
 	\},
         \ 'component_function': {
 	\'readonly':'LightlineReadonly',
-        \'gitbranch': 'LightLineFugitive',
+        \'gitbranch': 'gina#component#repo#preset',
         \'filetype': 'LightlineFiletype',
 	\'Inactivefn':'MyInactiveFilename',
 	\'relativepath':'MyFilepath',
@@ -733,7 +731,10 @@ let g:lightline.component = {
 let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
 let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
 let g:lightline.component_type   = {'buffers': 'tabsel'}
-let g:lightline#bufferline#show_number = 1
+let g:lightline#bufferline#show_number = 2
+let g:lightline#bufferline#number_map = {
+\ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
+\ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
 let g:lightline#bufferline#unnamed = '[unnamed]'
 
 function! LightlineMode()
