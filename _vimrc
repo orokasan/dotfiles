@@ -341,7 +341,7 @@ nnoremap <silent> [denite]y :<C-u>Denite
 	\ -mode=normal
 	\ register neoyank<CR>
 nnoremap <silent> [denite]c :<C-u>Denite
-    \ -mode=normal -default-action=edit
+    \ -mode=normal
     \ command_history<CR>
 "nnoremap <silent> ;g :<C-u>Denite -buffer-name=search
 "      \ -no-empty -mode=normal grep<CR>
@@ -398,6 +398,9 @@ call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
 "h,lでディレクトリ上下移動
 call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
+"defxで開く
+call denite#custom#map('normal', 'd', '<denite:do_action:defx>', 'noremap')
+call denite#custom#map('insert', '<C-d>', '<denite:do_action:defx>', 'noremap')
 
 function! ToggleSorter(sorter) abort
    let sorters = split(b:denite_context.sorters, ',')
@@ -482,8 +485,9 @@ call dein#add('kmnk/denite-dirmark')
 "{{{
 nmap <Leader>dd    <SID>(dirmark)
 nmap <Leader>da    <SID>(dirmark-add)
-nnoremap <silent> <SID>(dirmark) :<C-u>Denite -default-action=cd dirmark<CR>
-nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand('%:p:h') .  '<CR>'
+nnoremap <silent> <SID>(dirmark) :<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
+"bookmark by "add"action
+nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>DeniteBufferDir dirmark/add <CR>'
 "}}}
 "-----------------------------------------------------------------------
 "Defx
@@ -501,8 +505,9 @@ call defx#custom#option('_', {
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:filename:time',
-    \ 'sort': "TIME",
+    \ 'sort': "TIME"
     \ })
+"    \ 'ignored-files':['desktop.ini','ntuser.*']
 "call defx#custom#column('filename', {
 "      \ 'directory_icon': '▸',
 "      \ 'opened_icon': '▾',
@@ -708,14 +713,14 @@ call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1
 call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
 call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
 call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
-"call lexima#add_rule({'char': '<TAB>', 'at': '\%#)', 'leave': 1})
-"call lexima#add_rule({'char': '<TAB>', 'at': '\%#"', 'leave': 1})
-"call lexima#add_rule({'char': '<TAB>', 'at': '\%#''', 'leave': 1})
-"call lexima#add_rule({'char': '<TAB>', 'at': '\%#]', 'leave': 1})
-"call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
-"call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
-"call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
-"call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#)', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#"', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#''', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#]', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
 "}}}
 "-----------------------------------------------------------------------------------------
 "文字数カウントスクリプト
@@ -826,13 +831,18 @@ endfunction
 call dein#add('itchyny/lightline.vim') "statuslineをかっこよく
 "lightline-bufferline
 call dein#add('mengelbrecht/lightline-bufferline') "tablineにバッファー表示
+"lightline-ale
+call dein#add('maximbaz/lightline-ale')
 call dein#add('itchyny/vim-gitbranch')
 "{{{
 let g:lightline = {
 \ 'colorscheme': 'deus',
     \ 'active': {
 		\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
-		\ 'right': [ ['charcount','lineinfo' ],['percent'], [ 'IMEstatus','filetype' ] ]
+		\ 'right': [
+        \ ['charcount','lineinfo', 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok',],
+        \ ['percent'], [ 'IMEstatus','filetype' ] 
+        \ ]
     \ },
 	\ 'inactive': {
 		\ 'left': [['inactivefn']],
@@ -840,8 +850,9 @@ let g:lightline = {
 	\},
     \ 'component_function': {
 		\'readonly':'LightlineReadonly',
-		\'gitbranch': 'LightLineFugitive',
+		\'gitbranch': 'LLgitbranch',
 		\'filetype': 'LightlineFiletype',
+        \ 'ale': 'ALEGetStatusLine',
 		\'inactivefn':'MyInactiveFilename',
 		\'relativepath':'MyFilepath',
         \'mode': 'LightlineMode'
@@ -849,18 +860,33 @@ let g:lightline = {
 	\ 'separator': { 'left': '', 'right': '' },
 	\ 'subseparator': { 'left': '', 'right': '' }
 \ }
+
 let g:lightline.component = {
 	\'IMEstatus':"%{IMStatus('-JP-')}",
 	\'charcount':"%{b:charCounterCount}"
 	\}
+let g:lightline.component_expand = {
+      \  'buffers': 'lightline#bufferline#buffers',
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
+let g:lightline.component_type = {
+      \  'buffers': 'tabsel',
+      \  'linter_checking': 'left',
+      \  'linter_warnings': 'warning',
+      \  'linter_errors': 'error',
+      \  'linter_ok': 'left',
+      \ }
 let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
-let g:lightline.component_expand = {'buffers': 'lightline#bufferline#buffers'}
-let g:lightline.component_type   = {'buffers': 'tabsel'}
 let g:lightline#bufferline#show_number = 2
 let g:lightline#bufferline#number_map = {
 \ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
+
 let g:lightline#bufferline#unnamed = '[unnamed]'
+
 
 command! -bar LightlineUpdate    call lightline#init()|
   \ call lightline#colorscheme()|
@@ -890,9 +916,9 @@ function! DeniteMode()
   endif
 endfunction
 
-autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call LightLineGina()
+autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call LLgitbranch()
 
-function! LightLineGina()
+function! s:llgit()
 if exists('*gitbranch#name')
 	let ginabranch = gitbranch#name()
 else
@@ -901,10 +927,10 @@ endif
 return ginabranch
 endfunction
 
-function! LightLineFugitive()
+function! LLgitbranch()
   try
-    if &ft !~? 'vimfiler\|gundo' && strlen(LightLineGina()) && winwidth(0) > 40
-      let _ = LightLineGina()
+    if &ft !~? 'vimfiler\|gundo' && strlen(s:llgit()) && winwidth(0) > 40
+      let _ = s:llgit()
       return strlen(_) && winwidth(0) > 100  ? ' '._ :
 	    \strlen(_) ? ' ': ''
     endif
@@ -938,6 +964,7 @@ function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 "}}}
+"-----------------------------------------------------------------------
 "-----------------------------------------------------------------------
 "deoplete
 call dein#add('Shougo/deoplete.nvim')
@@ -1050,7 +1077,6 @@ let g:comfortable_motion_impulse_multiplier = 1  " Feel free to increase/decreas
 nnoremap <silent> <C-d> :call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * 2)<CR>
 nnoremap <silent> <C-u> :call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * -2)<CR>
 "-----------------------------------------------------------------------
-
 call dein#add('w0rp/ale')
 "https://efcl.info/2015/09/10/introduce-textlint/
 "https://koirand.github.io/blog/2018/textlint/
@@ -1059,11 +1085,19 @@ let g:ale_linters = {
 \   'markdown': ['textlint']
 \}
 let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 0
+let g:ale_set_quickfix = 1
 let g:ale_sign_column_always = 1
 let g:ale_lint_on_enter = 0
 let g:ale_open_list = 0
 let g:ale_keep_list_window_open = 0
+let g:ale_sign_error = '!!'
+let g:ale_sign_warning = '=='
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
+nmap <silent> <Leader>p <Plug>(ale_previous_wrap)
+nmap <silent> <Leader>n <Plug>(ale_next_wrap)
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')

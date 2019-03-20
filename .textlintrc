@@ -1,10 +1,16 @@
 {
   "rules": {
-    "max-ten": {
-      "max": 5
+    "preset-japanese": false,
+    "preset-jtf-style": false,
+    "preset-ja-technical-writing": true,
+    "sentence-length": {
+        max: 125
         },
-    "preset-jtf-style": true,
-    "spellcheck-tech-word": false,
-    "no-mix-dearu-desumasu": false
-  }
+    "no-mix-dearu-desumasu": {
+        "preferInHeader": "",
+        "preferInBody": "ですます",
+        "preferInList": "である",
+        "strict": true
+        }
+    }
 }
