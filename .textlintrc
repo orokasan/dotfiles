@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "max-ten": {
+      "max": 5
+        },
+    "preset-jtf-style": true,
+    "spellcheck-tech-word": false,
+    "no-mix-dearu-desumasu": false
+  }
+}

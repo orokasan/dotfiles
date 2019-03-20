@@ -136,6 +136,7 @@ set virtualedit=block
 :set scrolloff=3
 "長い行を表示
 set display=lastline
+set signcolumn=yes
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 set spelllang=en,cjk
@@ -169,6 +170,7 @@ endfunction
 set list
 "不可視文字の表示
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
+
 "<TAB>を含むファイルを開いた際、<TAB>を何文字の空白に変換するかを設定
 set tabstop=4
 "キーボードで<TAB>を入力した際、<TAB>を何文字の空白に変換するかを設定
@@ -311,21 +313,22 @@ call dein#add('Shougo/neomru.vim')
 call dein#add('Shougo/denite.nvim')
 call dein#add('Shougo/unite.vim')
 call dein#add('Shougo/neoyank.vim')
+call dein#add('iyuuya/denite-ale')
 "{{{
 "need-Python3.6
 nnoremap [denite] <Nop>
 nmap <Leader>f [denite]
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
-	\ source<CR>
+	\  source<CR>
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
-	\ file<CR>
+	\  file<CR>
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
 	\ file<CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-	\ -mode=normal
+	\ -buffer-name=normal -mode=normal
 	\ buffer<CR>
 nnoremap <silent> ? :<C-u>Denite
 	\ -buffer-name=search -auto-highlight
@@ -335,26 +338,42 @@ nnoremap <silent> * :<C-u>DeniteCursorWord
 	\ -auto-highlight -mode=normal line<CR>
 "register&neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
-	\ -mode=normal -default-action=replace
+	\ -mode=normal
 	\ register neoyank<CR>
+nnoremap <silent> [denite]c :<C-u>Denite
+    \ -mode=normal -default-action=edit
+    \ command_history<CR>
 "nnoremap <silent> ;g :<C-u>Denite -buffer-name=search
 "      \ -no-empty -mode=normal grep<CR>
 "メニュー
-nnoremap <silent> [denite]u :Denite menu<CR>
-nnoremap <silent> [denite]h :Denite help<CR>
+nnoremap <silent> [denite]u :<C-u>Denite
+    \ menu<CR>
+nnoremap <silent> [denite]h :<C-u>Denite
+    \ help<CR>
 "最近使用したファイル一覧
 nnoremap <silent> [denite]n :<C-u>Denite
 	\ -mode=normal file_mru<CR>
+":change
 nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
- nnoremap <silent> [denite]j :<C-u>Denite -buffer-name=search
+"searchバッファをresumeして開く
+nnoremap <silent> [denite]j :<C-u>Denite -buffer-name=search
         \ -resume -mode=normal -refresh<CR>
 "denite-default option
+call denite#custom#option('normal', {
+    \ 'quick-move':'default'
+    \})
+call denite#custom#option('search', {
+	\ 'highlight_mode_insert': 'CursorLine',
+    \ 'auto-resize': v:true
+    \ })
 call denite#custom#option('_', {
 	\ 'prompt': '»',
 	\ 'cursor_wrap': v:true,
 	\ 'winheight': 15,
 	\ 'highlight_mode_insert': 'WildMenu',
-	\ 'statusline': v:false
+	\ 'statusline': v:false,
+    \ 'unique': v:true,
+    \ 'vertical-preview': v:true
 	\ })
 " Change mappings.
 call denite#custom#map(
@@ -371,8 +390,8 @@ call denite#custom#map(
       \)
 
 "C-J,C-Kでsplitで開く
-call denite#custom#map('insert', '<C-o>', '<denite:do_action:split>', 'noremap')
-call denite#custom#map('insert', '<C-O>', '<denite:do_action:vsplit>', 'noremap')
+call denite#custom#map('insert', '<C-g>', '<denite:do_action:split>', 'noremap')
+call denite#custom#map('insert', '<C-t>', '<denite:do_action:vsplit>', 'noremap')
 "C-h,C-lでディレクトリ移動
 call denite#custom#map('insert', '<C-l>', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
@@ -440,6 +459,7 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 
+"Defxで開く
 function! s:defx_open(context)
     let path = a:context['targets'][0]['action__path']
     let file = fnamemodify(path, ':p')
@@ -452,6 +472,7 @@ function! s:defx_open(context)
       execute('Defx ' . dir . file_search)
   endif
 endfunction
+"action:defxを定義
 call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
         \ function('s:defx_open'))
 "}}}
@@ -1033,12 +1054,16 @@ nnoremap <silent> <C-u> :call comfortable_motion#flick(g:comfortable_motion_impu
 call dein#add('w0rp/ale')
 "https://efcl.info/2015/09/10/introduce-textlint/
 "https://koirand.github.io/blog/2018/textlint/
+let g:ale_use_global_executables=1
 let g:ale_linters = {
 \   'markdown': ['textlint']
 \}
-let g:ale_sign_column_always = 1
 let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
+let g:ale_set_quickfix = 0
+let g:ale_sign_column_always = 1
+let g:ale_lint_on_enter = 0
+let g:ale_open_list = 0
+let g:ale_keep_list_window_open = 0
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
