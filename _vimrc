@@ -132,8 +132,14 @@ set textwidth=0
 set virtualedit=block
 " 行末の1文字先までカーソルを移動できるように
 "set virtualedit=onemore
+"3行余裕を持たせてスクロール
+:set scrolloff=3
+"長い行を表示
+set display+=lastline
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
+set spelllang=en,cjk
+
 "句読点を強引に挿入
 nnoremap <Leader>, a、<Esc>
 nnoremap <Leader>. a。<Esc>
@@ -166,6 +172,7 @@ set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 "<TAB>を含むファイルを開いた際、<TAB>を何文字の空白に変換するかを設定
 set tabstop=4
 "キーボードで<TAB>を入力した際、<TAB>を何文字の空白に変換するかを設定
+set expandtab
 set softtabstop=4
 "自動インデント
 set autoindent
@@ -268,7 +275,7 @@ cnoremap <M-b> <S-Left>| " 次の単語へ移動
 cnoremap <M-f> <S-Right>|" 前の単語へ移動
 " TABにて対応ペアにジャンプ
 nnoremap <Tab> %
-vnoremap <Tab> %
+xnoremap <Tab> %
 "バッファを閉じてもウィンドウが閉じないようにする
 "need-Bclose
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
@@ -385,14 +392,12 @@ function! ToggleSorter(sorter) abort
    let b:denite_new_context.sorters = join(sorters, ',')
    return '<denite:nop>'
 endfunction
-
 call denite#custom#map('insert', '<C-f>',
     \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
 
 "need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
-      \ ['rg',
-	  \ '--files', '--glob', '!.git'])
+      \ ['rg', '--files', '--glob', '!.git'])
 call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
 call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'final_opts', [])
@@ -434,22 +439,7 @@ call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
-"
-"defx連携
-function! s:defx_open(context)
-    let path = a:context['targets'][0]['action__path']
-    let file = fnamemodify(path, ':p')
-    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
-    let dir = denite#util#path2directory(path)
-	if &filetype ==# 'defx'
-      call defx#call_action('cd', [dir])
-      call defx#call_action('search', [path])
-    else
-      execute('Defx ' . dir . file_search)
-  endif
-endfunction
-call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
-        \ function('s:defx_open'))
+
 "}}}
 "-----------------------------------------------------------------------
 "Dirmark
@@ -463,20 +453,19 @@ nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>Denite dirmark/add::' . expand
 "-----------------------------------------------------------------------
 "Defx
 call dein#add('Shougo/defx.nvim') "ファイラー
-if !has('nvim')
+"if !has('nvim')
 call dein#add('roxma/nvim-yarp')
 call dein#add('roxma/vim-hug-neovim-rpc')
-endif
 "{{{
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
 	\ :<C-u>Defx -listed <CR>
-	\ :setlocal nonumber<CR>
+	\ :set nonumber<CR>
 call defx#custom#option('_', {
     \ 'winwidth': 40,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
-    \ 'columns':'mark:filename:time',
+    \ 'columns':'mark:filename:type:size:time',
     \ 'sort': "TIME",
     \ })
 "call defx#custom#column('filename', {
@@ -490,115 +479,116 @@ call defx#custom#option('_', {
 "      \ 'readonly_icon': '✗',
 "      \ 'selected_icon': '✓',
 "      \ })
-"augroup defx
-"autocmd!
+augroup defx
+autocmd!
 autocmd FileType defx call s:defx_my_settings()
-"augroup END
-
-"function! g:Denite_rec()
-"	let candidate = defx#get_candidate()
-"		if line('.) == 1
-"			let path_mod  = 'h'
-"		else
-"			let path_mod = candidate['is_directory']  '' : 'h'
-"		endif
-"	let rowdir = fnamemodify(candidate['action__path'], '":p:' . path_mod . '"')
-"	let narrow_dir = '' . rowdir . '"'
-"	execute('Denite -default-action=defx file/rec: . narrow_dir)
-"endfunction
-
-
 function! s:defx_my_settings() abort
+" Define mappings
+nnoremap <silent><buffer><expr> <C-c>
+\ <Nop>
+nnoremap <silent><buffer><expr> <CR>
+\ defx#do_action('drop')
+nnoremap <silent><buffer><expr> c
+\ defx#async_action('copy')
+nnoremap <silent><buffer><expr> m
+\ defx#async_action('move')
+nnoremap <silent><buffer><expr> p
+\ defx#async_action('paste')
+nnoremap <silent><buffer><expr> l 
+\ defx#is_directory() ?
+\ defx#do_action('open') :
+\ defx#do_action('drop')
+nnoremap <silent><buffer><expr> E
+\ defx#do_action('open', 'vsplit')
+nnoremap <silent><buffer><expr> t
+\ defx#do_action('toggle_sort','filename')
+nnoremap <silent><buffer><expr> T
+\ defx#do_action('toggle_sort','time')
+nnoremap <silent><buffer><expr> P
+\ defx#do_action('open', 'pedit')
+nnoremap <silent><buffer><expr> K
+\ defx#do_action('new_directory')
+nnoremap <silent><buffer><expr> N
+\ defx#do_action('new_file')
+nnoremap <silent><buffer><expr> d
+\ defx#do_action('remove')
+nnoremap <silent><buffer><expr> r
+\ defx#do_action('rename')
+nnoremap <silent><buffer><expr> x
+\ defx#async_action('execute_system')
+nnoremap <silent><buffer><expr> f
+\ defx#do_action('open_or_close_tree')
+nnoremap <silent><buffer><expr> yy
+\ defx#do_action('yank_path')
+nnoremap <silent><buffer><expr> .
+\ defx#do_action('toggle_ignored_files')
+nnoremap <silent><buffer><expr> h
+\ defx#do_action('cd', ['..'])
+nnoremap <silent><buffer><expr> ~
+\ defx#do_action('cd')
+nnoremap <silent><buffer><expr> q
+\ defx#do_action('quit')
+nnoremap <silent><buffer><expr> i
+\ defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> I
+\ defx#do_action('clear_select_all')
+nnoremap <silent><buffer><expr> *
+\ defx#do_action('toggle_select_all')
+nnoremap <silent><buffer><expr> j
+\ line('.') == line('$') ? 'gg' : 'j'
+nnoremap <silent><buffer><expr> k
+\ line('.') == 1 ? 'G' : 'k'
+nnoremap <silent><buffer><expr> <C-l>
+\ defx#do_action('redraw')
+nnoremap <silent><buffer><expr> <C-g>
+\ defx#do_action('print')
+nnoremap <silent><buffer><expr> cd
+\ defx#do_action('change_vim_cwd')
+endfunction
+augroup END
+"Deniteでカーソル下のdirをfile/rec
+"nnoremap <silent><C-CR> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
+function! s:defx_open(context)
+    let path = a:context['targets'][0]['action__path']
+    let file = fnamemodify(path, ':p')
+    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
+    let dir = denite#util#path2directory(path)
+    if &filetype ==# 'defx'
+      call defx#do_action('cd', [dir])
+      call defx#do_action('search', [path])
+    else
+      execute('Defx ' . dir . file_search)
+endfunction
+call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
+        \ function('s:defx_open'))
+augroup ps_defx
+    au!
+    au FileType defx call s:defx_settings()
+augroup END
 
+function! s:defx_settings()
     function! s:GetDefxBaseDir(candidate) abort
         if line('.') == 1
             let path_mod  = 'h'
         else
-            let path_mod = isdirectory(a:candidate) ? '' : 'h'
+            let path_mod = isdirectory(a:candidate) ? 'h:h' : 'h'
         endif
-        return fnamemodify(a:candidate,'":p:' . path_mod . '"')
+        return fnamemodify(a:candidate, ':p:' . path_mod)
     endfunction
+
     function! s:denite_rec(context) abort
         let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
-        execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
+        execute('Denite -default-action=defx file/rec:' . narrow_dir)
     endfunction
-	" Define mappings
-	nnoremap <silent><buffer><expr> <C-c>
-	\ <Nop>
-	nnoremap <silent><buffer><expr> <CR>
-	\ defx#do_action('drop')
-	nnoremap <silent><buffer><expr> c
-	\ defx#async_action('copy')
-	nnoremap <silent><buffer><expr> m
-	\ defx#async_action('move')
-	nnoremap <silent><buffer><expr> p
-	\ defx#async_action('paste')
-	nnoremap <silent><buffer><expr> l 
-	\ defx#is_directory() ?
-	\ defx#do_action('open') :
-	\ defx#do_action('drop')
-	nnoremap <silent><buffer><expr> E
-	\ defx#do_action('open', 'vsplit')
-	"nnoremap <silent><buffer><expr> t
-	"\ defx#do_action('toggle_sort','filename')
-	"nnoremap <silent><buffer><expr> T
-	"\ defx#do_action('toggle_sort','time')
-	nnoremap <silent><buffer><expr> P
-	\ defx#do_action('open', 'pedit')
-	nnoremap <silent><buffer><expr> K
-	\ defx#do_action('new_directory')
-	nnoremap <silent><buffer><expr> N
-	\ defx#do_action('new_file')
-	nnoremap <silent><buffer><expr> d
-	\ defx#do_action('remove')
-	nnoremap <silent><buffer><expr> r
-	\ defx#do_action('rename')
-	nnoremap <silent><buffer><expr> x
-	\ defx#async_action('execute_system')
-	nnoremap <silent><buffer><expr> f
-	\ defx#do_action('open_or_close_tree')
-	nnoremap <silent><buffer><expr> yy
-	\ defx#do_action('yank_path')
-	nnoremap <silent><buffer><expr> .
-	\ defx#do_action('toggle_ignored_files')
-	nnoremap <silent><buffer><expr> h
-	\ defx#do_action('cd', ['..'])
-	nnoremap <silent><buffer><expr> ~
-	\ defx#do_action('cd')
-	nnoremap <silent><buffer><expr> q
-	\ defx#do_action('quit')
-	nnoremap <silent><buffer><expr> i
-	\ defx#do_action('toggle_select') . 'j'
-	nnoremap <silent><buffer><expr> I
-	\ defx#do_action('clear_select_all')
-	nnoremap <silent><buffer><expr> *
-	\ defx#do_action('toggle_select_all')
-	nnoremap <silent><buffer><expr> j
-	\ line('.') == line('$') ? 'gg' : 'j'
-	nnoremap <silent><buffer><expr> k
-	\ line('.') == 1 ? 'G' : 'k'
-	nnoremap <silent><buffer><expr> <C-l>
-	\ defx#do_action('redraw')
-	nnoremap <silent><buffer><expr> <C-g>
-	\ defx#do_action('print')
-	nnoremap <silent><buffer><expr> cd
-	\ defx#do_action('change_vim_cwd')
-	nnoremap <silent><buffer><expr> <C-t>
-	\ defx#do_action('call', '<SID>denite_rec')
 
-		function! Test(context) abort
-		  echomsg string(a:context.targets[0])
-		endfunction
-		nnoremap <silent><buffer><expr> T
-		\ defx#do_action('call', 'Test')
-
+    nnoremap <silent><buffer><expr> <CR>
+        \ defx#is_directory() ? defx#do_action('open') :
+        \ defx#do_action('multi', ['drop', 'quit'])
+    nnoremap <silent><buffer><expr> <C-t>
+                \ defx#do_action('call', '<SID>denite_rec')
 endfunction
-
-
-"Deniteでカーソル下のdirをfile/rec
-nnoremap <silent><C-CR> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
-
 "}}}
+
 "-----------------------------------------------------------------------
 "gina.vim
 call dein#add('lambdalisue/gina.vim') "git管理
@@ -709,14 +699,14 @@ call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1
 call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
 call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
 call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#)', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#"', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#''', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#]', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
+"call lexima#add_rule({'char': '<TAB>', 'at': '\%#)', 'leave': 1})
+"call lexima#add_rule({'char': '<TAB>', 'at': '\%#"', 'leave': 1})
+"call lexima#add_rule({'char': '<TAB>', 'at': '\%#''', 'leave': 1})
+"call lexima#add_rule({'char': '<TAB>', 'at': '\%#]', 'leave': 1})
+"call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
+"call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
+"call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
+"call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
 "}}}
 "-----------------------------------------------------------------------------------------
 "文字数カウントスクリプト
@@ -748,12 +738,7 @@ function! s:CharCount()
 	endfor
 	return l:result
 endfunction
-"一行カウント
-function! s:LineChar()
-	let l:line = getline('.')
-	let l:result += strlen(substitute(l:line, ".", "x", "g"))
-	return l:result
-endfunction
+
 "選択範囲の行をカウント
 function! g:LineCharVCount() range
 	let l:result = 0
@@ -896,21 +881,10 @@ function! DeniteMode()
   endif
 endfunction
 
-autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call LightLineGina()
-
-function! LightLineGina()
-if exists('*gitbranch#name')
-	let ginabranch = gitbranch#name()
-else
-	let ginabranch = ''
-endif
-return ginabranch
-endfunction
-
 function! LightLineFugitive()
-   try
-    if &ft !~? 'vimfiler\|gundo' && strlen(LightLineGina()) && winwidth(0) > 40
-      let _ = LightLineGina()
+  try
+    if &ft !~? 'vimfiler\|gundo' && exists('*gitbranch#name') && winwidth(0) > 40
+      let _ = gitbranch#name()
       return strlen(_) && winwidth(0) > 100  ? ' '._ :
 	    \strlen(_) ? ' ': ''
     endif
@@ -926,7 +900,7 @@ function! MyFilepath()
 	let l:ll_filepath = expand('%:~')
 	let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
-	let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-45 ? pathshorten(l:ll_filepath) :
+	let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-30 ? pathshorten(l:ll_filepath) :
 	\ winwidth(0) > 70 ? l:ll_filepath  :
 	\ winwidth(0) > 45 ? l:ll_filename  : ''
 	let l:ll_modified = &modified ? '[+]' : ''
@@ -950,8 +924,6 @@ call dein#add('Shougo/deoplete.nvim')
 "{{{
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
-" Use smartcase.
-call deoplete#custom#option('smart_case', v:true)
 " <TAB>: completion.
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -961,28 +933,20 @@ function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~ '\s'
 endfunction
-
 " <S-TAB>: completion back.
 inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
 
 inoremap <expr><C-g>       deoplete#refresh()
 inoremap <expr><C-e>       deoplete#cancel_popup()
 inoremap <silent><expr><C-l>       deoplete#complete_common_string()
-
 " <CR>: close popup and save indent.
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort
   return pumvisible() ? deoplete#close_popup()."\<CR>" : "\<CR>"
 endfunction
 
-" cpsm test
-" call deoplete#custom#source('_', 'matchers', ['matcher_cpsm'])
-" call deoplete#custom#source('_', 'sorters', [])
-
 call deoplete#custom#source('_', 'matchers',
       \ ['matcher_fuzzy', 'matcher_length'])
-" call deoplete#custom#source('eskk,tabnine', 'matchers', [])
-call deoplete#custom#source('eskk', 'matchers', [])
 " call deoplete#custom#source('buffer', 'mark', '')
 " call deoplete#custom#source('_', 'matchers', ['matcher_full_fuzzy'])
 " call deoplete#custom#source('_', 'disabled_syntaxes', ['Comment', 'String'])
@@ -991,13 +955,6 @@ call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('look', 'filetypes', ['help', 'gitcommit'])
 call deoplete#custom#option('ignore_sources',
       \ {'_': ['around', 'buffer', 'tag', 'dictionary']})
-
-"call deoplete#custom#source('tabnine', 'rank', 300)
-"call deoplete#custom#source('tabnine', 'min_pattern_length', 2)
-" call deoplete#custom#source('tabnine', 'is_volatile', v:false)
-
-call deoplete#custom#source('zsh', 'filetypes', ['zsh', 'sh'])
-
 call deoplete#custom#source('_', 'converters', [
       \ 'converter_remove_paren',
       \ 'converter_remove_overlap',
@@ -1006,28 +963,20 @@ call deoplete#custom#source('_', 'converters', [
       \ 'converter_truncate_menu',
       \ 'converter_auto_delimiter',
       \ ])
-"call deoplete#custom#source('tabnine', 'converters', [
-"      \ 'converter_remove_overlap',
-"      \ ])
-
-" call deoplete#custom#source('buffer', 'min_pattern_length', 9999)
-" call deoplete#custom#source('clang', 'input_pattern', '\.\w*|\.->\w*|\w+::\w*')
-" call deoplete#custom#source('clang', 'max_pattern_length', -1)
-
 call deoplete#custom#option('keyword_patterns', {
       \ '_': '[a-zA-Z_]\k*\(?',
       \ 'tex': '[^\w|\s][a-zA-Z_]\w*',
       \ })
-
-" inoremap <silent><expr> <C-t> deoplete#manual_complete('file')
-
+inoremap <silent><expr> <C-tab> deoplete#manual_complete('file')
 call deoplete#custom#option({
-      \ 'auto_refresh_delay': 10,
+      \ 'smart_case': v:true ,
+      \ 'auto_complete_delay': 1,
+      \ 'auto_refresh_delay': 1,
       \ 'camel_case': v:true,
       \ 'skip_multibyte': v:true,
       \ 'prev_completion_mode': 'length',
+      \ 'yarp': v:false
       \ })
-" call deoplete#custom#option('num_processes', 0)
 
 "}}}
 "-----------------------------------------------------------------------
@@ -1074,9 +1023,12 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 "echodoc
 call dein#add('Shougo/echodoc.vim')
 "-----------------------------------------------------------------------
-"Asynchronous Lint Engine
-"call dein#add('w0rp/ale')
-"let g:ale_linters = {'vim': ['vint']}
+"スムーズなスクロール
+call dein#add('yuttie/comfortable-motion.vim')
+let g:comfortable_motion_no_default_key_mappings = 1
+let g:comfortable_motion_impulse_multiplier = 1  " Feel free to increase/decrease this value.
+nnoremap <silent> <C-d> :call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * 2)<CR>
+nnoremap <silent> <C-u> :call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * -2)<CR>
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
