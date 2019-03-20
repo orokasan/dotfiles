@@ -135,7 +135,7 @@ set virtualedit=block
 "3行余裕を持たせてスクロール
 :set scrolloff=3
 "長い行を表示
-set display+=lastline
+set display=lastline
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 set spelllang=en,cjk
@@ -439,7 +439,20 @@ call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
-
+function! s:defx_open(context)
+    let path = a:context['targets'][0]['action__path']
+    let file = fnamemodify(path, ':p')
+    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
+    let dir = denite#util#path2directory(path)
+    if &filetype ==# 'defx'
+      call defx#call_action('cd', [dir])
+      call defx#call_action('search', [path])
+    else
+      execute('Defx ' . dir . file_search)
+  endif
+endfunction
+call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
+        \ function('s:defx_open'))
 "}}}
 "-----------------------------------------------------------------------
 "Dirmark
@@ -460,12 +473,12 @@ call dein#add('roxma/vim-hug-neovim-rpc')
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
 	\ :<C-u>Defx -listed <CR>
-	\ :set nonumber<CR>
+	\ :setlocal nonumber<CR>
 call defx#custom#option('_', {
     \ 'winwidth': 40,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
-    \ 'columns':'mark:filename:type:size:time',
+    \ 'columns':'mark:filename:time',
     \ 'sort': "TIME",
     \ })
 "call defx#custom#column('filename', {
@@ -479,9 +492,39 @@ call defx#custom#option('_', {
 "      \ 'readonly_icon': '✗',
 "      \ 'selected_icon': '✓',
 "      \ })
-augroup defx
-autocmd!
+"augroup defx
+"autocmd!
 autocmd FileType defx call s:defx_my_settings()
+
+"function! g:Denite_rec()
+"	let candidate = defx#get_candidate()
+"		if line('.') == 1
+"			let path_mod  = 'h'
+"		else
+"			let path_mod = candidate['is_directory'] ? '' : 'h'
+"		endif
+"	let rowdir = fnamemodify(candidate['action__path'], '":p:' . path_mod . '"')
+"	let narrow_dir = '"' . rowdir . '"'
+"	execute('Denite -default-action=defx file/rec:' . narrow_dir)
+"endfunction
+"
+function! s:GetDefxBaseDir(candidate) abort
+    if line('.') == 1
+        let path_mod  = 'h'
+    else
+        let path_mod = isdirectory(a:candidate) ? 'h:h' : 'h'
+        let path_mod = isdirectory(a:candidate) ? '' : 'h'
+    endif
+    return fnamemodify(a:candidate, ':p:' . path_mod)
+    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
+endfunction
+
+function! s:denite_rec(context) abort
+    let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
+    execute('Denite -default-action=defx file/rec:' . narrow_dir)
+    execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
+endfunction
+
 function! s:defx_my_settings() abort
 " Define mappings
 nnoremap <silent><buffer><expr> <C-c>
@@ -545,48 +588,12 @@ nnoremap <silent><buffer><expr> <C-g>
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
 endfunction
-augroup END
-"Deniteでカーソル下のdirをfile/rec
-"nnoremap <silent><C-CR> :call denite#start([{'name':'file/rec','args':''}] , {'path':defx#get_candidate()['action__path']}) <CR>
-function! s:defx_open(context)
-    let path = a:context['targets'][0]['action__path']
-    let file = fnamemodify(path, ':p')
-    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
-    let dir = denite#util#path2directory(path)
-    if &filetype ==# 'defx'
-      call defx#do_action('cd', [dir])
-      call defx#do_action('search', [path])
-    else
-      execute('Defx ' . dir . file_search)
-endfunction
-call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
-        \ function('s:defx_open'))
-augroup ps_defx
-    au!
-    au FileType defx call s:defx_settings()
-augroup END
 
-function! s:defx_settings()
-    function! s:GetDefxBaseDir(candidate) abort
-        if line('.') == 1
-            let path_mod  = 'h'
-        else
-            let path_mod = isdirectory(a:candidate) ? 'h:h' : 'h'
-        endif
-        return fnamemodify(a:candidate, ':p:' . path_mod)
-    endfunction
-
-    function! s:denite_rec(context) abort
-        let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
-        execute('Denite -default-action=defx file/rec:' . narrow_dir)
-    endfunction
-
-    nnoremap <silent><buffer><expr> <CR>
-        \ defx#is_directory() ? defx#do_action('open') :
-        \ defx#do_action('multi', ['drop', 'quit'])
-    nnoremap <silent><buffer><expr> <C-t>
-                \ defx#do_action('call', '<SID>denite_rec')
-endfunction
+		function! Test(context) abort
+		  echomsg string(a:context.targets[0])
+		endfunction
+		nnoremap <silent><buffer><expr> T
+		\ defx#do_action('call', 'Test')
 "}}}
 
 "-----------------------------------------------------------------------
@@ -1029,6 +1036,17 @@ let g:comfortable_motion_no_default_key_mappings = 1
 let g:comfortable_motion_impulse_multiplier = 1  " Feel free to increase/decrease this value.
 nnoremap <silent> <C-d> :call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * 2)<CR>
 nnoremap <silent> <C-u> :call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * -2)<CR>
+"-----------------------------------------------------------------------
+
+call dein#add('w0rp/ale')
+"https://efcl.info/2015/09/10/introduce-textlint/
+"https://koirand.github.io/blog/2018/textlint/
+let g:ale_linters = {
+\   'markdown': ['textlint']
+\}
+let g:ale_sign_column_always = 1
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')
