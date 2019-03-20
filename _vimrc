@@ -439,6 +439,7 @@ call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+
 function! s:defx_open(context)
     let path = a:context['targets'][0]['action__path']
     let file = fnamemodify(path, ':p')
@@ -473,7 +474,7 @@ call dein#add('roxma/vim-hug-neovim-rpc')
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
 	\ :<C-u>Defx -listed <CR>
-	\ :setlocal nonumber<CR>
+	\ :set nonumber<CR>
 call defx#custom#option('_', {
     \ 'winwidth': 40,
     \ 'split': 'vertical',
@@ -492,38 +493,21 @@ call defx#custom#option('_', {
 "      \ 'readonly_icon': '✗',
 "      \ 'selected_icon': '✓',
 "      \ })
-"augroup defx
-"autocmd!
 autocmd FileType defx call s:defx_my_settings()
+    function! s:GetDefxBaseDir(candidate) abort
+        if line('.') == 1
+            let path_mod  = 'h'
+        else
+            let path_mod = isdirectory(a:candidate) ? '' : 'h'
+        endif
+        return fnamemodify(a:candidate,'":p:' . path_mod . '"')
+    endfunction
 
-"function! g:Denite_rec()
-"	let candidate = defx#get_candidate()
-"		if line('.') == 1
-"			let path_mod  = 'h'
-"		else
-"			let path_mod = candidate['is_directory'] ? '' : 'h'
-"		endif
-"	let rowdir = fnamemodify(candidate['action__path'], '":p:' . path_mod . '"')
-"	let narrow_dir = '"' . rowdir . '"'
-"	execute('Denite -default-action=defx file/rec:' . narrow_dir)
-"endfunction
-"
-function! s:GetDefxBaseDir(candidate) abort
-    if line('.') == 1
-        let path_mod  = 'h'
-    else
-        let path_mod = isdirectory(a:candidate) ? 'h:h' : 'h'
-        let path_mod = isdirectory(a:candidate) ? '' : 'h'
-    endif
-    return fnamemodify(a:candidate, ':p:' . path_mod)
-    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
-endfunction
+    function! s:denite_rec(context) abort
+        let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
+        execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
+    endfunction
 
-function! s:denite_rec(context) abort
-    let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
-    execute('Denite -default-action=defx file/rec:' . narrow_dir)
-    execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
-endfunction
 
 function! s:defx_my_settings() abort
 " Define mappings
@@ -587,13 +571,10 @@ nnoremap <silent><buffer><expr> <C-g>
 \ defx#do_action('print')
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
-endfunction
+nnoremap <silent><buffer><expr> <C-t>
+\ defx#do_action('call', '<SID>denite_rec')
 
-		function! Test(context) abort
-		  echomsg string(a:context.targets[0])
-		endfunction
-		nnoremap <silent><buffer><expr> T
-		\ defx#do_action('call', 'Test')
+endfunction
 "}}}
 
 "-----------------------------------------------------------------------
@@ -888,10 +869,21 @@ function! DeniteMode()
   endif
 endfunction
 
+autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call LightLineGina()
+
+function! LightLineGina()
+if exists('*gitbranch#name')
+	let ginabranch = gitbranch#name()
+else
+	let ginabranch = ''
+endif
+return ginabranch
+endfunction
+
 function! LightLineFugitive()
   try
-    if &ft !~? 'vimfiler\|gundo' && exists('*gitbranch#name') && winwidth(0) > 40
-      let _ = gitbranch#name()
+    if &ft !~? 'vimfiler\|gundo' && strlen(LightLineGina()) && winwidth(0) > 40
+      let _ = LightLineGina()
       return strlen(_) && winwidth(0) > 100  ? ' '._ :
 	    \strlen(_) ? ' ': ''
     endif
@@ -907,7 +899,7 @@ function! MyFilepath()
 	let l:ll_filepath = expand('%:~')
 	let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
-	let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-30 ? pathshorten(l:ll_filepath) :
+	let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-45 ? pathshorten(l:ll_filepath) :
 	\ winwidth(0) > 70 ? l:ll_filepath  :
 	\ winwidth(0) > 45 ? l:ll_filename  : ''
 	let l:ll_modified = &modified ? '[+]' : ''
