@@ -5,9 +5,8 @@
 "========================================================================
 "{{{
 "encode
-set nocompatible			" vi 非互換(宣言)
-scriptencoding utf-8,cp932		" vimrcのエンコーディング
 set encoding=utf-8			" vim 内部のエンコーディグ
+scriptencoding utf-8,cp932		" vimrcのエンコーディング
 set fileencoding=utf-8			" 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
@@ -140,7 +139,8 @@ set signcolumn=yes
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 set spelllang=en,cjk
-
+"日付を入力
+inoremap <expr> <F2> strftime("%Y%m%d")
 "句読点を強引に挿入
 nnoremap <Leader>, a、<Esc>
 nnoremap <Leader>. a。<Esc>
@@ -282,8 +282,6 @@ xnoremap <Tab> %
 "need-Bclose
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
 nnoremap <silent> <C-p> :Bclose<CR>
-"filetypeをmarkdownに（今はいらない？）
-noremap <leader>dm :<C-u>set ft=markdown<cr>
 "Markdownの改行タグ
 nnoremap <Leader>nr <C-u>A  <Esc>
 "Markdown Docx出力
@@ -297,7 +295,7 @@ nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "環境によってはcacheファイル生成で呼び出されるROBOCOPYの/MTオプションがエラーを出す
 "Shougo\dein.vim\autoload\dein\install.vimの777行目から/MTを消すことで解決
 if &compatible
-set nocompatible
+    set nocompatible
 endif
 set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
 
@@ -358,6 +356,9 @@ nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
 "searchバッファをresumeして開く
 nnoremap <silent> [denite]j :<C-u>Denite -buffer-name=search
         \ -resume -mode=normal -refresh<CR>
+nnoremap <silent> [denite]a :<C-u>Denite
+	\ -buffer-name=search -auto-highlight -mode=normal
+	\ ale<CR>
 "denite-default option
 call denite#custom#option('normal', {
     \ 'quick-move':'default'
@@ -475,9 +476,14 @@ function! s:defx_open(context)
       execute('Defx ' . dir . file_search)
   endif
 endfunction
+"function! s:denite_action_file_rec()
+
 "action:defxを定義
 call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
         \ function('s:defx_open'))
+"denite-filerecをactionに定義したい
+"call denite#custom#action('buffer,directory,file,openable,dirmark', filerec,
+"        \ function ('s:denite_action_file_rec'))
 "}}}
 "-----------------------------------------------------------------------
 "Dirmark
@@ -505,7 +511,7 @@ call defx#custom#option('_', {
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:filename:time',
-    \ 'sort': "TIME"
+    \ 'sort': 'TIME'
     \ })
 "    \ 'ignored-files':['desktop.ini','ntuser.*']
 "call defx#custom#column('filename', {
@@ -520,6 +526,7 @@ call defx#custom#option('_', {
 "      \ 'selected_icon': '✓',
 "      \ })
 autocmd FileType defx call s:defx_my_settings()
+
     function! s:GetDefxBaseDir(candidate) abort
         if line('.') == 1
             let path_mod  = 'h'
@@ -748,7 +755,7 @@ function! s:CharCount()
 	let l:result = 0
 	for l:linenum in range(0, line('$'))
 		let l:line = getline(l:linenum)
-		let l:result += strlen(substitute(l:line, ".", "x", "g"))
+		let l:result += strlen(substitute(l:line, '.', 'x',' g'))
 	endfor
 	return l:result
 endfunction
@@ -758,7 +765,7 @@ function! g:LineCharVCount() range
 	let l:result = 0
 	for l:linenum in range(a:firstline, a:lastline)
 		let l:line = getline(l:linenum)
-		let l:result += strlen(substitute(l:line, ".", "x", "g"))
+		let l:result += strlen(substitute(l:line, '.', 'x',' g'))
 	endfor
 	echo ' [WordCount] -- ' . l:result . ' : ' . s:CharCount() .
 				\ ' --   [選択行の字数:全体の字数]'
@@ -821,7 +828,7 @@ augroup END
 " セパレータを飛ばして移動する
 " filetype が tweetvim ならツイートをリロード
 function! s:tweetvim_reload()
-    if &filetype ==# "tweetvim"
+    if &filetype ==# 'tweetvim'
         call feedkeys("\<Plug>(tweetvim_action_reload)")
     endif
 endfunction
@@ -863,7 +870,7 @@ let g:lightline = {
 
 let g:lightline.component = {
 	\'IMEstatus':"%{IMStatus('-JP-')}",
-	\'charcount':"%{b:charCounterCount}"
+	\'charcount':'%{b:charCounterCount}'
 	\}
 let g:lightline.component_expand = {
       \  'buffers': 'lightline#bufferline#buffers',
@@ -905,10 +912,10 @@ return &filetype !~# '\v(help|denite|defx)' ? expand('%:t') : LightlineMode()
 endfunction
 
 function! DeniteMode()
-  if &ft == 'denite'
+  if &filetype ==# 'denite'
     " deniteは自分でinsertモード normalモードを管理しているので
     " lightlineのハイライト関数をdeniteのモードに合わせた値(-- NORMAL -- ならn)にしてハイライト関数を呼ぶ
-    let l:mode_str = substitute(denite#get_status("mode"), "-\\| ", "", "g")
+    let l:mode_str = substitute(denite#get_status('mode'), '-\\| ', '', 'g')
     call lightline#link(tolower(l:mode_str[0]))
     return l:mode_str
   else
@@ -929,7 +936,7 @@ endfunction
 
 function! LLgitbranch()
   try
-    if &ft !~? 'vimfiler\|gundo' && strlen(s:llgit()) && winwidth(0) > 40
+    if &filetype !~? 'vimfiler\|gundo' && strlen(s:llgit()) && winwidth(0) > 40
       let _ = s:llgit()
       return strlen(_) && winwidth(0) > 100  ? ' '._ :
 	    \strlen(_) ? ' ': ''
@@ -940,7 +947,7 @@ function! LLgitbranch()
 endfunction
 
 function! MyFilepath()
-  if &ft == 'denite'
+  if &filetype ==# 'denite'
 	return DeniteSources()
   else
 	let l:ll_filepath = expand('%:~')
@@ -955,8 +962,8 @@ function! MyFilepath()
 endfunction
 
 function! DeniteSources()
-    let l:filename = denite#get_status("sources")
-	let l:filepath = denite#get_status("path")
+    let l:filename = denite#get_status('sources')
+	let l:filepath = denite#get_status('path')
     return 'Denite ['. l:filename . ']'. l:filepath
 endfunction
 
@@ -978,7 +985,7 @@ inoremap <silent><expr> <TAB>
       \ deoplete#manual_complete()
 function! s:check_back_space() abort
   let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
+  return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 " <S-TAB>: completion back.
 inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
@@ -1050,7 +1057,7 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 " For conceal markers.
 if has('conceal')
-  set conceallevel=2 concealcursor=niv
+  set conceallevel=2
 endif
 "}}}
 "-----------------------------------------------------------------------
@@ -1070,20 +1077,23 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 "echodoc
 call dein#add('Shougo/echodoc.vim')
 "-----------------------------------------------------------------------
-"スムーズなスクロール
-call dein#add('yuttie/comfortable-motion.vim')
+"comfortable-motion.vim
+call dein#add('yuttie/comfortable-motion.vim') "スムーズなスクロール
 let g:comfortable_motion_no_default_key_mappings = 1
 let g:comfortable_motion_impulse_multiplier = 1  " Feel free to increase/decrease this value.
 nnoremap <silent> <C-d> :call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * 2)<CR>
 nnoremap <silent> <C-u> :call comfortable_motion#flick(g:comfortable_motion_impulse_multiplier * winheight(0) * -2)<CR>
 "-----------------------------------------------------------------------
+"ALE
 call dein#add('w0rp/ale')
+"{{{
 "https://efcl.info/2015/09/10/introduce-textlint/
 "https://koirand.github.io/blog/2018/textlint/
 let g:ale_use_global_executables=1
 let g:ale_linters = {
-\   'markdown': ['textlint']
-\}
+    \ 'markdown': ['textlint'],
+    \ 'vim':['vint']
+    \ }
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_sign_column_always = 1
@@ -1098,6 +1108,7 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 nmap <silent> <Leader>p <Plug>(ale_previous_wrap)
 nmap <silent> <Leader>n <Plug>(ale_next_wrap)
+"}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 call dein#add('NLKNguyen/papercolor-theme')

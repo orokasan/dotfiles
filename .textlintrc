@@ -2,15 +2,11 @@
   "rules": {
     "preset-japanese": false,
     "preset-jtf-style": false,
-    "preset-ja-technical-writing": true,
-    "sentence-length": {
-        max: 125
-        },
-    "no-mix-dearu-desumasu": {
-        "preferInHeader": "",
-        "preferInBody": "ですます",
-        "preferInList": "である",
-        "strict": true
+    "preset-ja-technical-writing": {
+        "sentence-length": {
+            max: 125
+            },
+        "no-mix-dearu-desumasu": false
         }
     }
 }
