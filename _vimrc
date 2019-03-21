@@ -153,7 +153,8 @@ nnoremap <Leader><S-Space> a…<Esc>
 " <ESC>でのIME状態保存を無効化
 inoremap <silent> <ESC> <ESC>
 inoremap <silent> <C-[> <ESC>
-inoremap <silent><C-c> <ESC>
+map <silent><C-c> <ESC>
+lmap <silent> <C-c> <ESC>
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
@@ -223,7 +224,6 @@ nnoremap <silent>cp ve"8d"0p
 nnoremap  j gj
 nnoremap  k gk
 "CTRL-sで保存！
-:nmap <c-s> :w<CR>
 :imap <c-s> <Esc>:w<CR>a
 "CTRL-qでclose
 nnoremap <silent> <C-q> :close<CR>
@@ -314,8 +314,10 @@ call dein#add('Shougo/neoyank.vim')
 call dein#add('iyuuya/denite-ale')
 "{{{
 "need-Python3.6
+"nonameバッファが開いてしまうことへの一時対応
+set nohidden
 nnoremap [denite] <Nop>
-nmap <Leader>f [denite]
+nmap s [denite]
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
 	\  source<CR>
 "現在開いているファイルのディレクトリ下のファイル一覧。
@@ -354,18 +356,24 @@ nnoremap <silent> [denite]n :<C-u>Denite
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
 "searchバッファをresumeして開く
-nnoremap <silent> [denite]j :<C-u>Denite -buffer-name=search
-        \ -resume -mode=normal -refresh<CR>
+nnoremap <silent> N :<C-u>Denite -buffer-name=search
+    \ -resume -mode=normal -refresh<CR>
+"open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
 	\ -buffer-name=search -auto-highlight -mode=normal
 	\ ale<CR>
+nnoremap <silent> n :<C-u>Denite
+    \ -cursor-pos=+1 -immediately
+    \ -buffer-name=search
+    \ -resume -mode=normal -refresh<CR>
 "denite-default option
 call denite#custom#option('normal', {
-    \ 'quick-move':'default'
+    \ 'quick-move':'normal'
     \})
 call denite#custom#option('search', {
 	\ 'highlight_mode_insert': 'CursorLine',
-    \ 'auto-resize': v:true
+    \ 'auto-resize': v:true,
+    \ 'winheight': 10
     \ })
 call denite#custom#option('_', {
 	\ 'prompt': '»',
@@ -389,6 +397,18 @@ call denite#custom#map(
       \ '<denite:move_to_previous_line>',
       \ 'noremap'
       \)
+call denite#custom#map(
+      \ 'insert',
+      \ '<C-q>',
+      \ '<denite:quit>',
+      \ 'noremap'
+      \)
+call denite#custom#map(
+      \ 'normal',
+      \ '<C-q>',
+      \ '<denite:quit>',
+      \ 'noremap'
+      \)
 
 "C-J,C-Kでsplitで開く
 call denite#custom#map('insert', '<C-g>', '<denite:do_action:split>', 'noremap')
@@ -400,8 +420,7 @@ call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
 call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
 "defxで開く
-call denite#custom#map('normal', 'd', '<denite:do_action:defx>', 'noremap')
-call denite#custom#map('insert', '<C-d>', '<denite:do_action:defx>', 'noremap')
+call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
 
 function! ToggleSorter(sorter) abort
    let sorters = split(b:denite_context.sorters, ',')
@@ -417,7 +436,6 @@ function! ToggleSorter(sorter) abort
 endfunction
 call denite#custom#map('insert', '<C-f>',
     \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
-
 "need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
       \ ['rg', '--files', '--glob', '!.git'])
@@ -505,7 +523,7 @@ call dein#add('roxma/vim-hug-neovim-rpc')
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
 	\ :<C-u>Defx -listed <CR>
-	\ :set nonumber<CR>
+	\ :setlocal nonumber<CR>
 call defx#custom#option('_', {
     \ 'winwidth': 40,
     \ 'split': 'vertical',
@@ -540,7 +558,6 @@ autocmd FileType defx call s:defx_my_settings()
         let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
         execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
     endfunction
-
 
 function! s:defx_my_settings() abort
 " Define mappings
@@ -696,9 +713,9 @@ call dein#add('rhysd/vim-operator-surround') "選択範囲に括弧を追加
 call dein#add('kana/vim-operator-user')
 "{{{
 "mapping
-map <silent>sa <Plug>(operator-surround-append)
-map <silent>sd <Plug>(operator-surround-delete)
-map <silent>sr <Plug>(operator-surround-replace)
+map <silent>ta <Plug>(operator-surround-append)
+map <silent>td <Plug>(operator-surround-delete)
+map <silent>tr <Plug>(operator-surround-replace)
 "2バイト括弧を追加
 let g:operator#surround#blocks = {}
 let g:operator#surround#blocks['-'] = [
@@ -739,10 +756,16 @@ augroup CharCounter
 	autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>Update()
 augroup END
 "表示をここで変えてからLightlineにわたす
+
 function! s:Update()
 	let l:count = s:CharCount()
 	if l:count == 0
-		let l:shresult = '---'
+		"let l:shresult = '---'
+		let l:shresult = ''
+"    elseif l:count <10
+"        let l:shresult ='   ' . l:count
+"    elseif l:count <100
+"        let l:shresult ='  ' . l:count
 	elseif l:count < 10000
 		let l:shresult = l:count
 	else
@@ -750,6 +773,7 @@ function! s:Update()
 	endif
 	let b:charCounterCount = l:shresult
 endfunction
+
 "全体カウント
 function! s:CharCount()
 	let l:result = 0
@@ -772,7 +796,8 @@ function! g:LineCharVCount() range
 endfunction
 "呼び出す
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
-vnoremap<silent> <CR> :LineCharVCount<CR>"}}}
+xnoremap<silent> ; :LineCharVCount<CR>
+"}}}
 "-----------------------------------------------------------------------
 "TweetVim
 call dein#add('mattn/webapi-vim')
@@ -911,17 +936,6 @@ function! MyInactiveFilename()
 return &filetype !~# '\v(help|denite|defx)' ? expand('%:t') : LightlineMode()
 endfunction
 
-function! DeniteMode()
-  if &filetype ==# 'denite'
-    " deniteは自分でinsertモード normalモードを管理しているので
-    " lightlineのハイライト関数をdeniteのモードに合わせた値(-- NORMAL -- ならn)にしてハイライト関数を呼ぶ
-    let l:mode_str = substitute(denite#get_status('mode'), '-\\| ', '', 'g')
-    call lightline#link(tolower(l:mode_str[0]))
-    return l:mode_str
-  else
-    return lightline#mode()
-  endif
-endfunction
 
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call LLgitbranch()
 
@@ -961,10 +975,23 @@ function! MyFilepath()
   endif
 endfunction
 
+function! DeniteMode()
+    let l:mode_str=denite#get_status('raw_mode')
+    call lightline#link(tolower(l:mode_str[0]))
+    return l:mode_str
+endfunction
+
 function! DeniteSources()
-    let l:filename = denite#get_status('sources')
-	let l:filepath = denite#get_status('path')
-    return 'Denite ['. l:filename . ']'. l:filepath
+    let l:sources = '['. denite#get_status('sources'). ']'
+    let l:path =denite#get_status('path')
+    let l:lilnenr = '-'. denite#get_status('linenr'). '-'
+    let l:buffer = '['. denite#get_status('buffer_name'). ']'
+    let denitesource =  l:lilnenr . l:buffer .l:sources . l:path
+    if strlen(denitesource) > 100
+        return l:sources .l:path
+    else
+        return denitesource
+    endif
 endfunction
 
 function! LightlineFiletype()
@@ -1089,6 +1116,9 @@ call dein#add('w0rp/ale')
 "{{{
 "https://efcl.info/2015/09/10/introduce-textlint/
 "https://koirand.github.io/blog/2018/textlint/
+"vint: pip install --pre vim-vint
+"preset-ja-technical-writing
+"npm install textlint-rule-preset-ja-technical-writing@beta
 let g:ale_use_global_executables=1
 let g:ale_linters = {
     \ 'markdown': ['textlint'],
@@ -1106,8 +1136,6 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
-nmap <silent> <Leader>p <Plug>(ale_previous_wrap)
-nmap <silent> <Leader>n <Plug>(ale_next_wrap)
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin
