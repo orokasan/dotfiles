@@ -1,5 +1,5 @@
-"ork's _vimrc for Windows
 "vim:set foldmethod=marker:
+"ork's _vimrc for Windows
 "========================================================================
 "基本設定
 "========================================================================
@@ -84,22 +84,22 @@ let g:loaded_netrwFileHandlers = 1
 "runtimepath
 "========================================================================
 set runtimepath+=~\vimfiles
-set runtimepath+=~\AppData\Local\Programs\Python\Python35\Lib\site-packages
 "========================================================================
 "Python,vimproc
 "========================================================================
 "メモ
 "インストールはAll Userで
+"%PYTHONPATHを確認
 "pipからneovim, greenletを導入 Visual Studio C++ 14.0が必要
-"greenletは同じpythonのバージョンでコンパイルする
 "参考:https://gammasoft.jp/python/python-version-management/
 "$VIMにインストールしたpythonと同じバージョンのdll(python3.dll, python35.dll, python35.zip)を入れる
 "kaoriya-vimのpython3.5に揃える
 "64bit版を使用する
 "kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
 "3.5と3.6が両方必要
-set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
-let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python36\python.exe')
+let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
+"set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
+"let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python36\python.exe')
 "vimprocのダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
@@ -114,6 +114,8 @@ set showmatch
 set matchtime=1
 " ステータスラインを常に表示
 set laststatus=2
+"コマンドライン行数の設定
+set cmdheight=1
 " ESC連打でハイライト解除
 nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
 nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
@@ -218,6 +220,8 @@ nnoremap <leader>k O<ESC>j
 nnoremap ; :
 " Enter normal mode
 inoremap jk <esc>
+"末尾までヤンク
+nnoremap <silent>Y $y
 "上書きペースト
 nnoremap <silent>cp ve"8d"0p
 " 折り返し時に表示行単位での移動できるようにする
@@ -263,8 +267,8 @@ nnoremap <S-Right> <C-w>><CR>
 nnoremap <S-Up>    <C-w>-<CR>
 nnoremap <S-Down>  <C-w>+<CR>
 "バッファ移動
-nnoremap <silent><Leader>wh :bprev<CR>|
-nnoremap <silent><Leader>wl :bnext<CR>|
+nnoremap <silent><Leader>h :bprev!<CR>|
+nnoremap <silent><Leader>l :bnext!<CR>|
 "コマンドライン上のマッピング
 cnoremap <C-a> <Home>| " 一文字戻る
 cnoremap <C-b> <Left>| " カーソルの下の文字を削除
@@ -316,6 +320,7 @@ call dein#add('iyuuya/denite-ale')
 "need-Python3.6
 "nonameバッファが開いてしまうことへの一時対応
 set nohidden
+
 nnoremap [denite] <Nop>
 nmap s [denite]
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
@@ -507,11 +512,11 @@ call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
 "Dirmark
 call dein#add('kmnk/denite-dirmark')
 "{{{
-nmap <Leader>dd    <SID>(dirmark)
-nmap <Leader>da    <SID>(dirmark-add)
+nmap [denite]d    <SID>(dirmark)
+nmap [denite]da    <SID>(dirmark-add)
 nnoremap <silent> <SID>(dirmark) :<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
 "bookmark by "add"action
-nnoremap <silent><expr> <SID>(dirmark-add) ':<C-u>DeniteBufferDir dirmark/add <CR>'
+nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirmark/add <CR>'
 "}}}
 "-----------------------------------------------------------------------
 "Defx
@@ -625,8 +630,8 @@ nnoremap <silent><buffer><expr> <C-t>
 \ defx#do_action('call', '<SID>denite_rec')
 
 endfunction
+"autocmd vimrc ColorScheme * highlight Defx_filename_directory term = bold ctermfg=33 guifg=#4078f2
 "}}}
-
 "-----------------------------------------------------------------------
 "gina.vim
 call dein#add('lambdalisue/gina.vim') "git管理
@@ -760,8 +765,7 @@ augroup END
 function! s:Update()
 	let l:count = s:CharCount()
 	if l:count == 0
-		"let l:shresult = '---'
-		let l:shresult = ''
+		let l:shresult = '---'
 "    elseif l:count <10
 "        let l:shresult ='   ' . l:count
 "    elseif l:count <100
@@ -779,7 +783,7 @@ function! s:CharCount()
 	let l:result = 0
 	for l:linenum in range(0, line('$'))
 		let l:line = getline(l:linenum)
-		let l:result += strlen(substitute(l:line, '.', 'x',' g'))
+		let l:result += strlen(substitute(l:line, '.', 'x','g'))
 	endfor
 	return l:result
 endfunction
@@ -789,7 +793,7 @@ function! g:LineCharVCount() range
 	let l:result = 0
 	for l:linenum in range(a:firstline, a:lastline)
 		let l:line = getline(l:linenum)
-		let l:result += strlen(substitute(l:line, '.', 'x',' g'))
+		let l:result += strlen(substitute(l:line, '.', 'x','g'))
 	endfor
 	echo ' [WordCount] -- ' . l:result . ' : ' . s:CharCount() .
 				\ ' --   [選択行の字数:全体の字数]'
@@ -842,14 +846,17 @@ autocmd FileType tweetvim     nmap     <buffer><silent>gg       gg<Plug>(tweetvi
 autocmd FileType tweetvim     nmap     <buffer>f                <Plug>(tweetvim_action_page_next)
 autocmd FileType tweetvim     nmap     <buffer>b                <Plug>(tweetvim_action_page_previous)
 "縦移動（カーソルを常に中央にする）
- autocmd FileType tweetvim     nnoremap <buffer><silent>j        :<C-u>call <SID>tweetvim_vertical_move("gj")<CR>zz
-autocmd FileType tweetvim     nnoremap <buffer><silent>k        :<C-u>call <SID>tweetvim_vertical_move("gk")<CR>zz
+ autocmd FileType tweetvim    nmap <silent> <buffer> j <Plug>(tweetvim_action_cursor_down)
+autocmd FileType tweetvim     nmap <silent> <buffer> k <Plug>(tweetvim_action_cursor_up)
 " 不要なマップを除去
 autocmd FileType tweetvim     nunmap   <buffer>ff
 autocmd FileType tweetvim     nunmap   <buffer>bb
 " tweetvim バッファに移動したときに自動リロード
 autocmd BufEnter * call <SID>tweetvim_reload()
 augroup END
+
+autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
+autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
 " セパレータを飛ばして移動する
 " filetype が tweetvim ならツイートをリロード
 function! s:tweetvim_reload()
@@ -918,7 +925,6 @@ let g:lightline#bufferline#number_map = {
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
 
 let g:lightline#bufferline#unnamed = '[unnamed]'
-
 
 command! -bar LightlineUpdate    call lightline#init()|
   \ call lightline#colorscheme()|
@@ -1092,6 +1098,7 @@ endif
 call dein#add('sjl/gundo.vim')
 "-----------------------------------------------------------------------
 let g:gundo_prefer_python3 = 1
+let g:gundo_auto_preview = 0
 let g:gundo_help = 0
 let g:gundo_width = 45
 let g:gundo_preview_height = 10
@@ -1122,7 +1129,8 @@ call dein#add('w0rp/ale')
 let g:ale_use_global_executables=1
 let g:ale_linters = {
     \ 'markdown': ['textlint'],
-    \ 'vim':['vint']
+    \ 'vim':['vint'],
+    \ 'text':['textlint']
     \ }
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
@@ -1150,4 +1158,3 @@ endif
 "||||||||dein scripts end||||||||
 filetype plugin indent on
 syntax enable
-
