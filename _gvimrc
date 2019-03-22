@@ -10,8 +10,8 @@ set t_Co=256   " This is may or may not needed.
 set background=light
 call one#highlight('Search','4b0082','f0e68c','bold')
 call one#highlight('IncSearch','4b0082','f0e68c','bold')
-call one#highlight('PreProc','f39800','fafafa','')
-call one#highlight('Type','f39800','fafafa','')
+call one#highlight('PreProc','e7609e','fafafa','')
+call one#highlight('Type','e7609e','fafafa','')
 
 "ツールバー非表示
   set guioptions-=T

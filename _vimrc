@@ -1,5 +1,7 @@
-"vim:set foldmethod=marker:
 "ork's _vimrc for Windows
+"今夜使いたいkey mapping
+"ciw => カーソル上の単語を削除してインサートモード
+"ci' => シングルクォート内のテキストを削除してインサートモード
 "========================================================================
 "基本設定
 "========================================================================
@@ -84,22 +86,17 @@ let g:loaded_netrwFileHandlers = 1
 "runtimepath
 "========================================================================
 set runtimepath+=~\vimfiles
+set runtimepath+="C:\Program Files\Python37"
 "========================================================================
 "Python,vimproc
 "========================================================================
 "メモ
 "インストールはAll Userで
-"%PYTHONPATHを確認
 "pipからneovim, greenletを導入 Visual Studio C++ 14.0が必要
 "参考:https://gammasoft.jp/python/python-version-management/
-"$VIMにインストールしたpythonと同じバージョンのdll(python3.dll, python35.dll, python35.zip)を入れる
-"kaoriya-vimのpython3.5に揃える
+"kaoriya-vimのpythonに揃える
 "64bit版を使用する
-"kaoriya-VimのPython3.5と同時にDefx等で必要なPython3.6を指定する。
-"3.5と3.6が両方必要
 let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
-"set pythonthreedll=~\AppData\Local\Programs\Python\Python36\python36.dll
-"let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python36\python.exe')
 "vimprocのダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
@@ -122,6 +119,7 @@ nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
 "モードライン設定
 set modeline
 :set modelines=5
+let g:solarized_termtrans=1
 "}}}
 "========================================================================
 "入力・編集
@@ -140,7 +138,7 @@ set display=lastline
 set signcolumn=yes
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
-set spelllang=en,cjk
+"set spelllang=en,cjk
 "日付を入力
 inoremap <expr> <F2> strftime("%Y%m%d")
 "句読点を強引に挿入
@@ -249,8 +247,8 @@ nnoremap <S-h> <Home>
 " インサートモード時は emacs like なキーバインド
 inoremap <C-f> <Right>|			" C-f で左へ移動
 inoremap <C-b> <Left>|			" C-b で右へ移動
-inoremap <C-p> <Up>|			" C-p で上へ移動
-inoremap <C-n> <Down>|			" C-n で下へ移動
+"inoremap <C-p> <Up>|			" C-p で上へ移動
+"inoremap <C-n> <Down>|			" C-n で下へ移動
 inoremap <C-a> <Home>|			" C-a で行頭へ移動
 inoremap <C-e> <End>|			" C-e で行末へ移動
 inoremap <C-h> <BS>|			" C-h でバックスペース
@@ -308,6 +306,7 @@ call dein#begin(expand('~/vimfiles/dein'))
 call dein#add(expand('~/vimfiles/dein/repos/github.com/Shougo/dein.vim'))
 "}}}
 "SCRIPTS
+"
 "-----------------------------------------------------------------------
 "Denite
 call dein#add('lambdalisue/vim-rplugin')
@@ -732,8 +731,8 @@ let g:operator#surround#blocks['-'] = [
 "-----------------------------------------------------------------------------------------
 "lexima
 call dein#add('cohama/lexima.vim') "括弧を補完
-"{{{
-"2バイト括弧を追加
+""{{{
+""2バイト括弧を追加
 call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
 call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
 call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
@@ -754,32 +753,15 @@ call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
 "-----------------------------------------------------------------------------------------
 "文字数カウントスクリプト
 "{{{
-"lightlineに渡す変数の設定
-"適宜アップデートしている
-augroup CharCounter
-	autocmd!
-	autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>Update()
-augroup END
-"表示をここで変えてからLightlineにわたす
-
-function! s:Update()
-	let l:count = s:CharCount()
-	if l:count == 0
-		let l:shresult = '---'
-"    elseif l:count <10
-"        let l:shresult ='   ' . l:count
-"    elseif l:count <100
-"        let l:shresult ='  ' . l:count
-	elseif l:count < 10000
-		let l:shresult = l:count
-	else
-		let l:shresult = (l:count / 1000) . 'k'
-	endif
-	let b:charCounterCount = l:shresult
-endfunction
-
-"全体カウント
+"
+"1行カウント
 function! s:CharCount()
+	let l:line = getline(line('.'))
+	let l:result =  strlen(substitute(l:line, '.', 'x','g'))
+	return l:result
+endfunction
+"全体カウント
+function! s:CharAllCount()
 	let l:result = 0
 	for l:linenum in range(0, line('$'))
 		let l:line = getline(l:linenum)
@@ -795,7 +777,7 @@ function! g:LineCharVCount() range
 		let l:line = getline(l:linenum)
 		let l:result += strlen(substitute(l:line, '.', 'x','g'))
 	endfor
-	echo ' [WordCount] -- ' . l:result . ' : ' . s:CharCount() .
+	echo ' [WordCount] -- ' . l:result . ' : ' . s:CharAllCount() .
 				\ ' --   [選択行の字数:全体の字数]'
 endfunction
 "呼び出す
@@ -879,7 +861,7 @@ let g:lightline = {
     \ 'active': {
 		\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
 		\ 'right': [
-        \ ['charcount','lineinfo', 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok',],
+        \ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','charcount','lineinfo' ],
         \ ['percent'], [ 'IMEstatus','filetype' ] 
         \ ]
     \ },
@@ -901,7 +883,8 @@ let g:lightline = {
 \ }
 
 let g:lightline.component = {
-	\'IMEstatus':"%{IMStatus('-JP-')}",
+    \'lineinfo':'%-2v:%3l',
+	\'IMEstatus':'%{IMStatus("-JP-")}',
 	\'charcount':'%{b:charCounterCount}'
 	\}
 let g:lightline.component_expand = {
@@ -942,6 +925,30 @@ function! MyInactiveFilename()
 return &filetype !~# '\v(help|denite|defx)' ? expand('%:t') : LightlineMode()
 endfunction
 
+"lightlineに渡す変数の設定
+augroup CharCounter
+	autocmd!
+"	autocmd * call <SID>CharCount()
+	autocmd CursorMoved,CursorMovedI,BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>Update()
+augroup END
+
+function! s:Update()
+	let l:count = s:CharAllCount()
+	if l:count == 0
+		let l:shresult = '---'
+"    elseif l:count <10
+"        let l:shresult ='   ' . l:count
+"    elseif l:count <100
+"        let l:shresult ='  ' . l:count
+	elseif l:count < 10000
+		let l:shresult = l:count
+	else
+		let l:shresult = (l:count / 1000) . 'k'
+	endif
+let l:CC = s:CharCount() < 10 ? '  ' . s:CharCount() :
+        \ s:CharCount() <100 ? ' ' . s:CharCount() : s:CharCount()
+	let b:charCounterCount =  l:CC . '/' . l:shresult
+endfunction
 
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call LLgitbranch()
 
@@ -1004,6 +1011,7 @@ function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 "}}}
+
 "-----------------------------------------------------------------------
 "-----------------------------------------------------------------------
 "deoplete
@@ -1065,7 +1073,7 @@ call deoplete#custom#option({
       \ 'yarp': v:false
       \ })
 
-"}}}
+call dein#add('notomo/denite-keymap')"}}}
 "-----------------------------------------------------------------------
 "deoplete-sources
 call dein#add('Shougo/neco-vim')
@@ -1135,6 +1143,7 @@ let g:ale_linters = {
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_sign_column_always = 1
+let g:ale_lint_delay = 5000
 let g:ale_lint_on_enter = 0
 let g:ale_open_list = 0
 let g:ale_keep_list_window_open = 0
@@ -1150,7 +1159,10 @@ let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 call dein#add('NLKNguyen/papercolor-theme')
 call dein#add('rakr/vim-one')
 call dein#add('hzchirs/vim-material')
+call dein#add('altercation/vim-colors-solarized')
 "-----------------------------------------------------------------------
+"benchvimrc-vim
+call dein#add('mattn/benchvimrc-vim')
 call dein#end()
 call dein#save_state()
 endif
@@ -1158,3 +1170,5 @@ endif
 "||||||||dein scripts end||||||||
 filetype plugin indent on
 syntax enable
+
+"vim:set foldmethod=marker:
