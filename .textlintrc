@@ -6,6 +6,7 @@
         "sentence-length": {
             max: 125
             },
+        "ja-no-mixed-period":false,
         "no-mix-dearu-desumasu": false
         }
     }

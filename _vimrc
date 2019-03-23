@@ -117,9 +117,8 @@ set cmdheight=1
 nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
 nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
 "モードライン設定
-set modeline
-:set modelines=5
-let g:solarized_termtrans=1
+set modelines=5
+
 "}}}
 "========================================================================
 "入力・編集
@@ -161,10 +160,6 @@ lmap <silent> <C-c> <ESC>
 " 「日本語入力固定モード」切替キー
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 " im_control.vimがない環境でもエラーを出さないためのダミー関数
-function! IMStatus(...)
-  return ''
-endfunction
-
 
 "Tab系
 "不可視文字の可視化
@@ -219,14 +214,12 @@ nnoremap ; :
 " Enter normal mode
 inoremap jk <esc>
 "末尾までヤンク
-nnoremap <silent>Y $y
-"上書きペースト
-nnoremap <silent>cp ve"8d"0p
+nnoremap <silent>Y y$
 " 折り返し時に表示行単位での移動できるようにする
 nnoremap  j gj
 nnoremap  k gk
 "CTRL-sで保存！
-:imap <c-s> <Esc>:w<CR>a
+imap <c-s> <Esc>:w<CR>a
 "CTRL-qでclose
 nnoremap <silent> <C-q> :close<CR>
 "画面分割マッピング
@@ -234,12 +227,10 @@ nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
 nnoremap <leader>wc :close<CR>
 nnoremap <leader>wn :vne<CR>
-nnoremap <leader>w+ :res +2<CR>
-nnoremap <leader>w- :res -2<CR>
 nnoremap <leader>wo :only<CR>
 "_vimrcを開く
 noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
-"開いている_vimrcを読み込む
+"開いているfileを読み込む
 noremap <Leader>ss :<C-u>source %<CR>
 "Shift-l, Shift-hで行末, 行頭に移動
 nnoremap <S-l> <End>
@@ -372,12 +363,12 @@ nnoremap <silent> n :<C-u>Denite
     \ -resume -mode=normal -refresh<CR>
 "denite-default option
 call denite#custom#option('normal', {
-    \ 'quick-move':'normal'
+    \ 'quick-move': 'immediately'
     \})
 call denite#custom#option('search', {
 	\ 'highlight_mode_insert': 'CursorLine',
     \ 'auto-resize': v:true,
-    \ 'winheight': 10
+    \ 'winheight': 5
     \ })
 call denite#custom#option('_', {
 	\ 'prompt': '»',
@@ -463,8 +454,8 @@ let s:menus.my_commands = {
 	\ 'description': 'Example commands'
 	\ }
 let s:menus.my_commands.command_candidates = [
-	\ ['Split the window', 'vnew'],
-	\ ['Open zsh menu', 'Denite menu:zsh'],
+	\ ['Split the window', 'snew'],
+	\ ['VerticalSplit the window', ''],
 	\ ['Format code', 'FormatCode', 'go,python'],
 	\ ]
 call denite#custom#var('menu', 'menus', s:menus)
@@ -642,6 +633,11 @@ call gina#custom#command#option(
 \ '/\%(log\|reflog\)',
 \ '--opener', 'vsplit'
 \)
+
+call gina#custom#command#option(
+\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+\ '--opener' , 'vsplit'
+\)
 call gina#custom#command#option(
 \ 'log', '--group', 'log-viewer'
 \)
@@ -741,15 +737,16 @@ call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1
 call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
 call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
 call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#)', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#"', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#''', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#]', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
-call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
+call lexima#add_rule({'char': '<S-Space>', 'at': '\%#)', 'leave': 1})
+call lexima#add_rule({'char': '<S-Space>', 'at': '\%#"', 'leave': 1})
+call lexima#add_rule({'char': '<S-Space>', 'at': '\%#''', 'leave': 1})
+call lexima#add_rule({'char': '<S-Space>', 'at': '\%#]', 'leave': 1})
+call lexima#add_rule({'char': '<S-Space>', 'at': '\%#}', 'leave': 1})
+call lexima#add_rule({'char': '<S-Space>', 'at': '\%#』', 'leave': 1})
+call lexima#add_rule({'char': '<S-Space>', 'at': '\%#」', 'leave': 1})
+call lexima#add_rule({'char': '<S-Space>', 'at': '\%#）', 'leave': 1})
 "}}}
+"
 "-----------------------------------------------------------------------------------------
 "文字数カウントスクリプト
 "{{{
@@ -760,6 +757,7 @@ function! s:CharCount()
 	let l:result =  strlen(substitute(l:line, '.', 'x','g'))
 	return l:result
 endfunction
+"
 "全体カウント
 function! s:CharAllCount()
 	let l:result = 0
@@ -876,7 +874,8 @@ let g:lightline = {
         \ 'ale': 'ALEGetStatusLine',
 		\'inactivefn':'MyInactiveFilename',
 		\'relativepath':'MyFilepath',
-        \'mode': 'LightlineMode'
+        \'mode': 'LightlineMode',
+	    \'charcount':'LLCharcount'
     \ },
 	\ 'separator': { 'left': '', 'right': '' },
 	\ 'subseparator': { 'left': '', 'right': '' }
@@ -884,8 +883,7 @@ let g:lightline = {
 
 let g:lightline.component = {
     \'lineinfo':'%-2v:%3l',
-	\'IMEstatus':'%{IMStatus("-JP-")}',
-	\'charcount':'%{b:charCounterCount}'
+	\'IMEstatus':'%{IMStatus("-JP-")}'
 	\}
 let g:lightline.component_expand = {
       \  'buffers': 'lightline#bufferline#buffers',
@@ -925,45 +923,82 @@ function! MyInactiveFilename()
 return &filetype !~# '\v(help|denite|defx)' ? expand('%:t') : LightlineMode()
 endfunction
 
+
+function! ProfileCursorMove() abort
+  let profile_file = expand('~/log/vim-profile.log')
+  if filereadable(profile_file)
+    call delete(profile_file)
+  endif
+
+  normal! gg
+  normal! zR
+
+  execute 'profile start ' . profile_file
+  profile func *
+  profile file *
+
+  augroup ProfileCursorMove
+    autocmd!
+    autocmd CursorHold <buffer> profile pause | q
+  augroup END
+
+  for i in range(100)
+    call feedkeys('j')
+  endfor
+endfunction
+
 "lightlineに渡す変数の設定
 augroup CharCounter
 	autocmd!
-"	autocmd * call <SID>CharCount()
-	autocmd CursorMoved,CursorMovedI,BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>Update()
+	autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave,CursorMoved,CursorMovedI * call <SID>LLvarCharCount()
+	autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>LLvarCharAllCount()
 augroup END
 
-function! s:Update()
+let s:llcharcount = ''
+let s:llcharallcount = ''
+
+function! s:LLvarCharAllCount()
 	let l:count = s:CharAllCount()
 	if l:count == 0
 		let l:shresult = '---'
-"    elseif l:count <10
-"        let l:shresult ='   ' . l:count
-"    elseif l:count <100
-"        let l:shresult ='  ' . l:count
+    elseif l:count <10
+        let l:shresult ='   ' . l:count
+    elseif l:count <100
+        let l:shresult ='  ' . l:count
 	elseif l:count < 10000
 		let l:shresult = l:count
 	else
 		let l:shresult = (l:count / 1000) . 'k'
 	endif
-let l:CC = s:CharCount() < 10 ? '  ' . s:CharCount() :
-        \ s:CharCount() <100 ? ' ' . s:CharCount() : s:CharCount()
-	let b:charCounterCount =  l:CC . '/' . l:shresult
+	let s:llcharallcount = l:shresult
 endfunction
 
-autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call LLgitbranch()
+function! s:LLvarCharCount()
+    let l:CC = s:CharCount() < 10 ? '  ' . s:CharCount() :
+	    \ s:CharCount() <100 ? ' ' . s:CharCount() : s:CharCount()
+    let s:llcharcount = l:CC
+endfunction
+
+function! LLCharcount()
+    return s:llcharcount . '/' . s:llcharallcount
+endfunction
+
+autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgit()
+
+let s:ginabranch = ''
 
 function! s:llgit()
 if exists('*gitbranch#name')
-	let ginabranch = gitbranch#name()
+	let s:ginabranch = gitbranch#name()
 else
-	let ginabranch = ''
+	let s:ginabranch = ''
 endif
-return ginabranch
+return s:ginabranch
 endfunction
 
 function! LLgitbranch()
   try
-    if &filetype !~? 'vimfiler\|gundo' && strlen(s:llgit()) && winwidth(0) > 40
+    if &filetype !~? 'vimfiler\|gundo' && strlen(s:ginabranch) && winwidth(0) > 40
       let _ = s:llgit()
       return strlen(_) && winwidth(0) > 100  ? ' '._ :
 	    \strlen(_) ? ' ': ''
@@ -1011,8 +1046,6 @@ function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 "}}}
-
-"-----------------------------------------------------------------------
 "-----------------------------------------------------------------------
 "deoplete
 call dein#add('Shougo/deoplete.nvim')
@@ -1097,9 +1130,9 @@ xmap <C-k>     <Plug>(neosnippet_expand_target)
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 " For conceal markers.
-if has('conceal')
-  set conceallevel=2
-endif
+"if has('conceal')
+"  set conceallevel=2
+"endif
 "}}}
 "-----------------------------------------------------------------------
 "Gundo
@@ -1160,9 +1193,12 @@ call dein#add('NLKNguyen/papercolor-theme')
 call dein#add('rakr/vim-one')
 call dein#add('hzchirs/vim-material')
 call dein#add('altercation/vim-colors-solarized')
+
+"!!!!!!!!!!!!!colorscheme!!!!!!!!!!!!!!!
 "-----------------------------------------------------------------------
 "benchvimrc-vim
 call dein#add('mattn/benchvimrc-vim')
+"-----------------------------------------------------------------------
 call dein#end()
 call dein#save_state()
 endif

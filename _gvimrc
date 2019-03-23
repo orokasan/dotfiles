@@ -3,11 +3,9 @@
 set clipboard=unnamed
 "=========================================================================================
 " 見た目系
-"!!!!!!!!!!!!!colorscheme!!!!!!!!!!!!!!!
-syntax on
 colorscheme one
-set t_Co=256   " This is may or may not needed.
 set background=light
+
 call one#highlight('Search','4b0082','f0e68c','bold')
 call one#highlight('IncSearch','4b0082','f0e68c','bold')
 call one#highlight('PreProc','e7609e','fafafa','')
@@ -87,6 +85,7 @@ set guicursor=n:blinkwait2000
 "cygwinとvimのターミナルが干渉するのを防ぐ
 set shell=cmd.exe
 set shellcmdflag=/C
+
 "=========================================================================================
 "lightline
 "powerlineフォント対応（Doubleが適正のはずがsingleで動作する)
