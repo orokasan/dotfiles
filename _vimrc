@@ -537,9 +537,10 @@ nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirma
 "-----------------------------------------------------------------------
 "Defx
 call dein#add('Shougo/defx.nvim') "ファイラー
-"if !has('nvim')
+if !has('nvim')
 call dein#add('roxma/nvim-yarp')
 call dein#add('roxma/vim-hug-neovim-rpc')
+endif
 "{{{
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
