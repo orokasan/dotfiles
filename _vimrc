@@ -334,9 +334,6 @@ call dein#add('Shougo/neoyank.vim')
 call dein#add('iyuuya/denite-ale')
 "{{{
 "need-Python3.6
-"nonameバッファが開いてしまうことへの一時対応
-set nohidden
-
 nnoremap [denite] <Nop>
 nmap s [denite]
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
@@ -544,7 +541,7 @@ call dein#add('roxma/vim-hug-neovim-rpc')
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
 	\ :<C-u>Defx -listed <CR>
-	\ :setlocal nonumber<CR>
+	\ :setlocal nonumber signcolumn=no<CR>
 call defx#custom#option('_', {
     \ 'winwidth': 40,
     \ 'split': 'vertical',
@@ -881,7 +878,7 @@ call dein#add('maximbaz/lightline-ale')
 call dein#add('itchyny/vim-gitbranch')
 "{{{
 let g:lightline = {
-\ 'colorscheme': 'deus',
+\ 'colorscheme': 'wombat',
     \ 'active': {
 		\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
 		\ 'right': [
