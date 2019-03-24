@@ -3,13 +3,19 @@
 set clipboard=unnamed
 "=========================================================================================
 " 見た目系
-colorscheme one
-set background=light
-
+colorscheme Iceberg
+set background=dark
+"set background=light
+augroup one
+autocmd!
+autocmd Colorscheme one MyOne() 
+function! MyOne()
 call one#highlight('Search','4b0082','f0e68c','bold')
 call one#highlight('IncSearch','4b0082','f0e68c','bold')
 call one#highlight('PreProc','e7609e','fafafa','')
 call one#highlight('Type','e7609e','fafafa','')
+endfunction
+augroup END
 
 "ツールバー非表示
   set guioptions-=T
@@ -67,7 +73,7 @@ augroup vimrc-auto-cursorline
       endif
     elseif a:event ==# 'CursorHold'
       " setlocal cursorline
-      hi CursorLine term=underline cterm=underline guibg=Grey90 " ADD
+"      hi CursorLine term=underline cterm=underline guibg=Grey90 " ADD
       let s:cursorline_lock = 1
     endif
   endfunction

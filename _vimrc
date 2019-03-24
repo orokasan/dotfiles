@@ -39,6 +39,7 @@ set noshowmode
 set formatoptions+=mMj
 "folding設定
 setlocal foldmethod=marker
+set viminfo='600,s100,h
 "いい感じに折りたたみ状態を保存
 function! s:is_view_available() abort
   if !&buflisted || &buftype !=# ''
@@ -118,7 +119,7 @@ nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
 nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
 "モードライン設定
 set modelines=5
-
+set noequalalways
 "}}}
 "========================================================================
 "入力・編集
@@ -136,7 +137,8 @@ set virtualedit=block
 set display=lastline
 set signcolumn=yes
 "日本語の文章構造に対応するやつ
-set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
+set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞,':'
+set lazyredraw
 "set spelllang=en,cjk
 "日付を入力
 inoremap <expr> <F2> strftime("%Y%m%d")
@@ -197,6 +199,30 @@ autocmd BufRead,BufNewFile *.{md} set filetype=markdown
 autocmd! FileType markdown hi! def link markdownItalic Normal
 autocmd FileType markdown set commentstring=<\!--\ %s\ -->
 augroup END
+" 「'」と「"」をトグルする
+nnoremap <silent> "" :<C-u>call ToggleQuote()<CR>
+function! ToggleQuote()
+  let save_cursor = getcurpos()
+
+  " どちらかのクォートを検索
+  cal search('\(\\\)\@<!\(' . "'" . '\|"\)', 'bc', line('.'))
+  let char = getline('.')[col('.')-1]
+
+  if char ==# "'"
+    let replaced = "\""
+  elseif char ==# "\""
+    let replaced = "'"
+  else
+    call execute(['echo', 'クォートが見つかりませんでした'])
+    return
+  endif
+  exe 'normal! r' . replaced
+
+  let close_pos = search('\(\\\)\@<!' . char, '')
+  exe 'normal! r' . replaced
+
+  call setpos('.', save_cursor)
+endfunction
 "}}}
 "========================================================================
 "Key mapping
@@ -636,7 +662,7 @@ call gina#custom#command#option(
 
 call gina#custom#command#option(
 \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-\ '--opener' , 'vsplit'
+\ '--opener' , 'split'
 \)
 call gina#custom#command#option(
 \ 'log', '--group', 'log-viewer'
@@ -776,7 +802,7 @@ function! g:LineCharVCount() range
 		let l:result += strlen(substitute(l:line, '.', 'x','g'))
 	endfor
 	echo ' [WordCount] -- ' . l:result . ' : ' . s:CharAllCount() .
-				\ ' --   [選択行の字数:全体の字数]'
+				\ ' -- [選択行の字数:全体の字数]'
 endfunction
 "呼び出す
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
@@ -980,7 +1006,11 @@ function! s:LLvarCharCount()
 endfunction
 
 function! LLCharcount()
-    return s:llcharcount . '/' . s:llcharallcount
+    if &filetype !~? 'vimfiler\|gundo|\defx|\denite' && winwidth(0) > 40
+        return s:llcharcount . '/' . s:llcharallcount
+    else
+        return ''
+    endif
 endfunction
 
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgit()
@@ -1141,8 +1171,9 @@ call dein#add('sjl/gundo.vim')
 let g:gundo_prefer_python3 = 1
 let g:gundo_auto_preview = 0
 let g:gundo_help = 0
-let g:gundo_width = 45
+let g:gundo_width = 30
 let g:gundo_preview_height = 10
+let g:gundo_preview_bottom = 1
 nmap U :<C-u>GundoToggle<CR>
 "-----------------------------------------------------------------------
 call dein#add('nathanaelkane/vim-indent-guides')
@@ -1193,7 +1224,7 @@ call dein#add('NLKNguyen/papercolor-theme')
 call dein#add('rakr/vim-one')
 call dein#add('hzchirs/vim-material')
 call dein#add('altercation/vim-colors-solarized')
-
+call dein#add('cocopon/iceberg.vim')
 "!!!!!!!!!!!!!colorscheme!!!!!!!!!!!!!!!
 "-----------------------------------------------------------------------
 "benchvimrc-vim

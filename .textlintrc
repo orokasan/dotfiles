@@ -6,6 +6,19 @@
         "sentence-length": {
             max: 125
             },
+        "max-ten": {
+            "max" : 3
+            },
+        "no-exclamation-question-mark": {
+            // allow to use !
+            "allowHalfWidthExclamation": false,
+            // allow to use ！
+            "allowFullWidthExclamation": true,
+            // allow to use ?
+            "allowHalfWidthQuestion": false,
+            // allow to use ？
+            "allowFullWidthQuestion": true
+            },
         "ja-no-mixed-period":false,
         "no-mix-dearu-desumasu": false
         }
