@@ -39,7 +39,7 @@ set noshowmode
 set formatoptions+=mMj
 "folding設定
 setlocal foldmethod=marker
-set viminfo='1,<1000,s100,/0,h,n~/vimfiles/viminfo
+"set viminfo='1,<1000,s100,/0,h,n~/vimfiles/viminfo
 "いい感じに折りたたみ状態を保存
 function! s:is_view_available() abort
   if !&buflisted || &buftype !=# ''
@@ -67,6 +67,7 @@ augroup MyAutoCmd
   autocmd MyAutoCmd BufWinLeave ?* call s:mkview()
   autocmd MyAutoCmd BufReadPost ?* call s:loadview()
 augroup END
+
 "使わないプリセットプラグインを読み込まない
 let g:loaded_gzip              = 1
 let g:loaded_tar               = 1
@@ -88,6 +89,8 @@ let g:loaded_netrwFileHandlers = 1
 "========================================================================
 set runtimepath+=~\vimfiles
 set runtimepath+="C:\Program Files\Python37"
+" plugins下のディレクトリをruntimepathへ追加する。
+set runtimepath+=~\vimfiles\Plugin
 "========================================================================
 "Python,vimproc
 "========================================================================
@@ -97,7 +100,9 @@ set runtimepath+="C:\Program Files\Python37"
 "参考:https://gammasoft.jp/python/python-version-management/
 "kaoriya-vimのpythonに揃える
 "64bit版を使用する
+let g:python_host_prog ='C:\Program Files (x86)\Python2.7\python.exe'
 let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
+
 "vimprocのダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
@@ -109,6 +114,7 @@ let g:vimproc#download_windows_dll = 1
 set showtabline=2
 " 括弧入力時の対応する括弧を表示
 set showmatch
+set number
 set matchtime=1
 " ステータスラインを常に表示
 set laststatus=2
@@ -142,6 +148,7 @@ if has('syntax')
   augroup END
   call ZenkakuSpace()
 endif
+
 " 'cursorline' を必要な時にだけ有効にする
 " http://d.hatena.ne.jp/thinca/20090530/1243615055
 " を少し改造、number の highlight は常に有効にする
@@ -215,15 +222,14 @@ nnoremap <Leader><S-Space> a…<Esc>
 " <ESC>でのIME状態保存を無効化
 inoremap <silent> <ESC> <ESC>
 inoremap <silent> <C-[> <ESC>
-map <silent><C-c> <ESC>
-lmap <silent> <C-c> <ESC>
+nnoremap <silent><C-c> <ESC>
+inoremap <silent> <C-c> <ESC>
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
 " 「日本語入力固定モード」切替キー
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
 " im_control.vimがない環境でもエラーを出さないためのダミー関数
-
 "Tab系
 "不可視文字の可視化
 set list
@@ -371,50 +377,55 @@ nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "========================================================================
 "DEIN INITIALIZE
 "========================================================================
+if has('vim_starting')
+  set rtp+=~/vimfiles/plugged/vim-plug
+  if !isdirectory(expand('~/vimfiles/plugged/vim-plug'))
+    echo 'install vim-plug...'
+    call system('mkdir -p ~/vimfiles/plugged/vim-plug')
+    call system('git clone https://github.com/junegunn/vim-plug.git ~/.vim/plugged/vim-plug/autoload')
+  end
+endif
 
-set runtimepath+=~/vimfiles/autoload/plug.vim
-set runtimepath+=~/vimfiles/plugged/vim-plug
-call plug#begin('~/vimfile/plugged')
+call plug#begin('~/vimfiles/plugged')
   Plug 'junegunn/vim-plug',
-  Plug 'Shougo/denite.nvim'
-  Plug 'Shougo/neomru.vim'
-  Plug 'Shougo/unite.vim'
-  Plug 'Shougo/neoyank.vim'
-  Plug 'iyuuya/denite-ale'
-  Plug 'kmnk/denite-dirmark'
-  Plug 'Shougo/defx.nvim' "ファイラー
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
+
+  Plug 'Shougo/neomru.vim' |Plug 'Shougo/unite.vim' |Plug 'Shougo/neoyank.vim' |Plug 'iyuuya/denite-ale' |Plug 'kmnk/denite-dirmark' |Plug 'Shougo/denite.nvim'
+if !has('nvim')
+  Plug 'roxma/nvim-yarp' 
+  Plug 'roxma/vim-hug-neovim-rpc' 
+endif
+  Plug 'Shougo/defx.nvim'
+
   Plug 'lambdalisue/gina.vim' "git管理
-  Plug 'iwataka/minidown.vim'
+  Plug 'iwataka/minidown.vim',{'on':'Markdown'}
   Plug 'deton/jasegment.vim' "W,E,Bで日本語でも分節移動ができるように
+
   Plug 'rhysd/vim-operator-surround' "選択範囲に括弧を追加
   Plug 'kana/vim-operator-user'
   Plug 'cohama/lexima.vim' "括弧を補完
-  Plug 'tyru/open-browser.vim'
-  Plug 'mattn/webapi-vim'
-  Plug 'basyura/twibill.vim'
-  Plug 'basyura/TweetVim' "Vimでもツイッター
-  Plug 'itchyny/lightline.vim' "statuslineをかっこよく
-  Plug 'mengelbrecht/lightline-bufferline' "tablineにバッファー表示
-  Plug 'maximbaz/lightline-ale'
-  Plug 'itchyny/vim-gitbranch'
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'Shougo/neco-vim'
-  Plug 'Shougo/neco-syntax'
-  Plug 'Shougo/neosnippet'
-  Plug 'Shougo/neosnippet-snippets'
+
+  Plug 'tyru/open-browser.vim' 
+  Plug 'basyura/TweetVim' , {'on':'TweetVimHomeTimeline'} |  Plug 'mattn/webapi-vim' , {'on':'TweetVimHomeTimeline'} |  Plug 'basyura/twibill.vim' , {'on':'TweetVimHomeTimeline'}
+
+  Plug 'itchyny/lightline.vim' | Plug 'mengelbrecht/lightline-bufferline' | Plug 'maximbaz/lightline-ale' | Plug 'itchyny/vim-gitbranch'
+  
+  Plug 'Shougo/deoplete.nvim', |  Plug 'Shougo/neco-vim' |  Plug 'Shougo/neco-syntax' 
+     \|  Plug 'Shougo/neosnippet' |  Plug 'Shougo/neosnippet-snippets'
+
   Plug 'sjl/gundo.vim'
   Plug 'nathanaelkane/vim-indent-guides'
   Plug 'Shougo/echodoc.vim'
   Plug 'w0rp/ale'
-  Plug 'NLKNguyen/papercolor-theme'
-  Plug 'rakr/vim-one'
-  Plug 'hzchirs/vim-material'
-  Plug 'altercation/vim-colors-solarized'
+
+"  Plug 'NLKNguyen/papercolor-theme'
+"  Plug 'rakr/vim-one'
+"  Plug 'hzchirs/vim-material'
+"  Plug 'altercation/vim-colors-solarized'
   Plug 'cocopon/iceberg.vim'
   Plug 'tomasr/molokai'
-  Plug 'mattn/benchvimrc-vim'
+
+  Plug 'mattn/benchvimrc-vim',{'on':'BenchVimrc'}
+  Plug 'pepo-le/win-ime-con.nvim'
   call plug#end()
 "{{{
 "環境によってはcacheファイル生成で呼び出されるROBOCOPYの/MTオプションがエラーを出す
@@ -495,7 +506,7 @@ call denite#custom#option('normal', {
     \})
 call denite#custom#option('search', {
 	\ 'highlight_mode_insert': 'CursorLine',
-    \ 'auto-resize': v:true,
+    \ 'split':'floating',
     \ 'winheight': 5
     \ })
 call denite#custom#option('_', {
@@ -679,8 +690,6 @@ autocmd FileType defx call s:defx_my_settings()
 
 function! s:defx_my_settings() abort
 " Define mappings
-nnoremap <silent><buffer><expr> <C-c>
-\ <Nop>
 nnoremap <silent><buffer><expr> <CR>
 \ defx#do_action('drop')
 nnoremap <silent><buffer><expr> c
@@ -967,7 +976,7 @@ endfunction
 "lightline-ale
 "{{{
 let g:lightline = {
-\ 'colorscheme': 'iceberg',
+\ 'colorscheme': 'wombat',
     \ 'active': {
 		\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
 		\ 'right': [
@@ -988,10 +997,12 @@ let g:lightline = {
 		\'relativepath':'MyFilepath',
         \'mode': 'LightlineMode',
 	    \'charcount':'LLCharcount'
-    \ },
-	\ 'separator': { 'left': '', 'right': '' },
-	\ 'subseparator': { 'left': '', 'right': '' }
+    \ }
 \ }
+if has('GUI')
+    let g:lightline.separator = { 'left': '', 'right': '' }
+    let g:lightline.subseparator = { 'left': '', 'right': '' }
+endif
 
 let g:lightline.component = {
     \'lineinfo':'%-2v:%3l',
@@ -1166,8 +1177,11 @@ endfunction
 "deoplete
 "{{{
 " Use deoplete.
-"
-let g:deoplete#enable_at_startup = 1
+autocmd vimrc VimEnter * call s:deoplete_setting()
+
+function! s:deoplete_setting()
+let g:deoplete#enable_at_startup = 0
+autocmd InsertEnter * call deoplete#enable()
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
@@ -1213,14 +1227,14 @@ inoremap <silent><expr> <C-tab> deoplete#manual_complete('file')
 
 call deoplete#custom#option({
       \ 'smart_case': v:true ,
-      \ 'auto_complete_delay': 1,
+      \ 'auto_complete_delay': 0,
       \ 'auto_refresh_delay': 1,
       \ 'camel_case': v:true,
       \ 'skip_multibyte': v:true,
       \ 'prev_completion_mode': 'length',
-      \ 'yarp': v:true,
       \ 'max_list': 50
       \ })
+endfunction
 "}}}"
 "-----------------------------------------------------------------------
 "deoplete-sources
@@ -1291,21 +1305,20 @@ let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin
+colorscheme Iceberg
 augroup one
 autocmd!
 autocmd Colorscheme one MyOne() 
 augroup END
 
-function! MyOne()
-call one#highlight('Search','4b0082','f0e68c','bold')
-call one#highlight('IncSearch','4b0082','f0e68c','bold')
-call one#highlight('PreProc','e7609e','fafafa','')
-call one#highlight('Type','e7609e','fafafa','')
-endfunction
-
+"function! MyOne()
+"call one#highlight('Search','4b0082','f0e68c','bold')
+"call one#highlight('IncSearch','4b0082','f0e68c','bold')
+"call one#highlight('PreProc','e7609e','fafafa','')
+"call one#highlight('Type','e7609e','fafafa','')
+"endfunction
 if has('GUI')
     set clipboard=unnamed
-    colorscheme Iceberg
     set background=dark
     "ツールバー非表示
     set guioptions-=T
@@ -1316,7 +1329,7 @@ if has('GUI')
     set guioptions-=L
     set guioptions-=b
     set guioptions-=e " gVimでもテキストベースのタブページを使う
-    set lines=40 " ウィンドウの縦幅
+    set lines=40 "ウィンドウの縦幅
     set columns=150 " ウィンドウの横幅
     winpos 50 30 " ウィンドウの起動時の位置
     set cmdheight=1 "コマンドライン行数の設定
@@ -1331,11 +1344,11 @@ if has('GUI')
     "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
     set guifont=Consolas:h11:cDEFAULT
     set guifontwide=MS_Gothic:h12:cDEFAULT
+"    set renderoptions=type:directx
     "IME状態でカーソルカラー変更
 else
     set t_Co=256
     set termguicolors 
-    colo molokai
     set ambiwidth=single
 endif
 
@@ -1344,6 +1357,4 @@ if has('multi_byte_ime')
 endif
 "!!!!!!!!!!!!!colorscheme!!!!!!!!!!!!!!!
 "-----------------------------------------------------------------------
-"benchvimrc-vim
-"
 "vim:set foldmethod=marker:
