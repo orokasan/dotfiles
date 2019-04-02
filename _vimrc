@@ -397,7 +397,7 @@ endif
   Plug 'Shougo/defx.nvim'
 
   Plug 'lambdalisue/gina.vim' "git管理
-  Plug 'iwataka/minidown.vim',{'on':'Markdown'}
+  Plug 'iwataka/minidown.vim',{'for':'markdown'}
   Plug 'deton/jasegment.vim' "W,E,Bで日本語でも分節移動ができるように
 
   Plug 'rhysd/vim-operator-surround' "選択範囲に括弧を追加
