@@ -379,15 +379,15 @@ nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "========================================================================
 if has('vim_starting')
   set rtp+=~/vimfiles/plugged/vim-plug
-  if !isdirectory(expand('~/vimfiles/plugged/vim-plug'))
+  if !isdirectory(expand('$HOME/vimfiles/plugged/vim-plug'))
     echo 'install vim-plug...'
-    call system('mkdir -p ~/vimfiles/plugged/vim-plug')
-    call system('git clone https://github.com/junegunn/vim-plug.git ~/.vim/plugged/vim-plug/autoload')
+    call system('mkdir -p vimfiles/plugged/vim-plug')
+    call system('git clone https://github.com/junegunn/vim-plug.git vimfiles/plugged/vim-plug/autoload')
   end
 endif
 
 call plug#begin('~/vimfiles/plugged')
-  Plug 'junegunn/vim-plug',
+"  Plug 'junegunn/vim-plug',
 
   Plug 'Shougo/neomru.vim' |Plug 'Shougo/unite.vim' |Plug 'Shougo/neoyank.vim' |Plug 'iyuuya/denite-ale' |Plug 'kmnk/denite-dirmark' |Plug 'Shougo/denite.nvim'
 if !has('nvim')
@@ -403,7 +403,7 @@ endif
   Plug 'rhysd/vim-operator-surround' "選択範囲に括弧を追加
   Plug 'kana/vim-operator-user'
   Plug 'cohama/lexima.vim' "括弧を補完
-
+  Plug 'kshenoy/vim-signature'
   Plug 'tyru/open-browser.vim' 
   Plug 'basyura/TweetVim' , {'on':'TweetVimHomeTimeline'} |  Plug 'mattn/webapi-vim' , {'on':'TweetVimHomeTimeline'} |  Plug 'basyura/twibill.vim' , {'on':'TweetVimHomeTimeline'}
 
@@ -651,7 +651,7 @@ nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirma
 "{{{
 "ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
-	\ :<C-u>Defx -listed <CR>
+	\ :<C-u>Defx<CR>
 	\ :setlocal nonumber signcolumn=no<CR>
 call defx#custom#option('_', {
     \ 'winwidth': 40,
