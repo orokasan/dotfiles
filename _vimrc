@@ -4,7 +4,6 @@
 "ci' => シングルクォート内のテキストを削除してインサートモード
 "========================================================================
 "基本設定
-"========================================================================
 "{{{
 "encode
 set encoding=utf-8			" vim 内部のエンコーディグ
@@ -108,7 +107,6 @@ let g:vimproc#download_windows_dll = 1
 "}}}
 "=========================================================================================
 "外観
-"=========================================================================================
 "{{{
 "常にタブラインを表示
 set showtabline=2
@@ -128,7 +126,10 @@ set modelines=5
 set noequalalways
 " ビープ音を可視化
 set visualbell
-
+"IME状態でカーソルカラー変更
+if has('multi_byte_ime')
+  highlight CursorIM guifg=NONE guibg=Purple
+endif
 "全角スペースを表示
 "コメント以外で全角スペースを指定しているので scriptencodingと、
 "このファイルのエンコードが一致するよう注意！
@@ -137,17 +138,17 @@ function! ZenkakuSpace()
   highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
 endfunction
 
-if has('syntax')
-  augroup ZenkakuSpace
-    autocmd!
-    " ZenkakuSpaceをカラーファイルで設定するなら次の行は削除
-    autocmd ColorScheme       * call ZenkakuSpace()
-    " 全角スペースのハイライト指定
-    autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
-    autocmd VimEnter,WinEnter * match ZenkakuSpace '\%u3000'
-  augroup END
-  call ZenkakuSpace()
-endif
+"if has('syntax')
+"  augroup ZenkakuSpace
+"    autocmd!
+"    " ZenkakuSpaceをカラーファイルで設定するなら次の行は削除
+"    autocmd ColorScheme       * call ZenkakuSpace()
+"    " 全角スペースのハイライト指定
+"    autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
+"    autocmd VimEnter,WinEnter * match ZenkakuSpace '\%u3000'
+"  augroup END
+"  call ZenkakuSpace()
+"endif
 
 " 'cursorline' を必要な時にだけ有効にする
 " http://d.hatena.ne.jp/thinca/20090530/1243615055
@@ -191,7 +192,6 @@ endif
 "}}}
 "========================================================================
 "入力・編集
-"========================================================================
 "{{{
 "自動改行をやめる
 set textwidth=0
@@ -269,7 +269,6 @@ augroup END
 "}}}
 "========================================================================
 "Key mapping
-"========================================================================
 "{{{
 "!!!!!!!!!!LeaderをSpaceキーに!!!!!!!!!!!!!!!
 let mapleader = "\<Space>"
@@ -351,8 +350,8 @@ nnoremap <Leader>nr <C-u>A  <Esc>
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "}}}
 "========================================================================
-"DEIN INITIALIZE
-"========================================================================
+"Vim-Plug
+"{{{
 if has('vim_starting')
   set rtp+=~/vimfiles/plugged/vim-plug
   if !isdirectory(expand('$HOME/vimfiles/plugged/vim-plug'))
@@ -403,22 +402,7 @@ endif
   Plug 'mattn/benchvimrc-vim',{'on':'BenchVimrc'}
   Plug 'pepo-le/win-ime-con.nvim'
   call plug#end()
-"{{{
-"環境によってはcacheファイル生成で呼び出されるROBOCOPYの/MTオプションがエラーを出す
-"Shougo\dein.vim\autoload\dein\install.vimの777行目から/MTを消すことで解決
-"set runtimepath+=~/vimfiles/dein/repos/github.com/Shougo/dein.vim
-"let s:deindir = '~/vimfiles/dein'
-"let s:deinrepo = s:deindir . '/repos/github.com/Shougo/dein.vim'
 
-"if dein#load_state(expand(s:deinrepo))
-"call dein#begin(expand(s:deindir))
-"call dein#add(expand(s:deinrepo))
-"
-"
-"call dein#end()
-"call dein#save_state()
-"endif
-"||||||||dein scripts end||||||||
 filetype plugin indent on
 syntax enable
 "}}}
@@ -457,12 +441,15 @@ nnoremap <silent> [denite]c :<C-u>Denite
 "      \ -no-empty -mode=normal grep<CR>
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
+	\ -mode=normal 
     \ menu<CR>
 nnoremap <silent> [denite]h :<C-u>Denite
+    \ -buffer-name=search
     \ help<CR>
 "最近使用したファイル一覧
 nnoremap <silent> [denite]n :<C-u>Denite
-	\ -mode=normal file_mru<CR>
+	\ -mode=normal 
+    \ file_mru<CR>
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
 "searchバッファをresumeして開く
@@ -507,19 +494,6 @@ call denite#custom#map(
       \ '<denite:move_to_previous_line>',
       \ 'noremap'
       \)
-call denite#custom#map(
-      \ 'insert',
-      \ '<C-q>',
-      \ '<denite:quit>',
-      \ 'noremap'
-      \)
-call denite#custom#map(
-      \ 'normal',
-      \ '<C-q>',
-      \ '<denite:quit>',
-      \ 'noremap'
-      \)
-
 "C-J,C-Kでsplitで開く
 call denite#custom#map('insert', '<C-g>', '<denite:do_action:split>', 'noremap')
 call denite#custom#map('insert', '<C-t>', '<denite:do_action:vsplit>', 'noremap')
@@ -546,6 +520,7 @@ function! ToggleSorter(sorter) abort
 endfunction
 call denite#custom#map('insert', '<C-f>',
     \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
+
 "need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
       \ ['rg', '--files', '--glob', '!.git'])
@@ -565,13 +540,13 @@ call denite#custom#source(
 " Add custom menus
 let s:menus = {}
 
-let s:menus.my_commands = {
-	\ 'description': 'Example commands'
+let s:menus.window_size = {
+	\ 'description': 'Change window size'
 	\ }
-let s:menus.my_commands.command_candidates = [
-	\ ['Split the window', 'snew'],
-	\ ['VerticalSplit the window', ''],
-	\ ['Format code', 'FormatCode', 'go,python'],
+let s:menus.window_size.command_candidates = [
+	\ ['150x40', 'set lines=40 columns=150'],
+	\ ['220x50', 'set lines=50 columns=220'],
+	\ ['Fullscreen-> :SM 6<CR> ', '']
 	\ ]
 call denite#custom#var('menu', 'menus', s:menus)
 
@@ -1085,7 +1060,7 @@ function! LLgitbranch()
     if &filetype !~? 'vimfiler\|gundo' && strlen(s:ginabranch) && winwidth(0) > 40
       let _ = s:llgit()
       return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
-	    \strlen(_) ? ' ': ''
+	    \strlen(_) ? ' ⭠': ''
     endif
   catch
   endtry
@@ -1251,11 +1226,8 @@ let g:gundo_preview_height = 10
 let g:gundo_preview_bottom = 1
 nmap U :<C-u>GundoToggle<CR>
 "-----------------------------------------------------------------------
-
-"-----------------------------------------------------------------------
+"Indent-guides
 let g:indent_guides_exclude_filetypes = ['help', 'defx']
-"-----------------------------------------------------------------------
-"echodoc
 "-----------------------------------------------------------------------
 "ALE
 "{{{
@@ -1287,29 +1259,14 @@ let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 "-----------------------------------------------------------------------
 "colorscheme-plugin
 colorscheme Iceberg
-augroup one
-autocmd!
-autocmd Colorscheme one MyOne() 
-augroup END
-
-"function! MyOne()
-"call one#highlight('Search','4b0082','f0e68c','bold')
-"call one#highlight('IncSearch','4b0082','f0e68c','bold')
-"call one#highlight('PreProc','e7609e','fafafa','')
-"call one#highlight('Type','e7609e','fafafa','')
-"endfunction
+"========================================================================
+"Gvim
 if has('GUI')
     set clipboard=unnamed
     set background=dark
+    let &guioptions = substitute(&guioptions, '[TMrRlLbeg]', '', 'g')
+    set guioptions+=M
     "ツールバー非表示
-    set guioptions-=T
-    set guioptions-=m
-    set guioptions-=r
-    set guioptions-=R
-    set guioptions-=l
-    set guioptions-=L
-    set guioptions-=b
-    set guioptions-=e " gVimでもテキストベースのタブページを使う
     set lines=40 "ウィンドウの縦幅
     set columns=150 " ウィンドウの横幅
     winpos 50 30 " ウィンドウの起動時の位置
@@ -1323,8 +1280,8 @@ if has('GUI')
     "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
 "    set guifont=Consolas:h11:cDEFAULT
 "    set guifontwide=MS_Gothic:h12:cDEFAULT
-    set guifont=Ricty_Diminished_for_Powerline:h14:cDEFAULT
-    set guifontwide=Ricty_Diminished_for_Powerline:h14:cDEFAULT
+    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
+    set guifontwide=Ricty_Diminished_for_Powerline:h13:cDEFAULT
     set renderoptions=type:directx,renmode:5,geom:1
     set ambiwidth=double
 else
@@ -1333,9 +1290,5 @@ else
     set ambiwidth=single
 endif
 
-"IME状態でカーソルカラー変更
-if has('multi_byte_ime')
-  highlight CursorIM guifg=NONE guibg=Purple
-endif
 "-----------------------------------------------------------------------
 "vim:set foldmethod=marker:
