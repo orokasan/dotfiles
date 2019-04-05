@@ -266,30 +266,6 @@ autocmd BufRead,BufNewFile *.{md} set filetype=markdown
 autocmd! FileType markdown hi! def link markdownItalic Normal
 autocmd FileType markdown set commentstring=<\!--\ %s\ -->
 augroup END
-" 「'」と「"」をトグルする
-nnoremap <silent> "" :<C-u>call ToggleQuote()<CR>
-function! ToggleQuote()
-  let save_cursor = getcurpos()
-
-  " どちらかのクォートを検索
-  cal search('\(\\\)\@<!\(' . "'" . '\|"\)', 'bc', line('.'))
-  let char = getline('.')[col('.')-1]
-
-  if char ==# "'"
-    let replaced = "\""
-  elseif char ==# "\""
-    let replaced = "'"
-  else
-    call execute(['echo', 'クォートが見つかりませんでした'])
-    return
-  endif
-  exe 'normal! r' . replaced
-
-  let close_pos = search('\(\\\)\@<!' . char, '')
-  exe 'normal! r' . replaced
-
-  call setpos('.', save_cursor)
-endfunction
 "}}}
 "========================================================================
 "Key mapping
@@ -1000,8 +976,8 @@ let g:lightline = {
     \ }
 \ }
 if has('GUI')
-    let g:lightline.separator = { 'left': '', 'right': '' }
-    let g:lightline.subseparator = { 'left': '', 'right': '' }
+    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
+    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 endif
 
 let g:lightline.component = {
@@ -1047,29 +1023,6 @@ return &filetype !~# '\v(help|denite|defx)' ? expand('%:t') : LightlineMode()
 endfunction
 
 
-function! ProfileCursorMove() abort
-  let profile_file = expand('~/log/vim-profile.log')
-  if filereadable(profile_file)
-    call delete(profile_file)
-  endif
-
-  normal! gg
-  normal! zR
-
-  execute 'profile start ' . profile_file
-  profile func *
-  profile file *
-
-  augroup ProfileCursorMove
-    autocmd!
-    autocmd CursorHold <buffer> profile pause | q
-  augroup END
-
-  for i in range(100)
-    call feedkeys('j')
-  endfor
-endfunction
-
 "lightlineに渡す変数の設定
 augroup CharCounter
 	autocmd!
@@ -1110,6 +1063,10 @@ function! LLCharcount()
     endif
 endfunction
 
+function! LightlineReadonly()
+    return &readonly ? '⭤' : ''
+endfunction
+
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgit()
 
 let s:ginabranch = ''
@@ -1127,7 +1084,7 @@ function! LLgitbranch()
   try
     if &filetype !~? 'vimfiler\|gundo' && strlen(s:ginabranch) && winwidth(0) > 40
       let _ = s:llgit()
-      return strlen(_) && winwidth(0) > 100  ? ' '._ :
+      return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
 	    \strlen(_) ? ' ': ''
     endif
   catch
@@ -1172,6 +1129,30 @@ endfunction
 function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
+
+function! ProfileCursorMove() abort
+  let profile_file = expand('~/log/vim-profile.log')
+  if filereadable(profile_file)
+    call delete(profile_file)
+  endif
+
+  normal! gg
+  normal! zR
+
+  execute 'profile start ' . profile_file
+  profile func *
+  profile file *
+
+  augroup ProfileCursorMove
+    autocmd!
+    autocmd CursorHold <buffer> profile pause | q
+  augroup END
+
+  for i in range(100)
+    call feedkeys('j')
+  endfor
+endfunction
+
 "}}}
 "-----------------------------------------------------------------------
 "deoplete
@@ -1335,26 +1316,26 @@ if has('GUI')
     set cmdheight=1 "コマンドライン行数の設定
     set cursorline
     hi clear CursorLine
-    ""N秒後にカーソル点滅開始
+    ""Nm秒後にカーソル点滅開始
     set guicursor=n:blinkwait2000
-
-    set ambiwidth=single
     "フォント
     "ConsolasにPowerlineSymbolsをパッチしてある
     "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
-    set guifont=Consolas:h11:cDEFAULT
-    set guifontwide=MS_Gothic:h12:cDEFAULT
-"    set renderoptions=type:directx
-    "IME状態でカーソルカラー変更
+"    set guifont=Consolas:h11:cDEFAULT
+"    set guifontwide=MS_Gothic:h12:cDEFAULT
+    set guifont=Ricty_Diminished_for_Powerline:h14:cDEFAULT
+    set guifontwide=Ricty_Diminished_for_Powerline:h14:cDEFAULT
+    set renderoptions=type:directx,renmode:5,geom:1
+    set ambiwidth=double
 else
     set t_Co=256
     set termguicolors 
     set ambiwidth=single
 endif
 
+"IME状態でカーソルカラー変更
 if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
 endif
-"!!!!!!!!!!!!!colorscheme!!!!!!!!!!!!!!!
 "-----------------------------------------------------------------------
 "vim:set foldmethod=marker:
