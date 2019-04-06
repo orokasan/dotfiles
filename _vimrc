@@ -241,6 +241,7 @@ set tabstop=4
 "キーボードで<TAB>を入力した際、<TAB>を何文字の空白に変換するかを設定
 set expandtab
 set softtabstop=4
+let g:vim_indent_cont = 4
 "自動インデント
 set autoindent
 "vimが自動でインデントを行った際、設定する空白数
@@ -290,6 +291,9 @@ nnoremap  k gk
 imap <c-s> <Esc>:w<CR>a
 "CTRL-qでclose
 nnoremap <silent> <C-q> :close<CR>
+"フルスクリーン化
+nnoremap <M-CR> :ScreenMode 6<CR>
+nnoremap <S-CR> :ScreenMode 1<CR>
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -392,15 +396,21 @@ endif
   Plug 'Shougo/echodoc.vim'
   Plug 'w0rp/ale'
 
-"  Plug 'NLKNguyen/papercolor-theme'
-"  Plug 'rakr/vim-one'
-"  Plug 'hzchirs/vim-material'
-"  Plug 'altercation/vim-colors-solarized'
+  Plug 'NLKNguyen/papercolor-theme'
+  Plug 'rakr/vim-one'
+  Plug 'hzchirs/vim-material'
+  Plug 'altercation/vim-colors-solarized'
   Plug 'cocopon/iceberg.vim'
   Plug 'tomasr/molokai'
+  Plug 'MvanDiemen/ghostbuster'
+  Plug 'nanotech/jellybeans.vim'
+  Plug 'jonathanfilip/vim-lucius'
+  Plug 'sheerun/vim-wombat-scheme'
+  Plug 'w0ng/vim-hybrid'
 
   Plug 'mattn/benchvimrc-vim',{'on':'BenchVimrc'}
   Plug 'pepo-le/win-ime-con.nvim'
+
   call plug#end()
 
 filetype plugin indent on
@@ -445,6 +455,7 @@ nnoremap <silent> [denite]u :<C-u>Denite
     \ menu<CR>
 nnoremap <silent> [denite]h :<C-u>Denite
     \ -buffer-name=search
+    \ -highlight-mode-insert=WildMenu
     \ help<CR>
 "最近使用したファイル一覧
 nnoremap <silent> [denite]n :<C-u>Denite
@@ -453,25 +464,34 @@ nnoremap <silent> [denite]n :<C-u>Denite
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
 "searchバッファをresumeして開く
-nnoremap <silent> N :<C-u>Denite -buffer-name=search
+nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
     \ -resume -mode=normal -refresh<CR>
 "open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
 	\ -buffer-name=search -auto-highlight -mode=normal
 	\ ale<CR>
-nnoremap <silent> n :<C-u>Denite
-    \ -cursor-pos=+1 -immediately
-    \ -buffer-name=search
-    \ -resume -mode=normal -refresh<CR>
+"nnoremap <silent>n :<C-u>Denite
+"    \ -cursor-pos=+1 -immediately
+"    \ -buffer-name=search
+"    \ -resume -mode=normal -refresh<CR>
 "denite-default option
 call denite#custom#option('normal', {
     \ 'quick-move': 'immediately'
     \})
-call denite#custom#option('search', {
-	\ 'highlight_mode_insert': 'CursorLine',
-    \ 'split':'floating',
-    \ 'winheight': 5
-    \ })
+
+if has('nvim')
+    call denite#custom#option('search', {
+        \ 'highlight_mode_insert': 'CursorLine',
+        \ 'split':'floating',
+        \ 'winheight': 5
+        \ })
+else
+    call denite#custom#option('search', {
+        \ 'highlight_mode_insert': 'CursorLine',
+        \ 'winheight': 5
+        \ })
+endif
+
 call denite#custom#option('_', {
 	\ 'prompt': '»',
 	\ 'cursor_wrap': v:true,
@@ -822,7 +842,6 @@ call lexima#add_rule({'char': '<C-Space>', 'at': '\%#』', 'leave': 1})
 call lexima#add_rule({'char': '<C-Space>', 'at': '\%#」', 'leave': 1})
 call lexima#add_rule({'char': '<C-Space>', 'at': '\%#）', 'leave': 1})
 "}}}
-"
 "-----------------------------------------------------------------------------------------
 "文字数カウントスクリプト
 "{{{
@@ -865,18 +884,22 @@ vmap <Leader>s <Plug>(openbrowser-smart-search)
 "-----------------------------------------------------------------------
 "TweetVim
 "{{{
-nnoremap <silent> <Leader>tws  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>twt  :TweetVimHomeTimeline<CR>
-nnoremap <silent> <Leader>twm :TweetVimMentions<CR>
-nnoremap <silent> <Leader>twu :Unite tweetvim<CR>
+nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
+nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
+nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
+nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
+
+let g:tweetvim_tweet_per_page = 60
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-let g:tweetvim_open_buffer_cmd = 'botright vsplit'
-let g:tweetvim_display_separator = 0
-let g:tweetvim_empty_separator = 0
+let g:tweetvim_open_buffer_cmd = 'botright 60vsplit'
+let g:tweetvim_display_separator = 1
+let g:tweetvim_empty_separator = 1
+let g:tweetvim_display_time = 0
 let g:tweetvim_async_post = 1
 let g:tweetvim_display_username = 1
 let g:tweetvim_tweet_limit = 560
+
 augroup TweetVimSetting
 autocmd!
 " マッピング
@@ -886,7 +909,6 @@ autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR
 " 各種アクション
 autocmd FileType tweetvim     nnoremap <buffer>s                :<C-u>TweetVimSay<CR>
 autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
-autocmd FileType tweetvim     nnoremap <buffer><Leader>h        :<C-u>TweetVimHomeTimeline<CR>
 autocmd FileType tweetvim     nnoremap <buffer><Leader>u        :<C-u>:Unite tweetvim<CR>
 autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
 autocmd FileType tweetvim     nnoremap <buffer>t                :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
@@ -1193,8 +1215,6 @@ call deoplete#custom#option({
 endfunction
 "}}}"
 "-----------------------------------------------------------------------
-"deoplete-sources
-"-----------------------------------------------------------------------
 "neosnippet
 "{{{
 " Plugin key-mappings.
@@ -1217,7 +1237,6 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 "}}}
 "-----------------------------------------------------------------------
 "Gundo
-"-----------------------------------------------------------------------
 let g:gundo_prefer_python3 = 1
 let g:gundo_auto_preview = 0
 let g:gundo_help = 0
@@ -1258,14 +1277,14 @@ let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin
-colorscheme Iceberg
+colorscheme hybrid
+set background=dark
 "========================================================================
 "Gvim
 if has('GUI')
     set clipboard=unnamed
-    set background=dark
     let &guioptions = substitute(&guioptions, '[TMrRlLbeg]', '', 'g')
-    set guioptions+=M
+    set guioptions+=MC
     "ツールバー非表示
     set lines=40 "ウィンドウの縦幅
     set columns=150 " ウィンドウの横幅
@@ -1286,7 +1305,7 @@ if has('GUI')
     set ambiwidth=double
 else
     set t_Co=256
-    set termguicolors 
+    set termguicolors
     set ambiwidth=single
 endif
 
