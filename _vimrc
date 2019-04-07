@@ -690,7 +690,7 @@ call gina#custom#command#option(
 \)
 
 call gina#custom#command#option(
-\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+\ '/\%(status\|st\|branch\|ls\|grep\|changes\|tag\)',
 \ '--opener' , 'split'
 \)
 call gina#custom#command#option(
@@ -746,6 +746,7 @@ call gina#custom#execute(
 \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
 \ 'setlocal winfixheight',
 \)
+
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
 "}}}
@@ -1243,7 +1244,7 @@ if has('GUI')
     set clipboard=unnamed
     let &guioptions = substitute(&guioptions, '[TMrRlLbeg]', '', 'g')
 "    set guioptions-=TMrRlLbeg
-    set guioptions+=MC
+    set guioptions+=M
     "ツールバー非表示
     set lines=40 "ウィンドウの縦幅
     set columns=150 " ウィンドウの横幅
