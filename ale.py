@@ -2,7 +2,6 @@
 #~/vimfiles/dein/repo/github.com/iyuuya/denite-ale/rplugin/python3/denite/source/ale.py
 from .base import Base
 
-
 class Source(Base):
 
     def __init__(self, vim):
@@ -20,10 +19,11 @@ class Source(Base):
     def _convert(self, info):
         abbr = '[%d:%d] %s' % (info['lnum'], info['col'], info['text'])
         myword = '[%d:%d] %s' % (info['lnum'], info['col'], info['text'])
+        mycol = 2 * info['col']
         return {
                 'word': myword,
                 'abbr': abbr,
                 'action__path': self.vim.call('bufname', info['bufnr']),
                 'action__line': info['lnum'],
-                'action__col': info['col']
+                'action__col': mycol
                 }

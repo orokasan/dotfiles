@@ -1,3 +1,4 @@
+
 scriptencoding utf-8
 
 " syntax for tweetvim
@@ -12,7 +13,7 @@ setlocal concealcursor=nc
 syntax match tweetvim_title "^\[.*" contains=tweetvim_reload
 
 syntax match tweetvim_status_id "\[\d\{-1,}\]$" display
-"syntax match tweetvim_created_at "- .\{-1,} \[" 
+"syntax match tweetvim_created_at "- .\{-1,} \["
 "
 syntax match tweetvim_screen_name "^\s\=\w\{-1,} " display
 
@@ -64,7 +65,7 @@ if get(g:, 'tweetvim_original_hi', 0)
   highlight default tweetvim_notify_mentions  guifg=#e86840
   highlight def link tweetvim_around_search   Search
 
-else 
+else
 "for Papercolor
   hi def link tweetvim_title           Title
   hi def link tweetvim_status_id       Special
