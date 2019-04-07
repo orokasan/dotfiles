@@ -50,7 +50,7 @@ function! s:is_view_available() abort
 endfunction
 
 function! s:mkview() abort
-  if s:is_view_available()
+   if s:is_view_available()
     silent! mkview
   endif
 endfunction
@@ -86,10 +86,8 @@ let g:loaded_netrwFileHandlers = 1
 "========================================================================
 "runtimepath
 "========================================================================
-set runtimepath+=~\vimfiles
 set runtimepath+="C:\Program Files\Python37"
 " plugins下のディレクトリをruntimepathへ追加する。
-set runtimepath+=~\vimfiles\Plugin
 "========================================================================
 "Python,vimproc
 "========================================================================
@@ -108,6 +106,8 @@ let g:vimproc#download_windows_dll = 1
 "=========================================================================================
 "外観
 "{{{
+set lazyredraw
+set shortmess+=I
 "常にタブラインを表示
 set showtabline=2
 " 括弧入力時の対応する括弧を表示
@@ -131,7 +131,7 @@ if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
 endif
 "全角スペースを表示
-"コメント以外で全角スペースを指定しているので scriptencodingと、
+"コメント以外で全角スペースを指定しているので "scriptencoding"と、
 "このファイルのエンコードが一致するよう注意！
 "デフォルトのZenkakuSpaceを定義
 function! ZenkakuSpace()
@@ -149,46 +149,6 @@ endfunction
 "  augroup END
 "  call ZenkakuSpace()
 "endif
-
-" 'cursorline' を必要な時にだけ有効にする
-" http://d.hatena.ne.jp/thinca/20090530/1243615055
-" を少し改造、number の highlight は常に有効にする
-"augroup vimrc-auto-cursorline
-"  autocmd!
-"  autocmd CursorMoved,CursorMovedI * call s:auto_cursorline('CursorMoved')
-"  autocmd CursorHold,CursorHoldI * call s:auto_cursorline('CursorHold')
-"  autocmd WinEnter * call s:auto_cursorline('WinEnter')
-"  autocmd WinLeave * call s:auto_cursorline('WinLeave')
-"
-"  setlocal cursorline
-"  hi clear CursorLine
-"
-"  let s:cursorline_lock = 0
-"  function! s:auto_cursorline(event)
-"    if a:event ==# 'WinEnter'
-"      setlocal cursorline
-"      hi CursorLine term=underline cterm=underline guibg=Grey90 " ADD
-"      let s:cursorline_lock = 2
-"    elseif a:event ==# 'WinLeave'
-"      setlocal nocursorline
-"      hi clear CursorLine " ADD
-"    elseif a:event ==# 'CursorMoved'
-"      if s:cursorline_lock
-"        if 1 < s:cursorline_lock
-"          let s:cursorline_lock = 1
-"        else
-"          " setlocal nocursorline
-"          hi clear CursorLine " ADD
-"          let s:cursorline_lock = 0
-"        endif
-"      endif
-"    elseif a:event ==# 'CursorHold'
-"      " setlocal cursorline
-""      hi CursorLine term=underline cterm=underline guibg=Grey90 " ADD
-"      let s:cursorline_lock = 1
-"    endif
-"  endfunction
-"augroup END
 "}}}
 "========================================================================
 "入力・編集
@@ -220,16 +180,15 @@ nnoremap <Leader>\ a\<Esc>
 nnoremap <Leader><Space> a <Esc>
 nnoremap <Leader><S-Space> a…<Esc>
 " <ESC>でのIME状態保存を無効化
-inoremap <silent> <ESC> <ESC>
-inoremap <silent> <C-[> <ESC>
-nnoremap <silent><C-c> <ESC>
-inoremap <silent> <C-c> <ESC>
+inoremap <silent><ESC> <ESC>
+inoremap <silent><C-[> <ESC>
+inoremap <silent><C-c> <ESC>
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
 " 「日本語入力固定モード」切替キー
 inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
-" im_control.vimがない環境でもエラーを出さないためのダミー関数
+
 "Tab系
 "不可視文字の可視化
 set list
@@ -275,6 +234,9 @@ augroup END
 let mapleader = "\<Space>"
 nnoremap + <C-a> "数字のプラス
 nnoremap - <C-x> "マイナス
+nnoremap 0 ^
+nnoremap ^ 0
+nnoremap 4 $
 " Create a blank line above/below current line
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
@@ -291,9 +253,8 @@ nnoremap  k gk
 imap <c-s> <Esc>:w<CR>a
 "CTRL-qでclose
 nnoremap <silent> <C-q> :close<CR>
-"フルスクリーン化
-nnoremap <M-CR> :ScreenMode 6<CR>
-nnoremap <S-CR> :ScreenMode 1<CR>
+" For JIS keyboard
+inoremap <C-@> <ESC>
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -357,7 +318,7 @@ nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "Vim-Plug
 "{{{
 if has('vim_starting')
-  set rtp+=~/vimfiles/plugged/vim-plug
+  set runtimepath+=~/vimfiles/plugged/vim-plug
   if !isdirectory(expand('$HOME/vimfiles/plugged/vim-plug'))
     echo 'install vim-plug...'
     call system('mkdir -p vimfiles/plugged/vim-plug')
@@ -369,6 +330,7 @@ call plug#begin('~/vimfiles/plugged')
 "  Plug 'junegunn/vim-plug',
 
   Plug 'Shougo/neomru.vim' |Plug 'Shougo/unite.vim' |Plug 'Shougo/neoyank.vim' |Plug 'iyuuya/denite-ale' |Plug 'kmnk/denite-dirmark' |Plug 'Shougo/denite.nvim'
+
 if !has('nvim')
   Plug 'roxma/nvim-yarp' 
   Plug 'roxma/vim-hug-neovim-rpc' 
@@ -384,12 +346,12 @@ endif
   Plug 'cohama/lexima.vim' "括弧を補完
   Plug 'kshenoy/vim-signature'
   Plug 'tyru/open-browser.vim' 
-  Plug 'basyura/TweetVim' , {'on':'TweetVimHomeTimeline'} |  Plug 'mattn/webapi-vim' , {'on':'TweetVimHomeTimeline'} |  Plug 'basyura/twibill.vim' , {'on':'TweetVimHomeTimeline'}
+  Plug 'basyura/TweetVim' , {'on':['TweetVimHomeTimeline','TweetVimSay']} |  Plug 'mattn/webapi-vim'|  Plug 'basyura/twibill.vim'
 
   Plug 'itchyny/lightline.vim' | Plug 'mengelbrecht/lightline-bufferline' | Plug 'maximbaz/lightline-ale' | Plug 'itchyny/vim-gitbranch'
   
-  Plug 'Shougo/deoplete.nvim', |  Plug 'Shougo/neco-vim' |  Plug 'Shougo/neco-syntax' 
-     \|  Plug 'Shougo/neosnippet' |  Plug 'Shougo/neosnippet-snippets'
+  Plug 'Shougo/deoplete.nvim', |  Plug 'Shougo/neco-vim' |  Plug 'Shougo/neco-syntax'
+    \|  Plug 'Shougo/neosnippet' |  Plug 'Shougo/neosnippet-snippets'
 
   Plug 'sjl/gundo.vim'
   Plug 'nathanaelkane/vim-indent-guides'
@@ -407,9 +369,9 @@ endif
   Plug 'jonathanfilip/vim-lucius'
   Plug 'sheerun/vim-wombat-scheme'
   Plug 'w0ng/vim-hybrid'
+  Plug 'morhetz/gruvbox'
 
   Plug 'mattn/benchvimrc-vim',{'on':'BenchVimrc'}
-  Plug 'pepo-le/win-ime-con.nvim'
 
   call plug#end()
 
@@ -451,7 +413,7 @@ nnoremap <silent> [denite]c :<C-u>Denite
 "      \ -no-empty -mode=normal grep<CR>
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
-	\ -mode=normal 
+	\ -mode=normal -winheight=5
     \ menu<CR>
 nnoremap <silent> [denite]h :<C-u>Denite
     \ -buffer-name=search
@@ -468,7 +430,7 @@ nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
     \ -resume -mode=normal -refresh<CR>
 "open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
-	\ -buffer-name=search -auto-highlight -mode=normal
+	\ -buffer-name=search -mode=normal
 	\ ale<CR>
 "nnoremap <silent>n :<C-u>Denite
 "    \ -cursor-pos=+1 -immediately
@@ -479,18 +441,9 @@ call denite#custom#option('normal', {
     \ 'quick-move': 'immediately'
     \})
 
-if has('nvim')
-    call denite#custom#option('search', {
-        \ 'highlight_mode_insert': 'CursorLine',
-        \ 'split':'floating',
-        \ 'winheight': 5
-        \ })
-else
-    call denite#custom#option('search', {
-        \ 'highlight_mode_insert': 'CursorLine',
-        \ 'winheight': 5
-        \ })
-endif
+call denite#custom#option('search', {
+    \ 'winheight': 5
+    \ })
 
 call denite#custom#option('_', {
 	\ 'prompt': '»',
@@ -524,7 +477,6 @@ call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
 call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
 "defxで開く
-call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
 
 function! ToggleSorter(sorter) abort
    let sorters = split(b:denite_context.sorters, ',')
@@ -558,8 +510,8 @@ call denite#custom#source(
 	\ 'file/rec', 'matchers', ['matcher/cpsm'])
 
 " Add custom menus
-let s:menus = {}
-
+let s:menus = {
+    \ }
 let s:menus.window_size = {
 	\ 'description': 'Change window size'
 	\ }
@@ -604,6 +556,7 @@ endfunction
 "action:defxを定義
 call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
         \ function('s:defx_open'))
+call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
 "denite-filerecをactionに定義したい
 "call denite#custom#action('buffer,directory,file,openable,dirmark', filerec,
 "        \ function ('s:denite_action_file_rec'))
@@ -612,7 +565,7 @@ call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
 "Dirmark
 "{{{
 nmap [denite]d    <SID>(dirmark)
-nmap [denite]da   <SID>(dirmark-add)
+nmap [denite]D   <SID>(dirmark-add)
 nnoremap <silent> <SID>(dirmark) :<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
 "bookmark by "add"action
 nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirmark/add <CR>'
@@ -620,7 +573,6 @@ nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirma
 "-----------------------------------------------------------------------
 "Defx
 "{{{
-"ファイル削除のためGnuWin32からいろいろ持ってくる必要がある?
 nnoremap <silent> <C-e>
 	\ :<C-u>Defx<CR>
 	\ :setlocal nonumber signcolumn=no<CR>
@@ -643,7 +595,8 @@ call defx#custom#option('_', {
 "      \ 'readonly_icon': '✗',
 "      \ 'selected_icon': '✓',
 "      \ })
-autocmd FileType defx call s:defx_my_settings()
+
+autocmd vimrc FileType defx call s:defx_my_settings()
 
     function! s:GetDefxBaseDir(candidate) abort
         if line('.') == 1
@@ -676,9 +629,9 @@ nnoremap <silent><buffer><expr> l
 nnoremap <silent><buffer><expr> E
 \ defx#do_action('open', 'vsplit')
 nnoremap <silent><buffer><expr> t
-\ defx#do_action('toggle_sort','filename')
+\ defx#do_action('multi', ['toggle_sort','filename','redraw'])
 nnoremap <silent><buffer><expr> T
-\ defx#do_action('toggle_sort','time')
+\ defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
 nnoremap <silent><buffer><expr> P
 \ defx#do_action('open', 'pedit')
 nnoremap <silent><buffer><expr> K
@@ -972,10 +925,10 @@ let g:lightline = {
 	    \'charcount':'LLCharcount'
     \ }
 \ }
-if has('GUI')
+"if has('GUI')
     let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
     let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
-endif
+"endif
 
 let g:lightline.component = {
     \'lineinfo':'%-2v:%3l',
@@ -1063,7 +1016,6 @@ endfunction
 function! LightlineReadonly()
     return &readonly ? '⭤' : ''
 endfunction
-
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgit()
 
 let s:ginabranch = ''
@@ -1156,10 +1108,10 @@ endfunction
 "{{{
 " Use deoplete.
 autocmd vimrc VimEnter * call s:deoplete_setting()
+autocmd vimrc InsertEnter * call deoplete#enable()
 
 function! s:deoplete_setting()
 let g:deoplete#enable_at_startup = 0
-autocmd InsertEnter * call deoplete#enable()
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
@@ -1277,13 +1229,20 @@ let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin
-colorscheme hybrid
+autocmd vimrc Colorscheme gruvbox let g:gruvbox_contrast_dark = 'medium'
+autocmd vimrc Colorscheme gruvbox let g:gruvbox_italicize_comments = 0
+autocmd vimrc Colorscheme gruvbox let g:gruvbox_invert_selection = 0
+autocmd vimrc Colorscheme gruvbox let g:gruvbox_guisp_fallback = 'bg'
+"colorscheme hybrid
+colorscheme gruvbox
 set background=dark
+
 "========================================================================
 "Gvim
 if has('GUI')
     set clipboard=unnamed
     let &guioptions = substitute(&guioptions, '[TMrRlLbeg]', '', 'g')
+"    set guioptions-=TMrRlLbeg
     set guioptions+=MC
     "ツールバー非表示
     set lines=40 "ウィンドウの縦幅
@@ -1299,15 +1258,25 @@ if has('GUI')
     "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
 "    set guifont=Consolas:h11:cDEFAULT
 "    set guifontwide=MS_Gothic:h12:cDEFAULT
-    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
-    set guifontwide=Ricty_Diminished_for_Powerline:h13:cDEFAULT
+    set guifont=Ricty_Diminished_for_Powerline:h13:cANSI
+    set guifontwide=Ricty_Diminished_for_Powerline:h13:cANSI
     set renderoptions=type:directx,renmode:5,geom:1
     set ambiwidth=double
 else
     set t_Co=256
     set termguicolors
-    set ambiwidth=single
 endif
 
+if has('kaoriya')
+    "autodate
+    let autodate_format ='%Y/%m/%d-%H:%M:%S'
+    let autodate_lines = 10
+    "フルスクリーン化
+    nnoremap <C-CR> :ScreenMode 6<CR>
+    nnoremap <S-CR> :ScreenMode 1<CR>
+    "背景透過
+    set transparency=250
+    set charspace=1
+endif
 "-----------------------------------------------------------------------
 "vim:set foldmethod=marker:
