@@ -1244,7 +1244,7 @@ if has('GUI')
     set clipboard=unnamed
     let &guioptions = substitute(&guioptions, '[TMrRlLbeg]', '', 'g')
 "    set guioptions-=TMrRlLbeg
-    set guioptions+=M
+    set guioptions+=MC
     "ツールバー非表示
     set lines=40 "ウィンドウの縦幅
     set columns=150 " ウィンドウの横幅
@@ -1276,8 +1276,8 @@ if has('kaoriya')
     nnoremap <C-CR> :ScreenMode 6<CR>
     nnoremap <S-CR> :ScreenMode 1<CR>
     "背景透過
-    set transparency=250
     set charspace=1
+    autocmd vimrc GUIEnter * set transparency=250
 endif
 "-----------------------------------------------------------------------
 "vim:set foldmethod=marker:
