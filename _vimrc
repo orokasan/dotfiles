@@ -1261,7 +1261,7 @@ if has('GUI')
 "    set guifontwide=MS_Gothic:h12:cDEFAULT
     set guifont=Ricty_Diminished_for_Powerline:h13:cANSI
     set guifontwide=Ricty_Diminished_for_Powerline:h13:cANSI
-    set renderoptions=type:directx,renmode:5,geom:1
+    set renderoptions=type:directx,renmode:5,geom:2
     set ambiwidth=double
 else
     set t_Co=256
