@@ -137,6 +137,21 @@ endif
 function! ZenkakuSpace()
   highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
 endfunction
+"一時的にバッファを最大化
+function! s:toggle_window_zoom() abort
+    if exists('t:zoom_winrestcmd')
+        execute t:zoom_winrestcmd
+        unlet t:zoom_winrestcmd
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+        resize
+        vertical resize
+    endif
+endfunction
+nnoremap <silent> <Plug>(my-zoom-window)
+      \ :<C-u>call <SID>toggle_window_zoom()<CR>
+nmap <Leader>wz <Plug>(my-zoom-window)
+nmap <Leader>w<C-z> <Plug>(my-zoom-window)
 
 "if has('syntax')
 "  augroup ZenkakuSpace
@@ -357,7 +372,7 @@ endif
   Plug 'nathanaelkane/vim-indent-guides'
   Plug 'Shougo/echodoc.vim'
   Plug 'w0rp/ale'
-
+  Plug 'tyru/eskk.vim'
   Plug 'NLKNguyen/papercolor-theme'
   Plug 'rakr/vim-one'
   Plug 'hzchirs/vim-material'
@@ -681,7 +696,10 @@ endfunction
 "-----------------------------------------------------------------------
 "gina.vim
 "{{{
-""docのexampleをコピペ
+"docのexampleをコピペ
+nnoremap <Leader>aa :<C-u>Gina status --short<CR>
+nnoremap <Leader>ac :<C-u>Gina commit<CR>
+
 call gina#custom#command#alias('branch', 'br')
 call gina#custom#command#option('br', '-v', 'v')
 call gina#custom#command#option(
@@ -690,8 +708,8 @@ call gina#custom#command#option(
 \)
 
 call gina#custom#command#option(
-\ '/\%(status\|st\|branch\|ls\|grep\|changes\|tag\)',
-\ '--opener' , 'split'
+\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+\ '--opener' , '10split'
 \)
 call gina#custom#command#option(
 \ 'log', '--group', 'log-viewer'
@@ -742,10 +760,10 @@ call gina#custom#mapping#nmap(
 \ {'noremap': 1, 'silent': 1}
 \)
 
-call gina#custom#execute(
-\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-\ 'setlocal winfixheight',
-\)
+"call gina#custom#execute(
+"\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+"\ 'setlocal winfixheight',
+"\)
 
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
@@ -1259,8 +1277,8 @@ if has('GUI')
     "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
 "    set guifont=Consolas:h11:cDEFAULT
 "    set guifontwide=MS_Gothic:h12:cDEFAULT
-    set guifont=Ricty_Diminished_for_Powerline:h13:cANSI
-    set guifontwide=Ricty_Diminished_for_Powerline:h13:cANSI
+    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
+    set guifontwide=Ricty_Diminished_for_Powerline:h13:cDEFAULT
     set renderoptions=type:directx,renmode:5,geom:2
     set ambiwidth=double
 else
@@ -1276,8 +1294,19 @@ if has('kaoriya')
     nnoremap <C-CR> :ScreenMode 6<CR>
     nnoremap <S-CR> :ScreenMode 1<CR>
     "背景透過
-    set charspace=1
-    autocmd vimrc GUIEnter * set transparency=250
+    autocmd vimrc GUIEnter * set transparency=245
 endif
+autocmd vimrc VimEnter * imap <C-k> <Plug>(eskk:toggle)
+autocmd vimrc VimEnter * cmap <C-k> <Plug>(eskk:toggle)
+
+if has('vim_starting')
+	let g:eskk_dictionary = '~/.skk-jisyo'
+endif
+
+let g:eskk_debug = 0
+let g:eskk_egg_like_newline = 1
+let g:eskk_revert_henkan_style = "okuri"
+let g:eskk_enable_completion = 0
+let g:eskk#large_dictionary = { 'path': "~/.eskk/SKK-JISYO.M", 'sorted': 1, 'encoding': 'euc-jp', }
 "-----------------------------------------------------------------------
 "vim:set foldmethod=marker:
