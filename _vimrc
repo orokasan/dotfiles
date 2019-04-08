@@ -106,8 +106,7 @@ let g:vimproc#download_windows_dll = 1
 "=========================================================================================
 "外観
 "{{{
-set lazyredraw
-set shortmess+=I
+"set shortmess+=I
 "常にタブラインを表示
 set showtabline=2
 " 括弧入力時の対応する括弧を表示
@@ -134,24 +133,24 @@ endif
 "コメント以外で全角スペースを指定しているので "scriptencoding"と、
 "このファイルのエンコードが一致するよう注意！
 "デフォルトのZenkakuSpaceを定義
-function! ZenkakuSpace()
-  highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
-endfunction
+"function! ZenkakuSpace()
+"  highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
+"endfunction
 "一時的にバッファを最大化
-function! s:toggle_window_zoom() abort
-    if exists('t:zoom_winrestcmd')
-        execute t:zoom_winrestcmd
-        unlet t:zoom_winrestcmd
-    else
-        let t:zoom_winrestcmd = winrestcmd()
-        resize
-        vertical resize
-    endif
-endfunction
-nnoremap <silent> <Plug>(my-zoom-window)
-      \ :<C-u>call <SID>toggle_window_zoom()<CR>
-nmap <Leader>wz <Plug>(my-zoom-window)
-nmap <Leader>w<C-z> <Plug>(my-zoom-window)
+"function! s:toggle_window_zoom() abort
+"    if exists('t:zoom_winrestcmd')
+"        execute t:zoom_winrestcmd
+"        unlet t:zoom_winrestcmd
+"    else
+"        let t:zoom_winrestcmd = winrestcmd()
+"        resize
+"        vertical resize
+"    endif
+"endfunction
+"nnoremap <silent> <Plug>(my-zoom-window)
+"      \ :<C-u>call <SID>toggle_window_zoom()<CR>
+"nmap <Leader>wz <Plug>(my-zoom-window)
+"nmap <Leader>w<C-z> <Plug>(my-zoom-window)
 
 "if has('syntax')
 "  augroup ZenkakuSpace
@@ -181,7 +180,6 @@ set display=lastline
 set signcolumn=yes
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
-set lazyredraw
 "set spelllang=en,cjk
 "日付を入力
 inoremap <expr> <F2> strftime("%Y%m%d")
@@ -332,6 +330,7 @@ nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "========================================================================
 "Vim-Plug
 "{{{
+  set runtimepath+=~/vimfiles/plugged/vim-plug
 if has('vim_starting')
   set runtimepath+=~/vimfiles/plugged/vim-plug
   if !isdirectory(expand('$HOME/vimfiles/plugged/vim-plug'))
@@ -350,8 +349,8 @@ if !has('nvim')
   Plug 'roxma/nvim-yarp' 
   Plug 'roxma/vim-hug-neovim-rpc' 
 endif
-  Plug 'Shougo/defx.nvim'
-  Plug 'lambdalisue/gina.vim' "git管理
+  Plug 'Shougo/defx.nvim' ",{'on':'Defx'}
+  Plug 'lambdalisue/gina.vim'  ", {'on':'Gina'}
   Plug 'iwataka/minidown.vim',{'for':'markdown'}
   Plug 'deton/jasegment.vim' "W,E,Bで日本語でも分節移動ができるように
 
@@ -369,8 +368,8 @@ endif
   Plug 'Shougo/deoplete.nvim', |  Plug 'Shougo/neco-vim' |  Plug 'Shougo/neco-syntax'
     \|  Plug 'Shougo/neosnippet' |  Plug 'Shougo/neosnippet-snippets'
 
-  Plug 'sjl/gundo.vim'
-  Plug 'nathanaelkane/vim-indent-guides'
+  Plug 'sjl/gundo.vim' ", {'on':'GundoToggle'}
+  Plug 'nathanaelkane/vim-indent-guides' ", {'on':'IndentGuidesToggle'}
   Plug 'Shougo/echodoc.vim'
   Plug 'w0rp/ale'
   Plug 'tyru/eskk.vim'
@@ -426,8 +425,8 @@ nnoremap <silent> [denite]y :<C-u>Denite
 nnoremap <silent> [denite]c :<C-u>Denite
     \ -mode=normal
     \ command_history<CR>
-"nnoremap <silent> ;g :<C-u>Denite -buffer-name=search
-"      \ -no-empty -mode=normal grep<CR>
+nnoremap <silent> [denite]g :<C-u>DeniteBufferDir -buffer-name=search
+      \ -no-empty -mode=normal grep<CR>
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
 	\ -mode=normal -winheight=5
@@ -593,6 +592,7 @@ nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirma
 nnoremap <silent> <C-e>
 	\ :<C-u>Defx<CR>
 	\ :setlocal nonumber signcolumn=no<CR>
+
 call defx#custom#option('_', {
     \ 'winwidth': 40,
     \ 'split': 'vertical',
@@ -615,7 +615,7 @@ call defx#custom#option('_', {
 
 autocmd vimrc FileType defx call s:defx_my_settings()
 
-    function! s:GetDefxBaseDir(candidate) abort
+    function! s:getdefxbasedir(candidate) abort
         if line('.') == 1
             let path_mod  = 'h'
         else
@@ -625,7 +625,7 @@ autocmd vimrc FileType defx call s:defx_my_settings()
     endfunction
 
     function! s:denite_rec(context) abort
-        let narrow_dir = s:GetDefxBaseDir(a:context.targets[0])
+        let narrow_dir = s:getdefxbasedir(a:context.targets[0])
         execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
     endfunction
 
@@ -699,9 +699,7 @@ endfunction
 "gina.vim
 "{{{
 "docのexampleをコピペ
-nnoremap <Leader>aa :<C-u>Gina status --short<CR>
-nnoremap <Leader>ac :<C-u>Gina commit<CR>
-
+"
 call gina#custom#command#alias('branch', 'br')
 call gina#custom#command#option('br', '-v', 'v')
 call gina#custom#command#option(
@@ -769,6 +767,9 @@ call gina#custom#mapping#nmap(
 
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
+
+nnoremap <Leader>aa :<C-u>Gina status --short<CR>
+nnoremap <Leader>ac :<C-u>Gina commit<CR>
 "}}}
 "-----------------------------------------------------------------------
 "vim-markdow
@@ -776,7 +777,7 @@ let g:neomru#file_mru_ignore_pattern = 'gina://'
 "mapping
 nnoremap <Leader>pmd <C-u>:Minidown<CR>
 "}}}
-"-----------------------------------------------------------------------------------------
+"----------------------------------------------------------------------------------------"
 "jasegment
 let g:jasegment#model='knbc_bunsetu'
 let g:jasentence_endpat = '[。．？！]\+'
@@ -1156,14 +1157,24 @@ autocmd vimrc InsertEnter * call deoplete#enable()
 
 function! s:deoplete_setting()
 let g:deoplete#enable_at_startup = 0
+
+call deoplete#custom#option({
+    \ 'auto_complete_delay': 0,
+    \ 'skip_multibyte': v:false,
+    \ 'max_list': 30,
+    \ 'min_pattern_length': 1,
+    \ 'yarp': v:true,
+    \ 'num_processes': 4
+    \ })
+
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ deoplete#mappings#manual_complete()
-function! s:check_back_space() abort"{{{
+function! s:check_back_space() abort "{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
-endfunction"}}}
+endfunction "}}}
 " <S-TAB>: completion back.
 inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
 inoremap <expr><C-e>       deoplete#refresh()
@@ -1174,6 +1185,7 @@ inoremap <expr><C-h>
 inoremap <expr><BS>
 \ deoplete#smart_close_popup()."\<C-h>"
 "inoremap <silent><expr><C-l>       deoplete#complete_common_string()
+inoremap <expr><C-l>       deoplete#insert_candidate(0)
 "" <CR>: close popup and save indent.
 "inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 "function! s:my_cr_function() abort
@@ -1187,7 +1199,8 @@ call deoplete#custom#source('eskk', 'mark' , '▽')
 call deoplete#custom#source('eskk', 'max_menu_width', 80)
 "matcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
-call deoplete#custom#source('eskk', 'rank', 1500)
+call deoplete#custom#source('eskk', 'rank', 500) 
+call deoplete#custom#source('vim', 'rank' , 250)
 call deoplete#custom#option('ignore_sources',
     \ {'_': [ 'tag', 'dictionary']})
 call deoplete#custom#source('_', 'converters', [
@@ -1205,32 +1218,16 @@ call deoplete#custom#source('_', 'converters', [
 " - mark_below = Mark shown for words N lines below.
 " - mark_changes = Mark shown for words in the changelist.
 call deoplete#custom#var('around', {
-\   'range_above': 15,
-\   'range_below': 15,
+\   'range_above': 30,
+\   'range_below': 30,
 \   'mark_above': '[↑]',
 \   'mark_below': '[↓]',
 \   'mark_changes': '[*]',
 \})
 
-call deoplete#custom#option({
-    \ 'auto_complete_delay': 0,
-    \ 'skip_multibyte': v:false,
-    \ 'max_list': 30,
-    \ 'min_pattern_length': 1,
-    \ 'yarp': v:true,
-    \ 'num_processes': 0,
-    \ 'candidate_marks':
-        \ ['A', 'S', 'D', 'F', 'G']
-    \ })
-inoremap <expr>A       deoplete#insert_candidate(0)
-inoremap <expr>S       deoplete#insert_candidate(1)
-inoremap <expr>D       deoplete#insert_candidate(2)
-inoremap <expr>F       deoplete#insert_candidate(3)
-inoremap <expr>G       deoplete#insert_candidate(4)
 endfunction
 "}}}"
 "-----------------------------------------------------------------------
-
 "neosnippet
 "{{{
 " Plugin key-mappings.
@@ -1262,6 +1259,7 @@ let g:gundo_preview_bottom = 1
 nmap U :<C-u>GundoToggle<CR>
 "-----------------------------------------------------------------------
 "Indent-guides
+nnoremap <silent><Leader>ig :IndentGuidesToggle<CR>
 let g:indent_guides_exclude_filetypes = ['help', 'defx']
 "-----------------------------------------------------------------------
 "ALE
@@ -1292,17 +1290,52 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 "}}}
 "-----------------------------------------------------------------------
+if has('vim_starting')
+	let g:eskk_dictionary = '~/.skk-jisyo'
+endif
+"let g:eskk_modestat = 'ascii'
+    "autocmd User InsertLeave * g:eskk#disable()
+    "autocmd User eskk-disable-pre call s:eskk_modestatus()
+":function! s:eskk_modestatus() abort
+":    let g:eskk#initial_mode = g:eskk#get_mode()
+":endfunction
+"augroup esvimrc
+"autocmd  InsertEnter * call s:eskk_my_setting()
+"augroup END
+"function! s:eskk_my_setting() abort
+"    call g:eskk#disable()
+"endfunction
+"let g:eskk#keep_state = 1
+
+nmap i i<C-j>
+nmap a a<C-j>
+nmap gi gi<C-j>
+let g:eskk#initial_mode = 'hira'
+"nnoremap <silent><Leader>; :call <SID>eskk_kana_toggle()<CR>
+"function! s:eskk_kana_toggle() abort
+"    if g:eskk#initial_mode ==# 'hira'
+"        let g:eskk#initial_mode = 'ascii'
+"    else
+"        let g:eskk#initial_mode = 'hira'
+"    endif
+"endfunction
+
+let g:eskk_revert_henkan_style = 'okuri'
+"let g:eskk_enable_completion = 1
+let g:eskk#large_dictionary = { 'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
+"invoke with '-'
+nmap  -  <Plug>(choosewin)
+let g:choosewin_label = 'ASDFGHJKL'
+"-----------------------------------------------------------------------
 "colorscheme-plugin
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_contrast_dark = 'medium'
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_italicize_comments = 0
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_invert_selection = 0
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_guisp_fallback = 'bg'
-
 colorscheme iceberg
 "colorscheme hybrid
 "colorscheme gruvbox
 set background=dark
-
 "========================================================================
 "Gvim
 if has('GUI')
@@ -1332,7 +1365,6 @@ else
     set t_Co=256
     set termguicolors
 endif
-
 if has('kaoriya')
     "autodate
     let autodate_format ='%Y/%m/%d-%H:%M:%S'
@@ -1343,19 +1375,5 @@ if has('kaoriya')
     "背景透過
     autocmd vimrc GUIEnter * set transparency=245
 endif
-
-if has('vim_starting')
-	let g:eskk_dictionary = '~/.skk-jisyo'
-endif
-
-nmap i i<C-j>
-nmap a a<C-j>
-let g:eskk#keep_state = 1
-let g:eskk_revert_henkan_style = 'okuri'
-let g:eskk_enable_completion = 1
-let g:eskk#large_dictionary = { 'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
-" invoke with '-'
-nmap  -  <Plug>(choosewin)
-let g:choosewin_label = 'ASDFGHJKL'
 "-----------------------------------------------------------------------
 "vim:set foldmethod=marker:
