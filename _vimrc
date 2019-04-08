@@ -180,7 +180,7 @@ set virtualedit=block
 set display=lastline
 set signcolumn=yes
 "日本語の文章構造に対応するやつ
-set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞,':'
+set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 set lazyredraw
 "set spelllang=en,cjk
 "日付を入力
@@ -202,7 +202,7 @@ inoremap <silent><C-c> <ESC>
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
 " 「日本語入力固定モード」切替キー
-inoremap <silent> <C-j> <C-^><C-r>=IMState('FixMode')<CR>
+inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
 
 "Tab系
 "不可視文字の可視化
@@ -351,7 +351,6 @@ if !has('nvim')
   Plug 'roxma/vim-hug-neovim-rpc' 
 endif
   Plug 'Shougo/defx.nvim'
-
   Plug 'lambdalisue/gina.vim' "git管理
   Plug 'iwataka/minidown.vim',{'for':'markdown'}
   Plug 'deton/jasegment.vim' "W,E,Bで日本語でも分節移動ができるように
@@ -373,16 +372,17 @@ endif
   Plug 'Shougo/echodoc.vim'
   Plug 'w0rp/ale'
   Plug 'tyru/eskk.vim'
-  Plug 'NLKNguyen/papercolor-theme'
-  Plug 'rakr/vim-one'
-  Plug 'hzchirs/vim-material'
-  Plug 'altercation/vim-colors-solarized'
+
+  "Plug 'NLKNguyen/papercolor-theme'
+  "Plug 'rakr/vim-one'
+  "Plug 'hzchirs/vim-material'
+  "Plug 'altercation/vim-colors-solarized'
   Plug 'cocopon/iceberg.vim'
-  Plug 'tomasr/molokai'
-  Plug 'MvanDiemen/ghostbuster'
-  Plug 'nanotech/jellybeans.vim'
-  Plug 'jonathanfilip/vim-lucius'
-  Plug 'sheerun/vim-wombat-scheme'
+  "Plug 'tomasr/molokai'
+  "Plug 'MvanDiemen/ghostbuster'
+  "Plug 'nanotech/jellybeans.vim'
+  "Plug 'jonathanfilip/vim-lucius'
+  "Plug 'sheerun/vim-wombat-scheme'
   Plug 'w0ng/vim-hybrid'
   Plug 'morhetz/gruvbox'
 
@@ -805,14 +805,13 @@ call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1
 call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
 call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
 call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<C-Space>', 'at': '\%#)', 'leave': 1})
-call lexima#add_rule({'char': '<C-Space>', 'at': '\%#"', 'leave': 1})
-call lexima#add_rule({'char': '<C-Space>', 'at': '\%#''', 'leave': 1})
-call lexima#add_rule({'char': '<C-Space>', 'at': '\%#]', 'leave': 1})
-call lexima#add_rule({'char': '<C-Space>', 'at': '\%#}', 'leave': 1})
-call lexima#add_rule({'char': '<C-Space>', 'at': '\%#』', 'leave': 1})
-call lexima#add_rule({'char': '<C-Space>', 'at': '\%#」', 'leave': 1})
-call lexima#add_rule({'char': '<C-Space>', 'at': '\%#）', 'leave': 1})
+call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
+call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
+call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#』', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
 "}}}
 "-----------------------------------------------------------------------------------------
 "文字数カウントスクリプト
@@ -857,14 +856,14 @@ vmap <Leader>s <Plug>(openbrowser-smart-search)
 "TweetVim
 "{{{
 nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
+nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumns=no<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
 nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
 
 let g:tweetvim_tweet_per_page = 60
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-let g:tweetvim_open_buffer_cmd = 'botright 60vsplit'
+let g:tweetvim_open_buffer_cmd = 'botright 48vsplit'
 let g:tweetvim_display_separator = 1
 let g:tweetvim_empty_separator = 1
 let g:tweetvim_display_time = 0
@@ -923,7 +922,7 @@ endfunction
 let g:lightline = {
 \ 'colorscheme': 'wombat',
     \ 'active': {
-		\ 'left': [ [ 'mode', 'paste' ],['gitbranch'], [ 'readonly', 'relativepath'] ],
+		\ 'left': [ [ 'mode', 'paste' ],['eskk','gitbranch'], [ 'readonly', 'relativepath'] ],
 		\ 'right': [
         \ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','charcount','lineinfo' ],
         \ ['percent'], [ 'IMEstatus','filetype' ] 
@@ -941,9 +940,11 @@ let g:lightline = {
 		\'inactivefn':'MyInactiveFilename',
 		\'relativepath':'MyFilepath',
         \'mode': 'LightlineMode',
-	    \'charcount':'LLCharcount'
+	    \'charcount':'LLCharcount',
+        \'eskk': 'LLeskk'
     \ }
 \ }
+
 "if has('GUI')
     let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
     let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
@@ -985,6 +986,10 @@ return &filetype ==# 'unite' ? 'Unite' :
 	\ &filetype ==# 'help' ? 'Help' :
 	\ &filetype ==# 'defx' ? 'Defx' :
 	\ lightline#mode()
+endfunction
+
+function! LLeskk()
+    return g:eskk#statusline()
 endfunction
 
 function! MyInactiveFilename()
@@ -1141,51 +1146,71 @@ function! s:check_back_space() abort"{{{
 endfunction"}}}
 " <S-TAB>: completion back.
 inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
-inoremap <expr><C-g>       deoplete#refresh()
-inoremap <expr><C-e>       deoplete#cancel_popup()
-inoremap <silent><expr><C-l>       deoplete#complete_common_string()
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function() abort
-  return pumvisible() ? deoplete#close_popup()."\<CR>" : "\<CR>"
-endfunction
-
-call deoplete#custom#source('_', 'matchers',
-      \ ['matcher_fuzzy', 'matcher_length'])
-" call deoplete#custom#source('buffer', 'mark', '')
-" call deoplete#custom#source('_', 'matchers', ['matcher_full_fuzzy'])
-" call deoplete#custom#source('_', 'disabled_syntaxes', ['Comment', 'String'])
-" call deoplete#custom#source('buffer', 'mark', '*')
-
-call deoplete#custom#source('look', 'filetypes', ['help', 'gitcommit'])
+inoremap <expr><C-e>       deoplete#refresh()
+inoremap <expr><C-g>       deoplete#cancel_popup()
+inoremap <expr><C-n> deoplete#mappings#manual_complete()
+inoremap <expr><C-h>
+\ deoplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS>
+\ deoplete#smart_close_popup()."\<C-h>"
+"inoremap <silent><expr><C-l>       deoplete#complete_common_string()
+"" <CR>: close popup and save indent.
+"inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+"function! s:my_cr_function() abort
+"  return pumvisible() ? deoplete#close_popup()."\<CR>" : "\<CR>"
+"endfunction
+"call deoplete#custom#source('_', 'matchers',
+"      \ ['matcher_fuzzy', 'matcher_length'])
+call deoplete#custom#source('_', 'matchers', ['matcher_head'])
+call deoplete#custom#source('buffer', 'mark', 'b')
+call deoplete#custom#source('eskk', 'mark' , '▽')
+call deoplete#custom#source('eskk', 'max_menu_width', 80)
+"matcherを指定してはいけない
+call deoplete#custom#source('eskk', 'matchers', [])
+call deoplete#custom#source('eskk', 'rank', 1500)
 call deoplete#custom#option('ignore_sources',
-      \ {'_': ['around', 'buffer', 'tag', 'dictionary']})
+    \ {'_': [ 'tag', 'dictionary']})
 call deoplete#custom#source('_', 'converters', [
-      \ 'converter_remove_paren',
-      \ 'converter_remove_overlap',
-      \ 'matcher_length',
-      \ 'converter_truncate_abbr',
-      \ 'converter_truncate_menu',
-      \ 'converter_auto_delimiter',
-      \ ])
-call deoplete#custom#option('keyword_patterns', {
-      \ '_': '[a-zA-Z_]\k*\(?',
-      \ 'tex': '[^\w|\s][a-zA-Z_]\w*',
-      \ })
-inoremap <silent><expr> <C-tab> deoplete#manual_complete('file')
+    \ 'converter_remove_paren',
+    \ 'converter_remove_overlap',
+    \ 'converter_truncate_abbr',
+    \ 'converter_truncate_menu',
+    \ 'converter_auto_paren',
+    \ 'converter_auto_delimiter'
+    \ ])
+" Using custom variables to configure values
+" - range_above = Search for words N lines above.
+" - range_below = Search for words N lines below.
+" - mark_above = Mark shown for words N lines above.
+" - mark_below = Mark shown for words N lines below.
+" - mark_changes = Mark shown for words in the changelist.
+call deoplete#custom#var('around', {
+\   'range_above': 15,
+\   'range_below': 15,
+\   'mark_above': '[↑]',
+\   'mark_below': '[↓]',
+\   'mark_changes': '[*]',
+\})
 
 call deoplete#custom#option({
-      \ 'smart_case': v:true ,
-      \ 'auto_complete_delay': 0,
-      \ 'auto_refresh_delay': 1,
-      \ 'camel_case': v:true,
-      \ 'skip_multibyte': v:true,
-      \ 'prev_completion_mode': 'length',
-      \ 'max_list': 50
-      \ })
+    \ 'auto_complete_delay': 0,
+    \ 'skip_multibyte': v:false,
+    \ 'max_list': 30,
+    \ 'min_pattern_length': 1,
+    \ 'yarp': v:true,
+    \ 'num_processes': 0,
+    \ 'candidate_marks':
+        \ ['A', 'S', 'D', 'F', 'G']
+    \ })
+inoremap <expr>A       deoplete#insert_candidate(0)
+inoremap <expr>S       deoplete#insert_candidate(1)
+inoremap <expr>D       deoplete#insert_candidate(2)
+inoremap <expr>F       deoplete#insert_candidate(3)
+inoremap <expr>G       deoplete#insert_candidate(4)
 endfunction
 "}}}"
 "-----------------------------------------------------------------------
+
 "neosnippet
 "{{{
 " Plugin key-mappings.
@@ -1252,8 +1277,10 @@ autocmd vimrc Colorscheme gruvbox let g:gruvbox_contrast_dark = 'medium'
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_italicize_comments = 0
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_invert_selection = 0
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_guisp_fallback = 'bg'
+
+colorscheme iceberg
 "colorscheme hybrid
-colorscheme gruvbox
+"colorscheme gruvbox
 set background=dark
 
 "========================================================================
@@ -1264,8 +1291,8 @@ if has('GUI')
 "    set guioptions-=TMrRlLbeg
     set guioptions+=MC
     "ツールバー非表示
-    set lines=40 "ウィンドウの縦幅
-    set columns=150 " ウィンドウの横幅
+    set lines=50 "ウィンドウの縦幅
+    set columns=220 " ウィンドウの横幅
     winpos 50 30 " ウィンドウの起動時の位置
     set cmdheight=1 "コマンドライン行数の設定
     set cursorline
@@ -1296,17 +1323,16 @@ if has('kaoriya')
     "背景透過
     autocmd vimrc GUIEnter * set transparency=245
 endif
-autocmd vimrc VimEnter * imap <C-k> <Plug>(eskk:toggle)
-autocmd vimrc VimEnter * cmap <C-k> <Plug>(eskk:toggle)
 
 if has('vim_starting')
 	let g:eskk_dictionary = '~/.skk-jisyo'
 endif
 
-let g:eskk_debug = 0
-let g:eskk_egg_like_newline = 1
-let g:eskk_revert_henkan_style = "okuri"
-let g:eskk_enable_completion = 0
-let g:eskk#large_dictionary = { 'path': "~/.eskk/SKK-JISYO.M", 'sorted': 1, 'encoding': 'euc-jp', }
+nmap i i<C-j>
+nmap a a<C-j>
+let g:eskk#keep_state = 1
+let g:eskk_revert_henkan_style = 'okuri'
+let g:eskk_enable_completion = 1
+let g:eskk#large_dictionary = { 'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 "-----------------------------------------------------------------------
 "vim:set foldmethod=marker:
