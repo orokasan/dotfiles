@@ -861,6 +861,7 @@ nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
 nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
 nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
+nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
   function! s:tw_open_existing() abort " {{{
     let bnr = bufnr('[tweetvim]')
     if bnr == -1
@@ -871,7 +872,6 @@ nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
       call win_gotoid(wids[0])
   endfunction " }}}
 
-nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
 let g:tweetvim_tweet_per_page = 60
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
