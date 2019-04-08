@@ -20,6 +20,7 @@ syntax match tweetvim_screen_name "^\s\=\w\{-1,} " display
 syntax match tweetvim_at_screen_name "@\w\+" display
 "added username syntax
 syntax match tweetvim_username ".*\ze\s@" display
+syntax match tweetvim_RT "RT\ze\s@" display
 
 "syntax match tweetvim_link "\<https\?://\S\+"
 "syntax match tweetvim_link "\<https\?://[[:alnum:]_#?~=\-+%]+"
@@ -73,6 +74,7 @@ else
   hi def link tweetvim_screen_name     PreCondit
   hi def link tweetvim_at_screen_name  PreCondit
   hi def link tweetvim_username        Structure
+  hi def link tweetvim_RT              Title
   hi def link tweetvim_link            Underlined
   hi def link tweetvim_hash_tag        Constant
   hi def link tweetvim_separator       Ignore

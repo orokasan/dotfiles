@@ -362,6 +362,8 @@ endif
   Plug 'tyru/open-browser.vim' 
   Plug 'basyura/TweetVim' , {'on':['TweetVimHomeTimeline','TweetVimSay']} |  Plug 'mattn/webapi-vim'|  Plug 'basyura/twibill.vim'
 
+  Plug 't9md/vim-choosewin'
+
   Plug 'itchyny/lightline.vim' | Plug 'mengelbrecht/lightline-bufferline' | Plug 'maximbaz/lightline-ale' | Plug 'itchyny/vim-gitbranch'
   
   Plug 'Shougo/deoplete.nvim', |  Plug 'Shougo/neco-vim' |  Plug 'Shougo/neco-syntax'
@@ -856,17 +858,27 @@ vmap <Leader>s <Plug>(openbrowser-smart-search)
 "TweetVim
 "{{{
 nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumns=no<CR>
+nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
 nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
+  function! s:tw_open_existing() abort " {{{
+    let bnr = bufnr('[tweetvim]')
+    if bnr == -1
+      echoerr 'call TweetVim!:'
+      return
+    endif
+    let wids = win_findbuf(bnr)
+      call win_gotoid(wids[0])
+  endfunction " }}}
 
+nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
 let g:tweetvim_tweet_per_page = 60
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
 let g:tweetvim_open_buffer_cmd = 'botright 48vsplit'
 let g:tweetvim_display_separator = 1
 let g:tweetvim_empty_separator = 1
-let g:tweetvim_display_time = 0
+let g:tweetvim_display_time = 1
 let g:tweetvim_async_post = 1
 let g:tweetvim_display_username = 1
 let g:tweetvim_tweet_limit = 560
@@ -878,7 +890,7 @@ autocmd!
 autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
 autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
 " 各種アクション
-autocmd FileType tweetvim     nnoremap <buffer>s                :<C-u>TweetVimSay<CR>
+autocmd FileType tweetvim     nnoremap <buffer>S                :<C-u>TweetVimSay<CR>
 autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
 autocmd FileType tweetvim     nnoremap <buffer><Leader>u        :<C-u>:Unite tweetvim<CR>
 autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
@@ -895,24 +907,27 @@ autocmd FileType tweetvim     nmap     <buffer><silent>gg       gg<Plug>(tweetvi
 autocmd FileType tweetvim     nmap     <buffer>f                <Plug>(tweetvim_action_page_next)
 autocmd FileType tweetvim     nmap     <buffer>b                <Plug>(tweetvim_action_page_previous)
 "縦移動（カーソルを常に中央にする）
- autocmd FileType tweetvim    nmap <silent> <buffer> j <Plug>(tweetvim_action_cursor_down)
-autocmd FileType tweetvim     nmap <silent> <buffer> k <Plug>(tweetvim_action_cursor_up)
+autocmd FileType tweetvim     nmap <silent> <buffer>n <Plug>(tweetvim_action_cursor_down)
+autocmd FileType tweetvim     nmap <silent> <buffer>p <Plug>(tweetvim_action_cursor_up)
+autocmd FileType tweetvim     nnoremap <buffer>j }
+autocmd FileType tweetvim     nnoremap <buffer>k {
+autocmd FileType tweetvim     nnoremap <buffer>th :TweetVimHomeTimeline<CR>
 " 不要なマップを除去
 autocmd FileType tweetvim     nunmap   <buffer>ff
 autocmd FileType tweetvim     nunmap   <buffer>bb
 " tweetvim バッファに移動したときに自動リロード
-autocmd BufEnter * call <SID>tweetvim_reload()
+"autocmd BufEnter * call <SID>tweetvim_reload()
 augroup END
 
 autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
 autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
 " セパレータを飛ばして移動する
 " filetype が tweetvim ならツイートをリロード
-function! s:tweetvim_reload()
-    if &filetype ==# 'tweetvim'
-        call feedkeys("\<Plug>(tweetvim_action_reload)")
-    endif
-endfunction
+"function! s:tweetvim_reload()
+"    if &filetype ==# 'tweetvim'
+"        call feedkeys("\<Plug>(tweetvim_action_reload)")
+"    endif
+"endfunction
 "}}}
 "-----------------------------------------------------------------------
 "lightline
@@ -985,6 +1000,7 @@ return &filetype ==# 'unite' ? 'Unite' :
 	\ &filetype ==# 'denite' ? DeniteMode() :
 	\ &filetype ==# 'help' ? 'Help' :
 	\ &filetype ==# 'defx' ? 'Defx' :
+	\ &filetype ==# 'tweetvim' ? 'Tweetvim' :
 	\ lightline#mode()
 endfunction
 
@@ -993,7 +1009,7 @@ function! LLeskk()
 endfunction
 
 function! MyInactiveFilename()
-return &filetype !~# '\v(help|denite|defx)' ? expand('%:t') : LightlineMode()
+return &filetype !~# '\v(help|denite|defx|tweetvim)' ? expand('%:t') : LightlineMode()
 endfunction
 
 
@@ -1030,7 +1046,8 @@ function! s:LLvarCharCount()
 endfunction
 
 function! LLCharcount()
-    if &filetype !~? 'vimfiler\|gundo|\defx|\denite' && winwidth(0) > 40
+    if &filetype !~? 'vimfiler\|gundo|\defx\|tweetvim\|denite'
+        \ && winwidth(0) > 40
         return s:llcharcount . '/' . s:llcharallcount
     else
         return ''
@@ -1066,18 +1083,21 @@ function! LLgitbranch()
 endfunction
 
 function! MyFilepath()
-  if &filetype ==# 'denite'
-	return DeniteSources()
-  else
-	let l:ll_filepath = expand('%:~')
-	let l:ll_filename = expand('%:t')
+if &filetype ==# 'denite' 
+    return DeniteSources()
+elseif &filetype !~? 'vimfiler\|gundo|\defx\|tweetvim'
+    let l:ll_filepath = expand('%:~')
+    let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
-	let l:ll_fn = winwidth(0) > 70  && strlen(l:ll_filepath) > winwidth(0)-45 ? pathshorten(l:ll_filepath) :
-	\ winwidth(0) > 70 ? l:ll_filepath  :
-	\ winwidth(0) > 45 ? l:ll_filename  : ''
+	let l:ll_fn = winwidth(0) < 65 ? '' :
+        \ strlen(l:ll_filepath) > winwidth(0)-65 ? pathshorten(l:ll_filepath) :
+	    \  l:ll_filepath
 	let l:ll_modified = &modified ? '[+]' : ''
 	return l:ll_fn . l:ll_modified
-  endif
+else
+    return ''
+endif
+
 endfunction
 
 function! DeniteMode()
@@ -1334,5 +1354,8 @@ let g:eskk#keep_state = 1
 let g:eskk_revert_henkan_style = 'okuri'
 let g:eskk_enable_completion = 1
 let g:eskk#large_dictionary = { 'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
+" invoke with '-'
+nmap  -  <Plug>(choosewin)
+let g:choosewin_label = 'ASDFGHJKL'
 "-----------------------------------------------------------------------
 "vim:set foldmethod=marker:
