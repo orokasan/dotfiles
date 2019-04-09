@@ -439,9 +439,6 @@ endif
   Plug 'mattn/benchvimrc-vim',{'on':'BenchVimrc'}
 
   call plug#end()
-
-filetype plugin indent on
-syntax enable
 "}}}
 "-----------------------------------------------------------------------
 "Denite {{{
@@ -1088,17 +1085,23 @@ return &filetype ==# 'unite' ? 'Unite' :
     \ &filetype ==# 'denite' ? DeniteMode() :
     \ &filetype ==# 'help' ? 'Help' :
     \ &filetype ==# 'defx' ? 'Defx' :
+    \ &filetype ==# 'gundo' ? 'Gundo' :
     \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
     \ lightline#mode()
 endfunction
 
 function! LLeskk()
-    if &filetype !~? 'vimfiler\|gundo|\defx\|tweetvim\|denite'
-        return eskk#is_enabled()
-        \ ? printf(get(a:000, 0, '[%s]'),
-        \          get(g:eskk#statusline_mode_strings,
-        \              eskk#get_current_instance().mode, '??'))
-        \ : printf('[--]')
+    if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
+        if eskk#is_enabled()
+            return printf(get(a:000, 0, '[%s]'),
+                \ get(g:eskk#statusline_mode_strings,
+                \ eskk#get_current_instance().mode, '??'))
+        elseif mode() !=# 'i'
+            return s:eskk_insert_status ? printf('[あ]')
+                \ : s:eskk_inserton ? printf('[あ]') : printf('[--]')
+        else
+            return printf('[--]')
+        endif
     else
         return ''
     endif
@@ -1107,7 +1110,6 @@ endfunction
 function! MyInactiveFilename()
 return &filetype !~# '\v(help|denite|defx|tweetvim)' ? expand('%:t') : LightlineMode()
 endfunction
-
 
 "lightlineに渡す変数の設定
 augroup CharCounter
@@ -1142,7 +1144,7 @@ function! s:LLvarCharCount()
 endfunction
 
 function! LLCharcount()
-    if &filetype !~? 'vimfiler\|gundo|\defx\|tweetvim\|denite'
+    if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
         \ && winwidth(0) > 40
         return s:llcharcount . '/' . s:llcharallcount
     else
@@ -1393,27 +1395,44 @@ if has('vim_starting')
 	let g:eskk_dictionary = '~/dotfiles/.skk-jisyo'
 endif
 
-autocmd vimrc InsertEnter * call <SID>eskk_insert_config()
-autocmd vimrc InsertLeave * if g:eskk#is_enabled() | let s:eskk_inserton = 1 
-    \| else | let s:eskk_inserton = 0
+"InsertLeaveイベント上で他プラグインと干渉する(順序の問題?)
+"=> vimrcをリロードすると動作しなくなる
+"リセットのタイミングを変えることで直った(?)
+if !exists('eskkautocmd_loaded')
+  let autocommands_loaded = 1
+    autocmd InsertEnter * call <SID>eskk_insert_config()
+"    autocmd InsertLeave * if g:eskk#is_enabled() | let s:eskk_inserton = 1 | else | let s:eskk_inserton = 0
+    autocmd InsertLeave * call <SID>eskk_status()
+endif
 
-function! s:eskk_insert_config() abort
-    if s:eskk_inserton == 1
-        call eskk#enable()
-    endif 
-endfunction
-
-let s:eskk_inserton = ''
-
-function! s:eskk_inserttoggle() abort
-    if s:eskk_inserton
-        let s:eskk_inserton = 1
-    else 
-        let s:eskk_inserton = 0
+function! s:eskk_status() abort
+    if eskk#is_enabled()
+         let s:eskk_inserton = 1
+    else
+        let s:eskk_inserton = ''
     endif
 endfunction
 
-let g:eskk#keep_state = 0
+let s:eskk_inserton = ''
+function! s:eskk_insert_config() abort
+    if s:eskk_inserton || s:eskk_insert_status
+        call eskk#enable()
+    endif
+endfunction
+
+let s:eskk_insert_status = ''
+nnoremap <silent><expr><C-y> <SID>eskk_inserttoggle()
+function! s:eskk_inserttoggle() abort
+    if s:eskk_insert_status
+        let s:eskk_insert_status = 0
+        let s:eskk_inserton = 0
+        echo 'eskk status off'
+    else 
+        let s:eskk_insert_status = 1
+        echo 'eskk status on'
+    endif
+endfunction
+
 let g:eskk#debug = 0
 let g:eskk#show_annotation = 1
 let g:eskk#rom_input_style = 'msime'
