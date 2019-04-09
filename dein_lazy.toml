@@ -1,0 +1,337 @@
+
+[[plugins]]
+repo =  'cohama/lexima.vim'
+on_i = 1
+hook_post_source = '''
+call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
+call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
+call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
+call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
+call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
+call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
+call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#』', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
+'''
+[[plugins]]
+repo =  'basyura/TweetVim'
+hook_source = '''
+nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
+nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
+nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
+nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
+nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
+  function! s:tw_open_existing() abort " {{{
+    let bnr = bufnr('[tweetvim]')
+    if bnr == -1
+      echoerr 'call TweetVim!:'
+      return
+    endif
+    let wids = win_findbuf(bnr)
+      call win_gotoid(wids[0])
+  endfunction " }}}
+
+let g:tweetvim_tweet_per_page = 60
+let g:tweetvim_include_rts    = 1
+let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
+let g:tweetvim_open_buffer_cmd = 'botright 44vsplit'
+let g:tweetvim_display_separator = 1
+let g:tweetvim_empty_separator = 1
+let g:tweetvim_display_time = 1
+let g:tweetvim_async_post = 1
+let g:tweetvim_display_username = 1
+let g:tweetvim_tweet_limit = 560
+
+augroup TweetVimSetting
+autocmd!
+" マッピング
+" 挿入・通常モードでsayバッファを閉じる
+autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
+autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
+" 各種アクション
+autocmd FileType tweetvim nnoremap <buffer>S 
+    \ :<C-u>TweetVimSay<CR>
+autocmd FileType tweetvim nnoremap <buffer>m
+    \ :<C-u>TweetVimMentions<CR>
+autocmd FileType tweetvim nnoremap <buffer><Leader>u
+    \ :<C-u>:Unite tweetvim<CR>
+autocmd FileType tweetvim nmap <buffer>c
+    \ <Plug>(tweetvim_action_in_reply_to)
+autocmd FileType tweetvim nnoremap <buffer>t 
+    \ :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
+autocmd FileType tweetvim nmap <buffer><Leader>F 
+    \ <Plug>(tweetvim_action_remove_favorite)
+autocmd FileType tweetvim nmap <buffer><Leader>d 
+    \ <Plug>(tweetvim_action_remove_status)
+autocmd FileType tweetvim nmap <buffer>o 
+    \ <Plug>(tweetvim_action_open_links)
+autocmd FileType tweetvim nmap <silent><buffer>q
+    \ :bd<CR>
+" リロード
+autocmd FileType tweetvim nmap <buffer><Tab>
+    \ <Plug>(tweetvim_action_reload)
+" ページの先頭に戻ったときにリロード
+autocmd FileType tweetvim nmap <buffer><silent>gg
+    \ gg<Plug>(tweetvim_action_reload)
+" ページ移動を ff/bb から f/b に
+autocmd FileType tweetvim nmap <buffer>f 
+    \ <Plug>(tweetvim_action_page_next)
+autocmd FileType tweetvim nmap <buffer>b 
+    \ <Plug>(tweetvim_action_page_previous)
+"縦移動（カーソルを常に中央にする）
+autocmd FileType tweetvim nmap <silent> <buffer>n 
+    \ <Plug>(tweetvim_action_cursor_down)
+autocmd FileType tweetvim nmap <silent> <buffer>p 
+    \ <Plug>(tweetvim_action_cursor_up)
+autocmd FileType tweetvim nnoremap <buffer>j }j
+autocmd FileType tweetvim nnoremap <buffer>k k{j
+autocmd FileType tweetvim nnoremap <buffer>th
+    \ :TweetVimHomeTimeline<CR>
+" 不要なマップを除去
+autocmd FileType tweetvim     nunmap   <buffer>ff
+autocmd FileType tweetvim     nunmap   <buffer>bb
+" tweetvim バッファに移動したときに自動リロード
+"autocmd BufEnter * call <SID>tweetvim_reload()
+" filetype が tweetvim ならツイートをリロード
+"function! s:tweetvim_reload()
+"    if &filetype ==# 'tweetvim'
+"        call feedkeys("\<Plug>(tweetvim_action_reload)")
+"    endif
+"endfunction
+augroup END
+
+autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
+autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
+[[plugins]]
+repo =  'Shougo/denite.nvim'
+hook_post_source = '''
+
+nnoremap [denite] <Nop>
+nmap s [denite]
+
+nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+	\  source<CR>
+
+"現在開いているファイルのディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
+	\  file<CR>
+"ホームディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
+	\ file<CR>
+"バッファ一覧
+nnoremap <silent> [denite]b :<C-u>Denite
+	\ -buffer-name=normal -mode=normal
+	\ buffer<CR>
+"デナイト・サーチ
+nnoremap <silent> ? :<C-u>Denite
+	\ -buffer-name=search -auto-highlight
+	\ line<CR>
+"デナイト・キーワードサーチ
+nnoremap <silent> * :<C-u>DeniteCursorWord
+	\ -buffer-name=search
+	\ -auto-highlight -mode=normal line<CR>
+"neoyank
+nnoremap <silent> [denite]y :<C-u>Denite
+	\ -mode=normal
+	\ register neoyank<CR>
+"コマンド履歴
+nnoremap <silent> [denite]c :<C-u>Denite
+    \ -mode=normal
+    \ command_history<CR>
+"バッファディレクトリからgrep
+nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
+    \ -buffer-name=search
+    \ -no-empty -mode=normal grep<CR>
+"メニュー
+nnoremap <silent> [denite]u :<C-u>Denite
+    \ -buffer_name=normal
+	\ -mode=normal -winheight=5
+    \ menu<CR>
+"ヘルプ
+nnoremap <silent> [denite]h :<C-u>Denite
+    \ -buffer-name=search
+    \ -highlight-mode-insert=WildMenu
+    \ help<CR>
+"最近使用したファイル-neomru
+nnoremap <silent> [denite]n :<C-u>Denite
+	\ -mode=normal 
+    \ file_mru<CR>
+":change
+nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
+"searchバッファをresumeして開く
+nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
+    \ -resume -mode=normal -refresh<CR>
+"open ale message
+nnoremap <silent> [denite]a :<C-u>Denite
+	\ -buffer-name=search -mode=normal
+	\ ale<CR>
+"nnoremap <silent>n :<C-u>Denite
+"    \ -cursor-pos=+1 -immediately
+"    \ -buffer-name=search
+"    \ -resume -mode=normal -refresh<CR>
+
+"denite option
+call denite#custom#option('_', {
+	\ 'prompt': '»',
+	\ 'cursor_wrap': v:true,
+	\ 'winheight': 15,
+	\ 'highlight_mode_insert': 'WildMenu',
+	\ 'statusline': v:false,
+    \ 'unique': v:true,
+    \ 'vertical_preview': v:true,
+    \ 'quick_move_table': {
+        \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
+        \   'h' : 5, 'l' : 6, ';' : 7,
+        \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
+        \ }
+	\ })
+"buffer-normal
+call denite#custom#option('normal', {
+	\ 'winheight': 10,
+    \ 'direction': 'dynamicbottom',
+    \ 'quick_move': 'immediately'
+    \})
+"buffer-search
+call denite#custom#option('search', {
+    \ 'direction': 'dynamicbottom',
+    \ 'winheight': 5
+    \ })
+
+" Change mappings.
+call denite#custom#map(
+      \ 'insert',
+      \ '<C-j>',
+      \ '<denite:move_to_next_line>',
+      \ 'noremap'
+      \)
+call denite#custom#map(
+      \ 'insert',
+      \ '<C-k>',
+      \ '<denite:move_to_previous_line>',
+      \ 'noremap'
+      \)
+"C-h,C-lでディレクトリ移動
+call denite#custom#map('insert', '<C-l>', '<denite:do_action:default>', 'noremap')
+call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
+"h,lでディレクトリ上下移動
+call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
+call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
+
+"sorter定義
+function! ToggleSorter(sorter) abort
+   let sorters = split(b:denite_context.sorters, ',')
+   let idx = index(sorters, a:sorter)
+   if idx < 0
+       call add(sorters, a:sorter)
+   else
+       call remove(sorters, idx)
+   endif
+   let b:denite_new_context = {}
+   let b:denite_new_context.sorters = join(sorters, ',')
+   return '<denite:nop>'
+endfunction
+
+call denite#custom#map('insert', '<C-f>',
+    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
+
+"need rg for grep/file-rec
+call denite#custom#var('file/rec', 'command',
+      \ ['rg', '--files', '--glob', '!.git'])
+call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'final_opts', [])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'default_opts',
+      \ ['--vimgrep', '--no-heading'])
+
+" Change matchers.
+call denite#custom#source(
+	\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
+"call denite#custom#source(
+"	\ 'file/rec', 'matchers', ['matcher/cpsm'])
+
+" Add custom menus
+let s:menus = {
+    \ }
+let s:menus.window_size = {
+	\ 'description': 'Change window size'
+	\ }
+let s:menus.window_size.command_candidates = [
+	\ ['150x40', 'set lines=40 columns=150'],
+	\ ['220x50', 'set lines=50 columns=220'],
+	\ ['Fullscreen-> :SM 6<CR> ', '']
+	\ ]
+call denite#custom#var('menu', 'menus', s:menus)
+
+"" Ag command on grep/filerec source
+"call denite#custom#var('file_rec', 'command',
+"    \ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+"call denite#custom#var('grep', 'command', ['ag'])
+
+" Define alias
+call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+call denite#custom#var('file/rec/git', 'command',
+	\ ['git', 'ls-files', '-co', '--exclude-standard'])
+call denite#custom#alias('source', 'file/rec/py', 'file/rec')
+call denite#custom#var('file/rec/py', 'command',['scantree.py'])
+" Change ignore_globs
+call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
+	\ [ '.git/', '.ropeproject/', '__pycache__/',
+	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+
+"Defxで開く
+function! s:defx_open(context)
+    let path = a:context['targets'][0]['action__path']
+    let file = fnamemodify(path, ':p')
+    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
+    let dir = denite#util#path2directory(path)
+    if &filetype ==# 'defx'
+      call defx#call_action('cd', [dir])
+      call defx#call_action('search', [path])
+    else
+      execute('Defx ' . dir . file_search)
+  endif
+endfunction
+
+"action:defxを定義
+call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
+        \ function('s:defx_open'))
+call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
+
+nmap [denite]d    <SID>(dirmark)
+nmap [denite]D   <SID>(dirmark-add)
+"open dirmark-bookmark in Denite
+nnoremap <silent> <SID>(dirmark) :<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
+"bookmark by "add"action
+nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirmark/add <CR>'
+"open in defx
+nmap [denite]x <SID>(defx):Denite 
+    \ -buffer-name=normal -mode=normal
+    \ defx/dirmark <CR>
+
+'''
+[[plugins]]
+repo =  'Shougo/neomru.vim'
+on_sourse = 'denite.nvim'
+
+[[plugins]]
+repo =  'Shougo/unite.vim' 
+on_sourse = 'denite.nvim'
+
+[[plugins]]
+repo =  'Shougo/neoyank.vim'
+on_sourse = 'denite.nvim'
+
+[[plugins]]
+repo =  'iyuuya/denite-ale'
+on_sourse = 'denite.nvim'
+
+[[plugins]]
+repo =  'kmnk/denite-dirmark'
+on_sourse = 'denite.nvim'

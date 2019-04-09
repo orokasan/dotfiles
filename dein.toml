@@ -1,0 +1,95 @@
+
+[[plugins]]
+repo =  'roxma/nvim-yarp'
+
+[[plugins]]
+repo =  'roxma/vim-hug-neovim-rpc'
+
+[[plugins]]
+repo =  'Shougo/defx.nvim'
+
+[[plugins]]
+repo =  'lambdalisue/gina.vim'
+
+[[plugins]]
+repo =  'iwataka/minidown.vim'
+
+[[plugins]]
+repo =  'deton/jasegment.vim'
+
+[[plugins]]
+repo =  'rhysd/vim-operator-surround'
+
+[[plugins]]
+repo =  'kana/vim-operator-user'
+
+[[plugins]]
+repo =  'kshenoy/vim-signature'
+
+[[plugins]]
+repo =  'tyru/open-browser.vim'
+
+
+[[plugins]]
+repo =  'mattn/webapi-vim'
+
+[[plugins]]
+repo =  'basyura/twibill.vim'
+
+[[plugins]]
+repo =  't9md/vim-choosewin'
+
+[[plugins]]
+repo =  'itchyny/lightline.vim'
+
+[[plugins]]
+repo =  'mengelbrecht/lightline-bufferline'
+
+[[plugins]]
+repo =  'maximbaz/lightline-ale'
+
+[[plugins]]
+repo =  'itchyny/vim-gitbranch'
+
+[[plugins]]
+repo =  'Shougo/deoplete.nvim'
+
+[[plugins]]
+repo =  'Shougo/neco-vim'
+
+[[plugins]]
+repo =  'Shougo/neco-syntax'
+
+[[plugins]]
+repo =  'Shougo/neosnippet'
+
+[[plugins]]
+repo =  'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo =  'sjl/gundo.vim'
+
+[[plugins]]
+repo =  'nathanaelkane/vim-indent-guides'
+
+[[plugins]]
+repo =  'Shougo/echodoc.vim'
+
+[[plugins]]
+repo =  'w0rp/ale'
+
+[[plugins]]
+repo =  'tyru/eskk.vim'
+
+[[plugins]]
+repo = 'cocopon/iceberg.vim'
+
+[[plugins]]
+repo = 'mattn/benchvimrc-vim'
+
+[[plugins]]
+repo =  'w0ng/vim-hybrid'
+
+[[plugins]]
+repo =  'morhetz/gruvbox'
+
