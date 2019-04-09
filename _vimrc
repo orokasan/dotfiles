@@ -2,6 +2,8 @@
 "今夜使いたいkey mapping
 "ciw => カーソル上の単語を削除してインサートモード
 "ci' => シングルクォート内のテキストを削除してインサートモード
+"vim正規表現
+"https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
 "========================================================================
 "基本設定 {{{
 "encode
@@ -1423,11 +1425,11 @@ endfunction
 let s:eskk_insert_status = ''
 nnoremap <silent><expr><C-y> <SID>eskk_inserttoggle()
 function! s:eskk_inserttoggle() abort
-    if s:eskk_insert_status
+    if s:eskk_insert_status || s:eskk_inserton
         let s:eskk_insert_status = 0
         let s:eskk_inserton = 0
         echo 'eskk status off'
-    else 
+    else
         let s:eskk_insert_status = 1
         echo 'eskk status on'
     endif
@@ -1442,6 +1444,14 @@ let g:eskk#tab_select_completion = 1
 let g:eskk_revert_henkan_style = 'okuri'
 let g:eskk#large_dictionary = {'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 
+let g:eskk#cursor_color = {
+\   'ascii': '#b4be82',
+\   'hira': '#e28878',
+\   'kata': '#84a0c6',
+\   'abbrev': '#4169e1',
+\   'zenei': '#ffd700',
+\}
+
 autocmd MyAutoCmd User eskk-initialize-post
       \ EskkMap -remap jj <ESC>
 autocmd MyAutoCmd User eskk-initialize-pre call s:eskk_initial_pre()
@@ -1454,7 +1464,8 @@ function! s:eskk_initial_pre() abort
   call t.add_map('z9', '（')
   call t.add_map('z0', '）')
   call eskk#register_mode_table('hira', t)
-endfunction"}}}
+endfunction
+"}}}
 "-----------------------------------------------------------------------
 "choosewin {{{
 "invoke with '-
