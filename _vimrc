@@ -3,8 +3,7 @@
 "ciw => カーソル上の単語を削除してインサートモード
 "ci' => シングルクォート内のテキストを削除してインサートモード
 "========================================================================
-"基本設定
-"{{{
+"基本設定 {{{
 "encode
 set encoding=utf-8			" vim 内部のエンコーディグ
 scriptencoding utf-8,cp932		" vimrcのエンコーディング
@@ -12,61 +11,9 @@ set fileencoding=utf-8			" 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
-" ------------------------------------------------------------------------------
 augroup vimrc
   autocmd!
 augroup END
-"========================================================================
-"config-file
-"========================================================================
-" スワップファイルを作らない
-set noswapfile
-" 編集中のファイルが変更されたら自動で読み直す
-set autoread
-"Undoファイルをまとめる
-set undodir=~/vimfiles/undo
-"backupファイルを作成
-set backup
-set backupdir=~/vimfiles/backup
-" バッファが編集中でもその他のファイルを開けるように
-set hidden
-" 入力中のコマンドをステータスに表示する
-set noshowcmd
-"モードを表示しない
-set noshowmode
-"日本語の行の連結時には空白を入力しない。
-set formatoptions+=mMj
-"folding設定
-setlocal foldmethod=marker
-"set viminfo='1,<1000,s100,/0,h,n~/vimfiles/viminfo
-"いい感じに折りたたみ状態を保存
-function! s:is_view_available() abort
-  if !&buflisted || &buftype !=# ''
-    return 0
-  elseif !filewritable(expand('%:p'))
-    return 0
-  endif
-  return 1
-endfunction
-
-function! s:mkview() abort
-   if s:is_view_available()
-    silent! mkview
-  endif
-endfunction
-
-function! s:loadview() abort
-  if s:is_view_available()
-    silent! loadview
-  endif
-endfunction
-
-augroup MyAutoCmd
-  autocmd!
-  autocmd MyAutoCmd BufWinLeave ?* call s:mkview()
-  autocmd MyAutoCmd BufReadPost ?* call s:loadview()
-augroup END
-
 "使わないプリセットプラグインを読み込まない
 let g:loaded_gzip              = 1
 let g:loaded_tar               = 1
@@ -84,29 +31,23 @@ let g:loaded_netrwPlugin       = 1
 let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 "========================================================================
-"runtimepath
-"========================================================================
-set runtimepath+="C:\Program Files\Python37"
-" plugins下のディレクトリをruntimepathへ追加する。
-"========================================================================
 "Python,vimproc
-"========================================================================
 "メモ
 "インストールはAll Userで
 "pipからneovim, greenletを導入 Visual Studio C++ 14.0が必要
 "参考:https://gammasoft.jp/python/python-version-management/
 "kaoriya-vimのpythonに揃える
 "64bit版を使用する
+set runtimepath+="C:\Program Files\Python37"
 let g:python_host_prog ='C:\Program Files (x86)\Python2.7\python.exe'
 let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
-
 "vimprocのダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
-"=========================================================================================
-"外観
-"{{{
-"set shortmess+=I
+"========================================================================================
+"外観  {{{
+
+set shortmess+=IaT
 "常にタブラインを表示
 set showtabline=2
 " 括弧入力時の対応する括弧を表示
@@ -122,13 +63,26 @@ nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
 nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
 "モードライン設定
 set modelines=5
-set noequalalways
 " ビープ音を可視化
 set visualbell
-"IME状態でカーソルカラー変更
-if has('multi_byte_ime')
-  highlight CursorIM guifg=NONE guibg=Purple
+
+if has('nvim')
+  " Display candidates by popup menu.
+  set wildmenu
+  set wildmode=full
+  set wildoptions+=pum
+else
+  " Display candidates by list.
+  set nowildmenu
+  set wildmode=list:longest,full
 endif
+"
+" Adjust window size of preview and help.
+set previewheight=8
+set helpheight=20
+
+set ttyfast
+
 "全角スペースを表示
 "コメント以外で全角スペースを指定しているので "scriptencoding"と、
 "このファイルのエンコードが一致するよう注意！
@@ -165,8 +119,8 @@ endif
 "endif
 "}}}
 "========================================================================
-"入力・編集
-"{{{
+"入力・編集 {{{
+
 "自動改行をやめる
 set textwidth=0
 " カーソルを文字が存在しない部分でも動けるようにする
@@ -181,6 +135,154 @@ set signcolumn=yes
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "set spelllang=en,cjk
+" スワップファイルを作らない
+set noswapfile
+" 編集中のファイルが変更されたら自動で読み直す
+set autoread
+"Undoファイルをまとめる
+set undodir=~/vimfiles/undo
+"backupファイルを作成
+set backup
+set backupdir=~/vimfiles/backup
+" バッファが編集中でもその他のファイルを開けるように
+set hidden
+" 入力中のコマンドをステータスに表示する
+set noshowcmd
+"モードを表示しない
+set noshowmode
+"日本語の行の連結時には空白を入力しない。
+set formatoptions+=mMj
+"不可視文字の可視化
+set list
+"不可視文字の表示
+set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
+"<TAB>を含むファイルを開いた際、<TAB>を何文字の空白に変換するかを設定
+set tabstop=4
+"キーボードで<TAB>を入力した際、<TAB>を何文字の空白に変換するかを設定
+set expandtab
+set softtabstop=4
+let g:vim_indent_cont = 4
+"自動インデント
+set autoindent
+"vimが自動でインデントを行った際、設定する空白数
+set shiftwidth=4
+" The prefix key.
+" 検索文字列が小文字の場合は大文字小文字を区別なく検索する
+set ignorecase
+" 検索文字列に大文字が含まれている場合は区別して検索する
+set smartcase
+" 検索文字列入力時に順次対象文字列にヒットさせる
+set incsearch
+" 検索時に最後まで行ったら最初に戻る
+set wrapscan
+" 検索語をハイライト表示
+set hlsearch
+
+"Markdown用設定
+"autocmd! FileType markdown hi! def link markdownItalic Normal
+autocmd vimrc FileType markdown set commentstring=<\!--\ %s\ -->
+
+"folding設定
+setlocal foldmethod=marker
+"viminfo設定(nvimと設定分ける)
+if has('nvim')
+  set shada=!,'300,<50,s10,h
+else
+  set viminfo=!,'300,<50,s10,h
+endif
+" Set minimal height for current window.
+" set winheight=20
+set winheight=1
+" Set maximam maximam command line window.
+set cmdwinheight=5
+" No equal window size.
+set noequalalways
+
+"いい感じに折りたたみ状態を保存 {{{
+function! s:is_view_available() abort
+  if !&buflisted || &buftype !=# ''
+    return 0
+  elseif !filewritable(expand('%:p'))
+    return 0
+  endif
+  return 1
+endfunction
+
+function! s:mkview() abort
+   if s:is_view_available()
+    silent! mkview
+  endif
+endfunction
+
+function! s:loadview() abort
+  if s:is_view_available()
+    silent! loadview
+  endif
+endfunction
+
+augroup MyAutoCmd
+  autocmd!
+  autocmd MyAutoCmd BufWinLeave * call s:mkview()
+  autocmd MyAutoCmd BufReadPost * call s:loadview()
+augroup END
+"}}}
+" Make directory automatically. {{{
+" --------------------------------------
+" http://vim-users.jp/2011/02/hack202/
+autocmd MyAutoCmd BufWritePre *
+      \ call s:mkdir_as_necessary(expand('<afile>:p:h'), v:cmdbang)
+function! s:mkdir_as_necessary(dir, force) abort
+  if !isdirectory(a:dir) && &l:buftype ==# '' &&
+        \ (a:force || input(printf('"%s" does not exist. Create? [y/N]',
+        \              a:dir)) =~? '^y\%[es]$')
+    call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+  endif
+endfunction
+"}}}
+
+"日本語入力固定モード
+"IM-control.vimが必要
+"https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
+"eskk.vimと干渉するため停止している
+let g:disable_IM_Control = 1
+
+if !exists('g:disable_IM_Control')
+" 「日本語入力固定モード」切替キー
+    inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
+endif
+
+"}}}
+"========================================================================
+"Key mapping {{{
+
+let mapleader = "\<Space>"
+
+nnoremap + <C-a> "数字のプラス
+nnoremap - <C-x> "マイナス
+nnoremap 0 ^
+nnoremap ^ 0
+nnoremap 4 $
+" Create a blank line above/below current line
+nnoremap <leader>j o<ESC>k
+nnoremap <leader>k O<ESC>j
+" Convenience key for getting to command mode
+nnoremap ; :
+" Enter normal mode
+inoremap jk <esc>
+"末尾までヤンク
+nnoremap <silent>Y y$
+" TABで対応ペアにジャンプ
+nnoremap <Tab> %
+xnoremap <Tab> %
+" 折り返し時に表示行単位での移動できるようにする
+nnoremap  j gj
+nnoremap  k gk
+"CTRL-sで保存！
+imap <c-s> <Esc>:w<CR>a
+"CTRL-qでclose
+nnoremap <silent> <C-q> :close<CR>
+" For JIS keyboard
+inoremap <C-@> <ESC>
 "日付を入力
 inoremap <expr> <F2> strftime("%Y%m%d")
 "句読点を強引に挿入
@@ -196,88 +298,39 @@ nnoremap <Leader><S-Space> a…<Esc>
 inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
 inoremap <silent><C-c> <ESC>
-"日本語入力固定モード
-"IM-control.vimが必要
-"https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
-" 「日本語入力固定モード」切替キー
-inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
+"_vimrcを開く
+noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
+"開いているfileを読み込む
+noremap <Leader>ss :<C-u>source %<CR>
+"lでfoldingを展開
+nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
+"CTRL-SPACEで閉じる
+nnoremap <silent><C-Space> :<C-u>call <SID>smart_foldcloser()<CR>
+function! s:smart_foldcloser() "{{{
+  if foldlevel('.') == 0
+    norm! zM
+    return
+  endif
 
-"Tab系
-"不可視文字の可視化
-set list
-"不可視文字の表示
-set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
+  let foldc_lnum = foldclosed('.')
+  norm! zc
+  if foldc_lnum == -1
+    return
+  endif
 
-"<TAB>を含むファイルを開いた際、<TAB>を何文字の空白に変換するかを設定
-set tabstop=4
-"キーボードで<TAB>を入力した際、<TAB>を何文字の空白に変換するかを設定
-set expandtab
-set softtabstop=4
-let g:vim_indent_cont = 4
-"自動インデント
-set autoindent
-"vimが自動でインデントを行った際、設定する空白数
-set shiftwidth=4
-" The prefix key.
-"検索系
-"type S, then type what you're looking for, a /, and what to replace it with
-nmap S :%s//g<LEFT><LEFT>
-" 検索文字列が小文字の場合は大文字小文字を区別なく検索する
-set ignorecase
-" 検索文字列に大文字が含まれている場合は区別して検索する
-set smartcase
-" 検索文字列入力時に順次対象文字列にヒットさせる
-set incsearch
-" 検索時に最後まで行ったら最初に戻る
-set wrapscan
-" 検索語をハイライト表示
-set hlsearch
-"Markdown用設定
-augroup vimrc_markdown
-autocmd!
-autocmd BufRead,BufNewFile *.{md} set filetype=markdown
-autocmd! FileType markdown hi! def link markdownItalic Normal
-autocmd FileType markdown set commentstring=<\!--\ %s\ -->
-augroup END
+  if foldclosed('.') != foldc_lnum
+    return
+  endif
+  norm! zM
+endfunction
 "}}}
-"========================================================================
-"Key mapping
-"{{{
-"!!!!!!!!!!LeaderをSpaceキーに!!!!!!!!!!!!!!!
-let mapleader = "\<Space>"
-nnoremap + <C-a> "数字のプラス
-nnoremap - <C-x> "マイナス
-nnoremap 0 ^
-nnoremap ^ 0
-nnoremap 4 $
-" Create a blank line above/below current line
-nnoremap <leader>j o<ESC>k
-nnoremap <leader>k O<ESC>j
-" Convenience key for getting to command mode
-nnoremap ; :
-" Enter normal mode
-inoremap jk <esc>
-"末尾までヤンク
-nnoremap <silent>Y y$
-" 折り返し時に表示行単位での移動できるようにする
-nnoremap  j gj
-nnoremap  k gk
-"CTRL-sで保存！
-imap <c-s> <Esc>:w<CR>a
-"CTRL-qでclose
-nnoremap <silent> <C-q> :close<CR>
-" For JIS keyboard
-inoremap <C-@> <ESC>
+
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
 nnoremap <leader>wc :close<CR>
 nnoremap <leader>wn :vne<CR>
 nnoremap <leader>wo :only<CR>
-"_vimrcを開く
-noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
-"開いているfileを読み込む
-noremap <Leader>ss :<C-u>source %<CR>
 "Shift-l, Shift-hで行末, 行頭に移動
 nnoremap <S-l> <End>
 nnoremap <S-h> <Home>
@@ -314,9 +367,6 @@ cnoremap <C-n> <Down>| " コマンドライン履歴を一つ戻る
 cnoremap <C-p> <Up>| " 前の単語へ移動
 cnoremap <M-b> <S-Left>| " 次の単語へ移動
 cnoremap <M-f> <S-Right>|" 前の単語へ移動
-" TABにて対応ペアにジャンプ
-nnoremap <Tab> %
-xnoremap <Tab> %
 "バッファを閉じてもウィンドウが閉じないようにする
 "need-Bclose
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
@@ -328,9 +378,8 @@ nnoremap <Leader>nr <C-u>A  <Esc>
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "}}}
 "========================================================================
-"Vim-Plug
-"{{{
-  set runtimepath+=~/vimfiles/plugged/vim-plug
+"Vim-Plug {{{
+"vimplugが無い場合はインストール
 if has('vim_starting')
   set runtimepath+=~/vimfiles/plugged/vim-plug
   if !isdirectory(expand('$HOME/vimfiles/plugged/vim-plug'))
@@ -395,13 +444,15 @@ filetype plugin indent on
 syntax enable
 "}}}
 "-----------------------------------------------------------------------
-"Denite
-"{{{
+"Denite {{{
+
 "need-Python3.6
 nnoremap [denite] <Nop>
 nmap s [denite]
+
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
 	\  source<CR>
+
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
 	\  file<CR>
@@ -412,30 +463,37 @@ nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
 nnoremap <silent> [denite]b :<C-u>Denite
 	\ -buffer-name=normal -mode=normal
 	\ buffer<CR>
+"デナイト・サーチ
 nnoremap <silent> ? :<C-u>Denite
 	\ -buffer-name=search -auto-highlight
 	\ line<CR>
+"デナイト・キーワードサーチ
 nnoremap <silent> * :<C-u>DeniteCursorWord
 	\ -buffer-name=search
 	\ -auto-highlight -mode=normal line<CR>
-"register&neoyank
+"neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
 	\ -mode=normal
 	\ register neoyank<CR>
+"コマンド履歴
 nnoremap <silent> [denite]c :<C-u>Denite
     \ -mode=normal
     \ command_history<CR>
-nnoremap <silent> [denite]g :<C-u>DeniteBufferDir -buffer-name=search
-      \ -no-empty -mode=normal grep<CR>
+"バッファディレクトリからgrep
+nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
+    \ -buffer-name=search
+    \ -no-empty -mode=normal grep<CR>
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
+    \ -buffer_name=normal
 	\ -mode=normal -winheight=5
     \ menu<CR>
+"ヘルプ
 nnoremap <silent> [denite]h :<C-u>Denite
     \ -buffer-name=search
     \ -highlight-mode-insert=WildMenu
     \ help<CR>
-"最近使用したファイル一覧
+"最近使用したファイル-neomru
 nnoremap <silent> [denite]n :<C-u>Denite
 	\ -mode=normal 
     \ file_mru<CR>
@@ -452,15 +510,8 @@ nnoremap <silent> [denite]a :<C-u>Denite
 "    \ -cursor-pos=+1 -immediately
 "    \ -buffer-name=search
 "    \ -resume -mode=normal -refresh<CR>
-"denite-default option
-call denite#custom#option('normal', {
-    \ 'quick-move': 'immediately'
-    \})
 
-call denite#custom#option('search', {
-    \ 'winheight': 5
-    \ })
-
+"denite option
 call denite#custom#option('_', {
 	\ 'prompt': '»',
 	\ 'cursor_wrap': v:true,
@@ -468,8 +519,25 @@ call denite#custom#option('_', {
 	\ 'highlight_mode_insert': 'WildMenu',
 	\ 'statusline': v:false,
     \ 'unique': v:true,
-    \ 'vertical-preview': v:true
+    \ 'vertical_preview': v:true,
+    \ 'quick_move_table': {
+        \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
+        \   'h' : 5, 'l' : 6, ';' : 7,
+        \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
+        \ }
 	\ })
+"buffer-normal
+call denite#custom#option('normal', {
+	\ 'winheight': 10,
+    \ 'direction': 'dynamicbottom',
+    \ 'quick_move': 'immediately'
+    \})
+"buffer-search
+call denite#custom#option('search', {
+    \ 'direction': 'dynamicbottom',
+    \ 'winheight': 5
+    \ })
+
 " Change mappings.
 call denite#custom#map(
       \ 'insert',
@@ -483,17 +551,14 @@ call denite#custom#map(
       \ '<denite:move_to_previous_line>',
       \ 'noremap'
       \)
-"C-J,C-Kでsplitで開く
-call denite#custom#map('insert', '<C-g>', '<denite:do_action:split>', 'noremap')
-call denite#custom#map('insert', '<C-t>', '<denite:do_action:vsplit>', 'noremap')
 "C-h,C-lでディレクトリ移動
 call denite#custom#map('insert', '<C-l>', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
 "h,lでディレクトリ上下移動
 call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
 call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
-"defxで開く
 
+"sorter定義
 function! ToggleSorter(sorter) abort
    let sorters = split(b:denite_context.sorters, ',')
    let idx = index(sorters, a:sorter)
@@ -506,6 +571,7 @@ function! ToggleSorter(sorter) abort
    let b:denite_new_context.sorters = join(sorters, ',')
    return '<denite:nop>'
 endfunction
+
 call denite#custom#map('insert', '<C-f>',
     \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
 
@@ -522,8 +588,8 @@ call denite#custom#var('grep', 'default_opts',
 " Change matchers.
 call denite#custom#source(
 	\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
-call denite#custom#source(
-	\ 'file/rec', 'matchers', ['matcher/cpsm'])
+"call denite#custom#source(
+"	\ 'file/rec', 'matchers', ['matcher/cpsm'])
 
 " Add custom menus
 let s:menus = {
@@ -567,40 +633,44 @@ function! s:defx_open(context)
       execute('Defx ' . dir . file_search)
   endif
 endfunction
-"function! s:denite_action_file_rec()
 
 "action:defxを定義
 call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
         \ function('s:defx_open'))
 call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
-"denite-filerecをactionに定義したい
-"call denite#custom#action('buffer,directory,file,openable,dirmark', filerec,
-"        \ function ('s:denite_action_file_rec'))
 "}}}
 "-----------------------------------------------------------------------
-"Dirmark
-"{{{
+"Dirmark {{{
+
 nmap [denite]d    <SID>(dirmark)
 nmap [denite]D   <SID>(dirmark-add)
+"open dirmark-bookmark in Denite
 nnoremap <silent> <SID>(dirmark) :<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
 "bookmark by "add"action
 nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirmark/add <CR>'
+"open in defx
+nmap [denite]x <SID>(defx):Denite 
+    \ -buffer-name=normal -mode=normal
+    \ defx/dirmark <CR>
 "}}}
 "-----------------------------------------------------------------------
-"Defx
-"{{{
-nnoremap <silent> <C-e>
-	\ :<C-u>Defx<CR>
-	\ :setlocal nonumber signcolumn=no<CR>
+"Defx {{{
+
+nmap <C-e> <SID>(defx)
+nmap <Leader>e <SID>(defxbufferdir)
+nnoremap <silent> <SID>(defx) :<C-u>Defx<CR>
+	\:setlocal signcolumn=no<CR>
+nnoremap <silent> <SID>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
+	\:setlocal signcolumn=no<CR>
 
 call defx#custom#option('_', {
-    \ 'winwidth': 40,
+    \ 'winwidth': 44,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:filename:time',
-    \ 'sort': 'TIME'
+    \ 'sort': 'TIME',
+    \ 'ignored_files': '.*,ntuser*,desktop.ini'
     \ })
-"    \ 'ignored-files':['desktop.ini','ntuser.*']
 "call defx#custom#column('filename', {
 "      \ 'directory_icon': '▸',
 "      \ 'opened_icon': '▾',
@@ -615,19 +685,19 @@ call defx#custom#option('_', {
 
 autocmd vimrc FileType defx call s:defx_my_settings()
 
-    function! s:getdefxbasedir(candidate) abort
-        if line('.') == 1
-            let path_mod  = 'h'
-        else
-            let path_mod = isdirectory(a:candidate) ? '' : 'h'
-        endif
-        return fnamemodify(a:candidate,'":p:' . path_mod . '"')
-    endfunction
+function! s:getdefxbasedir(candidate) abort
+    if line('.') == 1
+        let path_mod  = 'h'
+    else
+        let path_mod = isdirectory(a:candidate) ? '' : 'h'
+    endif
+    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
+endfunction
 
-    function! s:denite_rec(context) abort
-        let narrow_dir = s:getdefxbasedir(a:context.targets[0])
-        execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
-    endfunction
+function! s:denite_rec(context) abort
+    let narrow_dir = s:getdefxbasedir(a:context.targets[0])
+    execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
+endfunction
 
 function! s:defx_my_settings() abort
 " Define mappings
@@ -655,8 +725,9 @@ nnoremap <silent><buffer><expr> K
 \ defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N
 \ defx#do_action('new_file')
+"need 'pip install Send2Trash'
 nnoremap <silent><buffer><expr> d
-\ defx#do_action('remove')
+\ defx#do_action('remove_trash')
 nnoremap <silent><buffer><expr> r
 \ defx#do_action('rename')
 nnoremap <silent><buffer><expr> x
@@ -689,15 +760,12 @@ nnoremap <silent><buffer><expr> <C-g>
 \ defx#do_action('print')
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer><expr> <C-t>
+nnoremap <silent><buffer><expr> <C-s>
 \ defx#do_action('call', '<SID>denite_rec')
-
 endfunction
-"autocmd vimrc ColorScheme * highlight Defx_filename_directory term = bold ctermfg=33 guifg=#4078f2
 "}}}
 "-----------------------------------------------------------------------
-"gina.vim
-"{{{
+"gina.vim {{{
 "docのexampleをコピペ
 "
 call gina#custom#command#alias('branch', 'br')
@@ -772,18 +840,18 @@ nnoremap <Leader>aa :<C-u>Gina status --short<CR>
 nnoremap <Leader>ac :<C-u>Gina commit<CR>
 "}}}
 "-----------------------------------------------------------------------
-"vim-markdow
-"{{{
+"vim-markdow {{{
 "mapping
 nnoremap <Leader>pmd <C-u>:Minidown<CR>
 "}}}
 "----------------------------------------------------------------------------------------"
-"jasegment
+"jasegment {{{
 let g:jasegment#model='knbc_bunsetu'
 let g:jasentence_endpat = '[。．？！]\+'
+"}}}
 "-----------------------------------------------------------------------------------------
-" operator mappings
-"{{{
+" operator mappings {{{
+
 "mapping
 map <silent>ta <Plug>(operator-surround-append)
 map <silent>td <Plug>(operator-surround-delete)
@@ -797,8 +865,7 @@ let g:operator#surround#blocks['-'] = [
 \ ]
 "}}}
 "-----------------------------------------------------------------------------------------
-"lexima
-""{{{
+"lexima "{{{
 ""2バイト括弧を追加
 call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
 call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
@@ -817,16 +884,15 @@ call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
 call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
 "}}}
 "-----------------------------------------------------------------------------------------
-"文字数カウントスクリプト
-"{{{
-"
+"文字数カウント{{{
+
 "1行カウント
 function! s:CharCount()
 	let l:line = getline(line('.'))
 	let l:result =  strlen(substitute(l:line, '.', 'x','g'))
 	return l:result
 endfunction
-"
+
 "全体カウント
 function! s:CharAllCount()
 	let l:result = 0
@@ -852,12 +918,12 @@ command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> ; :LineCharVCount<CR>
 "}}}
 "-----------------------------------------------------------------------
-"Open-Browser
+"Open-Browser {{{
 nmap <Leader>s <Plug>(openbrowser-smart-search)
 vmap <Leader>s <Plug>(openbrowser-smart-search)
+"}}}
 "-----------------------------------------------------------------------
-"TweetVim
-"{{{
+"TweetVim {{{
 nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
 nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
@@ -876,7 +942,7 @@ nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
 let g:tweetvim_tweet_per_page = 60
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-let g:tweetvim_open_buffer_cmd = 'botright 48vsplit'
+let g:tweetvim_open_buffer_cmd = 'botright 44vsplit'
 let g:tweetvim_display_separator = 1
 let g:tweetvim_empty_separator = 1
 let g:tweetvim_display_time = 1
@@ -891,72 +957,86 @@ autocmd!
 autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
 autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
 " 各種アクション
-autocmd FileType tweetvim     nnoremap <buffer>S                :<C-u>TweetVimSay<CR>
-autocmd FileType tweetvim     nnoremap <buffer>m                :<C-u>TweetVimMentions<CR>
-autocmd FileType tweetvim     nnoremap <buffer><Leader>u        :<C-u>:Unite tweetvim<CR>
-autocmd FileType tweetvim     nmap     <buffer>c                <Plug>(tweetvim_action_in_reply_to)
-autocmd FileType tweetvim     nnoremap <buffer>t                :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
-autocmd FileType tweetvim     nmap     <buffer><Leader>F        <Plug>(tweetvim_action_remove_favorite)
-autocmd FileType tweetvim     nmap     <buffer><Leader>d        <Plug>(tweetvim_action_remove_status)
-autocmd FileType tweetvim     nmap     <buffer>o        <Plug>(tweetvim_action_open_links)
-autocmd FileType tweetvim     nmap     <silent><buffer>q				:bd<CR>
+autocmd FileType tweetvim nnoremap <buffer>S 
+    \ :<C-u>TweetVimSay<CR>
+autocmd FileType tweetvim nnoremap <buffer>m
+    \ :<C-u>TweetVimMentions<CR>
+autocmd FileType tweetvim nnoremap <buffer><Leader>u
+    \ :<C-u>:Unite tweetvim<CR>
+autocmd FileType tweetvim nmap <buffer>c
+    \ <Plug>(tweetvim_action_in_reply_to)
+autocmd FileType tweetvim nnoremap <buffer>t 
+    \ :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
+autocmd FileType tweetvim nmap <buffer><Leader>F 
+    \ <Plug>(tweetvim_action_remove_favorite)
+autocmd FileType tweetvim nmap <buffer><Leader>d 
+    \ <Plug>(tweetvim_action_remove_status)
+autocmd FileType tweetvim nmap <buffer>o 
+    \ <Plug>(tweetvim_action_open_links)
+autocmd FileType tweetvim nmap <silent><buffer>q
+    \ :bd<CR>
 " リロード
-autocmd FileType tweetvim     nmap     <buffer><Tab>            <Plug>(tweetvim_action_reload)
+autocmd FileType tweetvim nmap <buffer><Tab>
+    \ <Plug>(tweetvim_action_reload)
 " ページの先頭に戻ったときにリロード
-autocmd FileType tweetvim     nmap     <buffer><silent>gg       gg<Plug>(tweetvim_action_reload)
+autocmd FileType tweetvim nmap <buffer><silent>gg
+    \ gg<Plug>(tweetvim_action_reload)
 " ページ移動を ff/bb から f/b に
-autocmd FileType tweetvim     nmap     <buffer>f                <Plug>(tweetvim_action_page_next)
-autocmd FileType tweetvim     nmap     <buffer>b                <Plug>(tweetvim_action_page_previous)
+autocmd FileType tweetvim nmap <buffer>f 
+    \ <Plug>(tweetvim_action_page_next)
+autocmd FileType tweetvim nmap <buffer>b 
+    \ <Plug>(tweetvim_action_page_previous)
 "縦移動（カーソルを常に中央にする）
-autocmd FileType tweetvim     nmap <silent> <buffer>n <Plug>(tweetvim_action_cursor_down)
-autocmd FileType tweetvim     nmap <silent> <buffer>p <Plug>(tweetvim_action_cursor_up)
-autocmd FileType tweetvim     nnoremap <buffer>j }
-autocmd FileType tweetvim     nnoremap <buffer>k {
-autocmd FileType tweetvim     nnoremap <buffer>th :TweetVimHomeTimeline<CR>
+autocmd FileType tweetvim nmap <silent> <buffer>n 
+    \ <Plug>(tweetvim_action_cursor_down)
+autocmd FileType tweetvim nmap <silent> <buffer>p 
+    \ <Plug>(tweetvim_action_cursor_up)
+autocmd FileType tweetvim nnoremap <buffer>j }j
+autocmd FileType tweetvim nnoremap <buffer>k k{j
+autocmd FileType tweetvim nnoremap <buffer>th
+    \ :TweetVimHomeTimeline<CR>
 " 不要なマップを除去
 autocmd FileType tweetvim     nunmap   <buffer>ff
 autocmd FileType tweetvim     nunmap   <buffer>bb
 " tweetvim バッファに移動したときに自動リロード
 "autocmd BufEnter * call <SID>tweetvim_reload()
-augroup END
-
-autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
-autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-" セパレータを飛ばして移動する
 " filetype が tweetvim ならツイートをリロード
 "function! s:tweetvim_reload()
 "    if &filetype ==# 'tweetvim'
 "        call feedkeys("\<Plug>(tweetvim_action_reload)")
 "    endif
 "endfunction
+augroup END
+
+autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
+autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
 "}}}
 "-----------------------------------------------------------------------
-"lightline
+"lightline {{{
 "lightline-bufferline
 "lightline-ale
-"{{{
 let g:lightline = {
-\ 'colorscheme': 'wombat',
+\ 'colorscheme': 'iceberg',
     \ 'active': {
-		\ 'left': [ [ 'mode', 'paste' ],['eskk','gitbranch'], [ 'readonly', 'relativepath'] ],
-		\ 'right': [
+        \ 'left': [ [ 'mode', 'paste' ],['eskk','gitbranch'], [ 'readonly', 'relativepath'] ],
+        \ 'right': [
         \ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','charcount','lineinfo' ],
         \ ['percent'], [ 'IMEstatus','filetype' ] 
         \ ]
     \ },
-	\ 'inactive': {
-		\ 'left': [['inactivefn']],
-		\ 'right': [[ 'lineinfo' ]]
-	\},
+    \ 'inactive': {
+        \ 'left': [['inactivefn']],
+        \ 'right': [[ 'lineinfo' ]]
+    \},
     \ 'component_function': {
-		\'readonly':'LightlineReadonly',
-		\'gitbranch': 'LLgitbranch',
-		\'filetype': 'LightlineFiletype',
+        \'readonly':'LightlineReadonly',
+        \'gitbranch': 'LLgitbranch',
+        \'filetype': 'LightlineFiletype',
         \ 'ale': 'ALEGetStatusLine',
-		\'inactivefn':'MyInactiveFilename',
-		\'relativepath':'MyFilepath',
+        \'inactivefn':'MyInactiveFilename',
+        \'relativepath':'MyFilepath',
         \'mode': 'LightlineMode',
-	    \'charcount':'LLCharcount',
+        \'charcount':'LLCharcount',
         \'eskk': 'LLeskk'
     \ }
 \ }
@@ -966,10 +1046,17 @@ let g:lightline = {
     let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 "endif
 
-let g:lightline.component = {
-    \'lineinfo':'%-2v:%3l',
-	\'IMEstatus':'%{IMStatus("-JP-")}'
-	\}
+if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
+    let g:lightline.component = {
+        \'lineinfo':'%-2v:%3l'
+        \}
+else
+    let g:lightline.component = {
+        \'lineinfo':'%-2v:%3l',
+        \'IMEstatus':'%{IMStatus("-JP-")}'
+        \}
+endif
+
 let g:lightline.component_expand = {
       \  'buffers': 'lightline#bufferline#buffers',
       \  'linter_checking': 'lightline#ale#checking',
@@ -998,15 +1085,23 @@ command! -bar LightlineUpdate    call lightline#init()|
 
 function! LightlineMode()
 return &filetype ==# 'unite' ? 'Unite' :
-	\ &filetype ==# 'denite' ? DeniteMode() :
-	\ &filetype ==# 'help' ? 'Help' :
-	\ &filetype ==# 'defx' ? 'Defx' :
-	\ &filetype ==# 'tweetvim' ? 'Tweetvim' :
-	\ lightline#mode()
+    \ &filetype ==# 'denite' ? DeniteMode() :
+    \ &filetype ==# 'help' ? 'Help' :
+    \ &filetype ==# 'defx' ? 'Defx' :
+    \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
+    \ lightline#mode()
 endfunction
 
 function! LLeskk()
-    return g:eskk#statusline()
+    if &filetype !~? 'vimfiler\|gundo|\defx\|tweetvim\|denite'
+        return eskk#is_enabled()
+        \ ? printf(get(a:000, 0, '[%s]'),
+        \          get(g:eskk#statusline_mode_strings,
+        \              eskk#get_current_instance().mode, '??'))
+        \ : printf('[--]')
+    else
+        return ''
+    endif
 endfunction
 
 function! MyInactiveFilename()
@@ -1016,33 +1111,33 @@ endfunction
 
 "lightlineに渡す変数の設定
 augroup CharCounter
-	autocmd!
-	autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave,CursorMoved,CursorMovedI * call <SID>LLvarCharCount()
-	autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>LLvarCharAllCount()
+    autocmd!
+    autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave,CursorMoved,CursorMovedI * call <SID>LLvarCharCount()
+    autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>LLvarCharAllCount()
 augroup END
 
 let s:llcharcount = ''
 let s:llcharallcount = ''
 
 function! s:LLvarCharAllCount()
-	let l:count = s:CharAllCount()
-	if l:count == 0
-		let l:shresult = '---'
+    let l:count = s:CharAllCount()
+    if l:count == 0
+        let l:shresult = '---'
     elseif l:count <10
         let l:shresult ='   ' . l:count
     elseif l:count <100
         let l:shresult ='  ' . l:count
-	elseif l:count < 10000
-		let l:shresult = l:count
-	else
-		let l:shresult = (l:count / 1000) . 'k'
-	endif
-	let s:llcharallcount = l:shresult
+    elseif l:count < 10000
+        let l:shresult = l:count
+    else
+        let l:shresult = (l:count / 1000) . 'k'
+    endif
+    let s:llcharallcount = l:shresult
 endfunction
 
 function! s:LLvarCharCount()
     let l:CC = s:CharCount() < 10 ? '  ' . s:CharCount() :
-	    \ s:CharCount() <100 ? ' ' . s:CharCount() : s:CharCount()
+        \ s:CharCount() <100 ? ' ' . s:CharCount() : s:CharCount()
     let s:llcharcount = l:CC
 endfunction
 
@@ -1064,9 +1159,9 @@ let s:ginabranch = ''
 
 function! s:llgit()
 if exists('*gitbranch#name')
-	let s:ginabranch = gitbranch#name()
+    let s:ginabranch = gitbranch#name()
 else
-	let s:ginabranch = ''
+    let s:ginabranch = ''
 endif
 return s:ginabranch
 endfunction
@@ -1074,9 +1169,9 @@ endfunction
 function! LLgitbranch()
   try
     if &filetype !~? 'vimfiler\|gundo' && strlen(s:ginabranch) && winwidth(0) > 40
-      let _ = s:llgit()
-      return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
-	    \strlen(_) ? ' ⭠': ''
+    let _ = s:llgit()
+    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
+      \strlen(_) ? ' ⭠': ''
     endif
   catch
   endtry
@@ -1090,11 +1185,11 @@ elseif &filetype !~? 'vimfiler\|gundo|\defx\|tweetvim'
     let l:ll_filepath = expand('%:~')
     let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
-	let l:ll_fn = winwidth(0) < 65 ? '' :
+    let l:ll_fn = winwidth(0) < 65 ? '' :
         \ strlen(l:ll_filepath) > winwidth(0)-65 ? pathshorten(l:ll_filepath) :
-	    \  l:ll_filepath
-	let l:ll_modified = &modified ? '[+]' : ''
-	return l:ll_fn . l:ll_modified
+        \  l:ll_filepath
+    let l:ll_modified = &modified ? '[+]' : ''
+    return l:ll_fn . l:ll_modified
 else
     return ''
 endif
@@ -1149,8 +1244,7 @@ endfunction
 
 "}}}
 "-----------------------------------------------------------------------
-"deoplete
-"{{{
+"deoplete {{{
 " Use deoplete.
 autocmd vimrc VimEnter * call s:deoplete_setting()
 autocmd vimrc InsertEnter * call deoplete#enable()
@@ -1159,10 +1253,11 @@ function! s:deoplete_setting()
 let g:deoplete#enable_at_startup = 0
 
 call deoplete#custom#option({
-    \ 'auto_complete_delay': 0,
-    \ 'skip_multibyte': v:false,
+    \ 'auto_complete_delay': 10,
+    \ 'skip_multibyte': v:true,
     \ 'max_list': 30,
     \ 'min_pattern_length': 1,
+    \ 'prev_completion_mode': 'none',
     \ 'yarp': v:true,
     \ 'num_processes': 4
     \ })
@@ -1201,6 +1296,7 @@ call deoplete#custom#source('eskk', 'max_menu_width', 80)
 call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('eskk', 'rank', 500) 
 call deoplete#custom#source('vim', 'rank' , 250)
+call deoplete#custom#source('vim', 'min_pattern_length', 4)
 call deoplete#custom#option('ignore_sources',
     \ {'_': [ 'tag', 'dictionary']})
 call deoplete#custom#source('_', 'converters', [
@@ -1228,8 +1324,7 @@ call deoplete#custom#var('around', {
 endfunction
 "}}}"
 "-----------------------------------------------------------------------
-"neosnippet
-"{{{
+"neosnippet {{{
 " Plugin key-mappings.
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
@@ -1249,21 +1344,24 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 "endif
 "}}}
 "-----------------------------------------------------------------------
-"Gundo
+"Gundo {{{
+let g:gundo_help =1 
 let g:gundo_prefer_python3 = 1
 let g:gundo_auto_preview = 0
-let g:gundo_help = 0
-let g:gundo_width = 30
-let g:gundo_preview_height = 10
-let g:gundo_preview_bottom = 1
-nmap U :<C-u>GundoToggle<CR>
+let g:gundo_width = 50
+let g:gundo_right = 1
+let g:gundo_preview_height = 20
+let g:gundo_preview_bottom = 0
+let g:gundo_playback_delay = 500
+nnoremap U :<C-u>GundoToggle<CR>
+"}}}
 "-----------------------------------------------------------------------
-"Indent-guides
+"Indent-guides "{{{
 nnoremap <silent><Leader>ig :IndentGuidesToggle<CR>
 let g:indent_guides_exclude_filetypes = ['help', 'defx']
+"}}}
 "-----------------------------------------------------------------------
-"ALE
-"{{{
+"ALE {{{
 "https://efcl.info/2015/09/10/introduce-textlint/
 "https://koirand.github.io/blog/2018/textlint/
 "vint: pip install --pre vim-vint
@@ -1290,44 +1388,63 @@ let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 "}}}
 "-----------------------------------------------------------------------
+"eskk.vim"{{{
 if has('vim_starting')
-	let g:eskk_dictionary = '~/.skk-jisyo'
+	let g:eskk_dictionary = '~/dotfiles/.skk-jisyo'
 endif
-"let g:eskk_modestat = 'ascii'
-    "autocmd User InsertLeave * g:eskk#disable()
-    "autocmd User eskk-disable-pre call s:eskk_modestatus()
-":function! s:eskk_modestatus() abort
-":    let g:eskk#initial_mode = g:eskk#get_mode()
-":endfunction
-"augroup esvimrc
-"autocmd  InsertEnter * call s:eskk_my_setting()
-"augroup END
-"function! s:eskk_my_setting() abort
-"    call g:eskk#disable()
-"endfunction
-"let g:eskk#keep_state = 1
 
-nmap i i<C-j>
-nmap a a<C-j>
-nmap gi gi<C-j>
-let g:eskk#initial_mode = 'hira'
-"nnoremap <silent><Leader>; :call <SID>eskk_kana_toggle()<CR>
-"function! s:eskk_kana_toggle() abort
-"    if g:eskk#initial_mode ==# 'hira'
-"        let g:eskk#initial_mode = 'ascii'
-"    else
-"        let g:eskk#initial_mode = 'hira'
-"    endif
-"endfunction
+autocmd vimrc InsertEnter * call <SID>eskk_insert_config()
+autocmd vimrc InsertLeave * if g:eskk#is_enabled() | let s:eskk_inserton = 1 
+    \| else | let s:eskk_inserton = 0
 
+function! s:eskk_insert_config() abort
+    if s:eskk_inserton == 1
+        call eskk#enable()
+    endif 
+endfunction
+
+let s:eskk_inserton = ''
+
+function! s:eskk_inserttoggle() abort
+    if s:eskk_inserton
+        let s:eskk_inserton = 1
+    else 
+        let s:eskk_inserton = 0
+    endif
+endfunction
+
+let g:eskk#keep_state = 0
+let g:eskk#debug = 0
+let g:eskk#show_annotation = 1
+let g:eskk#rom_input_style = 'msime'
+let g:eskk#egg_like_newline = 1
+let g:eskk#egg_like_newline_completion = 1
+let g:eskk#tab_select_completion = 1
 let g:eskk_revert_henkan_style = 'okuri'
-"let g:eskk_enable_completion = 1
-let g:eskk#large_dictionary = { 'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
-"invoke with '-'
-nmap  -  <Plug>(choosewin)
-let g:choosewin_label = 'ASDFGHJKL'
+let g:eskk#large_dictionary = {'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
+
+autocmd MyAutoCmd User eskk-initialize-post
+      \ EskkMap -remap jj <ESC>
+autocmd MyAutoCmd User eskk-initialize-pre call s:eskk_initial_pre()
+function! s:eskk_initial_pre() abort
+  let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+  call t.add_map('z ', '　')
+  call t.add_map('~', '〜')
+  call t.add_map('zc', '©')
+  call t.add_map('zr', '®')
+  call t.add_map('z9', '（')
+  call t.add_map('z0', '）')
+  call eskk#register_mode_table('hira', t)
+endfunction"}}}
 "-----------------------------------------------------------------------
-"colorscheme-plugin
+"choosewin {{{
+"invoke with '-
+nmap  -  <Plug>(choosewin)
+let g:choosewin_blink_on_land = 0
+let g:choosewin_label = 'ASDFGHJKL'
+"}}}
+"-----------------------------------------------------------------------
+"colorscheme-plugin {{{
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_contrast_dark = 'medium'
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_italicize_comments = 0
 autocmd vimrc Colorscheme gruvbox let g:gruvbox_invert_selection = 0
@@ -1336,8 +1453,9 @@ colorscheme iceberg
 "colorscheme hybrid
 "colorscheme gruvbox
 set background=dark
+"}}}
 "========================================================================
-"Gvim
+"Gvim {{{
 if has('GUI')
     set clipboard=unnamed
     let &guioptions = substitute(&guioptions, '[TMrRlLbeg]', '', 'g')
@@ -1364,7 +1482,11 @@ if has('GUI')
 else
     set t_Co=256
     set termguicolors
+    colorscheme iceberg
 endif
+"}}}
+"========================================================================
+"+kaoriya {{{
 if has('kaoriya')
     "autodate
     let autodate_format ='%Y/%m/%d-%H:%M:%S'
@@ -1375,5 +1497,10 @@ if has('kaoriya')
     "背景透過
     autocmd vimrc GUIEnter * set transparency=245
 endif
-"-----------------------------------------------------------------------
+"IME状態でカーソルカラー変更
+if has('multi_byte_ime')
+  highlight CursorIM guifg=NONE guibg=Purple
+endif
+
+"}}}
 "vim:set foldmethod=marker:
