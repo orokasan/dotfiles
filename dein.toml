@@ -53,5 +53,10 @@ repo =  'w0ng/vim-hybrid'
 
 [[plugins]]
 repo =  'morhetz/gruvbox'
-
+hook_add = '''
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_italicize_comments = 0
+let g:gruvbox_invert_selection = 0
+let g:gruvbox_guisp_fallback = 'bg'
+'''
 

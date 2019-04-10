@@ -677,8 +677,8 @@ endif
 "リセットのタイミングを変えることで直った(?)
 if !exists('eskkautocmd_loaded')
   let autocommands_loaded = 1
-    autocmd InsertEnter * call <SID>eskk_insert_config()
     autocmd InsertLeave * call <SID>eskk_status()
+    autocmd InsertEnter * call <SID>eskk_insert_config()
 endif
 function! s:eskk_status() abort
     if eskk#is_enabled()
@@ -741,10 +741,6 @@ endfunction
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
-autocmd vimrc Colorscheme gruvbox let g:gruvbox_contrast_dark = 'medium'
-autocmd vimrc Colorscheme gruvbox let g:gruvbox_italicize_comments = 0
-autocmd vimrc Colorscheme gruvbox let g:gruvbox_invert_selection = 0
-autocmd vimrc Colorscheme gruvbox let g:gruvbox_guisp_fallback = 'bg'
 colorscheme iceberg
 "colorscheme hybrid
 "colorscheme gruvbox

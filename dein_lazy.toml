@@ -476,7 +476,6 @@ repo =  'rhysd/vim-operator-surround'
 depends = 'vim-operator-user'
 on_map = {v = '<Plug>'}
 hook_add = '''
-"mapping
 map <silent>ta <Plug>(operator-surround-append)
 map <silent>td <Plug>(operator-surround-delete)
 map <silent>tr <Plug>(operator-surround-replace)
@@ -496,7 +495,7 @@ repo =  'kana/vim-operator-user'
 
 [[plugins]]
 repo =  'tyru/open-browser.vim'
-on_map = {n = '<Plug>'}
+on_map = {nv = '<Plug>'}
 hook_add ='''
 nmap <Leader>s <Plug>(openbrowser-smart-search)
 vmap <Leader>s <Plug>(openbrowser-smart-search)
@@ -713,6 +712,7 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 [[plugins]]
 repo =  'w0rp/ale'
 hook_post_source ='''
+
 "https://efcl.info/2015/09/10/introduce-textlint/
 "https://koirand.github.io/blog/2018/textlint/
 "vint: pip install --pre vim-vint
@@ -742,9 +742,9 @@ let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 
 [[plugins]]
 repo =  't9md/vim-choosewin'
-on_map = {n = 'Plug'}
+on_map = {n = '<Plug>'}
 hook_add = '''
-nmap  -  <Plug>(choosewin)
+nmap - <Plug>(choosewin)
 '''
 hook_source = '''
 let g:choosewin_blink_on_land = 0
@@ -761,5 +761,5 @@ on_ft = 'toml'
 [[plugins]]
 repo = 'wsdjeg/dein-ui.vim'
 on_cmd = 'DeinUpdate'
-
 depends = ['dein.vim']
+
