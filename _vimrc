@@ -380,520 +380,34 @@ nnoremap <Leader>nr <C-u>A  <Esc>
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "}}}
 "========================================================================
-"Vim-Plug {{{
-"vimplugが無い場合はインストール
-if has('vim_starting')
-  set runtimepath+=~/vimfiles/plugged/vim-plug
-  if !isdirectory(expand('$HOME/vimfiles/plugged/vim-plug'))
-    echo 'install vim-plug...'
-    call system('mkdir -p vimfiles/plugged/vim-plug')
-    call system('git clone https://github.com/junegunn/vim-plug.git vimfiles/plugged/vim-plug/autoload')
-  end
+"dein.vim {{{
+set runtimepath+=$HOME/.cache/dein/repos/github.com/Shougo/dein.vim
+
+ let s:toml      = '~/dotfiles/dein.toml'
+ let s:lazy_toml = '~/dotfiles/dein_lazy.toml'
+
+if dein#load_state('$HOME/.cache/dein')
+    call dein#begin('~/.cache/dein')
+        call dein#load_toml(s:toml,      {'lazy': 0})
+        call dein#load_toml(s:lazy_toml, {'lazy': 1})
+    call dein#end()
+    call dein#save_state()
 endif
 
-call plug#begin('~/vimfiles/plugged')
-"  Plug 'junegunn/vim-plug',
-
-  Plug 'Shougo/neomru.vim' |Plug 'Shougo/unite.vim' |Plug 'Shougo/neoyank.vim' |Plug 'iyuuya/denite-ale' |Plug 'kmnk/denite-dirmark' |Plug 'Shougo/denite.nvim'
-
-if !has('nvim')
-  Plug 'roxma/nvim-yarp' 
-  Plug 'roxma/vim-hug-neovim-rpc' 
-endif
-  Plug 'Shougo/defx.nvim' ",{'on':'Defx'}
-  Plug 'lambdalisue/gina.vim'  ", {'on':'Gina'}
-  Plug 'iwataka/minidown.vim',{'for':'markdown'}
-  Plug 'deton/jasegment.vim' "W,E,Bで日本語でも分節移動ができるように
-
-  Plug 'rhysd/vim-operator-surround' "選択範囲に括弧を追加
-  Plug 'kana/vim-operator-user'
-  Plug 'cohama/lexima.vim' "括弧を補完
-  Plug 'kshenoy/vim-signature'
-  Plug 'tyru/open-browser.vim' 
-  Plug 'basyura/TweetVim' , {'on':['TweetVimHomeTimeline','TweetVimSay']} |  Plug 'mattn/webapi-vim'|  Plug 'basyura/twibill.vim'
-
-  Plug 't9md/vim-choosewin'
-
-  Plug 'itchyny/lightline.vim' | Plug 'mengelbrecht/lightline-bufferline' | Plug 'maximbaz/lightline-ale' | Plug 'itchyny/vim-gitbranch'
-  
-  Plug 'Shougo/deoplete.nvim', |  Plug 'Shougo/neco-vim' |  Plug 'Shougo/neco-syntax'
-    \|  Plug 'Shougo/neosnippet' |  Plug 'Shougo/neosnippet-snippets'
-
-  Plug 'sjl/gundo.vim' ", {'on':'GundoToggle'}
-  Plug 'nathanaelkane/vim-indent-guides' ", {'on':'IndentGuidesToggle'}
-  Plug 'Shougo/echodoc.vim'
-  Plug 'w0rp/ale'
-  Plug 'tyru/eskk.vim'
-
-  "Plug 'NLKNguyen/papercolor-theme'
-  "Plug 'rakr/vim-one'
-  "Plug 'hzchirs/vim-material'
-  "Plug 'altercation/vim-colors-solarized'
-  Plug 'cocopon/iceberg.vim'
-  "Plug 'tomasr/molokai'
-  "Plug 'MvanDiemen/ghostbuster'
-  "Plug 'nanotech/jellybeans.vim'
-  "Plug 'jonathanfilip/vim-lucius'
-  "Plug 'sheerun/vim-wombat-scheme'
-  Plug 'w0ng/vim-hybrid'
-  Plug 'morhetz/gruvbox'
-
-  Plug 'mattn/benchvimrc-vim',{'on':'BenchVimrc'}
-
-  call plug#end()
+filetype plugin indent on
+syntax enable
 "}}}
 "-----------------------------------------------------------------------
-"Denite {{{
-
-"need-Python3.6
-nnoremap [denite] <Nop>
-nmap s [denite]
-
-nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
-	\  source<CR>
-
-"現在開いているファイルのディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
-	\  file<CR>
-"ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
-	\ file<CR>
-"バッファ一覧
-nnoremap <silent> [denite]b :<C-u>Denite
-	\ -buffer-name=normal -mode=normal
-	\ buffer<CR>
-"デナイト・サーチ
-nnoremap <silent> ? :<C-u>Denite
-	\ -buffer-name=search -auto-highlight
-	\ line<CR>
-"デナイト・キーワードサーチ
-nnoremap <silent> * :<C-u>DeniteCursorWord
-	\ -buffer-name=search
-	\ -auto-highlight -mode=normal line<CR>
-"neoyank
-nnoremap <silent> [denite]y :<C-u>Denite
-	\ -mode=normal
-	\ register neoyank<CR>
-"コマンド履歴
-nnoremap <silent> [denite]c :<C-u>Denite
-    \ -mode=normal
-    \ command_history<CR>
-"バッファディレクトリからgrep
-nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
-    \ -buffer-name=search
-    \ -no-empty -mode=normal grep<CR>
-"メニュー
-nnoremap <silent> [denite]u :<C-u>Denite
-    \ -buffer_name=normal
-	\ -mode=normal -winheight=5
-    \ menu<CR>
-"ヘルプ
-nnoremap <silent> [denite]h :<C-u>Denite
-    \ -buffer-name=search
-    \ -highlight-mode-insert=WildMenu
-    \ help<CR>
-"最近使用したファイル-neomru
-nnoremap <silent> [denite]n :<C-u>Denite
-	\ -mode=normal 
-    \ file_mru<CR>
-":change
-nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
-"searchバッファをresumeして開く
-nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
-    \ -resume -mode=normal -refresh<CR>
-"open ale message
-nnoremap <silent> [denite]a :<C-u>Denite
-	\ -buffer-name=search -mode=normal
-	\ ale<CR>
-"nnoremap <silent>n :<C-u>Denite
-"    \ -cursor-pos=+1 -immediately
-"    \ -buffer-name=search
-"    \ -resume -mode=normal -refresh<CR>
-
-"denite option
-call denite#custom#option('_', {
-	\ 'prompt': '»',
-	\ 'cursor_wrap': v:true,
-	\ 'winheight': 15,
-	\ 'highlight_mode_insert': 'WildMenu',
-	\ 'statusline': v:false,
-    \ 'unique': v:true,
-    \ 'vertical_preview': v:true,
-    \ 'quick_move_table': {
-        \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
-        \   'h' : 5, 'l' : 6, ';' : 7,
-        \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
-        \ }
-	\ })
-"buffer-normal
-call denite#custom#option('normal', {
-	\ 'winheight': 10,
-    \ 'direction': 'dynamicbottom',
-    \ 'quick_move': 'immediately'
-    \})
-"buffer-search
-call denite#custom#option('search', {
-    \ 'direction': 'dynamicbottom',
-    \ 'winheight': 5
-    \ })
-
-" Change mappings.
-call denite#custom#map(
-      \ 'insert',
-      \ '<C-j>',
-      \ '<denite:move_to_next_line>',
-      \ 'noremap'
-      \)
-call denite#custom#map(
-      \ 'insert',
-      \ '<C-k>',
-      \ '<denite:move_to_previous_line>',
-      \ 'noremap'
-      \)
-"C-h,C-lでディレクトリ移動
-call denite#custom#map('insert', '<C-l>', '<denite:do_action:default>', 'noremap')
-call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
-"h,lでディレクトリ上下移動
-call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
-call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
-
-"sorter定義
-function! ToggleSorter(sorter) abort
-   let sorters = split(b:denite_context.sorters, ',')
-   let idx = index(sorters, a:sorter)
-   if idx < 0
-       call add(sorters, a:sorter)
-   else
-       call remove(sorters, idx)
-   endif
-   let b:denite_new_context = {}
-   let b:denite_new_context.sorters = join(sorters, ',')
-   return '<denite:nop>'
-endfunction
-
-call denite#custom#map('insert', '<C-f>',
-    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
-
-"need rg for grep/file-rec
-call denite#custom#var('file/rec', 'command',
-      \ ['rg', '--files', '--glob', '!.git'])
-call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
-call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'final_opts', [])
-call denite#custom#var('grep', 'separator', ['--'])
-call denite#custom#var('grep', 'default_opts',
-      \ ['--vimgrep', '--no-heading'])
-
-" Change matchers.
-call denite#custom#source(
-	\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
-"call denite#custom#source(
-"	\ 'file/rec', 'matchers', ['matcher/cpsm'])
-
-" Add custom menus
-let s:menus = {
-    \ }
-let s:menus.window_size = {
-	\ 'description': 'Change window size'
-	\ }
-let s:menus.window_size.command_candidates = [
-	\ ['150x40', 'set lines=40 columns=150'],
-	\ ['220x50', 'set lines=50 columns=220'],
-	\ ['Fullscreen-> :SM 6<CR> ', '']
-	\ ]
-call denite#custom#var('menu', 'menus', s:menus)
-
-"" Ag command on grep/filerec source
-"call denite#custom#var('file_rec', 'command',
-"    \ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
-"call denite#custom#var('grep', 'command', ['ag'])
-
-" Define alias
-call denite#custom#alias('source', 'file/rec/git', 'file/rec')
-call denite#custom#var('file/rec/git', 'command',
-	\ ['git', 'ls-files', '-co', '--exclude-standard'])
-call denite#custom#alias('source', 'file/rec/py', 'file/rec')
-call denite#custom#var('file/rec/py', 'command',['scantree.py'])
-" Change ignore_globs
-call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-	\ [ '.git/', '.ropeproject/', '__pycache__/',
-	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
-
-"Defxで開く
-function! s:defx_open(context)
-    let path = a:context['targets'][0]['action__path']
-    let file = fnamemodify(path, ':p')
-    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
-    let dir = denite#util#path2directory(path)
-    if &filetype ==# 'defx'
-      call defx#call_action('cd', [dir])
-      call defx#call_action('search', [path])
-    else
-      execute('Defx ' . dir . file_search)
-  endif
-endfunction
-
-"action:defxを定義
-call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
-        \ function('s:defx_open'))
-call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
-"}}}
-"-----------------------------------------------------------------------
-"Dirmark {{{
-
-nmap [denite]d    <SID>(dirmark)
-nmap [denite]D   <SID>(dirmark-add)
-"open dirmark-bookmark in Denite
-nnoremap <silent> <SID>(dirmark) :<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
-"bookmark by "add"action
-nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirmark/add <CR>'
-"open in defx
-nmap [denite]x <SID>(defx):Denite 
-    \ -buffer-name=normal -mode=normal
-    \ defx/dirmark <CR>
-"}}}
-"-----------------------------------------------------------------------
-"Defx {{{
-
-nmap <C-e> <SID>(defx)
-nmap <Leader>e <SID>(defxbufferdir)
-nnoremap <silent> <SID>(defx) :<C-u>Defx<CR>
-	\:setlocal signcolumn=no<CR>
-nnoremap <silent> <SID>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
-	\:setlocal signcolumn=no<CR>
-
-call defx#custom#option('_', {
-    \ 'winwidth': 44,
-    \ 'split': 'vertical',
-    \ 'direction': 'botright',
-    \ 'columns':'mark:filename:time',
-    \ 'sort': 'TIME',
-    \ 'ignored_files': '.*,ntuser*,desktop.ini'
-    \ })
-"call defx#custom#column('filename', {
-"      \ 'directory_icon': '▸',
-"      \ 'opened_icon': '▾',
-"      \ 'root_icon': ' ',
-"      \ 'min_width': 45,
-"      \ 'max_width': 45,
-"      \ })
-"call defx#custom#column('mark', {
-"      \ 'readonly_icon': '✗',
-"      \ 'selected_icon': '✓',
-"      \ })
-
-autocmd vimrc FileType defx call s:defx_my_settings()
-
-function! s:getdefxbasedir(candidate) abort
-    if line('.') == 1
-        let path_mod  = 'h'
-    else
-        let path_mod = isdirectory(a:candidate) ? '' : 'h'
-    endif
-    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
-endfunction
-
-function! s:denite_rec(context) abort
-    let narrow_dir = s:getdefxbasedir(a:context.targets[0])
-    execute('Denite -default-action=defx file/rec:''' .  narrow_dir . '''')
-endfunction
-
-function! s:defx_my_settings() abort
-" Define mappings
-nnoremap <silent><buffer><expr> <CR>
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> c
-\ defx#async_action('copy')
-nnoremap <silent><buffer><expr> m
-\ defx#async_action('move')
-nnoremap <silent><buffer><expr> p
-\ defx#async_action('paste')
-nnoremap <silent><buffer><expr> l 
-\ defx#is_directory() ?
-\ defx#do_action('open') :
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> E
-\ defx#do_action('open', 'vsplit')
-nnoremap <silent><buffer><expr> t
-\ defx#do_action('multi', ['toggle_sort','filename','redraw'])
-nnoremap <silent><buffer><expr> T
-\ defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
-nnoremap <silent><buffer><expr> P
-\ defx#do_action('open', 'pedit')
-nnoremap <silent><buffer><expr> K
-\ defx#do_action('new_directory')
-nnoremap <silent><buffer><expr> N
-\ defx#do_action('new_file')
-"need 'pip install Send2Trash'
-nnoremap <silent><buffer><expr> d
-\ defx#do_action('remove_trash')
-nnoremap <silent><buffer><expr> r
-\ defx#do_action('rename')
-nnoremap <silent><buffer><expr> x
-\ defx#async_action('execute_system')
-nnoremap <silent><buffer><expr> f
-\ defx#do_action('open_or_close_tree')
-nnoremap <silent><buffer><expr> yy
-\ defx#do_action('yank_path')
-nnoremap <silent><buffer><expr> .
-\ defx#do_action('toggle_ignored_files')
-nnoremap <silent><buffer><expr> h
-\ defx#do_action('cd', ['..'])
-nnoremap <silent><buffer><expr> ~
-\ defx#do_action('cd')
-nnoremap <silent><buffer><expr> q
-\ defx#do_action('quit')
-nnoremap <silent><buffer><expr> i
-\ defx#do_action('toggle_select') . 'j'
-nnoremap <silent><buffer><expr> I
-\ defx#do_action('clear_select_all')
-nnoremap <silent><buffer><expr> *
-\ defx#do_action('toggle_select_all')
-nnoremap <silent><buffer><expr> j
-\ line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr> k
-\ line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <C-l>
-\ defx#do_action('redraw')
-nnoremap <silent><buffer><expr> <C-g>
-\ defx#do_action('print')
-nnoremap <silent><buffer><expr> cd
-\ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer><expr> <C-s>
-\ defx#do_action('call', '<SID>denite_rec')
-endfunction
-"}}}
-"-----------------------------------------------------------------------
-"gina.vim {{{
-"docのexampleをコピペ
-"
-call gina#custom#command#alias('branch', 'br')
-call gina#custom#command#option('br', '-v', 'v')
-call gina#custom#command#option(
-\ '/\%(log\|reflog\)',
-\ '--opener', 'vsplit'
-\)
-
-call gina#custom#command#option(
-\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-\ '--opener' , '10split'
-\)
-call gina#custom#command#option(
-\ 'log', '--group', 'log-viewer'
-\)
-call gina#custom#command#option(
-\ 'status', '--group', 'status-viewer'
-\)
-call gina#custom#command#option(
-\ 'reflog', '--group', 'reflog-viewer'
-\)
-call gina#custom#command#option(
-\ 'commit', '-v|--verbose'
-\)
-call gina#custom#command#option(
-\ '/\%(status\|commit\)',
-\ '-u|--untracked-files'
-\)
-call gina#custom#command#option(
-\ '/\%(status\|changes\)',
-\ '--ignore-submodules'
-\)
-
-call gina#custom#action#alias(
-\ 'branch', 'track',
-\ 'checkout:track'
-\)
-call gina#custom#action#alias(
-\ 'branch', 'merge',
-\ 'commit:merge'
-\)
-call gina#custom#action#alias(
-\ 'branch', 'rebase',
-\ 'commit:rebase'
-\)
-
-call gina#custom#mapping#nmap(
-\ 'branch', 'g<CR>',
-\ '<Plug>(gina-commit-checkout-track)'
-\)
-call gina#custom#mapping#nmap(
-\ 'status', '<C-^>',
-\ ':<C-u>Gina commit<CR>',
-\ {'noremap': 1, 'silent': 1}
-\)
-call gina#custom#mapping#nmap(
-\ 'commit', '<C-^>',
-\ ':<C-u>Gina status<CR>',
-\ {'noremap': 1, 'silent': 1}
-\)
-
-"call gina#custom#execute(
-"\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-"\ 'setlocal winfixheight',
-"\)
-
-"denite-neomruでginaを無視
-let g:neomru#file_mru_ignore_pattern = 'gina://'
-
-nnoremap <Leader>aa :<C-u>Gina status --short<CR>
-nnoremap <Leader>ac :<C-u>Gina commit<CR>
-"}}}
-"-----------------------------------------------------------------------
-"vim-markdow {{{
-"mapping
-nnoremap <Leader>pmd <C-u>:Minidown<CR>
-"}}}
-"----------------------------------------------------------------------------------------"
-"jasegment {{{
-let g:jasegment#model='knbc_bunsetu'
-let g:jasentence_endpat = '[。．？！]\+'
-"}}}
-"-----------------------------------------------------------------------------------------
-" operator mappings {{{
-
-"mapping
-map <silent>ta <Plug>(operator-surround-append)
-map <silent>td <Plug>(operator-surround-delete)
-map <silent>tr <Plug>(operator-surround-replace)
-"2バイト括弧を追加
-let g:operator#surround#blocks = {}
-let g:operator#surround#blocks['-'] = [
-\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
-\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
-\   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
-\ ]
-"}}}
-"-----------------------------------------------------------------------------------------
-"lexima "{{{
-""2バイト括弧を追加
-call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
-call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
-call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
-call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
-call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
-call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
-call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#』', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
-"}}}
-"-----------------------------------------------------------------------------------------
-"文字数カウント{{{
-
+"文字数カウント "{{{
 "1行カウント
-function! s:CharCount()
+function! g:CharCount()
 	let l:line = getline(line('.'))
 	let l:result =  strlen(substitute(l:line, '.', 'x','g'))
 	return l:result
 endfunction
 
 "全体カウント
-function! s:CharAllCount()
+function! g:CharAllCount()
 	let l:result = 0
 	for l:linenum in range(0, line('$'))
 		let l:line = getline(l:linenum)
@@ -909,106 +423,12 @@ function! g:LineCharVCount() range
 		let l:line = getline(l:linenum)
 		let l:result += strlen(substitute(l:line, '.', 'x','g'))
 	endfor
-	echo ' [WordCount] -- ' . l:result . ' : ' . s:CharAllCount() .
+	echo ' [WordCount] -- ' . l:result . ' : ' . g:CharAllCount() .
 				\ ' -- [選択行の字数:全体の字数]'
 endfunction
 "呼び出す
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> ; :LineCharVCount<CR>
-"}}}
-"-----------------------------------------------------------------------
-"Open-Browser {{{
-nmap <Leader>s <Plug>(openbrowser-smart-search)
-vmap <Leader>s <Plug>(openbrowser-smart-search)
-"}}}
-"-----------------------------------------------------------------------
-"TweetVim {{{
-nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
-nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
-nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
-nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
-  function! s:tw_open_existing() abort " {{{
-    let bnr = bufnr('[tweetvim]')
-    if bnr == -1
-      echoerr 'call TweetVim!:'
-      return
-    endif
-    let wids = win_findbuf(bnr)
-      call win_gotoid(wids[0])
-  endfunction " }}}
-
-let g:tweetvim_tweet_per_page = 60
-let g:tweetvim_include_rts    = 1
-let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-let g:tweetvim_open_buffer_cmd = 'botright 44vsplit'
-let g:tweetvim_display_separator = 1
-let g:tweetvim_empty_separator = 1
-let g:tweetvim_display_time = 1
-let g:tweetvim_async_post = 1
-let g:tweetvim_display_username = 1
-let g:tweetvim_tweet_limit = 560
-
-augroup TweetVimSetting
-autocmd!
-" マッピング
-" 挿入・通常モードでsayバッファを閉じる
-autocmd FileType tweetvim_say nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
-autocmd FileType tweetvim_say inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
-" 各種アクション
-autocmd FileType tweetvim nnoremap <buffer>S 
-    \ :<C-u>TweetVimSay<CR>
-autocmd FileType tweetvim nnoremap <buffer>m
-    \ :<C-u>TweetVimMentions<CR>
-autocmd FileType tweetvim nnoremap <buffer><Leader>u
-    \ :<C-u>:Unite tweetvim<CR>
-autocmd FileType tweetvim nmap <buffer>c
-    \ <Plug>(tweetvim_action_in_reply_to)
-autocmd FileType tweetvim nnoremap <buffer>t 
-    \ :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
-autocmd FileType tweetvim nmap <buffer><Leader>F 
-    \ <Plug>(tweetvim_action_remove_favorite)
-autocmd FileType tweetvim nmap <buffer><Leader>d 
-    \ <Plug>(tweetvim_action_remove_status)
-autocmd FileType tweetvim nmap <buffer>o 
-    \ <Plug>(tweetvim_action_open_links)
-autocmd FileType tweetvim nmap <silent><buffer>q
-    \ :bd<CR>
-" リロード
-autocmd FileType tweetvim nmap <buffer><Tab>
-    \ <Plug>(tweetvim_action_reload)
-" ページの先頭に戻ったときにリロード
-autocmd FileType tweetvim nmap <buffer><silent>gg
-    \ gg<Plug>(tweetvim_action_reload)
-" ページ移動を ff/bb から f/b に
-autocmd FileType tweetvim nmap <buffer>f 
-    \ <Plug>(tweetvim_action_page_next)
-autocmd FileType tweetvim nmap <buffer>b 
-    \ <Plug>(tweetvim_action_page_previous)
-"縦移動（カーソルを常に中央にする）
-autocmd FileType tweetvim nmap <silent> <buffer>n 
-    \ <Plug>(tweetvim_action_cursor_down)
-autocmd FileType tweetvim nmap <silent> <buffer>p 
-    \ <Plug>(tweetvim_action_cursor_up)
-autocmd FileType tweetvim nnoremap <buffer>j }j
-autocmd FileType tweetvim nnoremap <buffer>k k{j
-autocmd FileType tweetvim nnoremap <buffer>th
-    \ :TweetVimHomeTimeline<CR>
-" 不要なマップを除去
-autocmd FileType tweetvim     nunmap   <buffer>ff
-autocmd FileType tweetvim     nunmap   <buffer>bb
-" tweetvim バッファに移動したときに自動リロード
-"autocmd BufEnter * call <SID>tweetvim_reload()
-" filetype が tweetvim ならツイートをリロード
-"function! s:tweetvim_reload()
-"    if &filetype ==# 'tweetvim'
-"        call feedkeys("\<Plug>(tweetvim_action_reload)")
-"    endif
-"endfunction
-augroup END
-
-autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
-autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
 "}}}
 "-----------------------------------------------------------------------
 "lightline {{{
@@ -1093,7 +513,7 @@ return &filetype ==# 'unite' ? 'Unite' :
 endfunction
 
 function! LLeskk()
-    if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
+    if exists('*eskk#is_enabled') && &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
         if eskk#is_enabled()
             return printf(get(a:000, 0, '[%s]'),
                 \ get(g:eskk#statusline_mode_strings,
@@ -1124,7 +544,7 @@ let s:llcharcount = ''
 let s:llcharallcount = ''
 
 function! s:LLvarCharAllCount()
-    let l:count = s:CharAllCount()
+    let l:count = g:CharAllCount()
     if l:count == 0
         let l:shresult = '---'
     elseif l:count <10
@@ -1140,8 +560,8 @@ function! s:LLvarCharAllCount()
 endfunction
 
 function! s:LLvarCharCount()
-    let l:CC = s:CharCount() < 10 ? '  ' . s:CharCount() :
-        \ s:CharCount() <100 ? ' ' . s:CharCount() : s:CharCount()
+    let l:CC = g:CharCount() < 10 ? '  ' . g:CharCount() :
+        \ g:CharCount() <100 ? ' ' . g:CharCount() : g:CharCount()
     let s:llcharcount = l:CC
 endfunction
 
@@ -1245,151 +665,6 @@ function! ProfileCursorMove() abort
     call feedkeys('j')
   endfor
 endfunction
-
-"}}}
-"-----------------------------------------------------------------------
-"deoplete {{{
-" Use deoplete.
-autocmd vimrc VimEnter * call s:deoplete_setting()
-autocmd vimrc InsertEnter * call deoplete#enable()
-
-function! s:deoplete_setting()
-let g:deoplete#enable_at_startup = 0
-
-call deoplete#custom#option({
-    \ 'auto_complete_delay': 10,
-    \ 'skip_multibyte': v:true,
-    \ 'max_list': 30,
-    \ 'min_pattern_length': 1,
-    \ 'prev_completion_mode': 'none',
-    \ 'yarp': v:true,
-    \ 'num_processes': 4
-    \ })
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ deoplete#mappings#manual_complete()
-function! s:check_back_space() abort "{{{
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction "}}}
-" <S-TAB>: completion back.
-inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
-inoremap <expr><C-e>       deoplete#refresh()
-inoremap <expr><C-g>       deoplete#cancel_popup()
-inoremap <expr><C-n> deoplete#mappings#manual_complete()
-inoremap <expr><C-h>
-\ deoplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS>
-\ deoplete#smart_close_popup()."\<C-h>"
-"inoremap <silent><expr><C-l>       deoplete#complete_common_string()
-inoremap <expr><C-l>       deoplete#insert_candidate(0)
-"" <CR>: close popup and save indent.
-"inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-"function! s:my_cr_function() abort
-"  return pumvisible() ? deoplete#close_popup()."\<CR>" : "\<CR>"
-"endfunction
-"call deoplete#custom#source('_', 'matchers',
-"      \ ['matcher_fuzzy', 'matcher_length'])
-call deoplete#custom#source('_', 'matchers', ['matcher_head'])
-call deoplete#custom#source('buffer', 'mark', 'b')
-call deoplete#custom#source('eskk', 'mark' , '▽')
-call deoplete#custom#source('eskk', 'max_menu_width', 80)
-"matcherを指定してはいけない
-call deoplete#custom#source('eskk', 'matchers', [])
-call deoplete#custom#source('eskk', 'rank', 500) 
-call deoplete#custom#source('vim', 'rank' , 250)
-call deoplete#custom#source('vim', 'min_pattern_length', 4)
-call deoplete#custom#option('ignore_sources',
-    \ {'_': [ 'tag', 'dictionary']})
-call deoplete#custom#source('_', 'converters', [
-    \ 'converter_remove_paren',
-    \ 'converter_remove_overlap',
-    \ 'converter_truncate_abbr',
-    \ 'converter_truncate_menu',
-    \ 'converter_auto_paren',
-    \ 'converter_auto_delimiter'
-    \ ])
-" Using custom variables to configure values
-" - range_above = Search for words N lines above.
-" - range_below = Search for words N lines below.
-" - mark_above = Mark shown for words N lines above.
-" - mark_below = Mark shown for words N lines below.
-" - mark_changes = Mark shown for words in the changelist.
-call deoplete#custom#var('around', {
-\   'range_above': 30,
-\   'range_below': 30,
-\   'mark_above': '[↑]',
-\   'mark_below': '[↓]',
-\   'mark_changes': '[*]',
-\})
-
-endfunction
-"}}}"
-"-----------------------------------------------------------------------
-"neosnippet {{{
-" Plugin key-mappings.
-" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
-" SuperTab like snippets behavior.
-" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-imap <expr><TAB>
- \ pumvisible() ? "\<C-n>" :
- \ neosnippet#expandable_or_jumpable() ?
- \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-" For conceal markers.
-"if has('conceal')
-"  set conceallevel=2
-"endif
-"}}}
-"-----------------------------------------------------------------------
-"Gundo {{{
-let g:gundo_help =1 
-let g:gundo_prefer_python3 = 1
-let g:gundo_auto_preview = 0
-let g:gundo_width = 50
-let g:gundo_right = 1
-let g:gundo_preview_height = 20
-let g:gundo_preview_bottom = 0
-let g:gundo_playback_delay = 500
-nnoremap U :<C-u>GundoToggle<CR>
-"}}}
-"-----------------------------------------------------------------------
-"Indent-guides "{{{
-nnoremap <silent><Leader>ig :IndentGuidesToggle<CR>
-let g:indent_guides_exclude_filetypes = ['help', 'defx']
-"}}}
-"-----------------------------------------------------------------------
-"ALE {{{
-"https://efcl.info/2015/09/10/introduce-textlint/
-"https://koirand.github.io/blog/2018/textlint/
-"vint: pip install --pre vim-vint
-"preset-ja-technical-writing
-"npm install textlint-rule-preset-ja-technical-writing@beta
-let g:ale_use_global_executables=1
-let g:ale_linters = {
-    \ 'markdown': ['textlint'],
-    \ 'vim':['vint'],
-    \ 'text':['textlint']
-    \ }
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
-let g:ale_sign_column_always = 1
-let g:ale_lint_delay = 5000
-let g:ale_lint_on_enter = 0
-let g:ale_open_list = 0
-let g:ale_keep_list_window_open = 0
-let g:ale_sign_error = '!!'
-let g:ale_sign_warning = '=='
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
 "}}}
 "-----------------------------------------------------------------------
 "eskk.vim"{{{
@@ -1402,11 +677,9 @@ endif
 "リセットのタイミングを変えることで直った(?)
 if !exists('eskkautocmd_loaded')
   let autocommands_loaded = 1
-    autocmd InsertEnter * nested call <SID>eskk_insert_config()
-"    autocmd InsertLeave * if g:eskk#is_enabled() | let s:eskk_inserton = 1 | else | let s:eskk_inserton = 0
-    autocmd InsertLeave * nested call <SID>eskk_status()
+    autocmd InsertEnter * call <SID>eskk_insert_config()
+    autocmd InsertLeave * call <SID>eskk_status()
 endif
-
 function! s:eskk_status() abort
     if eskk#is_enabled()
          let s:eskk_inserton = 1
@@ -1465,13 +738,6 @@ function! s:eskk_initial_pre() abort
   call t.add_map('z0', '）')
   call eskk#register_mode_table('hira', t)
 endfunction
-"}}}
-"-----------------------------------------------------------------------
-"choosewin {{{
-"invoke with '-
-nmap  -  <Plug>(choosewin)
-let g:choosewin_blink_on_land = 0
-let g:choosewin_label = 'ASDFGHJKL'
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{

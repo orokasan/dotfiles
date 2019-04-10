@@ -1,82 +1,46 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
+if = '''! has('nvim')'''
 
 [[plugins]]
 repo =  'roxma/vim-hug-neovim-rpc'
-
-[[plugins]]
-repo =  'Shougo/defx.nvim'
-
-[[plugins]]
-repo =  'lambdalisue/gina.vim'
-
-[[plugins]]
-repo =  'iwataka/minidown.vim'
+if = '''! has('nvim')'''
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
-
-[[plugins]]
-repo =  'rhysd/vim-operator-surround'
-
-[[plugins]]
-repo =  'kana/vim-operator-user'
+hook_source = '''
+let g:jasegment#model='knbc_bunsetu'
+let g:jasentence_endpat = '[。．？！]\+'
+'''
 
 [[plugins]]
 repo =  'kshenoy/vim-signature'
 
 [[plugins]]
-repo =  'tyru/open-browser.vim'
-
-
-[[plugins]]
-repo =  'mattn/webapi-vim'
+repo =  'maximbaz/lightline-ale'
+depends = ['lightline']
 
 [[plugins]]
-repo =  'basyura/twibill.vim'
+repo =  'itchyny/vim-gitbranch'
+depends = ['lightline']
 
 [[plugins]]
-repo =  't9md/vim-choosewin'
+repo =  'Shougo/neomru.vim'
+hook_source ='''
+"denite-neomruでginaを無視
+let g:neomru#file_mru_ignore_pattern = 'gina://'
+'''
 
 [[plugins]]
 repo =  'itchyny/lightline.vim'
 
 [[plugins]]
 repo =  'mengelbrecht/lightline-bufferline'
-
-[[plugins]]
-repo =  'maximbaz/lightline-ale'
-
-[[plugins]]
-repo =  'itchyny/vim-gitbranch'
-
-[[plugins]]
-repo =  'Shougo/deoplete.nvim'
-
-[[plugins]]
-repo =  'Shougo/neco-vim'
-
-[[plugins]]
-repo =  'Shougo/neco-syntax'
-
-[[plugins]]
-repo =  'Shougo/neosnippet'
-
-[[plugins]]
-repo =  'Shougo/neosnippet-snippets'
-
-[[plugins]]
-repo =  'sjl/gundo.vim'
-
-[[plugins]]
-repo =  'nathanaelkane/vim-indent-guides'
-
-[[plugins]]
-repo =  'Shougo/echodoc.vim'
-
-[[plugins]]
-repo =  'w0rp/ale'
+#[[plugins]]
+#repo =  'Shougo/echodoc.vim'
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
@@ -85,11 +49,9 @@ repo =  'tyru/eskk.vim'
 repo = 'cocopon/iceberg.vim'
 
 [[plugins]]
-repo = 'mattn/benchvimrc-vim'
-
-[[plugins]]
 repo =  'w0ng/vim-hybrid'
 
 [[plugins]]
 repo =  'morhetz/gruvbox'
+
 
