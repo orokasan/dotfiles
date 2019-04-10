@@ -39,26 +39,47 @@ repo =  'itchyny/lightline.vim'
 
 [[plugins]]
 repo =  'mengelbrecht/lightline-bufferline'
+
 #[[plugins]]
 #repo =  'Shougo/echodoc.vim'
 
+[[plugins]]
+repo =  'kmnk/denite-dirmark'
+hook_add = '''
+"{{{
+nmap [denite]d <Plug>(denite-dirmark)
+nmap [denite]D <Plug>(denite-dirmark-add)
+"open dirmark-bookmark in Denite
+nnoremap <silent> <Plug>(dirmark) 
+    \:<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
+"bookmark by "add"action
+nnoremap <silent><expr><nowait> <Plug>(dirmark-add) 
+    \:<C-u>DeniteBufferDir dirmark/add <CR>
+"open in defx
+nmap [denite]x <Plug>(defx):Denite 
+    \ -buffer-name=normal -mode=normal
+    \ defx/dirmark <CR>
+"}}}
+'''
 [[plugins]]
 repo =  'tyru/eskk.vim'
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
+#on_if = ''' g:colors_name='iceberg' '''
 
-[[plugins]]
-repo =  'w0ng/vim-hybrid'
+#[[plugins]]
+#repo =  'w0ng/vim-hybrid'
+#on_if = ''' g:colors_name='hybrid' '''
 
-[[plugins]]
-repo =  'morhetz/gruvbox'
-hook_add = '''#{{{
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_italicize_comments = 0
-let g:gruvbox_invert_selection = 0
-let g:gruvbox_guisp_fallback = 'bg'
-'''
-#}}}
+#[[plugins]]
+#repo =  'morhetz/gruvbox'#}}}
+#on_if = ''' g:colors_name='gruvbox' '''
+#hook_source = '''
+#let g:gruvbox_contrast_dark = 'medium'
+#let g:gruvbox_italicize_comments = 0
+#let g:gruvbox_invert_selection = 0
+#let g:gruvbox_guisp_fallback = 'bg'
+#'''
 
-#:set foldmethod=marker:
+# vim:set foldmethod=marker:

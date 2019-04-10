@@ -75,8 +75,8 @@ if has('nvim')
   set wildoptions+=pum
 else
   " Display candidates by list.
-  set nowildmenu
-  set wildmode=list:longest,full
+    set wildmenu
+    set wildmode=full
 endif
 "
 " Adjust window size of preview and help.
@@ -273,6 +273,7 @@ nnoremap ; :
 inoremap jk <esc>
 "末尾までヤンク
 nnoremap <silent>Y y$
+xnoremap <silent>Y y$
 " TABで対応ペアにジャンプ
 nnoremap <Tab> %
 xnoremap <Tab> %
@@ -473,10 +474,8 @@ let g:lightline = {
     let g:lightline.separator= { 'left': '', 'right': '' }
     let g:lightline.subseparator= { 'left': '', 'right': '' }
 "endif
-"if has('GUI')
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
-"endif
 
 if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
     let g:lightline.component = {
@@ -684,10 +683,7 @@ endfunction
 "}}}
 "-----------------------------------------------------------------------
 "eskk.vim"{{{
-if has('vim_starting')
 	let g:eskk_dictionary = '~/dotfiles/.skk-jisyo'
-endif
-
 "InsertLeaveイベント上で他プラグインと干渉する(順序の問題?)
 "=> vimrcをリロードすると動作しなくなる
 "リセットのタイミングを変えることで直った(?)
@@ -758,6 +754,7 @@ endfunction
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
 colorscheme iceberg
+"let g:colors_name = 'iceberg'
 "colorscheme hybrid
 "colorscheme gruvbox
 set background=dark
@@ -786,10 +783,10 @@ if has('GUI')
 "    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
 "Nerdfont
 "https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
-    set guifont=Ricty_Diminished_with-icons:h13:cDEFAULT
-    set guifontwide=Ricty_Diminished_with-icons:h13:cDEFAULT
+    set guifont=Ricty_Diminished_with-icons:h13.5:cDEFAULT
+    set guifontwide=Ricty_Diminished_with-icons:h13.5:cDEFAULT
     set renderoptions=type:directx,renmode:5,geom:2
-    set ambiwidth=single
+"    set ambiwidth=single
 "    set ambiwidth=double
 else
     set t_Co=256
@@ -808,6 +805,9 @@ if has('kaoriya')
     nnoremap <S-CR> :ScreenMode 1<CR>
     "背景透過
     autocmd vimrc GUIEnter * set transparency=245
+    set ambiwidth=auto
+else
+    set ambiwidth=single
 endif
 "IME状態でカーソルカラー変更
 if has('multi_byte_ime')

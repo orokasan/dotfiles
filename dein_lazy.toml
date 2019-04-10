@@ -1,239 +1,15 @@
 [[plugins]]
-repo =  'cohama/lexima.vim'
-on_event = 'InsertEnter' 
-hook_post_source = '''
-call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
-call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
-call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
-call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
-call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
-call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
-call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#』', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
-'''
-[[plugins]]
-repo =  'basyura/TweetVim'
-on_cmd = ['TweetVimHomeTimeline','TweetVimSay']
-depends = ['twibill.vim','webapi-vim','open-browser']
-hook_add = '''
-nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
-nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
-nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
-nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
-'''
-
-hook_source = '''
-let g:tweetvim_tweet_per_page = 60
-let g:tweetvim_include_rts    = 1
-let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-let g:tweetvim_open_buffer_cmd = 'botright 44vsplit'
-let g:tweetvim_display_separator = 1
-let g:tweetvim_empty_separator = 1
-let g:tweetvim_display_time = 1
-let g:tweetvim_async_post = 1
-let g:tweetvim_display_username = 1
-let g:tweetvim_tweet_limit = 560
-
-function! s:tw_open_existing() abort
-  let bnr = bufnr('[tweetvim]')
-  if bnr == -1
-    echoerr 'call TweetVim!:'
-    return
-  endif
-  let wids = win_findbuf(bnr)
-    call win_gotoid(wids[0])
-endfunction
-
-highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
-highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-
-'''
-[plugins.ftplugin]
-tweetvim_say = '''
-" マッピング
-" 挿入・通常モードでsayバッファを閉じる
-nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
-inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
-'''
-tweetvim = '''
-" 各種アクション
-nnoremap <buffer>S :<C-u>TweetVimSay<CR>
-nnoremap <buffer>m :<C-u>TweetVimMentions<CR>
-nnoremap <buffer>t :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
-nnoremap <buffer><Leader>u :<C-u>:Unite tweetvim<CR>
-nnoremap <buffer>j }j
-nnoremap <buffer>k k{j
-nnoremap <buffer>th :TweetVimHomeTimeline<CR>
-
-nmap <buffer>c <Plug>(tweetvim_action_in_reply_to)
-nmap <buffer><Leader>F <Plug>(tweetvim_action_remove_favorite)
-nmap <buffer><Leader>d <Plug>(tweetvim_action_remove_status)
-nmap <buffer>o <Plug>(tweetvim_action_open_links)
-nmap <silent><buffer>q :bd<CR>
-nmap <buffer><Tab> <Plug>(tweetvim_action_reload)
-" ページの先頭に戻ったときにリロード
-nmap <buffer><silent>gg gg<Plug>(tweetvim_action_reload)
-" ページ移動を ff/bb から f/b に
-nmap <buffer>f <Plug>(tweetvim_action_page_next)
-nmap <buffer>b <Plug>(tweetvim_action_page_previous)
-nmap <silent> <buffer>n <Plug>(tweetvim_action_cursor_down)
-nmap <silent> <buffer>p <Plug>(tweetvim_action_cursor_up)
-" 不要なマップを除去
-nunmap   <buffer>ff
-nunmap   <buffer>bb
-
-" tweetvim バッファに移動したときに自動リロード
-"autocmd BufEnter * call <SID>tweetvim_reload()
-" filetype が tweetvim ならツイートをリロード
-"function! s:tweetvim_reload()
-"    if &filetype ==# 'tweetvim'
-"        call feedkeys("\<Plug>(tweetvim_action_reload)")
-"    endif
-"endfunction
-'''
-
-[[plugins]]
-repo =  'mattn/webapi-vim'
-on_source = 'TweetVim'
-
-[[plugins]]
-repo =  'basyura/twibill.vim'
-on_source = 'TweetVim'
-
-[[plugins]]
-repo =  'Shougo/defx.nvim'
-on_cmd = 'Defx'
-hook_add = '''
-nmap <C-e> <SID>(defx)
-nmap <Leader>e <SID>(defxbufferdir)
-nnoremap <silent> <SID>(defx) :<C-u>Defx<CR>
-	\:setlocal signcolumn=no<CR>
-nnoremap <silent> <SID>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
-	\:setlocal signcolumn=no<CR>
-'''
-
-hook_post_source = '''
-call defx#custom#option('_', {
-    \ 'winwidth': 44,
-    \ 'split': 'vertical',
-    \ 'direction': 'botright',
-    \ 'columns':'mark:filename:time',
-    \ 'sort': 'TIME',
-    \ 'ignored_files': '.*,ntuser*,desktop.ini'
-    \ })
-
-"call defx#custom#column('filename', {
-"      \ 'directory_icon': '',
-"      \ 'opened_icon': '',
-"      \ 'root_icon': '',
-"      \ 'min_width': 45,
-"      \ 'max_width': 45,
-"      \ })
-"call defx#custom#column('mark', {
-"      \ 'readonly_icon': '✗',
-"      \ 'selected_icon': '✓',
-"      \ })
-
-function! s:getdefxbasedir(candidate) abort
-    if line('.') == 1
-        let path_mod  = 'h'
-    else
-        let path_mod = isdirectory(a:candidate) ? '' : 'h'
-    endif
-    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
-endfunction
-
-function! s:denite_rec(context) abort
-    let narrow_dir = s:getdefxbasedir(a:context.targets[0])
-    execute('Denite -default-action=defx file/rec:\'\'\' .  narrow_dir . \'\'\')
-endfunction
-'''
-[plugins.ftplugin]
-defx = '''
-" Define mappings
-nnoremap <silent><buffer><expr> <CR>
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> c
-\ defx#async_action('copy')
-nnoremap <silent><buffer><expr> m
-\ defx#async_action('move')
-nnoremap <silent><buffer><expr> p
-\ defx#async_action('paste')
-nnoremap <silent><buffer><expr> l 
-\ defx#is_directory() ?
-\ defx#do_action('open') :
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> E
-\ defx#do_action('open', 'vsplit')
-nnoremap <silent><buffer><expr> t
-\ defx#do_action('multi', ['toggle_sort','filename','redraw'])
-nnoremap <silent><buffer><expr> T
-\ defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
-nnoremap <silent><buffer><expr> P
-\ defx#do_action('open', 'pedit')
-nnoremap <silent><buffer><expr> K
-\ defx#do_action('new_directory')
-nnoremap <silent><buffer><expr> N
-\ defx#do_action('new_file')
-"need 'pip install Send2Trash'
-nnoremap <silent><buffer><expr> d
-\ defx#do_action('remove_trash')
-nnoremap <silent><buffer><expr> r
-\ defx#do_action('rename')
-nnoremap <silent><buffer><expr> x
-\ defx#async_action('execute_system')
-nnoremap <silent><buffer><expr> f
-\ defx#do_action('open_or_close_tree')
-nnoremap <silent><buffer><expr> yy
-\ defx#do_action('yank_path')
-nnoremap <silent><buffer><expr> .
-\ defx#do_action('toggle_ignored_files')
-nnoremap <silent><buffer><expr> h
-\ defx#do_action('cd', ['..'])
-nnoremap <silent><buffer><expr> ~
-\ defx#do_action('cd')
-nnoremap <silent><buffer><expr> q
-\ defx#do_action('quit')
-nnoremap <silent><buffer><expr> i
-\ defx#do_action('toggle_select') . 'j'
-nnoremap <silent><buffer><expr> I
-\ defx#do_action('clear_select_all')
-nnoremap <silent><buffer><expr> *
-\ defx#do_action('toggle_select_all')
-nnoremap <silent><buffer><expr> j
-\ line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr> k
-\ line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <C-l>
-\ defx#do_action('redraw')
-nnoremap <silent><buffer><expr> <C-g>
-\ defx#do_action('print')
-nnoremap <silent><buffer><expr> cd
-\ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer><expr> <C-s>
-\ defx#do_action('call', '<SID>denite_rec')
-endfunction
-'''
-
-[[plugins]]
 repo =  'Shougo/denite.nvim'
 on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
 hook_add = '''
-  nmap s [denite]
-  nnoremap [denite] <Nop>
-  nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
-  	\  source<CR>
+"{{{
+nmap s [denite]
+nnoremap [denite] <Nop>
+nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+    \  source<CR>
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
-  	\  file<CR>
+    \  file<CR>
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
   	\ file<CR>
@@ -292,9 +68,11 @@ nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
   "    \ -cursor-pos=+1 -immediately
   "    \ -buffer-name=search
   "    \ -resume -mode=normal -refresh<CR>
+"}}}
 '''
 
 hook_post_source = '''
+"{{{
 "denite option
 call denite#custom#option('_', {
 	\ 'prompt': '»',
@@ -303,7 +81,7 @@ call denite#custom#option('_', {
 	\ 'statusline': v:false,
     \ 'unique': v:true,
     \ 'highlight_mode_normal': 'Visual',
-    \ 'highlight_mode_insert': 'ErrorMsg',
+    \ 'highlight_mode_insert': 'ToolbarLine',
     \ 'vertical_preview': v:true,
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
@@ -434,8 +212,9 @@ nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirma
 nmap [denite]x <SID>(defx):Denite 
     \ -buffer-name=normal -mode=normal
     \ defx/dirmark <CR>
-
+"}}}
 '''
+
 [[plugins]]
 repo =  'iyuuya/denite-ale'
 on_source = ['denite.nvim']
@@ -446,66 +225,135 @@ on_event = 'TextYankPost'
 on_source = ['denite.nvim']
 
 [[plugins]]
-repo =  'kmnk/denite-dirmark'
-on_map = {n = '<Plug>'}
-depends = ['defx.nvim','denite.nvim']
-hook_add = '''
-nmap [denite]d    <SID>(dirmark)
-nmap [denite]D   <SID>(dirmark-add)
-"open dirmark-bookmark in Denite
-nnoremap <silent> <SID>(dirmark) :<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
-"bookmark by "add"action
-nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirmark/add <CR>'
-"open in defx
-nmap [denite]x <SID>(defx):Denite 
-    \ -buffer-name=normal -mode=normal
-    \ defx/dirmark <CR>
-'''
-
-[[plugins]]
 repo =  'Shougo/unite.vim'
 on_cmd = 'Unite'
 
+
 [[plugins]]
-repo =  'iwataka/minidown.vim'
-on_ft = 'markdown'
+repo =  'Shougo/defx.nvim'
+on_cmd = 'Defx'
 hook_add = '''
-nnoremap <Leader>pmd <C-u>:Minidown<CR>
+"{{{
+nmap <C-e> <Plug>(defx)
+nmap <Leader>e <Plug>(defxbufferdir)
+nnoremap <silent> <Plug>(defx) :<C-u>Defx<CR>
+	\:setlocal signcolumn=no<CR>
+nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
+	\:setlocal signcolumn=no<CR>
+"}}}
+'''
+hook_post_source = '''
+"{{{
+call defx#custom#option('_', {
+    \ 'winwidth': 44,
+    \ 'split': 'vertical',
+    \ 'direction': 'botright',
+    \ 'columns':'mark:filename:time',
+    \ 'sort': 'TIME',
+    \ 'ignored_files': '.*,ntuser*,desktop.ini'
+    \ })
+
+"call defx#custom#column('filename', {
+"      \ 'directory_icon': '',
+"      \ 'opened_icon': '',
+"      \ 'root_icon': '',
+"      \ 'min_width': 45,
+"      \ 'max_width': 45,
+"      \ })
+"call defx#custom#column('mark', {
+"      \ 'readonly_icon': '✗',
+"      \ 'selected_icon': '✓',
+"      \ })
+
+function! s:getdefxbasedir(candidate) abort
+    if line('.') == 1
+        let path_mod  = 'h'
+    else
+        let path_mod = isdirectory(a:candidate) ? '' : 'h'
+    endif
+    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
+endfunction
+
+function! s:denite_rec(context) abort
+    let narrow_dir = s:getdefxbasedir(a:context.targets[0])
+    execute('Denite -default-action=defx file/rec:\'\'\' .  narrow_dir . \'\'\')
+endfunction
+"}}}
+'''
+[plugins.ftplugin]
+defx = '''
+"{{{
+" Define mappings
+nnoremap <silent><buffer><expr> <CR>
+\ defx#do_action('drop')
+nnoremap <silent><buffer><expr> c
+\ defx#async_action('copy')
+nnoremap <silent><buffer><expr> m
+\ defx#async_action('move')
+nnoremap <silent><buffer><expr> p
+\ defx#async_action('paste')
+nnoremap <silent><buffer><expr> l 
+\ defx#is_directory() ?
+\ defx#do_action('open') :
+\ defx#do_action('drop')
+nnoremap <silent><buffer><expr> E
+\ defx#do_action('open', 'vsplit')
+nnoremap <silent><buffer><expr> t
+\ defx#do_action('multi', ['toggle_sort','filename','redraw'])
+nnoremap <silent><buffer><expr> T
+\ defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
+nnoremap <silent><buffer><expr> P
+\ defx#do_action('open', 'pedit')
+nnoremap <silent><buffer><expr> K
+\ defx#do_action('new_directory')
+nnoremap <silent><buffer><expr> N
+\ defx#do_action('new_file')
+"need 'pip install Send2Trash'
+nnoremap <silent><buffer><expr> d
+\ defx#do_action('remove_trash')
+nnoremap <silent><buffer><expr> r
+\ defx#do_action('rename')
+nnoremap <silent><buffer><expr> x
+\ defx#async_action('execute_system')
+nnoremap <silent><buffer><expr> f
+\ defx#do_action('open_or_close_tree')
+nnoremap <silent><buffer><expr> yy
+\ defx#do_action('yank_path')
+nnoremap <silent><buffer><expr> .
+\ defx#do_action('toggle_ignored_files')
+nnoremap <silent><buffer><expr> h
+\ defx#do_action('cd', ['..'])
+nnoremap <silent><buffer><expr> ~
+\ defx#do_action('cd')
+nnoremap <silent><buffer><expr> q
+\ defx#do_action('quit')
+nnoremap <silent><buffer><expr> i
+\ defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> I
+\ defx#do_action('clear_select_all')
+nnoremap <silent><buffer><expr> *
+\ defx#do_action('toggle_select_all')
+nnoremap <silent><buffer><expr> j
+\ line('.') == line('$') ? 'gg' : 'j'
+nnoremap <silent><buffer><expr> k
+\ line('.') == 1 ? 'G' : 'k'
+nnoremap <silent><buffer><expr> <C-l>
+\ defx#do_action('redraw')
+nnoremap <silent><buffer><expr> <C-g>
+\ defx#do_action('print')
+nnoremap <silent><buffer><expr> cd
+\ defx#do_action('change_vim_cwd')
+nnoremap <silent><buffer><expr> <C-s>
+\ defx#do_action('call', '<SID>denite_rec')
+endfunction
+"}}}
 '''
 
-[[plugins]]
-repo =  'rhysd/vim-operator-surround'
-depends = 'vim-operator-user'
-on_map = {v = '<Plug>'}
-hook_add = '''
-map <silent>ta <Plug>(operator-surround-append)
-map <silent>td <Plug>(operator-surround-delete)
-map <silent>tr <Plug>(operator-surround-replace)
-'''
-hook_source = '''
-"2バイト括弧を追加
-let g:operator#surround#blocks = {}
-let g:operator#surround#blocks['-'] = [
-\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
-\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
-\   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
-\ ]
-'''
-
-[[plugins]]
-repo =  'kana/vim-operator-user'
-
-[[plugins]]
-repo =  'tyru/open-browser.vim'
-on_map = {nv = '<Plug>'}
-hook_add ='''
-nmap <Leader>s <Plug>(openbrowser-smart-search)
-vmap <Leader>s <Plug>(openbrowser-smart-search)
-'''
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
 on_event = 'InsertEnter'
 hook_source = '''
+ "{{{
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
@@ -574,6 +422,7 @@ call deoplete#custom#option({
     \ 'num_processes': 4
     \ })
 call deoplete#enable()
+"}}}
 '''
 
 [[plugins]]
@@ -590,6 +439,7 @@ depends = ['neosnippet-snippets']
 on_event = 'InsertCharPre'
 on_ft = 'snippet'
 hook_source = '''
+"{{{
 " Plugin key-mappings.
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
@@ -607,9 +457,50 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 "if has('conceal')
 "  set conceallevel=2
 "endif
+"}}}
 '''
 [[plugins]]
 repo =  'Shougo/neosnippet-snippets'
+[[plugins]]
+repo =  'iwataka/minidown.vim'
+on_ft = 'markdown'
+hook_add = '''
+nnoremap <Leader>pmd <C-u>:Minidown<CR>
+'''
+
+[[plugins]]
+repo =  'cohama/lexima.vim'
+on_event = 'InsertEnter' 
+hook_post_source = '''
+"{{{
+call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
+call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
+call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
+call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
+call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
+call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
+call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
+call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#』', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
+call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
+"}}}
+'''
+
+[[plugins]]
+repo =  'kana/vim-operator-user'
+
+[[plugins]]
+repo =  'tyru/open-browser.vim'
+on_map = {nv = '<Plug>'}
+hook_add ='''
+nmap <Leader>o <Plug>(openbrowser-smart-search)
+vmap <Leader>o <Plug>(openbrowser-smart-search)
+'''
 
 [[plugins]]
 repo =  'lambdalisue/gina.vim'
@@ -619,6 +510,7 @@ nnoremap <Leader>aa :<C-u>Gina status --short<CR>
 nnoremap <Leader>ac :<C-u>Gina commit<CR>
 '''
 hook_post_source = '''
+"{{{
 call gina#custom#command#alias('branch', 'br')
 call gina#custom#command#option('br', '-v', 'v')
 call gina#custom#command#option(
@@ -683,6 +575,7 @@ call gina#custom#mapping#nmap(
 "\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
 "\ 'setlocal winfixheight',
 "\)
+"}}}
 '''
 
 [[plugins]]
@@ -692,6 +585,7 @@ hook_add = '''
 nnoremap U :<C-u>GundoToggle<CR>
 '''
 hook_source = '''
+"{{{
 let g:gundo_help =1 
 let g:gundo_prefer_python3 = 1
 let g:gundo_auto_preview = 0
@@ -700,6 +594,7 @@ let g:gundo_right = 1
 let g:gundo_preview_height = 20
 let g:gundo_preview_bottom = 0
 let g:gundo_playback_delay = 500
+"}}}
 '''
 
 [[plugins]]
@@ -714,7 +609,7 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 [[plugins]]
 repo =  'w0rp/ale'
 hook_post_source ='''
-
+"{{{
 "https://efcl.info/2015/09/10/introduce-textlint/
 "https://koirand.github.io/blog/2018/textlint/
 "vint: pip install --pre vim-vint
@@ -740,6 +635,7 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
+"}}}
 '''
 
 [[plugins]]
@@ -752,6 +648,123 @@ hook_source = '''
 let g:choosewin_blink_on_land = 0
 let g:choosewin_label = 'ASDFGHJKL'
 '''
+
+[[plugins]]
+repo =  'basyura/TweetVim'
+on_cmd = ['TweetVimHomeTimeline','TweetVimSay']
+depends = ['twibill.vim','webapi-vim','open-browser.vim']
+hook_add = '''
+"{{{
+nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
+nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
+nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
+nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
+nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
+"}}}
+'''
+
+hook_source = '''
+"{{{
+let g:tweetvim_tweet_per_page = 60
+let g:tweetvim_include_rts    = 1
+let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
+let g:tweetvim_open_buffer_cmd = 'botright 44vsplit'
+let g:tweetvim_display_separator = 1
+let g:tweetvim_empty_separator = 1
+let g:tweetvim_display_time = 1
+let g:tweetvim_async_post = 1
+let g:tweetvim_display_username = 1
+let g:tweetvim_tweet_limit = 560
+
+function! s:tw_open_existing() abort
+  let bnr = bufnr('[tweetvim]')
+  if bnr == -1
+    echoerr 'call TweetVim!:'
+    return
+  endif
+  let wids = win_findbuf(bnr)
+    call win_gotoid(wids[0])
+endfunction
+
+highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
+highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
+"}}}
+'''
+[plugins.ftplugin]
+tweetvim_say = '''
+"{{{
+" マッピング
+" 挿入・通常モードでsayバッファを閉じる
+nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
+inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
+"}}}
+'''
+tweetvim = '''
+"{{{
+"各種アクション
+nnoremap <buffer>S :<C-u>TweetVimSay<CR>
+nnoremap <buffer>m :<C-u>TweetVimMentions<CR>
+nnoremap <buffer>t :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
+nnoremap <buffer><Leader>u :<C-u>:Unite tweetvim<CR>
+nnoremap <buffer>j }j
+nnoremap <buffer>k k{j
+nnoremap <buffer>th :TweetVimHomeTimeline<CR>
+
+nmap <buffer>c <Plug>(tweetvim_action_in_reply_to)
+nmap <buffer><Leader>F <Plug>(tweetvim_action_remove_favorite)
+nmap <buffer><Leader>d <Plug>(tweetvim_action_remove_status)
+nmap <buffer>o <Plug>(tweetvim_action_open_links)
+nmap <silent><buffer>q :bd<CR>
+nmap <buffer><Tab> <Plug>(tweetvim_action_reload)
+" ページの先頭に戻ったときにリロード
+nmap <buffer><silent>gg gg<Plug>(tweetvim_action_reload)
+" ページ移動を ff/bb から f/b に
+nmap <buffer>f <Plug>(tweetvim_action_page_next)
+nmap <buffer>b <Plug>(tweetvim_action_page_previous)
+nmap <silent> <buffer>n <Plug>(tweetvim_action_cursor_down)
+nmap <silent> <buffer>p <Plug>(tweetvim_action_cursor_up)
+" 不要なマップを除去
+nunmap   <buffer>ff
+nunmap   <buffer>bb
+
+" tweetvim バッファに移動したときに自動リロード
+"autocmd BufEnter * call <SID>tweetvim_reload()
+" filetype が tweetvim ならツイートをリロード
+"function! s:tweetvim_reload()
+"    if &filetype ==# 'tweetvim'
+"        call feedkeys("\<Plug>(tweetvim_action_reload)")
+"    endif
+"endfunction
+"}}}
+'''
+
+[[plugins]]
+repo =  'mattn/webapi-vim'
+on_source = 'TweetVim'
+
+[[plugins]]
+repo =  'basyura/twibill.vim'
+on_source = 'TweetVim'
+
+[[plugins]]
+repo =  'rhysd/vim-operator-surround'
+depends = 'vim-operator-user'
+on_map = {v = '<Plug>'}
+hook_add = '''
+map <silent>ta <Plug>(operator-surround-append)
+map <silent>td <Plug>(operator-surround-delete)
+map <silent>tr <Plug>(operator-surround-replace)
+'''
+hook_source = '''
+"2バイト括弧を追加
+let g:operator#surround#blocks = {}
+let g:operator#surround#blocks['-'] = [
+\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
+\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
+\   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
+\ ]
+'''
+
 [[plugins]]
 repo = 'mattn/benchvimrc-vim'
 on_cmd = 'BenchVimrc'
@@ -765,4 +778,4 @@ repo = 'wsdjeg/dein-ui.vim'
 on_cmd = 'DeinUpdate'
 depends = ['dein.vim']
 
-#:set foldmethod=marker:
+# vim:set foldmethod=marker:
