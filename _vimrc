@@ -381,13 +381,22 @@ nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
 "}}}
 "========================================================================
 "dein.vim {{{
-set runtimepath+=$HOME/.cache/dein/repos/github.com/Shougo/dein.vim
+let s:dein_dir = expand('~/.cache/dein')
+let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
+
+if &runtimepath !~# '/dein.vim'
+      if !isdirectory(s:dein_repo_dir)
+        echo 'install dein.vim ...'
+        execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+      endif
+ execute 'set runtimepath+=' .fnamemodify(s:dein_repo_dir, ':p')
+endif
 
  let s:toml      = '~/dotfiles/dein.toml'
  let s:lazy_toml = '~/dotfiles/dein_lazy.toml'
 
-if dein#load_state('$HOME/.cache/dein')
-    call dein#begin('~/.cache/dein')
+if dein#load_state(s:dein_dir)
+    call dein#begin(s:dein_dir)
         call dein#load_toml(s:toml,      {'lazy': 0})
         call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
@@ -461,8 +470,12 @@ let g:lightline = {
 \ }
 
 "if has('GUI')
-    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
-    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
+    let g:lightline.separator= { 'left': '', 'right': '' }
+    let g:lightline.subseparator= { 'left': '', 'right': '' }
+"endif
+"if has('GUI')
+"    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
+"    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 "endif
 
 if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
@@ -575,7 +588,8 @@ function! LLCharcount()
 endfunction
 
 function! LightlineReadonly()
-    return &readonly ? '⭤' : ''
+"    return &readonly ? '⭤' : ''
+    return &readonly ? '' : ''
 endfunction
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgit()
 
@@ -594,8 +608,10 @@ function! LLgitbranch()
   try
     if &filetype !~? 'vimfiler\|gundo' && strlen(s:ginabranch) && winwidth(0) > 40
     let _ = s:llgit()
-    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
-      \strlen(_) ? ' ⭠': ''
+    return strlen(_) && winwidth(0) > 100  ? ' '._ :
+      \strlen(_) ? ' ': ''
+"    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
+"      \strlen(_) ? ' ⭠': ''
     endif
   catch
   endtry
@@ -767,10 +783,14 @@ if has('GUI')
     "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
 "    set guifont=Consolas:h11:cDEFAULT
 "    set guifontwide=MS_Gothic:h12:cDEFAULT
-    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
-    set guifontwide=Ricty_Diminished_for_Powerline:h13:cDEFAULT
+"    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
+"Nerdfont
+"https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
+    set guifont=Ricty_Diminished_with-icons:h13:cDEFAULT
+    set guifontwide=Ricty_Diminished_with-icons:h13:cDEFAULT
     set renderoptions=type:directx,renmode:5,geom:2
-    set ambiwidth=double
+    set ambiwidth=single
+"    set ambiwidth=double
 else
     set t_Co=256
     set termguicolors

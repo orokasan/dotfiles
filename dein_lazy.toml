@@ -21,7 +21,7 @@ call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
 [[plugins]]
 repo =  'basyura/TweetVim'
 on_cmd = ['TweetVimHomeTimeline','TweetVimSay']
-depends = ['twibill.vim','webapi-vim']
+depends = ['twibill.vim','webapi-vim','open-browser']
 hook_add = '''
 nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
 nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
@@ -131,9 +131,9 @@ call defx#custom#option('_', {
     \ })
 
 "call defx#custom#column('filename', {
-"      \ 'directory_icon': '▸',
-"      \ 'opened_icon': '▾',
-"      \ 'root_icon': ' ',
+"      \ 'directory_icon': '',
+"      \ 'opened_icon': '',
+"      \ 'root_icon': '',
 "      \ 'min_width': 45,
 "      \ 'max_width': 45,
 "      \ })
@@ -229,59 +229,61 @@ on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
 hook_add = '''
   nmap s [denite]
   nnoremap [denite] <Nop>
-
   nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
   	\  source<CR>
-
-  "現在開いているファイルのディレクトリ下のファイル一覧。
-  nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
+"現在開いているファイルのディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
   	\  file<CR>
-  "ホームディレクトリ下のファイル一覧。
-  nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
+"ホームディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
   	\ file<CR>
-  "バッファ一覧
-  nnoremap <silent> [denite]b :<C-u>Denite
+"バッファ一覧
+nnoremap <silent> [denite]b :<C-u>Denite
   	\ -buffer-name=normal -mode=normal
   	\ buffer<CR>
-  "デナイト・サーチ
-  nnoremap <silent> ? :<C-u>Denite
+"デナイト・サーチ
+nnoremap <silent> ? :<C-u>Denite
   	\ -buffer-name=search -auto-highlight
   	\ line<CR>
-  "デナイト・キーワードサーチ
-  nnoremap <silent> * :<C-u>DeniteCursorWord
+"デナイト・キーワードサーチ
+nnoremap <silent> * :<C-u>DeniteCursorWord
   	\ -buffer-name=search
   	\ -auto-highlight -mode=normal line<CR>
-  "neoyank
-  nnoremap <silent> [denite]y :<C-u>Denite
+"neoyank
+nnoremap <silent> [denite]y :<C-u>Denite
   	\ -mode=normal
-  	\ register neoyank<CR>
-  "コマンド履歴
-  nnoremap <silent> [denite]c :<C-u>Denite
+    \ -buffer-name=search
+  	\ neoyank<CR>
+nnoremap <silent> [denite]r :<C-u>Denite
+  	\ -mode=normal
+    \ -buffer-name=search
+  	\ register<CR>
+"コマンド履歴
+nnoremap <silent> [denite]c :<C-u>Denite
       \ -mode=normal
       \ command_history<CR>
-  "バッファディレクトリからgrep
-  nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
-      \ -buffer-name=search
-      \ -no-empty -mode=normal grep<CR>
-  "メニュー
-  nnoremap <silent> [denite]u :<C-u>Denite
-      \ -buffer_name=normal
+"バッファディレクトリからgrep
+nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
+    \ -buffer-name=search
+    \ -no-empty -mode=normal grep<CR>
+"メニュー
+nnoremap <silent> [denite]u :<C-u>Denite
+    \ -buffer_name=normal
   	\ -mode=normal -winheight=5
-      \ menu<CR>
-  "ヘルプ
-  nnoremap <silent> [denite]h :<C-u>Denite
-      \ -buffer-name=search
-      \ -highlight-mode-insert=WildMenu
-      \ help<CR>
-  "最近使用したファイル-neomru
-  nnoremap <silent> [denite]n :<C-u>Denite
+    \ menu<CR>
+"ヘルプ
+nnoremap <silent> [denite]h :<C-u>Denite
+    \ -buffer-name=search
+    \ help<CR>
+"最近使用したファイル-neomru
+nnoremap <silent> [denite]n :<C-u>Denite
   	\ -mode=normal 
-      \ file_mru<CR>
-  ":change
-  nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
-  "searchバッファをresumeして開く
-  nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
-      \ -resume -mode=normal -refresh<CR>
+    \ file_mru<CR>
+":change
+nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
+"searchバッファをresumeして開く
+nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
+    \ -resume -mode=normal -refresh<CR>
   "open ale message
   nnoremap <silent> [denite]a :<C-u>Denite
   	\ -buffer-name=search -mode=normal
@@ -297,11 +299,11 @@ hook_post_source = '''
 call denite#custom#option('_', {
 	\ 'prompt': '»',
 	\ 'cursor_wrap': v:true,
-	\ 'winheight': 15,
+	\ 'winheight': 14,
 	\ 'statusline': v:false,
     \ 'unique': v:true,
     \ 'highlight_mode_normal': 'Visual',
-    \ 'highlight_mode_insert': 'VisualNOS',
+    \ 'highlight_mode_insert': 'ErrorMsg',
     \ 'vertical_preview': v:true,
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
@@ -763,3 +765,4 @@ repo = 'wsdjeg/dein-ui.vim'
 on_cmd = 'DeinUpdate'
 depends = ['dein.vim']
 
+#:set foldmethod=marker:
