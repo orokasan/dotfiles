@@ -95,7 +95,8 @@ call denite#custom#option('_', {
 	\ 'statusline': v:false,
     \ 'short_source_names': v:true,
     \ 'highlight_mode_normal': 'Visual',
-    \ 'highlight_mode_insert': 'ToolbarLine',
+    \ 'highlight_mode_insert': 'Visual',
+    \ 'highlight_matched_char' : 'Title',
     \ 'vertical_preview': v:true,
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
@@ -216,16 +217,6 @@ call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
         \ function('s:defx_open'))
 call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
 
-nmap [denite]d    <SID>(dirmark)
-nmap [denite]D   <SID>(dirmark-add)
-"open dirmark-bookmark in Denite
-nnoremap <silent> <SID>(dirmark) :<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
-"bookmark by "add"action
-nnoremap <silent><expr><nowait> <SID>(dirmark-add)  ':<C-u>DeniteBufferDir dirmark/add <CR>'
-"open in defx
-nmap [denite]x <SID>(defx):Denite 
-    \ -buffer-name=normal -mode=normal
-    \ defx/dirmark <CR>
 "}}}
 '''
 
@@ -351,8 +342,8 @@ nnoremap <silent><buffer><expr> <C-g>
 \ defx#do_action('print')
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer><expr> <C-t>
-\ defx#do_action('call', '<SID>denite_rec')
+nnoremap <silent><buffer><expr> <C-s>
+\ call <SID>denite_rec<CR>
 endfunction
 
 function! s:getdefxbasedir(candidate) abort
@@ -591,6 +582,80 @@ nnoremap <Leader>pmd <C-u>:Minidown<CR>
 '''
 
 [[plugins]]
+repo =  'tyru/eskk.vim'
+on_event = 'InsertEnter'
+hook_add = '''
+let g:eskk#debug = 0
+let g:eskk#show_annotation = 1
+let g:eskk#rom_input_style = 'msime'
+let g:eskk#egg_like_newline = 1
+let g:eskk#egg_like_newline_completion = 1
+let g:eskk#tab_select_completion = 1
+let g:eskk_revert_henkan_style = 'okuri'
+let g:eskk#large_dictionary = {'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
+
+let g:eskk#cursor_color = {
+\   'ascii': '#b4be82',
+\   'hira': '#e28878',
+\   'kata': '#84a0c6',
+\   'abbrev': '#4169e1',
+\   'zenei': '#ffd700',
+\}
+nnoremap <silent><expr><C-y> <SID>eskk_inserttoggle()
+'''
+hook_source = '''
+augroup myeskk
+autocmd!
+autocmd InsertLeave * call <SID>eskk_status()
+autocmd InsertEnter * call <SID>eskk_insert_config()
+augroup END
+
+let s:eskk_insert_status = 0
+let s:eskk_inserton = 0
+let g:eskk_my_toggle_status = 0
+
+function! s:eskk_status() abort
+let s:eskk_inserton = eskk#is_enabled() ? 1 : 0
+let g:eskk_my_toggle_status = s:eskk_insert_status ? 1 : s:eskk_inserton ? 1 : 0
+endfunction
+
+function! s:eskk_insert_config() abort
+    if s:eskk_inserton || s:eskk_insert_status
+        call eskk#enable()
+    endif
+endfunction
+
+
+function! s:eskk_inserttoggle() abort
+    if s:eskk_insert_status || s:eskk_inserton
+        let s:eskk_insert_status = 0
+        let s:eskk_inserton = 0
+        let g:eskk_my_toggle_status = 0
+        echo 'eskk status off'
+    else
+        let s:eskk_insert_status = 1
+        let g:eskk_my_toggle_status = 1
+        echo 'eskk status on'
+    endif
+endfunction
+
+autocmd MyAutoCmd User eskk-initialize-post
+      \ EskkMap -remap jj <ESC>
+autocmd MyAutoCmd User eskk-initialize-pre call s:eskk_initial_pre()
+function! s:eskk_initial_pre() abort
+  let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+  call t.add_map('z ', '　')
+  call t.add_map('~', '〜')
+  call t.add_map('zc', '©')
+  call t.add_map('zr', '®')
+  call t.add_map('z9', '（')
+  call t.add_map('z0', '）')
+  call eskk#register_mode_table('hira', t)
+endfunction
+
+'''
+
+[[plugins]]
 repo =  'cohama/lexima.vim'
 on_event = 'InsertEnter' 
 hook_post_source = '''
@@ -615,6 +680,7 @@ call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
 
 [[plugins]]
 repo =  'kana/vim-operator-user'
+on_source = ['vim-operator-surround']
 
 [[plugins]]
 repo =  'tyru/open-browser.vim'
@@ -757,7 +823,7 @@ let g:ale_sign_warning = ''
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_statusline_format = ['%d', '%d', 'ok']
+let g:ale_statusline_format = ['%d', '%d', '']
 "}}}
 '''
 

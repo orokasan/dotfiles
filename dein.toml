@@ -22,6 +22,12 @@ repo =  'kshenoy/vim-signature'
 [[plugins]]
 repo =  'maximbaz/lightline-ale'
 depends = ['lightline']
+hook_add = '''
+let g:lightline#ale#indicator_checking = "\uf110"
+let g:lightline#ale#indicator_warnings = "\uf48f"
+let g:lightline#ale#indicator_errors = "\uf484"
+let g:lightline#ale#indicator_ok = "\uf43a"
+'''
 
 [[plugins]]
 repo =  'itchyny/vim-gitbranch'
@@ -44,9 +50,7 @@ repo =  'mengelbrecht/lightline-bufferline'
 #repo =  'Shougo/echodoc.vim'
 
 [[plugins]]
-repo =  'tyru/eskk.vim'
 
-[[plugins]]
 repo = 'cocopon/iceberg.vim'
 #on_if = ''' g:colors_name='iceberg' '''
 

@@ -76,7 +76,7 @@ if has('nvim')
 else
   " Display candidates by list.
     set wildmenu
-    set wildmode=full
+    set wildmode=longest
 endif
 "
 " Adjust window size of preview and help.
@@ -412,39 +412,6 @@ command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath()
 "}}}
 "-----------------------------------------------------------------------
-"文字数カウント "{{{
-"1行カウント
-function! g:CharCount()
-	let l:line = getline(line('.'))
-	let l:result =  strlen(substitute(l:line, '.', 'x','g'))
-	return l:result
-endfunction
-
-"全体カウント
-function! g:CharAllCount()
-	let l:result = 0
-	for l:linenum in range(0, line('$'))
-		let l:line = getline(l:linenum)
-		let l:result += strlen(substitute(l:line, '.', 'x','g'))
-	endfor
-	return l:result
-endfunction
-
-"選択範囲の行をカウント
-function! g:LineCharVCount() range
-	let l:result = 0
-	for l:linenum in range(a:firstline, a:lastline)
-		let l:line = getline(l:linenum)
-		let l:result += strlen(substitute(l:line, '.', 'x','g'))
-	endfor
-	echo ' [WordCount] -- ' . l:result . ' : ' . g:CharAllCount() .
-				\ ' -- [選択行の字数:全体の字数]'
-endfunction
-"呼び出す
-command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
-xnoremap<silent> ; :LineCharVCount<CR>
-"}}}
-"-----------------------------------------------------------------------
 "lightline {{{
 "lightline-bufferline
 "lightline-ale
@@ -460,22 +427,38 @@ let g:lightline = {
     \ 'inactive': {
         \ 'left': [['inactivefn']],
         \ 'right': [[ 'lineinfo' ]]
-    \},
+    \ },
     \ 'component_function': {
-        \'readonly':'LightlineReadonly',
-        \'gitbranch': 'LLgitbranch',
-        \'denitebuf': 'Denitebuffer',
-        \'filetype': 'LightlineFiletype',
-        \'inactivefn':'MyInactiveFilename',
-        \'relativepath':'MyFilepath',
-        \'mode': 'LightlineMode',
-        \'charcount':'LLCharcount',
-        \'eskk': 'LLeskk'
-    \},
-      \ 'component_function_visible_condition': {
-      \   'mode': 1,
+        \ 'readonly':'LightlineReadonly',
+        \ 'gitbranch': 'LLgitbranch',
+        \ 'denitebuf': 'Denitebuffer',
+        \ 'filetype': 'LightlineFiletype',
+        \ 'inactivefn':'MyInactiveFilename',
+        \ 'relativepath':'MyFilepath',
+        \ 'mode': 'LightlineMode',
+        \ 'charcount':'LLCharcount',
+        \ 'eskk': 'LLeskk'
+    \ },
+    \ 'component_expand': {
+        \ 'buffers': 'lightline#bufferline#buffers',
+        \ 'linter_checking': 'lightline#ale#checking',
+        \ 'linter_warnings': 'lightline#ale#warnings',
+        \ 'linter_errors': 'lightline#ale#errors',
+        \ 'linter_ok': 'lightline#ale#ok'
+    \ },
+    \ 'component_type' : {
+        \ 'buffers': 'tabsel',
+        \ 'linter_checking': 'left',
+        \ 'linter_warnings': 'warning',
+        \ 'linter_errors': 'error',
+        \ 'linter_ok': 'left'
+    \ },
+    \ 'tabline' : {'left': [['buffers']]
+    \ },
+    \ 'component_function_visible_condition': {
+        \ 'mode': 1,
+    \ }
 \ }
-\}
 "if has('GUI')
 "
    let g:lightline.separator= { 'left': '', 'right': '' }
@@ -498,27 +481,11 @@ else
         \}
 endif
 
-let g:lightline.component_expand = {
-      \  'buffers': 'lightline#bufferline#buffers',
-      \  'linter_checking': 'lightline#ale#checking',
-      \  'linter_warnings': 'LightLineAleWarning',
-      \  'linter_errors': 'LightLineAleError',
-      \  'linter_ok': 'LightLineAleOK',
-      \ }
-let g:lightline.component_type = {
-      \  'buffers': 'tabsel',
-      \  'linter_checking': 'left',
-      \  'linter_warnings': 'warning',
-      \  'linter_errors': 'error',
-      \  'linter_ok': 'left',
-      \ }
-let g:lightline.tabline          = {'left': [['buffers']], 'right': [['close']]}
+let g:lightline#bufferline#unnamed = '[unnamed]'
 let g:lightline#bufferline#show_number = 2
 let g:lightline#bufferline#number_map = {
 \ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
-
-let g:lightline#bufferline#unnamed = '[unnamed]'
 
 command! -bar LightlineUpdate    call lightline#init()|
   \ call lightline#colorscheme()|
@@ -534,20 +501,7 @@ return &filetype ==# 'unite' ? 'Unite' :
     \ lightline#mode()
 endfunction
 
-if dein#tap('ale')
-  function! LLGetAle()
-    let l:count = ale#statusline#Count(bufnr(''))
-    let l:errors = l:count.error + l:count.style_error
-    let l:warnings = l:count.warning + l:count.style_warning
-    return l:count.total == 0 ? 'OK' : ':' . l:errors . ' W:' . l:warnings
-  endfunction
-else
-  function! LLGetAle()
-    return ''
-  endfunction
-endif
-
-if dein#tap('ale')
+if dein#tap('eskk.vim')
     function! LLeskk() abort
         if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
             if eskk#is_enabled()
@@ -555,8 +509,7 @@ if dein#tap('ale')
                     \ get(g:eskk#statusline_mode_strings,
                     \ eskk#get_current_instance().mode, '??'))
             elseif mode() !=# 'i'
-                return s:eskk_insert_status ? printf('[あ]')
-                    \ : s:eskk_inserton ? printf('[あ]') : printf('[--]')
+                return g:eskk_my_toggle_status ? printf('[あ]') : printf('[--]')
             else
                 return printf('[--]')
             endif
@@ -575,33 +528,27 @@ endfunction
 "lightlineに渡す変数の設定
 augroup CharCounter
     autocmd!
-    autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave,CursorMoved,CursorMovedI * call <SID>LLvarCharCount()
-    autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>LLvarCharAllCount()
+    autocmd BufNew,BufEnter,TextChanged,CursorMoved,CursorMovedI * call <SID>llvarCharCount()
+    autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>llvarCharAllCount()
 augroup END
 
 let s:llcharcount = ''
 let s:llcharallcount = ''
 
-function! s:LLvarCharAllCount()
+function! s:llvarCharAllCount()
     let l:count = g:CharAllCount()
-    if l:count == 0
-        let l:shresult = '---'
-    elseif l:count <10
-        let l:shresult ='   ' . l:count
-    elseif l:count <100
-        let l:shresult ='  ' . l:count
-    elseif l:count < 10000
-        let l:shresult = l:count
-    else
-        let l:shresult = (l:count / 1000) . 'k'
-    endif
-    let s:llcharallcount = l:shresult
+    let s:llcharallcount = l:count == 0 ?   '---' :
+        \ l:count <10 ? '   ' . l:count :
+        \ l:count <100 ? '  ' . l:count :
+        \ l:count < 10000 ? l:count :
+        \ (l:count / 1000) . 'k'
 endfunction
 
-function! s:LLvarCharCount()
-    let l:CC = g:CharCount() < 10 ? '  ' . g:CharCount() :
-        \ g:CharCount() <100 ? ' ' . g:CharCount() : g:CharCount()
-    let s:llcharcount = l:CC
+function! s:llvarCharCount()
+    let l:count = g:CharCount()
+    let s:llcharcount = l:count < 10 ? '  ' . l:count :
+        \ l:count <100 ? ' ' . l:count :
+        \ l:count
 endfunction
 
 function! LLCharcount()
@@ -617,25 +564,19 @@ function! LightlineReadonly()
 "    return &readonly ? '⭤' : ''
     return &readonly ? '' : ''
 endfunction
+
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgit()
-
-let s:ginabranch = ''
-
+let s:llgit = 0
 function! s:llgit()
-if exists('*gitbranch#name')
-    let s:ginabranch = gitbranch#name()
-else
-    let s:ginabranch = ''
-endif
-return s:ginabranch
+let s:llgit = exists('*gitbranch#name') ? gitbranch#name() : ''
 endfunction
 
 function! LLgitbranch()
   try
-    if &filetype !~? 'vimfiler\|gundo' && strlen(s:ginabranch) && winwidth(0) > 40
-    let _ = s:llgit()
-    return strlen(_) && winwidth(0) > 100  ? ' '._ :
-      \strlen(_) ? ' ': ''
+    if &filetype !~? 'vimfiler\|gundo' && exists('s:llgit') && winwidth(0) > 40
+    let l:br = s:llgit
+    return strlen(l:br) && winwidth(0) > 100  ? ' '. l:br :
+      \strlen(l:br) ? ' ': ''
 "    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
 "      \strlen(_) ? ' ⭠': ''
     endif
@@ -693,38 +634,6 @@ function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 
-function! LightLineAleError() abort
-  return s:ale_string(0)
-endfunction
-
-function! LightLineAleWarning() abort
-  return s:ale_string(1)
-endfunction
-
-function! LightLineAleOk() abort
-  return s:ale_string(2)
-endfunction
-
-function! s:ale_string(mode)
-  if !exists('g:ale_buffer_info')
-    return ''
-  endif
-
-  let l:buffer = bufnr('%')
-  let l:counts = ale#statusline#Count(l:buffer)
-  let [l:error_format, l:warning_format, l:no_errors] = g:ale_statusline_format
-
-  if a:mode == 0 " Error
-    let l:errors = l:counts.error + l:counts.style_error
-    return l:errors ? printf(l:error_format, l:errors) : ''
-  elseif a:mode == 1 " Warning
-    let l:warnings = l:counts.warning + l:counts.style_warning
-    return l:warnings ? printf(l:warning_format, l:warnings) : ''
-  endif
-
-  return l:counts.total == 0? l:no_errors : ''
-endfunction
-
 function! ProfileCursorMove() abort
   let profile_file = expand('~/log/vim-profile.log')
   if filereadable(profile_file)
@@ -749,73 +658,36 @@ function! ProfileCursorMove() abort
 endfunction
 "}}}
 "-----------------------------------------------------------------------
-"eskk.vim"{{{
-"InsertLeaveイベント上で他プラグインと干渉する(順序の問題?)
-"=> vimrcをリロードすると動作しなくなる
-"リセットのタイミングを変えることで直った(?)
-if !exists('eskkautocmd_loaded')
-  let autocommands_loaded = 1
-    autocmd InsertLeave * call <SID>eskk_status()
-    autocmd InsertEnter * call <SID>eskk_insert_config()
-endif
-function! s:eskk_status() abort
-    if eskk#is_enabled()
-         let s:eskk_inserton = 1
-    else
-        let s:eskk_inserton = ''
-    endif
+"文字数カウント "{{{
+"1行カウント
+function! g:CharCount()
+	let l:line = getline(line('.'))
+	return strlen(substitute(l:line, '.', 'x','g'))
 endfunction
 
-let s:eskk_inserton = ''
-function! s:eskk_insert_config() abort
-    if s:eskk_inserton || s:eskk_insert_status
-        call eskk#enable()
-    endif
+"全体カウント
+function! g:CharAllCount()
+	let l:result = 0
+	for l:linenum in range(0, line('$'))
+		let l:line = getline(l:linenum)
+		let l:result += strlen(substitute(l:line, '.', 'x','g'))
+	endfor
+	return l:result
 endfunction
 
-let s:eskk_insert_status = ''
-nnoremap <silent><expr><C-y> <SID>eskk_inserttoggle()
-function! s:eskk_inserttoggle() abort
-    if s:eskk_insert_status || s:eskk_inserton
-        let s:eskk_insert_status = 0
-        let s:eskk_inserton = 0
-        echo 'eskk status off'
-    else
-        let s:eskk_insert_status = 1
-        echo 'eskk status on'
-    endif
+"選択範囲の行をカウント
+function! g:LineCharVCount() range
+	let l:result = 0
+	for l:linenum in range(a:firstline, a:lastline)
+		let l:line = getline(l:linenum)
+		let l:result += strlen(substitute(l:line, '.', 'x','g'))
+	endfor
+	echo ' [WordCount] -- ' . l:result . ' : ' . g:CharAllCount() .
+				\ ' -- [選択行の字数:全体の字数]'
 endfunction
-
-let g:eskk#debug = 0
-let g:eskk#show_annotation = 1
-let g:eskk#rom_input_style = 'msime'
-let g:eskk#egg_like_newline = 1
-let g:eskk#egg_like_newline_completion = 1
-let g:eskk#tab_select_completion = 1
-let g:eskk_revert_henkan_style = 'okuri'
-let g:eskk#large_dictionary = {'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
-
-let g:eskk#cursor_color = {
-\   'ascii': '#b4be82',
-\   'hira': '#e28878',
-\   'kata': '#84a0c6',
-\   'abbrev': '#4169e1',
-\   'zenei': '#ffd700',
-\}
-
-autocmd MyAutoCmd User eskk-initialize-post
-      \ EskkMap -remap jj <ESC>
-autocmd MyAutoCmd User eskk-initialize-pre call s:eskk_initial_pre()
-function! s:eskk_initial_pre() abort
-  let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-  call t.add_map('z ', '　')
-  call t.add_map('~', '〜')
-  call t.add_map('zc', '©')
-  call t.add_map('zr', '®')
-  call t.add_map('z9', '（')
-  call t.add_map('z0', '）')
-  call eskk#register_mode_table('hira', t)
-endfunction
+"呼び出す
+command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
+xnoremap<silent> ; :LineCharVCount<CR>
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
