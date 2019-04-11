@@ -45,7 +45,7 @@ nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
     \ -buffer_name=normal
-  	\ -mode=normal -winheight=5
+  	\ -winheight=5
     \ menu<CR>
 "ヘルプ
 nnoremap <silent> [denite]h :<C-u>Denite
@@ -53,21 +53,35 @@ nnoremap <silent> [denite]h :<C-u>Denite
     \ help<CR>
 "最近使用したファイル-neomru
 nnoremap <silent> [denite]n :<C-u>Denite
-  	\ -mode=normal -winheight=10
+    \ -buffer-name=normal
     \ file_mru<CR>
+"mark一覧
+nnoremap <silent> [denite]m :<C-u>Denite
+    \ -buffer-name=normal
+    \ mark<CR>
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
 "searchバッファをresumeして開く
 nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
     \ -resume -mode=normal -refresh<CR>
-  "open ale message
-  nnoremap <silent> [denite]a :<C-u>Denite
-  	\ -buffer-name=search -mode=normal
-  	\ ale<CR>
-  "nnoremap <silent>n :<C-u>Denite
-  "    \ -cursor-pos=+1 -immediately
-  "    \ -buffer-name=search
-  "    \ -resume -mode=normal -refresh<CR>
+"open ale message
+nnoremap <silent> [denite]a :<C-u>Denite
+	\ -buffer-name=search -mode=normal
+	\ ale<CR>
+"nnoremap <silent>n :<C-u>Denite
+"    \ -cursor-pos=+1 -immediately
+"    \ -buffer-name=search
+"    \ -resume -mode=normal -refresh<CR>
+
+"open dirmark-bookmark in Denite
+nnoremap <silent> [denite]d :<C-u>Denite
+    \ -buffer-name=normal
+    \ dirmark<CR>
+"bookmark by "add"action
+nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
+    \ -buffer-name=normal
+    \ dirmark/add<CR>
+
 "}}}
 '''
 
@@ -92,8 +106,8 @@ call denite#custom#option('_', {
 "buffer-normal
 call denite#custom#option('normal', {
 	\ 'winheight': 10,
-    \ 'direction': 'dynamicbottom',
-    \ 'quick_move': 'immediately'
+    \ 'mode' : 'normal',
+    \ 'direction': 'dynamicbottom'
     \})
 "buffer-search
 call denite#custom#option('search', {
@@ -225,6 +239,10 @@ on_event = 'TextYankPost'
 on_source = ['denite.nvim']
 
 [[plugins]]
+repo =  'kmnk/denite-dirmark'
+on_source = ['denite.nvim','defx.nvim']
+
+[[plugins]]
 repo =  'Shougo/unite.vim'
 on_cmd = ['Unite']
 
@@ -240,6 +258,10 @@ nnoremap <silent> <Plug>(defx) :<C-u>Defx<CR>
 	\:setlocal signcolumn=no<CR>
 nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
 	\:setlocal signcolumn=no<CR>
+
+nmap <silent> [denite]x <Plug>(defx):<C-u>Denite
+    \ -buffer-name=normal
+    \ defx/dirmark<CR>
 "}}}
 '''
 hook_post_source = '''
@@ -264,20 +286,6 @@ call defx#custom#option('_', {
 "      \ 'readonly_icon': '✗',
 "      \ 'selected_icon': '✓',
 "      \ })
-
-function! s:getdefxbasedir(candidate) abort
-    if line('.') == 1
-        let path_mod  = 'h'
-    else
-        let path_mod = isdirectory(a:candidate) ? '' : 'h'
-    endif
-    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
-endfunction
-
-function! s:denite_rec(context) abort
-    let narrow_dir = s:getdefxbasedir(a:context.targets[0])
-    execute('Denite -default-action=defx file/rec:\'\'\' .  narrow_dir . \'\'\')
-endfunction
 "}}}
 '''
 [plugins.ftplugin]
@@ -343,15 +351,31 @@ nnoremap <silent><buffer><expr> <C-g>
 \ defx#do_action('print')
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer><expr> <C-s>
+nnoremap <silent><buffer><expr> <C-t>
 \ defx#do_action('call', '<SID>denite_rec')
 endfunction
+
+function! s:getdefxbasedir(candidate) abort
+    if line('.') == 1
+        let path_mod  = 'h'
+    else
+        let path_mod = isdirectory(a:candidate) ? '' : 'h'
+    endif
+    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
+endfunction
+
+function! s:denite_rec(context) abort
+    let narrow_dir = s:getdefxbasedir(a:context.targets[0])
+    execute('Denite -default-action=defx file/rec:\'\'\' .  narrow_dir . \'\'\')
+endfunction
+
 "}}}
 '''
 [[plugins]]
 repo = 'kristijanhusak/defx-icons'
 on_source = 'defx.nvim'
 hook_source = '''
+"{{{
 "NerdFont List{{{
 "This list is useful for testing and choosing interesting symbols.
 "Also it's more consistent with current fonts than codepoints shown in README.
@@ -406,6 +430,7 @@ hook_source = '''
 "
 "
 "}}}
+
 let g:defx_icons_enable_syntax_highlight = 1
 let g:defx_icons_column_length = 2
 let g:defx_icons_directory_icon = ''
@@ -444,6 +469,7 @@ let g:defx_icons_extensions = {
     \'pptx' : { 'icon':'', 'color': s:colors.orange},
     \'ppt' : { 'icon':'', 'color': s:colors.orange}
     \}
+"}}}
 '''
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
@@ -672,6 +698,7 @@ call gina#custom#mapping#nmap(
 "\ 'setlocal winfixheight',
 "\)
 "}}}
+
 '''
 
 [[plugins]]
@@ -725,12 +752,12 @@ let g:ale_lint_delay = 5000
 let g:ale_lint_on_enter = 0
 let g:ale_open_list = 0
 let g:ale_keep_list_window_open = 0
-let g:ale_sign_error = '!!'
-let g:ale_sign_warning = '=='
+let g:ale_sign_error = ''
+let g:ale_sign_warning = ''
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_statusline_format = ['E:%d', 'W:%d', 'ok']
+let g:ale_statusline_format = ['%d', '%d', 'ok']
 "}}}
 '''
 

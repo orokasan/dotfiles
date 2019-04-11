@@ -44,24 +44,6 @@ repo =  'mengelbrecht/lightline-bufferline'
 #repo =  'Shougo/echodoc.vim'
 
 [[plugins]]
-repo =  'kmnk/denite-dirmark'
-hook_add = '''
-"{{{
-nmap [denite]d <Plug>(denite-dirmark)
-nmap [denite]D <Plug>(denite-dirmark-add)
-"open dirmark-bookmark in Denite
-nnoremap <silent> <Plug>(dirmark) 
-    \:<C-u>Denite -mode=normal -buffer-name=normal dirmark<CR>
-"bookmark by "add"action
-nnoremap <silent><expr><nowait> <Plug>(dirmark-add) 
-    \:<C-u>DeniteBufferDir dirmark/add <CR>
-"open in defx
-nmap [denite]x <Plug>(defx):Denite 
-    \ -buffer-name=normal -mode=normal
-    \ defx/dirmark <CR>
-"}}}
-'''
-[[plugins]]
 repo =  'tyru/eskk.vim'
 
 [[plugins]]

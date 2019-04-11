@@ -406,6 +406,10 @@ endif
 
 filetype plugin indent on
 syntax enable
+
+command! -nargs=0 -complete=command DeinInstall  call dein#install()
+command! -nargs=0 -complete=command DeinUpdate call dein#update()
+command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath()
 "}}}
 "-----------------------------------------------------------------------
 "文字数カウント "{{{
@@ -447,7 +451,7 @@ xnoremap<silent> ; :LineCharVCount<CR>
 let g:lightline = {
 \ 'colorscheme': 'iceberg',
     \ 'active': {
-        \ 'left': [ [ 'mode', 'paste' ],['eskk','gitbranch'], [ 'readonly', 'relativepath'] ],
+        \ 'left': [ [ 'mode', 'paste' ],['eskk','gitbranch','denitebuf'], [ 'readonly', 'relativepath'] ],
         \ 'right': [
         \ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','charcount','lineinfo' ],
         \ ['percent'], [ 'IMEstatus','filetype' ] 
@@ -460,19 +464,25 @@ let g:lightline = {
     \ 'component_function': {
         \'readonly':'LightlineReadonly',
         \'gitbranch': 'LLgitbranch',
+        \'denitebuf': 'Denitebuffer',
         \'filetype': 'LightlineFiletype',
-        \ 'ale': 'ALEGetStatusLine',
         \'inactivefn':'MyInactiveFilename',
         \'relativepath':'MyFilepath',
         \'mode': 'LightlineMode',
         \'charcount':'LLCharcount',
         \'eskk': 'LLeskk'
-    \ }
+    \},
+      \ 'component_function_visible_condition': {
+      \   'mode': 1,
 \ }
-
+\}
 "if has('GUI')
-    let g:lightline.separator= { 'left': '', 'right': '' }
-    let g:lightline.subseparator= { 'left': '', 'right': '' }
+"
+   let g:lightline.separator= { 'left': '', 'right': '' }
+   let g:lightline.subseparator= { 'left': '', 'right': '' }
+"
+"   let g:lightline.separator= { 'left': '', 'right': '' }
+"   let g:lightline.subseparator= { 'left': '', 'right': '' }
 "endif
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
@@ -491,9 +501,9 @@ endif
 let g:lightline.component_expand = {
       \  'buffers': 'lightline#bufferline#buffers',
       \  'linter_checking': 'lightline#ale#checking',
-      \  'linter_warnings': 'lightline#ale#warnings',
-      \  'linter_errors': 'lightline#ale#errors',
-      \  'linter_ok': 'lightline#ale#ok',
+      \  'linter_warnings': 'LightLineAleWarning',
+      \  'linter_errors': 'LightLineAleError',
+      \  'linter_ok': 'LightLineAleOK',
       \ }
 let g:lightline.component_type = {
       \  'buffers': 'tabsel',
@@ -524,22 +534,39 @@ return &filetype ==# 'unite' ? 'Unite' :
     \ lightline#mode()
 endfunction
 
-function! LLeskk()
-    if exists('*eskk#is_enabled') && &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
-        if eskk#is_enabled()
-            return printf(get(a:000, 0, '[%s]'),
-                \ get(g:eskk#statusline_mode_strings,
-                \ eskk#get_current_instance().mode, '??'))
-        elseif mode() !=# 'i'
-            return s:eskk_insert_status ? printf('[あ]')
-                \ : s:eskk_inserton ? printf('[あ]') : printf('[--]')
-        else
-            return printf('[--]')
+if dein#tap('ale')
+  function! LLGetAle()
+    let l:count = ale#statusline#Count(bufnr(''))
+    let l:errors = l:count.error + l:count.style_error
+    let l:warnings = l:count.warning + l:count.style_warning
+    return l:count.total == 0 ? 'OK' : ':' . l:errors . ' W:' . l:warnings
+  endfunction
+else
+  function! LLGetAle()
+    return ''
+  endfunction
+endif
+
+if dein#tap('ale')
+    function! LLeskk() abort
+        if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
+            if eskk#is_enabled()
+                return printf(get(a:000, 0, '[%s]'),
+                    \ get(g:eskk#statusline_mode_strings,
+                    \ eskk#get_current_instance().mode, '??'))
+            elseif mode() !=# 'i'
+                return s:eskk_insert_status ? printf('[あ]')
+                    \ : s:eskk_inserton ? printf('[あ]') : printf('[--]')
+            else
+                return printf('[--]')
+            endif
         endif
+    endfunction
     else
+    function! LLeskk() abort
         return ''
-    endif
-endfunction
+    endfunction
+endif
 
 function! MyInactiveFilename()
 return &filetype !~# '\v(help|denite|defx|tweetvim)' ? expand('%:t') : LightlineMode()
@@ -634,28 +661,68 @@ else
 endif
 
 endfunction
-
 function! DeniteMode()
     let l:mode_str=denite#get_status('raw_mode')
     call lightline#link(tolower(l:mode_str[0]))
     return l:mode_str
 endfunction
 
+function! Denitebuffer()
+if &filetype ==# 'denite'
+    let l:buffer = denite#get_status('buffer_name')
+    return 'Denite ['. l:buffer . ']'
+else
+    return ''
+endif
+endfunction
+
 function! DeniteSources()
-    let l:sources = '['. denite#get_status('sources'). ']'
+    let l:linenr = denite#get_status('linenr')
+    let l:sources = denite#get_status('sources')
     let l:path =denite#get_status('path')
-    let l:lilnenr = '-'. denite#get_status('linenr'). '-'
-    let l:buffer = '['. denite#get_status('buffer_name'). ']'
-    let denitesource =  l:lilnenr . l:buffer .l:sources . l:path
+    let denitesource = l:linenr . ' - '. '[' .l:sources . ']' . l:path
     if strlen(denitesource) > 100
-        return l:sources .l:path
+        return  l:linenr . ' - '. '[' .l:sources . ']'
     else
         return denitesource
+
     endif
 endfunction
 
 function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightLineAleError() abort
+  return s:ale_string(0)
+endfunction
+
+function! LightLineAleWarning() abort
+  return s:ale_string(1)
+endfunction
+
+function! LightLineAleOk() abort
+  return s:ale_string(2)
+endfunction
+
+function! s:ale_string(mode)
+  if !exists('g:ale_buffer_info')
+    return ''
+  endif
+
+  let l:buffer = bufnr('%')
+  let l:counts = ale#statusline#Count(l:buffer)
+  let [l:error_format, l:warning_format, l:no_errors] = g:ale_statusline_format
+
+  if a:mode == 0 " Error
+    let l:errors = l:counts.error + l:counts.style_error
+    return l:errors ? printf(l:error_format, l:errors) : ''
+  elseif a:mode == 1 " Warning
+    let l:warnings = l:counts.warning + l:counts.style_warning
+    return l:warnings ? printf(l:warning_format, l:warnings) : ''
+  endif
+
+  return l:counts.total == 0? l:no_errors : ''
 endfunction
 
 function! ProfileCursorMove() abort
@@ -753,7 +820,6 @@ endfunction
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
 colorscheme iceberg
-"let g:colors_name = 'iceberg'
 "colorscheme hybrid
 "colorscheme gruvbox
 set background=dark
@@ -765,7 +831,6 @@ if has('GUI')
     let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
 "    set guioptions-=TMrRlLbeg
     set guioptions+=M
-    set guioptions+=a
     set guioptions+=C
     "ツールバー非表示
     set lines=50 "ウィンドウの縦幅
@@ -787,8 +852,11 @@ if has('GUI')
     set guifont=Ricty_Diminished_with-icons:h13:cDEFAULT
     set guifontwide=Ricty_Diminished_with-icons:h13:cDEFAULT
     set renderoptions=type:directx,renmode:5,geom:2
-"    set ambiwidth=single
-"    set ambiwidth=double
+
+    if has('kaoriya')
+        set ambiwidth=auto
+    endif
+
 else
     set t_Co=256
     set termguicolors
@@ -806,9 +874,6 @@ if has('kaoriya')
     nnoremap <S-CR> :ScreenMode 1<CR>
     "背景透過
     autocmd vimrc GUIEnter * set transparency=245
-    set ambiwidth=auto
-else
-    set ambiwidth=single
 endif
 "IME状態でカーソルカラー変更
 if has('multi_byte_ime')
