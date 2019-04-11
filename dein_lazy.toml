@@ -232,6 +232,7 @@ on_cmd = 'Unite'
 [[plugins]]
 repo =  'Shougo/defx.nvim'
 on_cmd = 'Defx'
+rev = '39b11b4'
 hook_add = '''
 "{{{
 nmap <C-e> <Plug>(defx)
@@ -248,7 +249,7 @@ call defx#custom#option('_', {
     \ 'winwidth': 44,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
-    \ 'columns':'mark:filename:time',
+    \ 'columns':'mark:indent:icons:filename:time',
     \ 'sort': 'TIME',
     \ 'ignored_files': '.*,ntuser*,desktop.ini'
     \ })
@@ -348,7 +349,22 @@ nnoremap <silent><buffer><expr> <C-s>
 endfunction
 "}}}
 '''
-
+[[plugins]]
+repo = 'kristijanhusak/defx-icons'
+on_source = 'defx.nvim'
+hook_source = '''
+let g:defx_icons_enable_syntax_highlight = 1
+let g:defx_icons_column_length = 2
+let g:defx_icons_directory_icon = ''
+let g:defx_icons_mark_icon = '*'
+let g:defx_icons_parent_icon = ''
+let g:defx_icons_default_icon = ''
+let g:defx_icons_directory_symlink_icon = ''
+" Options below are applicable only when using "tree" feature
+let g:defx_icons_root_opened_tree_icon = ''
+let g:defx_icons_nested_opened_tree_icon = ''
+let g:defx_icons_nested_closed_tree_icon = ''
+'''
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
 on_event = 'InsertEnter'

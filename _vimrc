@@ -765,7 +765,7 @@ if has('GUI')
     set clipboard=unnamed
     let &guioptions = substitute(&guioptions, '[TMrRlLbeg]', '', 'g')
 "    set guioptions-=TMrRlLbeg
-    set guioptions+=!MC
+    set guioptions+=!M
     "ツールバー非表示
     set lines=50 "ウィンドウの縦幅
     set columns=220 " ウィンドウの横幅
@@ -797,7 +797,7 @@ endif
 "========================================================================
 "+kaoriya {{{
 if has('kaoriya')
-    "autodate
+    "autodate 'Last Change: .'
     let autodate_format ='%Y/%m/%d-%H:%M:%S'
     let autodate_lines = 10
     "フルスクリーン化
