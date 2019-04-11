@@ -82,4 +82,10 @@ repo = 'cocopon/iceberg.vim'
 #let g:gruvbox_guisp_fallback = 'bg'
 #'''
 
+#[[plugins]]
+#repo = 'ryanoasis/vim-devicons'
+#hook_add = '''
+#let g:webdevicons_enable_denite = 1
+#let g:webdevicons_enable_unite = 1
+#'''
 # vim:set foldmethod=marker:

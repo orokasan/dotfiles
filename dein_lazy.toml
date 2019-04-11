@@ -53,7 +53,7 @@ nnoremap <silent> [denite]h :<C-u>Denite
     \ help<CR>
 "最近使用したファイル-neomru
 nnoremap <silent> [denite]n :<C-u>Denite
-  	\ -mode=normal 
+  	\ -mode=normal -winheight=10
     \ file_mru<CR>
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
@@ -75,11 +75,11 @@ hook_post_source = '''
 "{{{
 "denite option
 call denite#custom#option('_', {
-	\ 'prompt': '»',
+	\ 'prompt': '>>',
 	\ 'cursor_wrap': v:true,
 	\ 'winheight': 14,
 	\ 'statusline': v:false,
-    \ 'unique': v:true,
+    \ 'short_source_names': v:true,
     \ 'highlight_mode_normal': 'Visual',
     \ 'highlight_mode_insert': 'ToolbarLine',
     \ 'vertical_preview': v:true,
@@ -104,13 +104,13 @@ call denite#custom#option('search', {
 " Change mappings.
 call denite#custom#map(
       \ 'insert',
-      \ '<C-j>',
+      \ '<C-n>',
       \ '<denite:move_to_next_line>',
       \ 'noremap'
       \)
 call denite#custom#map(
       \ 'insert',
-      \ '<C-k>',
+      \ '<C-p>',
       \ '<denite:move_to_previous_line>',
       \ 'noremap'
       \)
@@ -226,8 +226,7 @@ on_source = ['denite.nvim']
 
 [[plugins]]
 repo =  'Shougo/unite.vim'
-on_cmd = 'Unite'
-
+on_cmd = ['Unite']
 
 [[plugins]]
 repo =  'Shougo/defx.nvim'
@@ -353,17 +352,98 @@ endfunction
 repo = 'kristijanhusak/defx-icons'
 on_source = 'defx.nvim'
 hook_source = '''
+"NerdFont List{{{
+"This list is useful for testing and choosing interesting symbols.
+"Also it's more consistent with current fonts than codepoints shown in README.
+"So, it may worth to add this to the wiki - I've opened issue just to ask is this appropriate. Probably it's better to put it on page with Nerd font loaded.
+"
+"IEC Power Symbols (23FB-23FE,2B58)
+"⏻⏼⏽⏾⭘
+"Font Awesome Extension (moved E000-E0A9 → E200-E2A9)
+"
+"
+"
+"
+"
+"Powerline Extra Symbols (E0A0-E0A3 E0B0-E0BF E0C0-E0C8 E0CC-E0CF E0D0-E0D2 E0D4)
+"
+"Devicons (moved E600-E6C5 → E700-E7C5)
+"
+"
+"
+"
+"
+"Font Awesome (F000-F2E0 with holes)
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"Octicons (2665,26A1, moved F000-F105 with holes → F400-F4A8, moved F27C → F67C)
+"♥⚡
+"
+"
+"
+"
+"
+"Pomicons (E000-E00A)
+"
+"Font Linux (moved F100-F115 with holes → F300-F313)
+"
+"Seti-UI + Custom (E5FA-E62B)
+"
+"
+"}}}
 let g:defx_icons_enable_syntax_highlight = 1
 let g:defx_icons_column_length = 2
 let g:defx_icons_directory_icon = ''
 let g:defx_icons_mark_icon = '*'
 let g:defx_icons_parent_icon = ''
 let g:defx_icons_default_icon = ''
-let g:defx_icons_directory_symlink_icon = ''
+let g:defx_icons_directory_symlink_icon = ''
 " Options below are applicable only when using "tree" feature
 let g:defx_icons_root_opened_tree_icon = ''
 let g:defx_icons_nested_opened_tree_icon = ''
 let g:defx_icons_nested_closed_tree_icon = ''
+let s:colors = {
+      \ 'brown': '905532',
+      \ 'aqua': '3AFFDB',
+      \ 'blue': '689FB6',
+      \ 'darkBlue': '44788E',
+      \ 'purple': '834F79',
+      \ 'lightPurple': '834F79',
+      \ 'red': 'AE403F',
+      \ 'beige': 'F5C06F',
+      \ 'yellow': 'F09F17',
+      \ 'orange': 'D4843E',
+      \ 'darkOrange': 'F16529',
+      \ 'pink': 'CB6F6F',
+      \ 'salmon': 'EE6E73',
+      \ 'green': '8FAA54',
+      \ 'lightGreen': '31B53E',
+      \ 'white': 'C6C8D1'
+      \ }
+let g:defx_icons_extensions = {
+    \'txt' : { 'icon':'', 'color': s:colors.white},
+    \'pdf' : { 'icon':'', 'color': s:colors.red},
+    \'docx' : { 'icon':'', 'color': s:colors.blue},
+    \'doc' : { 'icon':'', 'color': s:colors.blue},
+    \'xlsx' : { 'icon':'', 'color': s:colors.green},
+    \'pptx' : { 'icon':'', 'color': s:colors.orange},
+    \'ppt' : { 'icon':'', 'color': s:colors.orange}
+    \}
 '''
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
@@ -674,7 +754,6 @@ hook_add = '''
 nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
 nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
-nnoremap <silent> <Leader>tu :Unite tweetvim<CR>
 nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
 "}}}
 '''
@@ -720,8 +799,7 @@ tweetvim = '''
 "各種アクション
 nnoremap <buffer>S :<C-u>TweetVimSay<CR>
 nnoremap <buffer>m :<C-u>TweetVimMentions<CR>
-nnoremap <buffer>t :<C-u>Unite tweetvim -no-start-insert -quick-match<CR>
-nnoremap <buffer><Leader>u :<C-u>:Unite tweetvim<CR>
+nnoremap <buffer><Leader>j :<C-u>Denite unite:tweetvim<CR>
 nnoremap <buffer>j }j
 nnoremap <buffer>k k{j
 nnoremap <buffer>th :TweetVimHomeTimeline<CR>
@@ -789,9 +867,5 @@ on_cmd = 'BenchVimrc'
 repo = 'cespare/vim-toml'
 on_ft = 'toml'
 
-[[plugins]]
-repo = 'wsdjeg/dein-ui.vim'
-on_cmd = 'DeinUpdate'
-depends = ['dein.vim']
 
 # vim:set foldmethod=marker:

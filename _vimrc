@@ -683,7 +683,6 @@ endfunction
 "}}}
 "-----------------------------------------------------------------------
 "eskk.vim"{{{
-	let g:eskk_dictionary = '~/dotfiles/.skk-jisyo'
 "InsertLeaveイベント上で他プラグインと干渉する(順序の問題?)
 "=> vimrcをリロードすると動作しなくなる
 "リセットのタイミングを変えることで直った(?)
@@ -763,9 +762,11 @@ set background=dark
 "Gvim {{{
 if has('GUI')
     set clipboard=unnamed
-    let &guioptions = substitute(&guioptions, '[TMrRlLbeg]', '', 'g')
+    let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
 "    set guioptions-=TMrRlLbeg
-    set guioptions+=!M
+    set guioptions+=M
+    set guioptions+=a
+    set guioptions+=C
     "ツールバー非表示
     set lines=50 "ウィンドウの縦幅
     set columns=220 " ウィンドウの横幅
@@ -783,8 +784,8 @@ if has('GUI')
 "    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
 "Nerdfont
 "https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
-    set guifont=Ricty_Diminished_with-icons:h13.5:cDEFAULT
-    set guifontwide=Ricty_Diminished_with-icons:h13.5:cDEFAULT
+    set guifont=Ricty_Diminished_with-icons:h13:cDEFAULT
+    set guifontwide=Ricty_Diminished_with-icons:h13:cDEFAULT
     set renderoptions=type:directx,renmode:5,geom:2
 "    set ambiwidth=single
 "    set ambiwidth=double
