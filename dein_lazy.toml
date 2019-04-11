@@ -342,9 +342,8 @@ nnoremap <silent><buffer><expr> <C-g>
 \ defx#do_action('print')
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer><expr> <C-s>
-\ call <SID>denite_rec<CR>
-endfunction
+nnoremap <silent><buffer> <C-s>
+\:call <SID>denite_rec<CR>
 
 function! s:getdefxbasedir(candidate) abort
     if line('.') == 1

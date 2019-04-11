@@ -40,6 +40,7 @@ let g:loaded_netrwFileHandlers = 1
 "参考:https://gammasoft.jp/python/python-version-management/
 "kaoriya-vimのpythonに揃える
 "64bit版を使用する
+set runtimepath+='~/vimfiles'
 set runtimepath+="C:\Program Files\Python37"
 let g:python_host_prog ='C:\Program Files (x86)\Python2.7\python.exe'
 let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
@@ -262,8 +263,11 @@ let mapleader = "\<Space>"
 nnoremap + <C-a> "数字のプラス
 nnoremap - <C-x> "マイナス
 nnoremap 0 ^
+xnoremap 0 ^
 nnoremap ^ 0
+xnoremap ^ 0
 nnoremap 4 $
+xnoremap 4 $
 " Create a blank line above/below current line
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
@@ -334,19 +338,13 @@ nnoremap <leader>wv :vsp<CR>:bprev<CR>
 nnoremap <leader>wc :close<CR>
 nnoremap <leader>wn :vne<CR>
 nnoremap <leader>wo :only<CR>
-"Shift-l, Shift-hで行末, 行頭に移動
-nnoremap <S-l> <End>
-nnoremap <S-h> <Home>
-" インサートモード時は emacs like なキーバインド
+""Shift-l, Shift-hで行末, 行頭に移動
+"nnoremap <S-l> <End>
+"nnoremap <S-h> <Home>
+" インサートモード時はちょっとemacs like なキーバインド
 inoremap <C-f> <Right>|			" C-f で左へ移動
 inoremap <C-b> <Left>|			" C-b で右へ移動
-"inoremap <C-p> <Up>|			" C-p で上へ移動
-"inoremap <C-n> <Down>|			" C-n で下へ移動
-inoremap <C-a> <Home>|			" C-a で行頭へ移動
-inoremap <C-e> <End>|			" C-e で行末へ移動
 inoremap <C-h> <BS>|			" C-h でバックスペース
-inoremap <C-m> <CR>|			" C-m で改行
-inoremap <C-l> <del>
 "window移動
 nnoremap <C-h> <C-w>h|			" Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-j> <C-w>j|			" Ctrl + hjkl でウィンドウ間を移動
@@ -393,8 +391,8 @@ if &runtimepath !~# '/dein.vim'
  execute 'set runtimepath+=' .fnamemodify(s:dein_repo_dir, ':p')
 endif
 
- let s:toml      = '~/dotfiles/dein.toml'
- let s:lazy_toml = '~/dotfiles/dein_lazy.toml'
+let s:toml      = '~/dotfiles/dein.toml'
+let s:lazy_toml = '~/dotfiles/dein_lazy.toml'
 
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir)
@@ -418,7 +416,7 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath()
 let g:lightline = {
 \ 'colorscheme': 'iceberg',
     \ 'active': {
-        \ 'left': [ [ 'mode', 'paste' ],['eskk','gitbranch','denitebuf'], [ 'readonly', 'relativepath'] ],
+        \ 'left': [ [ 'mode', 'paste' ],['eskk','denitebuf','gitbranch'], [ 'readonly', 'relativepath'] ],
         \ 'right': [
         \ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','charcount','lineinfo' ],
         \ ['percent'], [ 'IMEstatus','filetype' ] 
@@ -459,14 +457,10 @@ let g:lightline = {
         \ 'mode': 1,
     \ }
 \ }
-"if has('GUI')
-"
    let g:lightline.separator= { 'left': '', 'right': '' }
    let g:lightline.subseparator= { 'left': '', 'right': '' }
-"
 "   let g:lightline.separator= { 'left': '', 'right': '' }
 "   let g:lightline.subseparator= { 'left': '', 'right': '' }
-"endif
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 
@@ -487,9 +481,6 @@ let g:lightline#bufferline#number_map = {
 \ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
 
-command! -bar LightlineUpdate    call lightline#init()|
-  \ call lightline#colorscheme()|
-  \ call lightline#update()
 
 function! LightlineMode()
 return &filetype ==# 'unite' ? 'Unite' :
@@ -500,20 +491,24 @@ return &filetype ==# 'unite' ? 'Unite' :
     \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
     \ lightline#mode()
 endfunction
+"例外filetype
+let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite)'
 
 if dein#tap('eskk.vim')
     function! LLeskk() abort
-        if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
-            if eskk#is_enabled()
-                return printf(get(a:000, 0, '[%s]'),
-                    \ get(g:eskk#statusline_mode_strings,
-                    \ eskk#get_current_instance().mode, '??'))
-            elseif mode() !=# 'i'
-                return g:eskk_my_toggle_status ? printf('[あ]') : printf('[--]')
-            else
-                return printf('[--]')
-            endif
+    if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim)'
+        if eskk#is_enabled()
+            return printf(get(a:000, 0, '[%s]'),
+                \ get(g:eskk#statusline_mode_strings,
+                \ eskk#get_current_instance().mode, '??'))
+        elseif mode() !=# 'i'
+            return g:eskk_my_toggle_status ? printf('[あ]') : printf('[--]')
+        else
+            return printf('[--]')
         endif
+    else
+            return ''
+    endif
     endfunction
     else
     function! LLeskk() abort
@@ -522,7 +517,7 @@ if dein#tap('eskk.vim')
 endif
 
 function! MyInactiveFilename()
-return &filetype !~# '\v(help|denite|defx|tweetvim)' ? expand('%:t') : LightlineMode()
+return &filetype !~# s:ignore_filetype ? expand('%:t') : LightlineMode()
 endfunction
 
 "lightlineに渡す変数の設定
@@ -552,7 +547,7 @@ function! s:llvarCharCount()
 endfunction
 
 function! LLCharcount()
-    if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim|denite)'
+    if &filetype !~? s:ignore_filetype
         \ && winwidth(0) > 40
         return s:llcharcount . '/' . s:llcharallcount
     else
@@ -573,7 +568,7 @@ endfunction
 
 function! LLgitbranch()
   try
-    if &filetype !~? 'vimfiler\|gundo' && exists('s:llgit') && winwidth(0) > 40
+    if &filetype !~?  s:ignore_filetype && exists('s:llgit') && winwidth(0) > 40
     let l:br = s:llgit
     return strlen(l:br) && winwidth(0) > 100  ? ' '. l:br :
       \strlen(l:br) ? ' ': ''
@@ -588,7 +583,7 @@ endfunction
 function! MyFilepath()
 if &filetype ==# 'denite' 
     return DeniteSources()
-elseif &filetype !~? 'vimfiler\|gundo|\defx\|tweetvim'
+elseif &filetype !~? s:ignore_filetype
     let l:ll_filepath = expand('%:~')
     let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
@@ -634,28 +629,33 @@ function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 
-function! ProfileCursorMove() abort
-  let profile_file = expand('~/log/vim-profile.log')
-  if filereadable(profile_file)
-    call delete(profile_file)
-  endif
-
-  normal! gg
-  normal! zR
-
-  execute 'profile start ' . profile_file
-  profile func *
-  profile file *
-
-  augroup ProfileCursorMove
-    autocmd!
-    autocmd CursorHold <buffer> profile pause | q
-  augroup END
-
-  for i in range(100)
-    call feedkeys('j')
-  endfor
-endfunction
+"デバッグ用
+"command! -bar LightlineUpdate    call lightline#init()|
+"  \ call lightline#colorscheme()|
+"  \ call lightline#update()
+"
+"function! ProfileCursorMove() abort
+"  let profile_file = expand('~/log/vim-profile.log')
+"  if filereadable(profile_file)
+"    call delete(profile_file)
+"  endif
+"
+"  normal! gg
+"  normal! zR
+"
+"  execute 'profile start ' . profile_file
+"  profile func *
+"  profile file *
+"
+"  augroup ProfileCursorMove
+"    autocmd!
+"    autocmd CursorHold <buffer> profile pause | q
+"  augroup END
+"
+"  for i in range(100)
+"    call feedkeys('j')
+"  endfor
+"endfunction
 "}}}
 "-----------------------------------------------------------------------
 "文字数カウント "{{{
