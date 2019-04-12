@@ -256,6 +256,7 @@ on_cmd = ['Unite']
 
 [[plugins]]
 repo =  'Shougo/defx.nvim'
+depends = [ 'nvim-yarp', 'vim-hug-neovim-rpc' ]
 on_cmd = 'Defx'
 rev = '39b11b4'
 hook_add = '''
@@ -482,6 +483,7 @@ let g:defx_icons_extensions = {
 '''
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
+depends = [ 'nvim-yarp', 'vim-hug-neovim-rpc' ]
 on_event = 'InsertEnter'
 hook_source = '''
  "{{{
@@ -494,14 +496,18 @@ function! s:check_back_space() abort "{{{
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
 " <S-TAB>: completion back.
-inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
-inoremap <expr><C-e>       deoplete#refresh()
-inoremap <expr><C-g>       deoplete#cancel_popup()
-inoremap <expr><C-n> deoplete#mappings#manual_complete()
-inoremap <expr><C-h>
-\ deoplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS>
-\ deoplete#smart_close_popup()."\<C-h>"
+inoremap <silent><expr><S-TAB>
+    \ pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <silent><expr><C-e> 
+    \ deoplete#refresh()
+inoremap <silent><expr><C-g>
+    \ deoplete#undo_completion()
+inoremap <silent><expr><C-n>
+    \ deoplete#mappings#manual_complete()
+inoremap <silent><expr><C-h>
+    \ deoplete#smart_close_popup()."\<C-h>"
+inoremap <silent><expr><BS>
+    \ deoplete#smart_close_popup()."\<C-h>"
 "inoremap <silent><expr><C-l>       deoplete#complete_common_string()
 inoremap <expr><C-l>       deoplete#insert_candidate(0)
 "" <CR>: close popup and save indent.
@@ -547,8 +553,8 @@ call deoplete#custom#option({
     \ 'auto_complete_delay': 10,
     \ 'skip_multibyte': v:true,
     \ 'max_list': 30,
-    \ 'min_pattern_length': 1,
-    \ 'prev_completion_mode': 'none',
+    \ 'min_pattern_length': 2,
+    \ 'prev_completion_mode': 'filter',
     \ 'yarp': v:true,
     \ 'num_processes': 4
     \ })
@@ -558,6 +564,7 @@ call deoplete#enable()
 
 [[plugins]]
 repo =  'Shougo/neco-vim'
+depends = [ 'deoplete.nvim' ]
 on_ft = 'vim'
 
 [[plugins]]
@@ -592,11 +599,13 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 '''
 [[plugins]]
 repo =  'Shougo/neosnippet-snippets'
+on_source = 'neosnippet'
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
 on_event = 'InsertEnter'
 hook_add = '''
+"{{{
 let g:eskk#debug = 0
 let g:eskk#show_annotation = 1
 let g:eskk#rom_input_style = 'msime'
@@ -614,6 +623,7 @@ let g:eskk#cursor_color = {
 \   'zenei': '#ffd700',
 \}
 nnoremap <silent><expr><C-y> <SID>eskk_inserttoggle()
+"}}}
 '''
 hook_source = '''
 augroup myeskk
@@ -693,6 +703,16 @@ call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
 [[plugins]]
 repo =  'kana/vim-operator-user'
 on_source = ['vim-operator-surround']
+on_source = ['vim-operator-replace']
+
+[[plugins]]
+repo = 'kana/vim-operator-replace'
+depends = 'vim-operator-user'
+on_map = {nv = '<Plug>'}
+hook_add = '''
+nmap _ <Plug>(operator-replace)
+vmap _ <Plug>(operator-replace)
+'''
 
 [[plugins]]
 repo =  'tyru/open-browser.vim'
@@ -800,6 +820,7 @@ let g:gundo_playback_delay = 500
 
 [[plugins]]
 repo =  'nathanaelkane/vim-indent-guides'
+on_cmd = 'IndentGuideToggle'
 hook_add = '''
 nnoremap <silent><Leader>ig :IndentGuidesToggle<CR>
 '''
@@ -810,6 +831,7 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 
 [[plugins]]
 repo =  'w0rp/ale'
+on_event = 'InsertEnter'
 hook_post_source ='''
 "{{{
 "https://efcl.info/2015/09/10/introduce-textlint/
@@ -825,7 +847,7 @@ let g:ale_linters = {
     \ 'text':['textlint']
     \ }
 let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
+let g:ale_set_quickfix = 0
 let g:ale_sign_column_always = 1
 let g:ale_lint_delay = 5000
 let g:ale_lint_on_enter = 0
@@ -854,7 +876,7 @@ let g:choosewin_label = 'ASDFGHJKL'
 [[plugins]]
 repo =  'basyura/TweetVim'
 on_cmd = ['TweetVimHomeTimeline','TweetVimSay']
-depends = ['twibill.vim','webapi-vim','open-browser.vim']
+depends = ['twibill.vim','webapi-vim']
 hook_add = '''
 "{{{
 nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
@@ -938,13 +960,6 @@ nunmap   <buffer>bb
 "}}}
 '''
 
-[[plugins]]
-repo =  'mattn/webapi-vim'
-on_source = 'TweetVim'
-
-[[plugins]]
-repo =  'basyura/twibill.vim'
-on_source = 'TweetVim'
 
 [[plugins]]
 repo = 'previm/previm'
@@ -957,7 +972,7 @@ nnoremap <silent><Leader>pmd :PrevimOpen<CR>
 [[plugins]]
 repo =  'rhysd/vim-operator-surround'
 depends = 'vim-operator-user'
-on_map = {v= '<Plug>'}
+on_map = {nv= '<Plug>'}
 hook_add = '''
 map <silent>ta <Plug>(operator-surround-append)
 map <silent>td <Plug>(operator-surround-delete)
@@ -983,11 +998,26 @@ nnoremap <silent><C-s> :OverCommandLine<CR>%s//gc<Left><Left><Left>
 [[plugins]]
 repo = 'osyo-manga/vim-precious'
 on_ft = 'toml'
+hook_source = '''
+" カーソル移動時の自動切り替えを無効化
+" このオプションは filetype ごとに設定可能
+" "*" は全ての filetype に影響する
+let g:precious_enable_switch_CursorMoved = {
+\   "*" : 0
+\}
+let g:precious_enable_switch_CursorMoved_i = {
+\   "*" : 0
+\}
 
+" insert に入った時にスイッチし、抜けた時に元に戻す
+augroup test
+    autocmd!
+    autocmd InsertEnter * :PreciousSwitch
+    autocmd InsertLeave * :PreciousReset
+augroup END
+'''
 [[plugins]]
 repo = 'mattn/benchvimrc-vim'
 on_cmd = 'BenchVimrc'
-
-
 
 # vim:set foldmethod=marker:

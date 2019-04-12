@@ -439,6 +439,8 @@ let g:lightline = {
         \ 'left': [['inactivefn']],
         \ 'right': [[ 'lineinfo' ]]
     \ },
+    \ 'tabline' : {'left': [['buffers']], 'right': [ ['close'], ['gina'] ]
+    \ },
     \ 'component':{
         \ 'lineinfo':'%-2v:%3l'
     \},
@@ -451,6 +453,7 @@ let g:lightline = {
         \ 'mode': 'LLMode',
         \ 'charcount':'LLCharcount',
         \ 'eskk': 'LLeskk',
+        \ 'gina': 'gina#component#traffic#preset',
         \ 'gitbranch':'LLgitbranch'
     \ },
     \ 'component_expand': {
@@ -466,8 +469,6 @@ let g:lightline = {
         \ 'linter_warnings': 'warning',
         \ 'linter_errors': 'error',
         \ 'linter_ok': 'left'
-    \ },
-    \ 'tabline' : {'left': [['buffers']]
     \ },
     \ 'component_function_visible_condition': {
         \ 'mode': 1,
@@ -506,7 +507,7 @@ endfunction
 "例外filetype
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite)'
 
-if dein#tap('eskk.vim')
+if dein#is_sourced('eskk.vim')
     function! LLeskk() abort
     if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim)'
         if eskk#is_enabled()
