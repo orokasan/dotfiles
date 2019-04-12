@@ -22,9 +22,9 @@ nnoremap <silent> ? :<C-u>Denite
   	\ -buffer-name=search -auto-highlight
   	\ line<CR>
 "デナイト・キーワードサーチ
-nnoremap <silent> * :<C-u>DeniteCursorWord
-  	\ -buffer-name=search
-  	\ -auto-highlight -mode=normal line<CR>
+"nnoremap <silent> * :<C-u>DeniteCursorWord
+"  	\ -buffer-name=search
+"  	\ -auto-highlight -mode=normal line<CR>
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
   	\ -mode=normal
@@ -68,11 +68,18 @@ nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
 nnoremap <silent> [denite]a :<C-u>Denite
 	\ -buffer-name=search -mode=normal
 	\ ale<CR>
-"nnoremap <silent>n :<C-u>Denite
-"    \ -cursor-pos=+1 -immediately
-"    \ -buffer-name=search
-"    \ -resume -mode=normal -refresh<CR>
-
+nnoremap <silent><Leader>n :<C-u>Denite
+    \ -cursor-pos=+1 -immediately
+    \ -buffer-name=search -no-empty
+    \ -resume -mode=normal -refresh<CR>
+nnoremap <silent><Leader>n :<C-u>Denite
+    \ -cursor-pos=-1 -immediately
+    \ -buffer-name=search -no-empty
+    \ -resume -mode=normal -refresh<CR>
+"コマンド結果をdeniteに出力
+nnoremap [denite]o :<C-u>Denite
+    \ -buffer-name=search
+    \ output:
 "open dirmark-bookmark in Denite
 nnoremap <silent> [denite]d :<C-u>Denite
     \ -buffer-name=normal
@@ -172,14 +179,24 @@ call denite#custom#source(
 " Add custom menus
 let s:menus = {
     \ }
-let s:menus.window_size = {
-	\ 'description': 'Change window size'
-	\ }
+let s:menus.window_size = {'description': 'Change window size' }
 let s:menus.window_size.command_candidates = [
 	\ ['150x40', 'set lines=40 columns=150'],
 	\ ['220x50', 'set lines=50 columns=220'],
 	\ ['Fullscreen-> :SM 6<CR> ', '']
 	\ ]
+let s:menus.string = {'description': 'string utilities.'}
+let s:menus.string.command_candidates = [
+      \ ['format: reverse lines', 'g/^/m0'],
+      \ ['format: remove ^M', '%s///g'],
+      \ ['format: querystring', 'silent! %s/&amp;/\&/g | silent! %s/&/\r&/g | silent! %s/=/\r=/g'],
+      \ ['format: to smb', 'silent! %s/\\/\//g | silent! %s/^\(smb:\/\/\|\/\/\)\?/smb:\/\//g']
+      \ ]
+let s:menus.vim = {'description': 'vim runtime.'}
+let s:menus.vim.command_candidates = [
+      \ ['upgrade: dein:deps', 'call dein#update()']
+      \ ]
+
 call denite#custom#var('menu', 'menus', s:menus)
 
 "" Ag command on grep/filerec source
@@ -261,11 +278,13 @@ call defx#custom#option('_', {
     \ 'winwidth': 44,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
-    \ 'columns':'mark:indent:icons:filename:time',
+    \ 'columns':'mark:indent:icons:filename',
     \ 'sort': 'TIME',
     \ 'ignored_files': '.*,ntuser*,desktop.ini'
     \ })
-
+call defx#custom#column('indent', {
+    \ 'indent': ' |'
+    \ })
 "call defx#custom#column('filename', {
 "      \ 'directory_icon': '',
 "      \ 'opened_icon': '',
@@ -573,12 +592,6 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 '''
 [[plugins]]
 repo =  'Shougo/neosnippet-snippets'
-[[plugins]]
-repo =  'iwataka/minidown.vim'
-on_ft = 'markdown'
-hook_add = '''
-nnoremap <Leader>pmd <C-u>:Minidown<CR>
-'''
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
@@ -794,6 +807,7 @@ hook_source ='''
 let g:indent_guides_exclude_filetypes = ['help', 'defx']
 '''
 
+
 [[plugins]]
 repo =  'w0rp/ale'
 hook_post_source ='''
@@ -895,7 +909,7 @@ nnoremap <buffer><Leader>j :<C-u>Denite unite:tweetvim<CR>
 nnoremap <buffer>j }j
 nnoremap <buffer>k k{j
 nnoremap <buffer>th :TweetVimHomeTimeline<CR>
-
+nnoremap <buffer>r :redraw<CR>
 nmap <buffer>c <Plug>(tweetvim_action_in_reply_to)
 nmap <buffer><Leader>F <Plug>(tweetvim_action_remove_favorite)
 nmap <buffer><Leader>d <Plug>(tweetvim_action_remove_status)
@@ -933,9 +947,17 @@ repo =  'basyura/twibill.vim'
 on_source = 'TweetVim'
 
 [[plugins]]
+repo = 'previm/previm'
+depends = 'open-browser.vim'
+on_ft = ['markdown']
+hook_add = '''
+nnoremap <silent><Leader>pmd :PrevimOpen<CR>
+'''
+
+[[plugins]]
 repo =  'rhysd/vim-operator-surround'
 depends = 'vim-operator-user'
-on_map = {v = '<Plug>'}
+on_map = {v= '<Plug>'}
 hook_add = '''
 map <silent>ta <Plug>(operator-surround-append)
 map <silent>td <Plug>(operator-surround-delete)
@@ -952,12 +974,20 @@ let g:operator#surround#blocks['-'] = [
 '''
 
 [[plugins]]
+repo = 'osyo-manga/vim-over'
+on_cmf = 'OverCommandLine'
+hook_add = '''
+nnoremap <silent><C-s> :OverCommandLine<CR>%s//gc<Left><Left><Left>
+'''
+
+[[plugins]]
+repo = 'osyo-manga/vim-precious'
+on_ft = 'toml'
+
+[[plugins]]
 repo = 'mattn/benchvimrc-vim'
 on_cmd = 'BenchVimrc'
 
-[[plugins]]
-repo = 'cespare/vim-toml'
-on_ft = 'toml'
 
 
 # vim:set foldmethod=marker:

@@ -77,7 +77,7 @@ if has('nvim')
 else
   " Display candidates by list.
     set wildmenu
-    set wildmode=longest
+    set wildmode=longest:full
 endif
 "
 " Adjust window size of preview and help.
@@ -169,7 +169,15 @@ let g:vim_indent_cont = 4
 set autoindent
 "vimが自動でインデントを行った際、設定する空白数
 set shiftwidth=4
-" The prefix key.
+"
+" Localize search options.
+autocmd vimrc WinLeave *
+\     let b:vimrc_pattern = @/
+\   | let b:vimrc_hlsearch = &hlsearch
+autocmd vimrc WinEnter *
+\     let @/ = get(b:, 'vimrc_pattern', @/)
+\   | let &l:hlsearch = get(b:, 'vimrc_hlsearch', &l:hlsearch)
+
 " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
 set ignorecase
 " 検索文字列に大文字が含まれている場合は区別して検索する
@@ -260,6 +268,7 @@ endif
 
 let mapleader = "\<Space>"
 
+nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
 nnoremap + <C-a> "数字のプラス
 nnoremap - <C-x> "マイナス
 nnoremap 0 ^
@@ -279,11 +288,15 @@ inoremap jk <esc>
 nnoremap <silent>Y y$
 xnoremap <silent>Y y$
 " TABで対応ペアにジャンプ
-nnoremap <Tab> %
-xnoremap <Tab> %
+nmap <Tab> %
+vmap <Tab> %
 " 折り返し時に表示行単位での移動できるようにする
 nnoremap  j gj
 nnoremap  k gk
+" handy replace.
+nnoremap <Leader>*  *:<C-u>%s/<C-r>///g<C-f><Left><Left>
+vnoremap <Leader>*  y:<C-u>%s/<C-r>"//g<C-f><Left><Left>
+vnoremap <expr><CR> printf(':s/%s//g<C-f><Left><Left>', expand('<cword>'))
 "CTRL-sで保存！
 imap <c-s> <Esc>:w<CR>a
 "CTRL-qでclose
@@ -416,7 +429,7 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath()
 let g:lightline = {
 \ 'colorscheme': 'iceberg',
     \ 'active': {
-        \ 'left': [ [ 'mode', 'paste' ],['eskk','denitebuf','gitbranch'], [ 'readonly', 'relativepath'] ],
+        \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','gitbranch'], [ 'readonly', 'relativepath'] ],
         \ 'right': [
         \ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','charcount','lineinfo' ],
         \ ['percent'], [ 'IMEstatus','filetype' ] 
@@ -426,16 +439,19 @@ let g:lightline = {
         \ 'left': [['inactivefn']],
         \ 'right': [[ 'lineinfo' ]]
     \ },
+    \ 'component':{
+        \ 'lineinfo':'%-2v:%3l'
+    \},
     \ 'component_function': {
-        \ 'readonly':'LightlineReadonly',
-        \ 'gitbranch': 'LLgitbranch',
-        \ 'denitebuf': 'Denitebuffer',
-        \ 'filetype': 'LightlineFiletype',
-        \ 'inactivefn':'MyInactiveFilename',
-        \ 'relativepath':'MyFilepath',
-        \ 'mode': 'LightlineMode',
+        \ 'readonly':'LLReadonly',
+        \ 'denitebuf': 'LLDeniteBuffer',
+        \ 'filetype': 'LLFiletype',
+        \ 'inactivefn':'LLInactiveFilename',
+        \ 'relativepath':'LLMyFilepath',
+        \ 'mode': 'LLMode',
         \ 'charcount':'LLCharcount',
-        \ 'eskk': 'LLeskk'
+        \ 'eskk': 'LLeskk',
+        \ 'gitbranch':'LLgitbranch'
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
@@ -465,12 +481,8 @@ let g:lightline = {
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 
 if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
-    let g:lightline.component = {
-        \'lineinfo':'%-2v:%3l'
-        \}
 else
-    let g:lightline.component = {
-        \'lineinfo':'%-2v:%3l',
+    let g:lightline.component += {
         \'IMEstatus':'%{IMStatus("-JP-")}'
         \}
 endif
@@ -482,9 +494,9 @@ let g:lightline#bufferline#number_map = {
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
 
 
-function! LightlineMode()
+function! LLMode()
 return &filetype ==# 'unite' ? 'Unite' :
-    \ &filetype ==# 'denite' ? DeniteMode() :
+    \ &filetype ==# 'denite' ? LLDeniteMode() :
     \ &filetype ==# 'help' ? 'Help' :
     \ &filetype ==# 'defx' ? 'Defx' :
     \ &filetype ==# 'gundo' ? 'Gundo' :
@@ -516,8 +528,8 @@ if dein#tap('eskk.vim')
     endfunction
 endif
 
-function! MyInactiveFilename()
-return &filetype !~# s:ignore_filetype ? expand('%:t') : LightlineMode()
+function! LLInactiveFilename()
+return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
 endfunction
 
 "lightlineに渡す変数の設定
@@ -555,34 +567,31 @@ function! LLCharcount()
     endif
 endfunction
 
-function! LightlineReadonly()
+function! LLReadonly()
 "    return &readonly ? '⭤' : ''
     return &readonly ? '' : ''
 endfunction
 
-autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgit()
-let s:llgit = 0
-function! s:llgit()
-let s:llgit = exists('*gitbranch#name') ? gitbranch#name() : ''
-endfunction
-
-function! LLgitbranch()
-  try
-    if &filetype !~?  s:ignore_filetype && exists('s:llgit') && winwidth(0) > 40
-    let l:br = s:llgit
-    return strlen(l:br) && winwidth(0) > 100  ? ' '. l:br :
-      \strlen(l:br) ? ' ': ''
+let s:llgitbranch = ''
+autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgitcache()
+function! s:llgitcache()
+    let l:git = gitbranch#name()
+    if &filetype !~? s:ignore_filetype && strlen(l:git)
+        let s:llgitbranch =  winwidth(0) > 100  ? ' '. l:git :' '
+    else
+        let s:llgitbranch = ''
 "    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
 "      \strlen(_) ? ' ⭠': ''
     endif
-  catch
-  endtry
-  return ''
 endfunction
 
-function! MyFilepath()
+function! LLgitbranch() abort
+    return s:llgitbranch
+endfunction
+
+function! LLMyFilepath()
 if &filetype ==# 'denite' 
-    return DeniteSources()
+    return LLDeniteSource()
 elseif &filetype !~? s:ignore_filetype
     let l:ll_filepath = expand('%:~')
     let l:ll_filename = expand('%:t')
@@ -597,13 +606,13 @@ else
 endif
 
 endfunction
-function! DeniteMode()
+function! LLDeniteMode()
     let l:mode_str=denite#get_status('raw_mode')
     call lightline#link(tolower(l:mode_str[0]))
     return l:mode_str
 endfunction
 
-function! Denitebuffer()
+function! LLDeniteBuffer()
 if &filetype ==# 'denite'
     let l:buffer = denite#get_status('buffer_name')
     return 'Denite ['. l:buffer . ']'
@@ -612,7 +621,7 @@ else
 endif
 endfunction
 
-function! DeniteSources()
+function! LLDeniteSource()
     let l:linenr = denite#get_status('linenr')
     let l:sources = denite#get_status('sources')
     let l:path =denite#get_status('path')
@@ -621,11 +630,10 @@ function! DeniteSources()
         return  l:linenr . ' - '. '[' .l:sources . ']'
     else
         return denitesource
-
     endif
 endfunction
 
-function! LightlineFiletype()
+function! LLFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 
@@ -753,4 +761,7 @@ if has('multi_byte_ime')
 endif
 
 "}}}
+if has('migemo')
+    set migemo
+endif
 "vim:set foldmethod=marker:

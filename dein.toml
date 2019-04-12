@@ -11,7 +11,7 @@ if = '''! has('nvim')'''
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
-hook_source = '''
+hook_add = '''
 let g:jasegment#model='knbc_bunsetu'
 let g:jasentence_endpat = '[。．？！]\+'
 '''
@@ -28,6 +28,8 @@ let g:lightline#ale#indicator_warnings = "\uf48f"
 let g:lightline#ale#indicator_errors = "\uf484"
 let g:lightline#ale#indicator_ok = "\uf43a"
 '''
+[[plugins]]
+repo = 'haya14busa/vim-migemo'
 
 [[plugins]]
 repo =  'itchyny/vim-gitbranch'
@@ -41,6 +43,9 @@ let g:neomru#file_mru_ignore_pattern = 'gina://'
 '''
 
 [[plugins]]
+repo = 'cespare/vim-toml'
+
+[[plugins]]
 repo =  'itchyny/lightline.vim'
 
 [[plugins]]
@@ -49,8 +54,21 @@ repo =  'mengelbrecht/lightline-bufferline'
 #[[plugins]]
 #repo =  'Shougo/echodoc.vim'
 
+#[[plugins]]
+#repo = 'rhysd/clever-f.vim'
+#hook_add = '''
+#'''
 [[plugins]]
+repo = 'kana/vim-operator-replace'
+depends = 'vim-operator-user'
+hook_add = '''
+map _  <Plug>(operator-replace)
+'''
 
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+
+[[plugins]]
 repo = 'cocopon/iceberg.vim'
 #on_if = ''' g:colors_name='iceberg' '''
 
