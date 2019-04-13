@@ -50,7 +50,7 @@ let g:vimproc#download_windows_dll = 1
 "========================================================================================
 "外観  {{{
 
-set shortmess+=IaT
+set shortmess+=IaTs
 "常にタブラインを表示
 set showtabline=2
 " 括弧入力時の対応する括弧を表示
@@ -66,8 +66,9 @@ nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
 nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
 "モードライン設定
 set modelines=5
-" ビープ音を可視化
-set visualbell
+" ビープを停止
+set visualbell t_vb=
+set noerrorbells
 
 if has('nvim')
   " Display candidates by popup menu.
@@ -304,7 +305,10 @@ nnoremap <silent> <C-q> :close<CR>
 " For JIS keyboard
 inoremap <C-@> <ESC>
 "日付を入力
-inoremap <expr> <F2> strftime("%Y%m%d")
+inoremap <F2> Last Change: .
+"検索メッセージを非表示
+nnoremap <silent> n n
+nnoremap <silent> N N
 "句読点を強引に挿入
 nnoremap <Leader>, a、<Esc>
 nnoremap <Leader>. a。<Esc>
@@ -406,17 +410,19 @@ endif
 
 let s:toml      = '~/dotfiles/dein.toml'
 let s:lazy_toml = '~/dotfiles/dein_lazy.toml'
+let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_dir)
-        call dein#load_toml(s:toml,      {'lazy': 0})
-        call dein#load_toml(s:lazy_toml, {'lazy': 1})
+    call dein#begin(s:dein_dir,s:myvimrc)
+    call dein#load_toml(s:toml,      {'lazy': 0})
+    call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
     call dein#save_state()
 endif
 
 filetype plugin indent on
 syntax enable
+"autocmd vimrc VimEnter * call dein#call_hook('post_source')
 
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
@@ -430,16 +436,16 @@ let g:lightline = {
 \ 'colorscheme': 'iceberg',
     \ 'active': {
         \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','gitbranch'], [ 'readonly', 'relativepath'] ],
-        \ 'right': [
-        \ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','charcount','lineinfo' ],
-        \ ['percent'], [ 'IMEstatus','filetype' ] 
+        \ 'right': [ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','lineinfo' ], ['charcount'], [ 'percent','IMEstatus'] 
         \ ]
     \ },
     \ 'inactive': {
         \ 'left': [['inactivefn']],
         \ 'right': [[ 'lineinfo' ]]
     \ },
-    \ 'tabline' : {'left': [['buffers']], 'right': [ ['close'], ['gina'] ]
+    \ 'tabline' : {
+    \ 'left': [['buffers']], 
+    \ 'right': [ ['winnr'],['fileencoding','filetype'] ]
     \ },
     \ 'component':{
         \ 'lineinfo':'%-2v:%3l'
@@ -453,7 +459,6 @@ let g:lightline = {
         \ 'mode': 'LLMode',
         \ 'charcount':'LLCharcount',
         \ 'eskk': 'LLeskk',
-        \ 'gina': 'gina#component#traffic#preset',
         \ 'gitbranch':'LLgitbranch'
     \ },
     \ 'component_expand': {
@@ -481,6 +486,9 @@ let g:lightline = {
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 
+let g:lightline.tabline_separator = g:lightline.separator
+let g:lightline.tabline_subseparator = g:lightline.subseparator
+
 if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
 else
     let g:lightline.component += {
@@ -507,7 +515,7 @@ endfunction
 "例外filetype
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite)'
 
-if dein#is_sourced('eskk.vim')
+if dein#tap('eskk.vim')
     function! LLeskk() abort
     if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim)'
         if eskk#is_enabled()
@@ -548,8 +556,10 @@ function! s:llvarCharAllCount()
     let s:llcharallcount = l:count == 0 ?   '---' :
         \ l:count <10 ? '   ' . l:count :
         \ l:count <100 ? '  ' . l:count :
-        \ l:count < 10000 ? l:count :
-        \ (l:count / 1000) . 'k'
+        \ l:count <1000 ? ' ' . l:count : l:count
+"        \ (l:count / 1000) . 'k'
+"        \ l:count <1000 ? l:count :
+"        \ (l:count / 1000) . 'k'
 endfunction
 
 function! s:llvarCharCount()
@@ -561,8 +571,8 @@ endfunction
 
 function! LLCharcount()
     if &filetype !~? s:ignore_filetype
-        \ && winwidth(0) > 40
-        return s:llcharcount . '/' . s:llcharallcount
+"        \ && winwidth(0) > 40
+        return  s:llcharcount . '/' . s:llcharallcount
     else
         return ''
     endif
@@ -639,9 +649,9 @@ function! LLFiletype()
 endfunction
 
 "デバッグ用
-"command! -bar LightlineUpdate    call lightline#init()|
-"  \ call lightline#colorscheme()|
-"  \ call lightline#update()
+command! -bar LightlineUpdate    call lightline#init()|
+  \ call lightline#colorscheme()|
+  \ call lightline#update()
 "
 "function! ProfileCursorMove() abort
 "  let profile_file = expand('~/log/vim-profile.log')
@@ -704,6 +714,8 @@ colorscheme iceberg
 "colorscheme hybrid
 "colorscheme gruvbox
 set background=dark
+"let ayucolor='dark'
+"colorscheme ayu
 "}}}
 "========================================================================
 "Gvim {{{
@@ -736,6 +748,7 @@ if has('GUI')
 
     if has('kaoriya')
         set ambiwidth=auto
+        autocmd vimrc VimEnter * SM 6
     endif
 
 else
@@ -743,6 +756,7 @@ else
     set termguicolors
     colorscheme iceberg
 endif
+
 "}}}
 "========================================================================
 "+kaoriya {{{
@@ -760,9 +774,5 @@ endif
 if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
 endif
-
 "}}}
-if has('migemo')
-    set migemo
-endif
 "vim:set foldmethod=marker:

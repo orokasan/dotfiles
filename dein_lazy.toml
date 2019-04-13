@@ -36,8 +36,9 @@ nnoremap <silent> [denite]r :<C-u>Denite
   	\ register<CR>
 "コマンド履歴
 nnoremap <silent> [denite]c :<C-u>Denite
-      \ -mode=normal
-      \ command_history<CR>
+    \ -buffer-name=normal
+    \ -default-action='ex'
+    \ command_history<CR>
 "バッファディレクトリからgrep
 nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
     \ -buffer-name=search
@@ -96,7 +97,7 @@ hook_post_source = '''
 "{{{
 "denite option
 call denite#custom#option('_', {
-	\ 'prompt': '>>',
+	\ 'prompt': '>',
 	\ 'cursor_wrap': v:true,
 	\ 'winheight': 14,
 	\ 'statusline': v:false,
@@ -120,7 +121,7 @@ call denite#custom#option('normal', {
 "buffer-search
 call denite#custom#option('search', {
     \ 'direction': 'dynamicbottom',
-    \ 'winheight': 5
+    \ 'winheight': 10
     \ })
 
 " Change mappings.
@@ -213,7 +214,7 @@ call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 " Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
-	\   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+	\   'venv/', 'images/','img/', 'fonts/'])
 
 "Defxで開く
 function! s:defx_open(context)
@@ -273,7 +274,7 @@ nmap <silent> [denite]x <Plug>(defx):<C-u>Denite
     \ defx/dirmark<CR>
 "}}}
 '''
-hook_post_source = '''
+hook_source = '''
 "{{{
 call defx#custom#option('_', {
     \ 'winwidth': 44,
@@ -297,6 +298,8 @@ call defx#custom#column('indent', {
 "      \ 'readonly_icon': '✗',
 "      \ 'selected_icon': '✓',
 "      \ })
+
+
 "}}}
 '''
 [plugins.ftplugin]
@@ -362,10 +365,10 @@ nnoremap <silent><buffer><expr> <C-g>
 \ defx#do_action('print')
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer> <C-s>
-\:call <SID>denite_rec<CR>
+nnoremap <silent><buffer><expr> <C-r>
+\ defx#do_action('call','<SID>Defx_denite_rec')
 
-function! s:getdefxbasedir(candidate) abort
+function! s:GetDefxBufferDir(candidate) abort
     if line('.') == 1
         let path_mod  = 'h'
     else
@@ -374,9 +377,12 @@ function! s:getdefxbasedir(candidate) abort
     return fnamemodify(a:candidate,'":p:' . path_mod . '"')
 endfunction
 
-function! s:denite_rec(context) abort
-    let narrow_dir = s:getdefxbasedir(a:context.targets[0])
-    execute('Denite -default-action=defx file/rec:\'\'\' .  narrow_dir . \'\'\')
+function! s:Defx_denite_rec(context) abort
+    let narrow_dir = s:GetDefxBufferDir(a:context.targets[0])
+    execute('Denite
+    \ -default-action=defx
+    \ file/rec:"' .  narrow_dir .'"
+    \ ')
 endfunction
 
 "}}}
@@ -631,7 +637,7 @@ autocmd!
 autocmd InsertLeave * call <SID>eskk_status()
 autocmd InsertEnter * call <SID>eskk_insert_config()
 augroup END
-
+ 
 let s:eskk_insert_status = 0
 let s:eskk_inserton = 0
 let g:eskk_my_toggle_status = 0
@@ -922,12 +928,14 @@ nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
 inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
 "}}}
 '''
+
+[plugins.ftplugin]
 tweetvim = '''
 "{{{
 "各種アクション
 nnoremap <buffer>S :<C-u>TweetVimSay<CR>
 nnoremap <buffer>m :<C-u>TweetVimMentions<CR>
-nnoremap <buffer><Leader>j :<C-u>Denite unite:tweetvim<CR>
+nnoremap <buffer><Leader>j :<C-u>Denite -direction=bottomright unite:tweetvim<CR>
 nnoremap <buffer>j }j
 nnoremap <buffer>k k{j
 nnoremap <buffer>th :TweetVimHomeTimeline<CR>
@@ -986,13 +994,6 @@ let g:operator#surround#blocks['-'] = [
 \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
 \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
 \ ]
-'''
-
-[[plugins]]
-repo = 'osyo-manga/vim-over'
-on_cmf = 'OverCommandLine'
-hook_add = '''
-nnoremap <silent><C-s> :OverCommandLine<CR>%s//gc<Left><Left><Left>
 '''
 
 [[plugins]]

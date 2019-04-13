@@ -31,7 +31,9 @@ let g:lightline#ale#indicator_ok = "\uf43a"
 
 [[plugins]]
 repo = 'haya14busa/vim-migemo'
-
+hook_add = '''
+set migemo
+'''
 
 [[plugins]]
 repo =  'Shougo/neomru.vim'
@@ -41,10 +43,10 @@ let g:neomru#file_mru_ignore_pattern = 'gina://'
 '''
 
 [[plugins]]
-repo =  'mattn/webapi-vim'
+repo =  'basyura/twibill.vim'
 
 [[plugins]]
-repo =  'basyura/twibill.vim'
+repo =  'mattn/webapi-vim'
 
 [[plugins]]
 repo = 'cespare/vim-toml'
@@ -58,34 +60,38 @@ depends = ['lightline.vim']
 
 [[plugins]]
 repo =  'itchyny/vim-gitbranch'
-depends = ['lightline']
-#[[plugins]]
-#repo =  'Shougo/echodoc.vim'
-
-#[[plugins]]
-#repo = 'rhysd/clever-f.vim'
-#hook_add = '''
-#'''
+depends = ['lightline.vim']
 
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
-#on_if = ''' g:colors_name='iceberg' '''
 
-#[[plugins]]
-#repo =  'w0ng/vim-hybrid'
-#on_if = ''' g:colors_name='hybrid' '''
+[[plugins]]
+repo =  'w0ng/vim-hybrid'
 
-#[[plugins]]
-#repo =  'morhetz/gruvbox'#}}}
-#on_if = ''' g:colors_name='gruvbox' '''
-#hook_source = '''
-#let g:gruvbox_contrast_dark = 'medium'
-#let g:gruvbox_italicize_comments = 0
-#let g:gruvbox_invert_selection = 0
-#let g:gruvbox_guisp_fallback = 'bg'
-#'''
+[[plugins]]
+repo ='ayu-theme/ayu-vim'
+
+[[plugins]]
+repo = 'yarisgutierrez/ayu-lightline'
+depends = ['lightline.vim']
+
+[[plugins]]
+repo =  'morhetz/gruvbox'
+hook_add = '''
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_italicize_comments = 0
+let g:gruvbox_invert_selection = 0
+let g:gruvbox_guisp_fallback = 'bg'
+'''
+
+[[plugins]]
+repo = 'markonm/traces.vim'
+hook_add ='''
+let g:traces_num_range_preview = 1
+nnoremap S :s//gc<Left><Left><Left>
+'''
 
 # vim:set foldmethod=marker:
