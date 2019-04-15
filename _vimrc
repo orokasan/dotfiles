@@ -7,9 +7,9 @@
 "========================================================================
 "基本設定 {{{
 "encode
-set encoding=utf-8			" vim 内部のエンコーディグ
-scriptencoding utf-8,cp932		" vimrcのエンコーディング
-set fileencoding=utf-8			" 既定のファイル保存エンコーディング
+set encoding=utf-8         "vim 内部のエンコーディグ
+scriptencoding utf-8,cp932 "vimrcのエンコーディング
+set fileencoding=utf-8     " 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
@@ -47,43 +47,38 @@ let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
 "vimprocのダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
-"========================================================================================
+"========================================================================
 "外観  {{{
-
 set shortmess+=IaTs
-"常にタブラインを表示
-set showtabline=2
-" 括弧入力時の対応する括弧を表示
-set showmatch
-set number
-set matchtime=1
-" ステータスラインを常に表示
-set laststatus=2
-"コマンドライン行数の設定
-set cmdheight=1
+set showtabline=2   "常にタブラインを表示
+set number          "行番号を表示
+set signcolumn=yes  "signcolumを常に表示
+set laststatus=2    " ステータスラインを常に表示
+set cmdheight=1     "コマンドライン行数の設定
+set cursorline      "cusorlineをハイライト
+set noshowcmd       " 入力中のコマンドをステータスに表示しない
+set noshowmode      "モードを表示しない
+"cursorlineのhighlight syntaxをけす
+autocmd vimrc ColorScheme *  hi clear CursorLine
+
+set modelines=5     "モードライン設定
+set showmatch       "括弧入力時の対応する括弧を表示
+set matchtime=1     "括弧のハイライト時間(ミリ秒)
+
+set visualbell      "ビープを停止
+set t_vb=
+set noerrorbells
+set hidden          " バッファが編集中でもその他のファイルを開けるように
+
 " ESC連打でハイライト解除
 nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
 nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
-"モードライン設定
-set modelines=5
-" ビープを停止
-set visualbell t_vb=
-set noerrorbells
-
-if has('nvim')
-  " Display candidates by popup menu.
-  set wildmenu
-  set wildmode=full
-  set wildoptions+=pum
-else
-  " Display candidates by list.
-    set wildmenu
-    set wildmode=longest:full
-endif
+" Display candidates by list.
+set wildmenu
+set wildmode=longest:full
 "
-" Adjust window size of preview and help.
-set previewheight=8
-set helpheight=20
+set previewheight=8 " Adjust window size of preview 
+set helpheight=15 "and help.
 
 set ttyfast
 
@@ -94,21 +89,6 @@ set ttyfast
 "function! ZenkakuSpace()
 "  highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
 "endfunction
-"一時的にバッファを最大化
-"function! s:toggle_window_zoom() abort
-"    if exists('t:zoom_winrestcmd')
-"        execute t:zoom_winrestcmd
-"        unlet t:zoom_winrestcmd
-"    else
-"        let t:zoom_winrestcmd = winrestcmd()
-"        resize
-"        vertical resize
-"    endif
-"endfunction
-"nnoremap <silent> <Plug>(my-zoom-window)
-"      \ :<C-u>call <SID>toggle_window_zoom()<CR>
-"nmap <Leader>wz <Plug>(my-zoom-window)
-"nmap <Leader>w<C-z> <Plug>(my-zoom-window)
 
 "if has('syntax')
 "  augroup ZenkakuSpace
@@ -125,52 +105,39 @@ set ttyfast
 "========================================================================
 "入力・編集 {{{
 
-"自動改行をやめる
-set textwidth=0
-" カーソルを文字が存在しない部分でも動けるようにする
-set virtualedit=block
-" 行末の1文字先までカーソルを移動できるように
-"set virtualedit=onemore
-"3行余裕を持たせてスクロール
-:set scrolloff=3
-"長い行を表示
-set display=lastline
-set signcolumn=yes
+set virtualedit=block       " カーソルを文字が存在しない部分でも動けるようにする
+"set virtualedit=onemore "行末の1文字先までカーソルを移動できるように
+set scrolloff=3             "3行余裕を持たせてスクロール
+set display=lastline        "長い行をいい感じに表示
+"
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "set spelllang=en,cjk
-" スワップファイルを作らない
-set noswapfile
-" 編集中のファイルが変更されたら自動で読み直す
-set autoread
-"Undoファイルをまとめる
-set undodir=~/vimfiles/undo
-"backupファイルを作成
-set backup
+set noswapfile              " スワップファイルを作らない
+set autoread                " 編集中のファイルが変更されたら自動で読み直す
+set undodir=~/vimfiles/undo "Undoファイルをまとめる
+set backup                  "backupファイルを作成
 set backupdir=~/vimfiles/backup
-" バッファが編集中でもその他のファイルを開けるように
-set hidden
-" 入力中のコマンドをステータスに表示する
-set noshowcmd
-"モードを表示しない
-set noshowmode
-"日本語の行の連結時には空白を入力しない。
-set formatoptions+=mMj
-"不可視文字の可視化
-set list
-"不可視文字の表示
+
+set textwidth=0             "自動改行をやめる
+set formatoptions+=mMj      "日本語の行の連結時には空白を入力しない。など
+
+set list                    "不可視文字の可視化
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
-"<TAB>を含むファイルを開いた際、<TAB>を何文字の空白に変換するかを設定
-set tabstop=4
-"キーボードで<TAB>を入力した際、<TAB>を何文字の空白に変換するかを設定
+
+set tabstop=4               "<TAB>空白の表示設定
 set expandtab
-set softtabstop=4
+set softtabstop=4           "<TAB>の空白変換数
 let g:vim_indent_cont = 4
-"自動インデント
-set autoindent
-"vimが自動でインデントを行った際、設定する空白数
-set shiftwidth=4
+set autoindent              "自動インデント
+set shiftwidth=4            "vimが自動でインデントを行った際、設定する空白数
 "
+set ignorecase              " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
+set smartcase               " 検索文字列に大文字が含まれている場合は区別して検索する
+set incsearch               " 検索文字列入力時に順次対象文字列にヒットさせる
+set wrapscan                " 検索時に最後まで行ったら最初に戻る
+set hlsearch                " 検索語をハイライト表示
+
 " Localize search options.
 autocmd vimrc WinLeave *
 \     let b:vimrc_pattern = @/
@@ -179,23 +146,13 @@ autocmd vimrc WinEnter *
 \     let @/ = get(b:, 'vimrc_pattern', @/)
 \   | let &l:hlsearch = get(b:, 'vimrc_hlsearch', &l:hlsearch)
 
-" 検索文字列が小文字の場合は大文字小文字を区別なく検索する
-set ignorecase
-" 検索文字列に大文字が含まれている場合は区別して検索する
-set smartcase
-" 検索文字列入力時に順次対象文字列にヒットさせる
-set incsearch
-" 検索時に最後まで行ったら最初に戻る
-set wrapscan
-" 検索語をハイライト表示
-set hlsearch
-
 "Markdown用設定
 "autocmd! FileType markdown hi! def link markdownItalic Normal
 autocmd vimrc FileType markdown set commentstring=<\!--\ %s\ -->
 
 "folding設定
 setlocal foldmethod=marker
+"
 "viminfo設定(nvimと設定分ける)
 if has('nvim')
   set shada=!,'300,<50,s10,h
@@ -205,6 +162,7 @@ endif
 " Set minimal height for current window.
 " set winheight=20
 set winheight=1
+set winwidth=1
 " Set maximam maximam command line window.
 set cmdwinheight=5
 " No equal window size.
@@ -251,13 +209,11 @@ function! s:mkdir_as_necessary(dir, force) abort
   endif
 endfunction
 "}}}
-
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
 "eskk.vimと干渉するため停止している
 let g:disable_IM_Control = 1
-
 if !exists('g:disable_IM_Control')
 " 「日本語入力固定モード」切替キー
     inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
@@ -268,10 +224,9 @@ endif
 "Key mapping {{{
 
 let mapleader = "\<Space>"
-
+"いい感じに挿入
 nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
-nnoremap + <C-a> "数字のプラス
-nnoremap - <C-x> "マイナス
+"行頭、行末への移動
 nnoremap 0 ^
 xnoremap 0 ^
 nnoremap ^ 0
@@ -286,8 +241,9 @@ nnoremap ; :
 " Enter normal mode
 inoremap jk <esc>
 "末尾までヤンク
-nnoremap <silent>Y y$
-xnoremap <silent>Y y$
+nnoremap Y y$
+xnoremap Y y$
+nnoremap vv 0v$
 " TABで対応ペアにジャンプ
 nmap <Tab> %
 vmap <Tab> %
@@ -298,34 +254,49 @@ nnoremap  k gk
 nnoremap <Leader>*  *:<C-u>%s/<C-r>///g<C-f><Left><Left>
 vnoremap <Leader>*  y:<C-u>%s/<C-r>"//g<C-f><Left><Left>
 vnoremap <expr><CR> printf(':s/%s//g<C-f><Left><Left>', expand('<cword>'))
-"CTRL-sで保存！
-imap <c-s> <Esc>:w<CR>a
-"CTRL-qでclose
-nnoremap <silent> <C-q> :close<CR>
-" For JIS keyboard
-inoremap <C-@> <ESC>
+
+imap <c-s> <Esc>:w<CR>a             "CTRL-sで保存
+nnoremap <silent><C-q> :close<CR>   "CTRL-qでclose
+inoremap <C-@> <ESC>                "For JIS keyboard
+"日付を入力(+kaoriya限定)
+inoremap <F3> Last Change: .
 "日付を入力
-inoremap <F2> Last Change: .
+inoremap <expr><F2> strftime("%Y%m%d")
+
 "検索メッセージを非表示
 nnoremap <silent> n n
 nnoremap <silent> N N
 "句読点を強引に挿入
-nnoremap <Leader>, a、<Esc>
-nnoremap <Leader>. a。<Esc>
-nnoremap <Leader>? a？<Esc>
-nnoremap <Leader>! a！<Esc>
-nnoremap <Leader>/ a/<Esc>
-nnoremap <Leader>\ a\<Esc>
-nnoremap <Leader><Space> a <Esc>
+nnoremap <Leader>,         a、<Esc>
+nnoremap <Leader>.         a。<Esc>
+nnoremap <Leader>?         a？<Esc>
+nnoremap <Leader>!         a！<Esc>
+nnoremap <Leader>/         a/<Esc>
+nnoremap <Leader>\         a\<Esc>
+nnoremap <Leader><Space>   a <Esc>
 nnoremap <Leader><S-Space> a…<Esc>
 " <ESC>でのIME状態保存を無効化
 inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
 inoremap <silent><C-c> <ESC>
 "_vimrcを開く
-noremap <silent> <leader>vme :e ~/dotfiles/?vimrc<CR>
-"開いているfileを読み込む
-noremap <Leader>ss :<C-u>source %<CR>
+noremap <silent> <leader>vr :e ~/dotfiles/?vimrc<CR>
+"開いているVimscriptを読み込む
+nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
+if !exists('*s:source_script')  "{{{
+  function s:source_script(path) abort
+    let path = expand(a:path)
+    if !filereadable(path) || getbufvar(a:path, '&filetype') !=# 'vim'
+      return
+    endif
+    execute 'source' fnameescape(path)
+    echo printf(
+          \ '"%s" has sourced (%s)',
+          \ simplify(fnamemodify(path, ':~:.')),
+          \ strftime('%c'),
+          \)
+  endfunction
+endif  "}}}
 "lでfoldingを展開
 nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
 "CTRL-SPACEで閉じる
@@ -372,6 +343,21 @@ nnoremap <S-Left>  <C-w><<CR>
 nnoremap <S-Right> <C-w>><CR>
 nnoremap <S-Up>    <C-w>-<CR>
 nnoremap <S-Down>  <C-w>+<CR>
+"一時的にバッファを最大化
+nnoremap <silent> <Plug>(my-zoom-window)
+      \ :<C-u>call <SID>toggle_window_zoom()<CR>
+nmap <Leader>wz <Plug>(my-zoom-window)
+nmap <Leader>w<C-z> <Plug>(my-zoom-window)
+function! s:toggle_window_zoom() abort "{{{
+    if exists('t:zoom_winrestcmd')
+        execute t:zoom_winrestcmd
+        unlet t:zoom_winrestcmd
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+        resize
+        vertical resize
+    endif
+endfunction  "}}}
 "バッファ移動
 nnoremap <silent><Leader>h :bprev!<CR>|
 nnoremap <silent><Leader>l :bnext!<CR>|
@@ -394,6 +380,64 @@ nnoremap <Leader>nr <C-u>A  <Esc>
 "Markdown Docx出力
 "pandocが必要
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
+"}}}
+"========================================================================================
+"Gvim {{{
+if has('GUI')
+    set clipboard=unnamed
+    "ツールバー非表示
+    ""Nm秒後にカーソル点滅開始
+    set guicursor=n:blinkwait2000
+    "フォント
+    "ConsolasにPowerlineSymbolsをパッチしてある
+    "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
+"    set guifont=Consolas:h11:cDEFAULT
+"    set guifontwide=MS_Gothic:h12:cDEFAULT
+"    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
+"Nerdfont
+"https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
+    let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
+    set guioptions+=M
+"    set guioptions+=C
+    let no_buffers_menu = 1
+    set guifont=Ricty_Diminished_with-icons:h13:cDEFAULT
+    set guifontwide=Ricty_Diminished_with-icons:h13:cDEFAULT
+    set renderoptions=type:directx,renmode:5,geom:2
+
+"    if has('kaoriya')
+"        autocmd vimrc SourcePost ?vimrc ScreenMode 6
+"    else
+        set lines=56 "ウィンドウの縦幅
+        set columns=238 " ウィンドウの横幅
+        winpos 2 17 " ウィンドウの起動時の位置
+    set ambiwidth=auto
+"    endif
+
+else
+    set t_Co=256
+    set termguicolors
+endif
+"}}}
+"========================================================================
+"+kaoriya {{{
+if has('kaoriya')
+    "autodate 'Last Change: .'
+    let autodate_format ='%Y/%m/%d-%H:%M:%S'
+    let autodate_lines = 10
+    "フルスクリーン化
+    nnoremap <C-CR> :ScreenMode 6<CR>
+    nnoremap <S-CR> :ScreenMode 1<CR>
+    "背景透過
+    autocmd vimrc GUIEnter * set transparency=245
+    "全角文字を自動判定
+else
+    set ambiwidth=single
+endif
+
+"IME状態でカーソルカラー変更
+if has('multi_byte_ime')
+  highlight CursorIM guifg=NONE guibg=Purple
+endif
 "}}}
 "========================================================================
 "dein.vim {{{
@@ -418,11 +462,18 @@ if dein#load_state(s:dein_dir)
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
     call dein#save_state()
+
+    if has('vim_starting')
+        call dein#call_hook('source')
+        autocmd MyAutoCmd VimEnter * call dein#call_hook('post_source')
+    else
+        call dein#call_hook('source')
+        call dein#call_hook('post_source')
+    endif
 endif
 
 filetype plugin indent on
 syntax enable
-"autocmd vimrc VimEnter * call dein#call_hook('post_source')
 
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
@@ -436,7 +487,8 @@ let g:lightline = {
 \ 'colorscheme': 'iceberg',
     \ 'active': {
         \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','gitbranch'], [ 'readonly', 'relativepath'] ],
-        \ 'right': [ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok','lineinfo' ], ['charcount'], [ 'percent','IMEstatus'] 
+        \ 'right': [ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'lineinfo'],
+            \ ['charcount'], [ 'percent','IMEstatus'] 
         \ ]
     \ },
     \ 'inactive': {
@@ -468,15 +520,12 @@ let g:lightline = {
         \ 'linter_errors': 'lightline#ale#errors',
         \ 'linter_ok': 'lightline#ale#ok'
     \ },
-    \ 'component_type' : {
+   \ 'component_type' : {
         \ 'buffers': 'tabsel',
         \ 'linter_checking': 'left',
         \ 'linter_warnings': 'warning',
         \ 'linter_errors': 'error',
         \ 'linter_ok': 'left'
-    \ },
-    \ 'component_function_visible_condition': {
-        \ 'mode': 1,
     \ }
 \ }
    let g:lightline.separator= { 'left': '', 'right': '' }
@@ -486,6 +535,9 @@ let g:lightline = {
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 
+"    \ 'component_function_visible_condition': {
+"        \ 'mode': 1,
+"    \ }
 let g:lightline.tabline_separator = g:lightline.separator
 let g:lightline.tabline_subseparator = g:lightline.subseparator
 
@@ -515,27 +567,6 @@ endfunction
 "例外filetype
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite)'
 
-if dein#tap('eskk.vim')
-    function! LLeskk() abort
-    if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim)'
-        if eskk#is_enabled()
-            return printf(get(a:000, 0, '[%s]'),
-                \ get(g:eskk#statusline_mode_strings,
-                \ eskk#get_current_instance().mode, '??'))
-        elseif mode() !=# 'i'
-            return g:eskk_my_toggle_status ? printf('[あ]') : printf('[--]')
-        else
-            return printf('[--]')
-        endif
-    else
-            return ''
-    endif
-    endfunction
-    else
-    function! LLeskk() abort
-        return ''
-    endfunction
-endif
 
 function! LLInactiveFilename()
 return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
@@ -644,37 +675,33 @@ function! LLDeniteSource()
     endif
 endfunction
 
-function! LLFiletype()
-  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
-endfunction
-
 "デバッグ用
 command! -bar LightlineUpdate    call lightline#init()|
   \ call lightline#colorscheme()|
   \ call lightline#update()
 "
-"function! ProfileCursorMove() abort
-"  let profile_file = expand('~/log/vim-profile.log')
-"  if filereadable(profile_file)
-"    call delete(profile_file)
-"  endif
-"
-"  normal! gg
-"  normal! zR
-"
-"  execute 'profile start ' . profile_file
-"  profile func *
-"  profile file *
-"
-"  augroup ProfileCursorMove
-"    autocmd!
-"    autocmd CursorHold <buffer> profile pause | q
-"  augroup END
-"
-"  for i in range(100)
-"    call feedkeys('j')
-"  endfor
-"endfunction
+function! ProfileCursorMove() abort
+  let profile_file = expand('~/log/vim-profile.log')
+  if filereadable(profile_file)
+    call delete(profile_file)
+  endif
+
+  normal! gg
+  normal! zR
+
+  execute 'profile start ' . profile_file
+  profile func *
+  profile file *
+
+  augroup ProfileCursorMove
+    autocmd!
+    autocmd CursorHold <buffer> profile pause | q
+  augroup END
+
+  for i in range(100)
+    call feedkeys('j')
+  endfor
+endfunction
 "}}}
 "-----------------------------------------------------------------------
 "文字数カウント "{{{
@@ -716,63 +743,5 @@ colorscheme iceberg
 set background=dark
 "let ayucolor='dark'
 "colorscheme ayu
-"}}}
-"========================================================================
-"Gvim {{{
-if has('GUI')
-    set clipboard=unnamed
-    let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
-"    set guioptions-=TMrRlLbeg
-    set guioptions+=M
-    set guioptions+=C
-    "ツールバー非表示
-    set lines=50 "ウィンドウの縦幅
-    set columns=220 " ウィンドウの横幅
-    winpos 50 30 " ウィンドウの起動時の位置
-    set cmdheight=1 "コマンドライン行数の設定
-    set cursorline
-    hi clear CursorLine
-    ""Nm秒後にカーソル点滅開始
-    set guicursor=n:blinkwait2000
-    "フォント
-    "ConsolasにPowerlineSymbolsをパッチしてある
-    "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
-"    set guifont=Consolas:h11:cDEFAULT
-"    set guifontwide=MS_Gothic:h12:cDEFAULT
-"    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
-"Nerdfont
-"https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
-    set guifont=Ricty_Diminished_with-icons:h13:cDEFAULT
-    set guifontwide=Ricty_Diminished_with-icons:h13:cDEFAULT
-    set renderoptions=type:directx,renmode:5,geom:2
-
-    if has('kaoriya')
-        set ambiwidth=auto
-        autocmd vimrc VimEnter * SM 6
-    endif
-
-else
-    set t_Co=256
-    set termguicolors
-    colorscheme iceberg
-endif
-
-"}}}
-"========================================================================
-"+kaoriya {{{
-if has('kaoriya')
-    "autodate 'Last Change: .'
-    let autodate_format ='%Y/%m/%d-%H:%M:%S'
-    let autodate_lines = 10
-    "フルスクリーン化
-    nnoremap <C-CR> :ScreenMode 6<CR>
-    nnoremap <S-CR> :ScreenMode 1<CR>
-    "背景透過
-    autocmd vimrc GUIEnter * set transparency=245
-endif
-"IME状態でカーソルカラー変更
-if has('multi_byte_ime')
-  highlight CursorIM guifg=NONE guibg=Purple
-endif
 "}}}
 "vim:set foldmethod=marker:

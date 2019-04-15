@@ -3,11 +3,11 @@ repo = 'Shougo/dein.vim'
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
-if = '''! has('nvim')'''
+on_if = '''!has('nvim')'''
 
 [[plugins]]
 repo =  'roxma/vim-hug-neovim-rpc'
-if = '''! has('nvim')'''
+on_if = '''!has('nvim')'''
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
@@ -32,14 +32,20 @@ let g:lightline#ale#indicator_ok = "\uf43a"
 [[plugins]]
 repo = 'haya14busa/vim-migemo'
 hook_add = '''
-set migemo
+if has('migemo')
+    set migemo
+endif
 '''
-
+hook_post_source= '''
+call migemo#SearchChar(0)
+'''
 [[plugins]]
 repo =  'Shougo/neomru.vim'
 hook_add ='''
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
+let g:neomru#time_format = '%Y/%m/%d %H:%M:%S'
+let g:neomru#file_mru_limit = 100
 '''
 
 [[plugins]]
@@ -91,7 +97,8 @@ let g:gruvbox_guisp_fallback = 'bg'
 repo = 'markonm/traces.vim'
 hook_add ='''
 let g:traces_num_range_preview = 1
-nnoremap S :s//gc<Left><Left><Left>
+nnoremap S :%s/
 '''
+
 
 # vim:set foldmethod=marker:

@@ -10,9 +10,15 @@ nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
     \  file<CR>
+"現在開いているファイルのディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
+    \  file/rec<CR>
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
   	\ file<CR>
+"ホームディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
+  	\ file/rec<CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
   	\ -buffer-name=normal -mode=normal
@@ -163,7 +169,7 @@ call denite#custom#map('insert', '<C-f>',
 
 "need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
-      \ ['rg', '--files', '--glob', '!.git'])
+      \ ['rg', '--files','--hidden','--glob', '!.git'])
 call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
 call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'final_opts', [])
@@ -173,7 +179,7 @@ call denite#custom#var('grep', 'default_opts',
 
 " Change matchers.
 call denite#custom#source(
-	\ 'file_mru', 'matchers', ['matcher/fuzzy', 'matcher/project_files'])
+	\ 'file_mru', 'matchers', ['matcher/regexp', 'matcher/project_files'])
 "call denite#custom#source(
 "	\ 'file/rec', 'matchers', ['matcher/cpsm'])
 
@@ -182,9 +188,10 @@ let s:menus = {
     \ }
 let s:menus.window_size = {'description': 'Change window size' }
 let s:menus.window_size.command_candidates = [
+	\ ['120x60', 'set lines=60 columns=120'],
 	\ ['150x40', 'set lines=40 columns=150'],
-	\ ['220x50', 'set lines=50 columns=220'],
-	\ ['Fullscreen-> :SM 6<CR> ', '']
+	\ ['240x40', 'set lines=40 columns=240'],
+	\ ['240x60', 'set lines=60 columns=240']
 	\ ]
 let s:menus.string = {'description': 'string utilities.'}
 let s:menus.string.command_candidates = [
@@ -193,10 +200,10 @@ let s:menus.string.command_candidates = [
       \ ['format: querystring', 'silent! %s/&amp;/\&/g | silent! %s/&/\r&/g | silent! %s/=/\r=/g'],
       \ ['format: to smb', 'silent! %s/\\/\//g | silent! %s/^\(smb:\/\/\|\/\/\)\?/smb:\/\//g']
       \ ]
-let s:menus.vim = {'description': 'vim runtime.'}
-let s:menus.vim.command_candidates = [
-      \ ['upgrade: dein:deps', 'call dein#update()']
-      \ ]
+"let s:menus.vim = {'description': 'vim runtime.'}
+"let s:menus.vim.command_candidates = [
+"      \ ['upgrade: dein:deps', 'call dein#update()']
+"      \ ]
 
 call denite#custom#var('menu', 'menus', s:menus)
 
@@ -216,6 +223,16 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
 	\   'venv/', 'images/','img/', 'fonts/'])
 
+function! s:denite_rec(context)
+    let path = a:context['targets'][0]['action__path']
+    let dir = denite#util#path2directory(path)
+    execute('Denite file/rec:"' . dir .'"')
+  endif
+endfunction
+
+call denite#custom#action('buffer,directory,file,openable,dirmark', 'file/rec',
+        \ function('s:denite_rec'))
+
 "Defxで開く
 function! s:defx_open(context)
     let path = a:context['targets'][0]['action__path']
@@ -226,7 +243,7 @@ function! s:defx_open(context)
       call defx#call_action('cd', [dir])
       call defx#call_action('search', [path])
     else
-      execute('Defx ' . dir . file_search)
+      execute('Defx "' . dir . '"' . file_search)
   endif
 endfunction
 
@@ -257,17 +274,13 @@ on_cmd = ['Unite']
 
 [[plugins]]
 repo =  'Shougo/defx.nvim'
-depends = [ 'nvim-yarp', 'vim-hug-neovim-rpc' ]
 on_cmd = 'Defx'
-rev = '39b11b4'
 hook_add = '''
 "{{{
 nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
 nnoremap <silent> <Plug>(defx) :<C-u>Defx<CR>
-	\:setlocal signcolumn=no<CR>
 nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
-	\:setlocal signcolumn=no<CR>
 
 nmap <silent> [denite]x <Plug>(defx):<C-u>Denite
     \ -buffer-name=normal
@@ -276,6 +289,8 @@ nmap <silent> [denite]x <Plug>(defx):<C-u>Denite
 '''
 hook_source = '''
 "{{{
+autocmd vimrc FileType defx setlocal signcolumn=no
+
 call defx#custom#option('_', {
     \ 'winwidth': 44,
     \ 'split': 'vertical',
@@ -284,9 +299,9 @@ call defx#custom#option('_', {
     \ 'sort': 'TIME',
     \ 'ignored_files': '.*,ntuser*,desktop.ini'
     \ })
-call defx#custom#column('indent', {
-    \ 'indent': ' |'
-    \ })
+"call defx#custom#column('indent', {
+"    \ 'indent': ' |'
+"    \ })
 "call defx#custom#column('filename', {
 "      \ 'directory_icon': '',
 "      \ 'opened_icon': '',
@@ -489,7 +504,6 @@ let g:defx_icons_extensions = {
 '''
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
-depends = [ 'nvim-yarp', 'vim-hug-neovim-rpc' ]
 on_event = 'InsertEnter'
 hook_source = '''
  "{{{
@@ -653,6 +667,23 @@ function! s:eskk_insert_config() abort
     endif
 endfunction
 
+function! s:define_LLeskk()
+    function! LLeskk() abort
+    if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim)'
+        if eskk#is_enabled()
+            return printf(get(a:000, 0, '[%s]'),
+                \ get(g:eskk#statusline_mode_strings,
+                \ eskk#get_current_instance().mode, '??'))
+        elseif mode() !=# 'i'
+            return g:eskk_my_toggle_status ? printf('[あ]') : printf('[--]')
+        else
+            return printf('[--]')
+        endif
+    else
+            return ''
+    endif
+    endfunction
+endfunction
 
 function! s:eskk_inserttoggle() abort
     if s:eskk_insert_status || s:eskk_inserton
@@ -667,9 +698,9 @@ function! s:eskk_inserttoggle() abort
     endif
 endfunction
 
-autocmd MyAutoCmd User eskk-initialize-post
+autocmd vimrc User eskk-initialize-post
       \ EskkMap -remap jj <ESC>
-autocmd MyAutoCmd User eskk-initialize-pre call s:eskk_initial_pre()
+autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre() | call <SID>define_LLeskk()
 function! s:eskk_initial_pre() abort
   let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
   call t.add_map('z ', '　')
@@ -885,8 +916,8 @@ on_cmd = ['TweetVimHomeTimeline','TweetVimSay']
 depends = ['twibill.vim','webapi-vim']
 hook_add = '''
 "{{{
-nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>:setlocal signcolumn=no<CR>
+nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay |
+nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
 nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
 "}}}
@@ -894,6 +925,8 @@ nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
 
 hook_source = '''
 "{{{
+autocmd vimrc FileType tweetvim setlocal signcolumn=no
+autocmd vimrc FileType tweetvim setlocal nonumber
 let g:tweetvim_tweet_per_page = 60
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
@@ -914,9 +947,11 @@ function! s:tw_open_existing() abort
   let wids = win_findbuf(bnr)
     call win_gotoid(wids[0])
 endfunction
-
 highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
 highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
+autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
+autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
+
 "}}}
 '''
 [plugins.ftplugin]
@@ -933,27 +968,27 @@ inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
 tweetvim = '''
 "{{{
 "各種アクション
-nnoremap <buffer>S :<C-u>TweetVimSay<CR>
-nnoremap <buffer>m :<C-u>TweetVimMentions<CR>
-nnoremap <buffer><Leader>j :<C-u>Denite -direction=bottomright unite:tweetvim<CR>
-nnoremap <buffer>j }j
-nnoremap <buffer>k k{j
-nnoremap <buffer>th :TweetVimHomeTimeline<CR>
-nnoremap <buffer>r :redraw<CR>
-nmap <buffer>c <Plug>(tweetvim_action_in_reply_to)
-nmap <buffer><Leader>F <Plug>(tweetvim_action_remove_favorite)
-nmap <buffer><Leader>d <Plug>(tweetvim_action_remove_status)
-nmap <buffer>o <Plug>(tweetvim_action_open_links)
-nmap <silent><buffer>q :bd<CR>
-nmap <buffer><Tab> <Plug>(tweetvim_action_reload)
-" ページの先頭に戻ったときにリロード
-nmap <buffer><silent>gg gg<Plug>(tweetvim_action_reload)
-" ページ移動を ff/bb から f/b に
-nmap <buffer>f <Plug>(tweetvim_action_page_next)
-nmap <buffer>b <Plug>(tweetvim_action_page_previous)
-nmap <silent> <buffer>n <Plug>(tweetvim_action_cursor_down)
-nmap <silent> <buffer>p <Plug>(tweetvim_action_cursor_up)
-" 不要なマップを除去
+nnoremap <buffer>S          :<C-u>TweetVimSay<CR>
+nnoremap <buffer>m          :<C-u>TweetVimMentions<CR>
+nnoremap <buffer><Leader>j  :<C-u>Denite -direction=bottomright unite:tweetvim<CR>
+nnoremap <buffer>j          }j
+nnoremap <buffer>k          k{j
+nnoremap <buffer>th         :TweetVimHomeTimeline<CR>
+nnoremap <buffer>r          :redraw<CR>
+nmap     <buffer>c          <Plug>(tweetvim_action_in_reply_to)
+nmap     <buffer><Leader>F  <Plug>(tweetvim_action_remove_favorite)
+nmap     <buffer><Leader>d  <Plug>(tweetvim_action_remove_status)
+nmap     <buffer>o          <Plug>(tweetvim_action_open_links)
+nmap     <silent><buffer>q  :bd<CR>
+nmap     <buffer><Tab>      <Plug>(tweetvim_action_reload)m
+"ページの先頭に戻ったときにリロード
+nmap     <buffer><silent>gg gg<Plug>(tweetvim_action_reload)
+"ページ移動をff/bb から f/b に
+nmap     <buffer>f          <Plug>(tweetvim_action_page_next)
+nmap     <buffer>b          <Plug>(tweetvim_action_page_previous)
+nmap     <silent>           <buffer>n <Plug>(tweetvim_action_cursor_down)
+nmap     <silent>           <buffer>p <Plug>(tweetvim_action_cursor_up)
+"不要なマップを除去
 nunmap   <buffer>ff
 nunmap   <buffer>bb
 
@@ -997,6 +1032,20 @@ let g:operator#surround#blocks['-'] = [
 '''
 
 [[plugins]]
+repo = 'itchyny/vim-cursorword'
+on_map = {nv='<Plug>'}
+hook_add = '''
+function! s:toggle_vim_cursorword() abort
+  let g:cursorword = g:cursorword ? 0 : 1
+  call cursorword#matchadd()
+endfunction
+nnoremap <silent> <Plug>(cursorword-toggle)
+      \ :<C-u>call <SID>toggle_vim_cursorword()<CR>
+nmap <C-g>c     <Plug>(cursorword-toggle)
+nmap <C-g><C-c> <Plug>(cursorword-toggle)
+'''
+
+[[plugins]]
 repo = 'osyo-manga/vim-precious'
 on_ft = 'toml'
 hook_source = '''
@@ -1020,5 +1069,38 @@ augroup END
 [[plugins]]
 repo = 'mattn/benchvimrc-vim'
 on_cmd = 'BenchVimrc'
+
+[[plugins]]
+repo = 'junegunn/goyo.vim'
+on_cmd = 'Goyo'
+hook_add = '''
+nnoremap <F4> :Goyo<CR>
+let g:goyo_width = 80
+let g:goyo_height = '60%'
+function! s:goyo_enter()
+  set scrolloff=999
+  Limelight
+endfunction
+
+function! s:goyo_leave()
+  set scrolloff=3
+  Limelight!
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+'''
+[[plugins]]
+repo = 'junegunn/limelight.vim'
+on_cmd = 'Limelight'
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+on_map = '<Plug>(EasyAlign)'
+hook_add = '''
+vmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+'''
 
 # vim:set foldmethod=marker:
