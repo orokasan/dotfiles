@@ -64,7 +64,6 @@ set noshowcmd       " 入力中のコマンドをステータスに表示しな�
 set noshowmode      "モードを表示しない
 "cursorlineのhighlight syntaxをけす
 autocmd vimrc ColorScheme *  hi clear CursorLine
-
 set modelines=5     "モードライン設定
 set showmatch       "括弧入力時の対応する括弧を表示
 set matchtime=1     "括弧のハイライト時間(ミリ秒)
@@ -402,8 +401,8 @@ if has('GUI')
     set guioptions+=M
 "    set guioptions+=C
     let no_buffers_menu = 1
-    set guifont=Ricty_Diminished_with-icons:h13:cDEFAULT
-    set guifontwide=Ricty_Diminished_with-icons:h13:cDEFAULT
+    set guifont=Ricty_Diminished_with-icons:h13.5:cDEFAULT
+    set guifontwide=Ricty_Diminished_with-icons:h13.5:cDEFAULT
     set renderoptions=type:directx,renmode:5,geom:2
 
 "    if has('kaoriya')
