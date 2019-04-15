@@ -3,11 +3,11 @@ repo = 'Shougo/dein.vim'
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
-if = '''! has('nvim')'''
+on_if = '''!has('nvim')'''
 
 [[plugins]]
 repo =  'roxma/vim-hug-neovim-rpc'
-if = '''! has('nvim')'''
+on_if = '''!has('nvim')'''
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
@@ -28,19 +28,21 @@ let g:lightline#ale#indicator_warnings = "\uf48f"
 let g:lightline#ale#indicator_errors = "\uf484"
 let g:lightline#ale#indicator_ok = "\uf43a"
 '''
-[[plugins]]
-repo = 'haya14busa/vim-migemo'
-
-[[plugins]]
-repo =  'itchyny/vim-gitbranch'
-depends = ['lightline']
 
 [[plugins]]
 repo =  'Shougo/neomru.vim'
-hook_source ='''
+hook_add ='''
 "denite-neomruでginaを無視
 let g:neomru#file_mru_ignore_pattern = 'gina://'
+let g:neomru#time_format = '%Y/%m/%d %H:%M:%S'
+let g:neomru#file_mru_limit = 100
 '''
+
+[[plugins]]
+repo =  'basyura/twibill.vim'
+
+[[plugins]]
+repo =  'mattn/webapi-vim'
 
 [[plugins]]
 repo = 'cespare/vim-toml'
@@ -50,46 +52,43 @@ repo =  'itchyny/lightline.vim'
 
 [[plugins]]
 repo =  'mengelbrecht/lightline-bufferline'
+depends = ['lightline.vim']
 
-#[[plugins]]
-#repo =  'Shougo/echodoc.vim'
-
-#[[plugins]]
-#repo = 'rhysd/clever-f.vim'
-#hook_add = '''
-#'''
 [[plugins]]
-repo = 'kana/vim-operator-replace'
-depends = 'vim-operator-user'
-hook_add = '''
-map _  <Plug>(operator-replace)
-'''
+repo =  'itchyny/vim-gitbranch'
+depends = ['lightline.vim']
 
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
-#on_if = ''' g:colors_name='iceberg' '''
 
-#[[plugins]]
-#repo =  'w0ng/vim-hybrid'
-#on_if = ''' g:colors_name='hybrid' '''
+[[plugins]]
+repo =  'w0ng/vim-hybrid'
 
-#[[plugins]]
-#repo =  'morhetz/gruvbox'#}}}
-#on_if = ''' g:colors_name='gruvbox' '''
-#hook_source = '''
-#let g:gruvbox_contrast_dark = 'medium'
-#let g:gruvbox_italicize_comments = 0
-#let g:gruvbox_invert_selection = 0
-#let g:gruvbox_guisp_fallback = 'bg'
-#'''
+[[plugins]]
+repo ='ayu-theme/ayu-vim'
 
-#[[plugins]]
-#repo = 'ryanoasis/vim-devicons'
-#hook_add = '''
-#let g:webdevicons_enable_denite = 1
-#let g:webdevicons_enable_unite = 1
-#'''
+[[plugins]]
+repo = 'yarisgutierrez/ayu-lightline'
+depends = ['lightline.vim']
+
+[[plugins]]
+repo =  'morhetz/gruvbox'
+hook_add = '''
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_italicize_comments = 0
+let g:gruvbox_invert_selection = 0
+let g:gruvbox_guisp_fallback = 'bg'
+'''
+
+[[plugins]]
+repo = 'markonm/traces.vim'
+hook_add ='''
+let g:traces_num_range_preview = 1
+nnoremap S :%s/
+'''
+
+
 # vim:set foldmethod=marker:
