@@ -950,6 +950,30 @@ function! s:tw_open_existing() abort
 endfunction
 highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
 highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
+" 自動更新間隔（秒）
+"https://gist.github.com/rhysd/4201877
+let s:tweetvim_update_interval_seconds = 60
+let s:tweetvim_timestamp = reltime()[0]
+function! s:tweetvim_autoupdate()
+    let current = reltime()[0]
+    if current - s:tweetvim_timestamp > s:tweetvim_update_interval_seconds
+        call feedkeys("\<Plug>(tweetvim_action_reload)")
+        let s:tweetvim_timestamp = current
+    endif
+    call feedkeys(mode() ==# 'i' ? "\<C-g>\<ESC>" : "g\<ESC>", 'n')
+endfunction
+
+function! s:tweetvim_setup_autoupdate()
+    augroup vimrc-tweetvim-autoupdate
+        autocmd!
+        autocmd CursorHold * call <SID>tweetvim_autoupdate()
+    augroup END
+endfunction
+
+" 自動更新開始と終了用コマンド
+command! -nargs=0 TweetVimAutoUpdate call <SID>tweetvim_setup_autoupdate()
+command! -nargs=0 TweetVimStopAutoUpdate autocmd! vimrc-tweetvim-autoupdate
+
 autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
 autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
 
