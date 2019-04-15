@@ -878,7 +878,6 @@ let g:tweetvim_display_time = 1
 let g:tweetvim_async_post = 1
 let g:tweetvim_display_username = 1
 let g:tweetvim_tweet_limit = 560
-
 function! s:tw_open_existing() abort
   let bnr = bufnr('[tweetvim]')
   if bnr == -1
