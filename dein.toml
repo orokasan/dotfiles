@@ -30,16 +30,6 @@ let g:lightline#ale#indicator_ok = "\uf43a"
 '''
 
 [[plugins]]
-repo = 'haya14busa/vim-migemo'
-hook_add = '''
-if has('migemo')
-    set migemo
-endif
-'''
-hook_post_source= '''
-call migemo#SearchChar(0)
-'''
-[[plugins]]
 repo =  'Shougo/neomru.vim'
 hook_add ='''
 "denite-neomruでginaを無視

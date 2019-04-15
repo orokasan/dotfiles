@@ -271,7 +271,7 @@ on_source = ['denite.nvim','defx.nvim']
 [[plugins]]
 repo =  'Shougo/unite.vim'
 on_cmd = ['Unite']
-
+on_source = ['TweetVim']
 [[plugins]]
 repo =  'Shougo/defx.nvim'
 on_cmd = 'Defx'
@@ -738,6 +738,18 @@ call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
 '''
 
 [[plugins]]
+repo = 'haya14busa/vim-migemo'
+on_if = '''!has('nvim')'''
+hook_add = '''
+if has('migemo')
+    set migemo
+endif
+'''
+hook_post_source= '''
+call migemo#SearchChar(0)
+'''
+
+[[plugins]]
 repo =  'kana/vim-operator-user'
 on_source = ['vim-operator-surround']
 on_source = ['vim-operator-replace']
@@ -920,13 +932,12 @@ nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay |
 nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
 nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
+nnoremap <silent><Leader>tu :<C-u>Denite -buffer-name=normal unite:tweetvim<CR>
 "}}}
 '''
 
 hook_source = '''
 "{{{
-autocmd vimrc FileType tweetvim setlocal signcolumn=no
-autocmd vimrc FileType tweetvim setlocal nonumber
 let g:tweetvim_tweet_per_page = 60
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
@@ -937,7 +948,6 @@ let g:tweetvim_display_time = 1
 let g:tweetvim_async_post = 1
 let g:tweetvim_display_username = 1
 let g:tweetvim_tweet_limit = 560
-
 function! s:tw_open_existing() abort
   let bnr = bufnr('[tweetvim]')
   if bnr == -1
@@ -947,12 +957,14 @@ function! s:tw_open_existing() abort
   let wids = win_findbuf(bnr)
     call win_gotoid(wids[0])
 endfunction
+
 highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
 highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
-autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-
+autocmd vimrc FileType tweetvim highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
+autocmd vimrc FileType tweetvim highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
+autocmd vimrc FileType tweetvim setlocal signcolumn=no nonumber nobreakindent nolinebreak
 "}}}
+"
 '''
 [plugins.ftplugin]
 tweetvim_say = '''
@@ -970,7 +982,7 @@ tweetvim = '''
 "各種アクション
 nnoremap <buffer>S          :<C-u>TweetVimSay<CR>
 nnoremap <buffer>m          :<C-u>TweetVimMentions<CR>
-nnoremap <buffer><Leader>j  :<C-u>Denite -direction=bottomright unite:tweetvim<CR>
+nnoremap <buffer>dd :Denite -buffer-name=normal -direction='dynamictop' unite:tweetvim<CR>
 nnoremap <buffer>j          }j
 nnoremap <buffer>k          k{j
 nnoremap <buffer>th         :TweetVimHomeTimeline<CR>
@@ -988,6 +1000,8 @@ nmap     <buffer>f          <Plug>(tweetvim_action_page_next)
 nmap     <buffer>b          <Plug>(tweetvim_action_page_previous)
 nmap     <silent>           <buffer>n <Plug>(tweetvim_action_cursor_down)
 nmap     <silent>           <buffer>p <Plug>(tweetvim_action_cursor_up)
+nnoremap <buffer>n          <C-d>
+nnoremap <buffer>p          <C-u>
 "不要なマップを除去
 nunmap   <buffer>ff
 nunmap   <buffer>bb
