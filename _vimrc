@@ -8,7 +8,11 @@
 "基本設定 {{{
 "encode
 set encoding=utf-8         "vim 内部のエンコーディグ
+if !has('nvim')
 scriptencoding utf-8,cp932 "vimrcのエンコーディング
+else
+scriptencoding utf-8
+endif
 set fileencoding=utf-8     " 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
@@ -124,7 +128,6 @@ set formatoptions+=mMj      "日本語の行の連結時には空白を入力し
 
 set list                    "不可視文字の可視化
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
-
 set tabstop=4               "<TAB>空白の表示設定
 set expandtab
 set softtabstop=4           "<TAB>の空白変換数
@@ -406,8 +409,8 @@ if has('GUI')
 "    if has('kaoriya')
 "        autocmd vimrc SourcePost ?vimrc ScreenMode 6
 "    else
-        set lines=56 "ウィンドウの縦幅
-        set columns=238 " ウィンドウの横幅
+        set lines=60 "ウィンドウの縦幅
+        set columns=120 " ウィンドウの横幅
         winpos 2 17 " ウィンドウの起動時の位置
     set ambiwidth=auto
 "    endif
@@ -415,6 +418,7 @@ if has('GUI')
 else
     set t_Co=256
     set termguicolors
+    set ambiwidth=double
 endif
 "}}}
 "========================================================================
@@ -429,8 +433,10 @@ if has('kaoriya')
     "背景透過
     autocmd vimrc GUIEnter * set transparency=245
     "全角文字を自動判定
-else
-    set ambiwidth=single
+endif
+
+if has('nvim')
+    set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 endif
 
 "IME状態でカーソルカラー変更
@@ -527,8 +533,13 @@ let g:lightline = {
         \ 'linter_ok': 'left'
     \ }
 \ }
-   let g:lightline.separator= { 'left': '', 'right': '' }
+if !has('nvim')
    let g:lightline.subseparator= { 'left': '', 'right': '' }
+   let g:lightline.separator= { 'left': '', 'right': '' }
+else
+    let g:lightline.subseparator= { 'left': '', 'right': '' }
+   let g:lightline.separator= { 'left': '', 'right': '' }
+endif
 "   let g:lightline.separator= { 'left': '', 'right': '' }
 "   let g:lightline.subseparator= { 'left': '', 'right': '' }
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }

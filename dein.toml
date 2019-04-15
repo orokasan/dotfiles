@@ -3,11 +3,11 @@ repo = 'Shougo/dein.vim'
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
-on_if = '''!has('nvim')'''
+#on_if = '!has('nvim')'
 
 [[plugins]]
 repo =  'roxma/vim-hug-neovim-rpc'
-on_if = '''!has('nvim')'''
+#on_if = '!has('nvim')'
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
@@ -36,6 +36,7 @@ hook_add ='''
 let g:neomru#file_mru_ignore_pattern = 'gina://'
 let g:neomru#time_format = '%Y/%m/%d %H:%M:%S'
 let g:neomru#file_mru_limit = 100
+let g:neomru#file_mru_path= '~/.cache/neomru/file'
 '''
 
 [[plugins]]
@@ -82,7 +83,6 @@ let g:gruvbox_italicize_comments = 0
 let g:gruvbox_invert_selection = 0
 let g:gruvbox_guisp_fallback = 'bg'
 '''
-
 [[plugins]]
 repo = 'markonm/traces.vim'
 hook_add ='''
