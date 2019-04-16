@@ -376,8 +376,6 @@ cnoremap <M-f> <S-Right>|" 前の単語へ移動
 "need-Bclose
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
 nnoremap <silent> <C-p> :Bclose<CR>
-"Markdownの改行タグ
-nnoremap <Leader>nr <C-u>A  <Esc>
 "Markdown Docx出力
 "pandocが必要
 nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
@@ -401,9 +399,11 @@ if has('GUI')
     set guioptions+=M
 "    set guioptions+=C
     let no_buffers_menu = 1
-    set guifont=Ricty_Diminished_with-icons:h13.5:cDEFAULT
-    set guifontwide=Ricty_Diminished_with-icons:h13.5:cDEFAULT
-    set renderoptions=type:directx,renmode:5,geom:2
+    let s:fontsize = '12.5'
+    let s:myguifont = 'Ricty_Diminished_with-icons:h' . s:fontsize .':cDEFAULT'
+    let &guifont = s:myguifont
+    let &guifontwide = s:myguifont
+    set renderoptions=type:directx,renmode:5,geom:1
 
 "    if has('kaoriya')
 "        autocmd vimrc SourcePost ?vimrc ScreenMode 6
