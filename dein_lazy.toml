@@ -1005,7 +1005,7 @@ nmap     <buffer><Leader>F  <Plug>(tweetvim_action_remove_favorite)
 nmap     <buffer><Leader>d  <Plug>(tweetvim_action_remove_status)
 nmap     <buffer>o          <Plug>(tweetvim_action_open_links)
 nmap     <silent><buffer>q  :bd<CR>
-nmap     <buffer><Tab>      <Plug>(tweetvim_action_reload)m
+nmap     <buffer><Tab>      <Plug>(tweetvim_action_reload)
 "ページの先頭に戻ったときにリロード
 nmap     <buffer><silent>gg gg<Plug>(tweetvim_action_reload)
 "ページ移動をff/bb から f/b に
