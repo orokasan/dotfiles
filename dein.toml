@@ -90,5 +90,17 @@ let g:traces_num_range_preview = 1
 nnoremap S :%s/
 '''
 
-
+[[plugins]]
+repo = 'vim-pandoc/vim-pandoc'
+hook_add = '''
+let g:pandoc#modules#disabled = ["formatting","chdir", "spell"]
+let g:pandoc#folding#fdc = 0
+let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
+let g:pandoc#filetypes#pandoc_markdown=0
+'''
+[[plugins]]
+repo = 'vim-pandoc/vim-pandoc-syntax'
+hook_add = '''
+let g:pandoc#syntax#conceal#use = 0
+'''
 # vim:set foldmethod=marker:

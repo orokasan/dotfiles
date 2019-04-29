@@ -870,17 +870,18 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 [[plugins]]
 repo =  'w0rp/ale'
 on_event = 'InsertEnter'
-hook_post_source ='''
+hook_source ='''
 "{{{
 "https://efcl.info/2015/09/10/introduce-textlint/
 "https://koirand.github.io/blog/2018/textlint/
 "vint: pip install --pre vim-vint
 "preset-ja-technical-writing
 "npm install textlint-rule-preset-ja-technical-writing@beta
-
 let g:ale_use_global_executables=1
+let g:ale_set_balloons =0
 let g:ale_linters = {
     \ 'markdown': ['textlint'],
+    \ 'pandoc' : ['textlint'],
     \ 'vim':['vint'],
     \ 'text':['textlint']
     \ }
@@ -976,7 +977,7 @@ command! -nargs=0 TweetVimStopAutoUpdate autocmd! vimrc-tweetvim-autoupdate
 
 autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
 autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-
+;cd
 "}}}
 '''
 [plugins.ftplugin]
