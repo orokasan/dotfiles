@@ -251,6 +251,7 @@ vmap <Tab> %
 " 折り返し時に表示行単位での移動できるようにする
 nnoremap  j gj
 nnoremap  k gk
+nnoremap  J gJ
 " handy replace.
 nnoremap <Leader>*  *:<C-u>%s/<C-r>///g<C-f><Left><Left>
 vnoremap <Leader>*  y:<C-u>%s/<C-r>"//g<C-f><Left><Left>
@@ -378,7 +379,7 @@ cnoremap <M-f> <S-Right>|" 前の単語へ移動
 nnoremap <silent> <C-p> :Bclose<CR>
 "Markdown Docx出力
 "pandocが必要
-nnoremap <Leader>dmd <C-u> :! pandoc "%:p" -o "%:p:r.docx"<CR>
+nnoremap <Leader>p <C-u> :!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 "}}}
 "========================================================================================
 "Gvim {{{
@@ -399,7 +400,7 @@ if has('GUI')
     set guioptions+=M
 "    set guioptions+=C
     let no_buffers_menu = 1
-    let s:fontsize = '12.5'
+    let s:fontsize = '13.5'
     let s:myguifont = 'Ricty_Diminished_with-icons:h' . s:fontsize .':cDEFAULT'
     let &guifont = s:myguifont
     let &guifontwide = s:myguifont
@@ -504,18 +505,17 @@ let g:lightline = {
     \ 'right': [ ['winnr'],['fileencoding','filetype'] ]
     \ },
     \ 'component':{
-        \ 'lineinfo':'%-2v:%3l'
     \},
     \ 'component_function': {
         \ 'readonly':'LLReadonly',
         \ 'denitebuf': 'LLDeniteBuffer',
-        \ 'filetype': 'LLFiletype',
         \ 'inactivefn':'LLInactiveFilename',
         \ 'relativepath':'LLMyFilepath',
         \ 'mode': 'LLMode',
         \ 'charcount':'LLCharcount',
         \ 'eskk': 'LLeskk',
-        \ 'gitbranch':'LLgitbranch'
+        \ 'gitbranch':'LLgitbranch',
+        \ 'lineinfo':'LLlineinfo'
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
@@ -581,6 +581,15 @@ function! LLInactiveFilename()
 return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
 endfunction
 
+function! LLlineinfo() abort
+    let l:col = col('.')
+    let l:fixedcol = l:col <10 ? '--' . l:col :
+        \ l:col <100 ? '-' . l:col : l:col
+    if winwidth(0) > 65
+        return printf('%s:%d#%d', l:fixedcol , line('.') , line('$') )
+    endif
+endfunction
+
 "lightlineに渡す変数の設定
 augroup CharCounter
     autocmd!
@@ -604,17 +613,15 @@ endfunction
 
 function! s:llvarCharCount()
     let l:count = g:CharCount()
-    let s:llcharcount = l:count < 10 ? '  ' . l:count :
-        \ l:count <100 ? ' ' . l:count :
+    let s:llcharcount = l:count < 10 ? '--' . l:count :
+        \ l:count <100 ? '-' . l:count :
         \ l:count
 endfunction
 
 function! LLCharcount()
     if &filetype !~? s:ignore_filetype
-"        \ && winwidth(0) > 40
-        return  s:llcharcount . '/' . s:llcharallcount
-    else
-        return ''
+        return winwidth(0) > 100 ? '[' . s:llcharcount . ']' . s:llcharallcount . 'w' :
+            \ winwidth(0) > 65 ? '[' . s:llcharcount . ']w' : ''
     endif
 endfunction
 
@@ -742,7 +749,7 @@ function! g:LineCharVCount() range
 endfunction
 "呼び出す
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
-xnoremap<silent> ; :LineCharVCount<CR>
+xnoremap<silent> <C-o> :LineCharVCount<CR>
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
