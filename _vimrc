@@ -72,10 +72,9 @@ set visualbell      "ビープを停止
 set t_vb=
 set noerrorbells
 set hidden          " バッファが編集中でもその他のファイルを開けるように
-
 " ESC連打でハイライト解除
-nmap<silent> <Esc><Esc> :nohlsearch<CR><Esc>
-nmap<silent> <C-c><C-c> :nohlsearch<CR><Esc>
+nmap<silent> <Esc><Esc> :nohlsearch<CR>
+nmap<silent> <C-c><C-c> :nohlsearch<CR>
 " Display candidates by list.
 set wildmenu
 set wildmode=longest:full
@@ -110,13 +109,14 @@ set ttyfast
 
 set virtualedit=block       " カーソルを文字が存在しない部分でも動けるようにする
 "set virtualedit=onemore "行末の1文字先までカーソルを移動できるように
-set scrolloff=3             "3行余裕を持たせてスクロール
+set scrolloff=5             "3行余裕を持たせてスクロール
 set display=lastline        "長い行をいい感じに表示
 "
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "set spelllang=en,cjk
-set noswapfile              " スワップファイルを作らない
+set swapfile              " スワップファイルを作らない/作る
+set directory=~/vimfiles/swap
 set autoread                " 編集中のファイルが変更されたら自動で読み直す
 set undodir=~/vimfiles/undo "Undoファイルをまとめる
 set backup                  "backupファイルを作成
@@ -139,13 +139,13 @@ set smartcase               " 検索文字列に大文字が含まれている�
 set incsearch               " 検索文字列入力時に順次対象文字列にヒットさせる
 set wrapscan                " 検索時に最後まで行ったら最初に戻る
 set hlsearch                " 検索語をハイライト表示
-" Localize search options.
-autocmd vimrc WinLeave *
-\     let b:vimrc_pattern = @/
-\   | let b:vimrc_hlsearch = &hlsearch
-autocmd vimrc WinEnter *
-\     let @/ = get(b:, 'vimrc_pattern', @/)
-\   | let &l:hlsearch = get(b:, 'vimrc_hlsearch', &l:hlsearch)
+"" Localize search options.
+"autocmd vimrc WinLeave *
+"\     let b:vimrc_pattern = @/
+"\   | let b:vimrc_hlsearch = &hlsearch
+"autocmd vimrc WinEnter *
+"\     let @/ = get(b:, 'vimrc_pattern', @/)
+"\   | let &l:hlsearch = get(b:, 'vimrc_hlsearch', &l:hlsearch)
 
 "Markdown用設定
 "autocmd! FileType markdown hi! def link markdownItalic Normal
@@ -268,6 +268,8 @@ inoremap <expr><F2> strftime("%Y%m%d")
 "検索メッセージを非表示
 nnoremap <silent> n n
 nnoremap <silent> N N
+"Visualモードから検索
+vnoremap * "zy/<C-R>z<CR>
 "句読点を強引に挿入
 nnoremap <Leader>,         a、<Esc>
 nnoremap <Leader>.         a。<Esc>
@@ -412,6 +414,7 @@ if has('GUI')
         set lines=60 "ウィンドウの縦幅
         set columns=120 " ウィンドウの横幅
         winpos 2 17 " ウィンドウの起動時の位置
+    "全角文字を自動判定
     set ambiwidth=auto
 "    endif
 
@@ -432,7 +435,12 @@ if has('kaoriya')
     nnoremap <S-CR> :ScreenMode 1<CR>
     "背景透過
     autocmd vimrc GUIEnter * set transparency=245
-    "全角文字を自動判定
+    "migemo有効化
+    if has('migemo')
+        set runtimepath+=$VIM/runtime
+        nnoremap / g/
+        nnoremap g/ /
+    endif
 endif
 
 if has('nvim')
@@ -583,10 +591,10 @@ endfunction
 
 function! LLlineinfo() abort
     let l:col = col('.')
-    let l:fixedcol = l:col <10 ? '--' . l:col :
-        \ l:col <100 ? '-' . l:col : l:col
+    let l:fixedcol = l:col <10 ? '  ' . l:col :
+        \ l:col <100 ? ' ' . l:col : l:col
     if winwidth(0) > 65
-        return printf('%s:%d#%d', l:fixedcol , line('.') , line('$') )
+        return printf('%s:%d#%d', l:fixedcol , line('.') , line('$') )
     endif
 endfunction
 
@@ -736,7 +744,6 @@ function! g:CharAllCount()
 	endfor
 	return l:result
 endfunction
-
 "選択範囲の行をカウント
 function! g:LineCharVCount() range
 	let l:result = 0
@@ -751,6 +758,7 @@ endfunction
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> :LineCharVCount<CR>
 "}}}
+set completefunc=googlesuggest#Complete
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
 colorscheme iceberg

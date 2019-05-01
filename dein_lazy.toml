@@ -290,7 +290,12 @@ nmap <silent> [denite]x <Plug>(defx):<C-u>Denite
 '''
 hook_source = '''
 "{{{
-autocmd vimrc FileType defx setlocal signcolumn=no
+
+augroup defx
+    autocmd!
+    autocmd BufEnter FileType defx set nohlsearch
+    autocmd BufLeave FileType defx set hlsearch
+augroup END
 
 call defx#custom#option('_', {
     \ 'winwidth': 44,
@@ -321,6 +326,7 @@ call defx#custom#option('_', {
 [plugins.ftplugin]
 defx = '''
 "{{{
+setlocal signcolumn=no
 " Define mappings
 nnoremap <silent><buffer><expr> <CR>
 \ defx#do_action('drop')
@@ -505,9 +511,10 @@ let g:defx_icons_extensions = {
 '''
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
+on_if = ''' has('nvim') '''
 on_event = 'InsertEnter'
 hook_source = '''
- "{{{
+"{{{
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
@@ -542,13 +549,12 @@ call deoplete#custom#source('_', 'matchers', ['matcher_head'])
 call deoplete#custom#source('buffer', 'mark', 'b')
 call deoplete#custom#source('eskk', 'mark' , '▽')
 call deoplete#custom#source('eskk', 'max_menu_width', 80)
+call deoplete#custom#source('eskk', 'min_pattern_length', 1)
 "matcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('eskk', 'rank', 500) 
 call deoplete#custom#source('vim', 'rank' , 250)
 call deoplete#custom#source('vim', 'min_pattern_length', 4)
-call deoplete#custom#option('ignore_sources',
-    \ {'_': [ 'tag', 'dictionary']})
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
     \ 'converter_remove_overlap',
@@ -564,33 +570,100 @@ call deoplete#custom#source('_', 'converters', [
 " - mark_below = Mark shown for words N lines below.
 " - mark_changes = Mark shown for words in the changelist.
 call deoplete#custom#var('around', {
-\   'range_above': 30,
-\   'range_below': 30,
+\   'range_above': 20,
+\   'range_below': 20,
 \   'mark_above': '[↑]',
 \   'mark_below': '[↓]',
 \   'mark_changes': '[*]',
 \})
+call deoplete#custom#option('sources', {
+\ 'markdown': ['buffer'],
+\})
 call deoplete#custom#option({
-    \ 'auto_complete_delay': 10,
-    \ 'skip_multibyte': v:true,
+    \ 'auto_complete_delay': 0,
+    \ 'skip_multibyte': v:false,
     \ 'max_list': 30,
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'filter',
-    \ 'yarp': v:false,
-    \ 'num_processes': 4
+    \ 'num_processes': 0
     \ })
 call deoplete#enable()
 "}}}
 '''
 
 [[plugins]]
+repo = 'Shougo/neocomplete.vim'
+on_if = ''' !has('nvim') '''
+on_event = 'InsertEnter'
+hook_source = '''
+"{{{
+" Note: This option must set it in .vimrc (_vimrc).
+" NOT IN .gvimrc (_gvimrc)!
+" Disable AutoComplPop.
+" Use neocomplete.
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+let g:neocomplete#enable_auto_select = 1
+" Define keyword.
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplete#undo_completion()
+inoremap <expr><C-l>     neocomplete#complete_common_string()
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? "\<C-y>" : "\<CR>"
+endfunction
+" <TAB>: completion.
+inoremap <silent><expr> <TAB>
+    \ pumvisible() ? "\<C-n>" :
+    \ neosnippet#expandable_or_jumpable() ?
+    \    "\<Plug>(neosnippet_expand_or_jump)" :
+    \ <SID>check_back_space() ? "\<TAB>" :
+    \ neocomplete#start_manual_complete()
+function! s:check_back_space() abort "{{{
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction"}}}
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+
+let g:neocomplete#auto_complete_delay = 1
+let g:neocomplete#skip_auto_completion_time = '0.2'
+let g:neocomplete#enable_multibyte_completion = 1
+
+if !exists('g:neocomplete#keyword_patterns')
+  let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns._ = '\h\w*'
+
+let g:neocomplete#max_list=50
+call neocomplete#custom#source('_', 'matchers', ['matcher_fuzzy','matcher_head'])
+call neocomplete#custom#source('eskk', 'rank', 500) 
+call neocomplete#custom#source('eskk','max_candidates', 50)
+call neocomplete#custom#source('vim', 'rank' , 250)
+call neocomplete#custom#source('buffer', 'mark', 'B')
+call neocomplete#custom#source('eskk', 'mark' , '▽')
+call neocomplete#custom#source('eskk', 'max_menu_width', 80)
+let g:neocomplete#ignore_source_files = [
+    \'member.vim', 'tag.vim', 'buffer', 'dictionary.vim', 'include.vim', 'file_include.vim' 
+    \]
+call neocomplete#init#enable()
+"}}}
+'''
+
+[[plugins]]
 repo =  'Shougo/neco-vim'
-depends = [ 'deoplete.nvim' ]
+on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
 [[plugins]]
-repo =  'Shougo/neco-syntax'
-on_source = ['deoplete']
+repo = 'mattn/googlesuggest-complete-vim'
+on_event = 'InsertEnter'
+depends = ['webapi-vim']
 
 [[plugins]]
 repo =  'Shougo/neosnippet'
@@ -601,15 +674,10 @@ hook_source = '''
 "{{{
 " Plugin key-mappings.
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
-" SuperTab like snippets behavior.
+imap <C-e>     <Plug>(neosnippet_expand_or_jump)
+smap <C-e>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-e>     <Plug>(neosnippet_expand_target)
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-imap <expr><TAB>
- \ pumvisible() ? "\<C-n>" :
- \ neosnippet#expandable_or_jumpable() ?
- \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 " For conceal markers.
@@ -618,6 +686,7 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 "endif
 "}}}
 '''
+
 [[plugins]]
 repo =  'Shougo/neosnippet-snippets'
 on_source = 'neosnippet'
@@ -766,6 +835,8 @@ on_cmd = ['Gina']
 hook_add = '''
 nnoremap <Leader>aa :<C-u>Gina status --short<CR>
 nnoremap <Leader>ac :<C-u>Gina commit<CR>
+nnoremap <Leader>ap :<C-u>Gina push<CR>
+
 '''
 hook_post_source = '''
 "{{{
@@ -918,7 +989,7 @@ on_cmd = ['TweetVimHomeTimeline','TweetVimSay']
 depends = ['twibill.vim','webapi-vim']
 hook_add = '''
 "{{{
-nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay |
+nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
 nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
 nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
@@ -977,7 +1048,6 @@ command! -nargs=0 TweetVimStopAutoUpdate autocmd! vimrc-tweetvim-autoupdate
 
 autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
 autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-;cd
 "}}}
 '''
 [plugins.ftplugin]
