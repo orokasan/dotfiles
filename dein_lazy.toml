@@ -595,7 +595,7 @@ call deoplete#enable()
 repo = 'Shougo/neocomplete.vim'
 on_if = ''' !has('nvim') '''
 on_event = 'InsertEnter'
-hook_source = '''
+hook_post_source = '''
 "{{{
 " Note: This option must set it in .vimrc (_vimrc).
 " NOT IN .gvimrc (_gvimrc)!
@@ -604,6 +604,7 @@ hook_source = '''
 " Use smartcase.
 let g:neocomplete#enable_smart_case = 1
 let g:neocomplete#enable_auto_select = 1
+let g:neocomplete#use_vimproc = 1
 " Define keyword.
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplete#undo_completion()
@@ -612,9 +613,7 @@ inoremap <expr><C-l>     neocomplete#complete_common_string()
 " <CR>: close popup and save indent.
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function()
-  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? "\<C-y>" : "\<CR>"
+  return pumvisible() ? "\<C-y>" : "\<CR>"
 endfunction
 " <TAB>: completion.
 inoremap <silent><expr> <TAB>
@@ -630,7 +629,7 @@ endfunction"}}}
 " <C-h>, <BS>: close popup and delete backword char.
 inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-
+let g:neocomplete#sources#buffer#cache_limit_size = 500000
 let g:neocomplete#auto_complete_delay = 1
 let g:neocomplete#skip_auto_completion_time = '0.2'
 let g:neocomplete#enable_multibyte_completion = 1
@@ -638,20 +637,22 @@ let g:neocomplete#enable_multibyte_completion = 1
 if !exists('g:neocomplete#keyword_patterns')
   let g:neocomplete#keyword_patterns = {}
 endif
-let g:neocomplete#keyword_patterns._ = '\h\w*'
+"let g:neocomplete#keyword_patterns._ = '\h\w*'
 
 let g:neocomplete#max_list=50
 call neocomplete#custom#source('_', 'matchers', ['matcher_fuzzy','matcher_head'])
 call neocomplete#custom#source('eskk', 'rank', 500) 
 call neocomplete#custom#source('eskk','max_candidates', 50)
 call neocomplete#custom#source('vim', 'rank' , 250)
-call neocomplete#custom#source('buffer', 'mark', 'B')
+call neocomplete#custom#source('buffer', 'mark', 'b')
 call neocomplete#custom#source('eskk', 'mark' , '▽')
 call neocomplete#custom#source('eskk', 'max_menu_width', 80)
 let g:neocomplete#ignore_source_files = [
-    \'member.vim', 'tag.vim', 'buffer', 'dictionary.vim', 'include.vim', 'file_include.vim' 
+    \'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim' 
     \]
-call neocomplete#init#enable()
+"call neocomplete#init#enable()
+"call neocomplete#start_manual_complete()
+execute 'NeoCompleteBufferMakeCache'
 "}}}
 '''
 
@@ -716,6 +717,7 @@ nnoremap <silent><expr><C-y> <SID>eskk_inserttoggle()
 "}}}
 '''
 hook_source = '''
+"{{{
 augroup myeskk
 autocmd!
 autocmd InsertLeave * call <SID>eskk_status()
@@ -781,31 +783,32 @@ function! s:eskk_initial_pre() abort
   call t.add_map('z0', '）')
   call eskk#register_mode_table('hira', t)
 endfunction
-
-'''
-
-[[plugins]]
-repo =  'cohama/lexima.vim'
-on_event = 'InsertEnter' 
-hook_post_source = '''
-"{{{
-call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
-call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
-call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
-call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
-call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
-call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
-call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
-call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#』', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
-call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
 "}}}
 '''
+
+#[[plugins]]
+#repo =  'cohama/lexima.vim'
+#on_event = 'InsertEnter' 
+#hook_post_source = '''
+#"{{{
+#let g:lexima_map_escape = '<ESC>', '<CR>' ,'<BS>'
+#call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
+#call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
+#call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
+#call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
+#call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
+#call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
+#call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
+#call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
+#call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
+#call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
+#call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
+#call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
+#call lexima#add_rule({'char': '[', 'at': '\%#』', 'leave': 1})
+#call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
+#call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
+#"}}}
+#'''
 
 [[plugins]]
 repo =  'kana/vim-operator-user'
@@ -936,7 +939,6 @@ nnoremap <silent><Leader>ig :IndentGuidesToggle<CR>
 hook_source ='''
 let g:indent_guides_exclude_filetypes = ['help', 'defx']
 '''
-
 
 [[plugins]]
 repo =  'w0rp/ale'
