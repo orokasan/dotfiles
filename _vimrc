@@ -6,6 +6,7 @@
 "https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
 "========================================================================
 "基本設定 {{{
+"
 "encode
 set encoding=utf-8         "vim 内部のエンコーディグ
 if !has('nvim')
@@ -44,8 +45,8 @@ let g:loaded_netrwFileHandlers = 1
 "参考:https://gammasoft.jp/python/python-version-management/
 "kaoriya-vimのpythonに揃える
 "64bit版を使用する
-set runtimepath+='~/vimfiles'
-set runtimepath+="C:\Program Files\Python37"
+"set runtimepath+='~/vimfiles'
+"set runtimepath+="C:\Program Files\Python37"
 let g:python_host_prog ='C:\Program Files (x86)\Python2.7\python.exe'
 let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
 "vimprocのダウンロード(for Win)
@@ -112,7 +113,12 @@ endif
 "}}}
 "========================================================================
 "入力・編集 {{{
-
+"migemo有効化
+if has('migemo')
+    set runtimepath+=$VIM/runtime
+    nnoremap / g/
+    nnoremap g/ /
+endif
 set virtualedit=block       " カーソルを文字が存在しない部分でも動けるようにする
 "set virtualedit=onemore "行末の1文字先までカーソルを移動できるように
 set scrolloff=5             "3行余裕を持たせてスクロール
@@ -401,12 +407,6 @@ if has('kaoriya')
     nnoremap <S-CR> :ScreenMode 1<CR>
     "背景透過
     autocmd vimrc GUIEnter * set transparency=245
-    "migemo有効化
-    if has('migemo')
-        set runtimepath+=$VIM/runtime
-        nnoremap / g/
-        nnoremap g/ /
-    endif
 endif
 
 if has('nvim')
