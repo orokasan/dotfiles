@@ -87,7 +87,6 @@ nnoremap <silent><Leader>n :<C-u>Denite
 nnoremap [denite]o :<C-u>Denite
     \ -buffer-name=search
     \ output:
-"open dirmark-bookmark in Denite
 nnoremap <silent> [denite]d :<C-u>Denite
     \ -buffer-name=normal
     \ dirmark<CR>
@@ -576,9 +575,6 @@ call deoplete#custom#var('around', {
 \   'mark_below': '[↓]',
 \   'mark_changes': '[*]',
 \})
-call deoplete#custom#option('sources', {
-\ 'markdown': ['buffer'],
-\})
 call deoplete#custom#option({
     \ 'auto_complete_delay': 0,
     \ 'skip_multibyte': v:false,
@@ -590,12 +586,11 @@ call deoplete#custom#option({
 call deoplete#enable()
 "}}}
 '''
-
 [[plugins]]
 repo = 'Shougo/neocomplete.vim'
 on_if = ''' !has('nvim') '''
 on_event = 'InsertEnter'
-hook_post_source = '''
+hook_source = '''
 "{{{
 " Note: This option must set it in .vimrc (_vimrc).
 " NOT IN .gvimrc (_gvimrc)!
@@ -605,6 +600,7 @@ hook_post_source = '''
 let g:neocomplete#enable_smart_case = 1
 let g:neocomplete#enable_auto_select = 1
 let g:neocomplete#use_vimproc = 1
+let g:neocomplete#min_keyword_length = 6
 " Define keyword.
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplete#undo_completion()
@@ -637,10 +633,15 @@ let g:neocomplete#enable_multibyte_completion = 1
 if !exists('g:neocomplete#keyword_patterns')
   let g:neocomplete#keyword_patterns = {}
 endif
-"let g:neocomplete#keyword_patterns._ = '\h\w*'
+
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
 let g:neocomplete#max_list=50
-call neocomplete#custom#source('_', 'matchers', ['matcher_fuzzy','matcher_head'])
+call neocomplete#custom#source('_', 'matchers', ['matcher_head','matcher_length'])
+" Change default converter.
+"call neocomplete#custom#source('_', 'converters',
+"\ ['converter_remove_overlap', 'converter_remove_last_paren',
+"    \  'converter_abbr'])
 call neocomplete#custom#source('eskk', 'rank', 500) 
 call neocomplete#custom#source('eskk','max_candidates', 50)
 call neocomplete#custom#source('vim', 'rank' , 250)
@@ -648,12 +649,16 @@ call neocomplete#custom#source('buffer', 'mark', 'b')
 call neocomplete#custom#source('eskk', 'mark' , '▽')
 call neocomplete#custom#source('eskk', 'max_menu_width', 80)
 let g:neocomplete#ignore_source_files = [
-    \'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim' 
+    \'member', 'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim' 
     \]
 "call neocomplete#init#enable()
 "call neocomplete#start_manual_complete()
-execute 'NeoCompleteBufferMakeCache'
+"execute 'NeoCompleteBufferMakeCache'
 "}}}
+'''
+hook_post_source = '''
+call neocomplete#initialize()
+"NeoCompleteBufferMakeCache
 '''
 
 [[plugins]]
@@ -665,6 +670,9 @@ on_ft = 'vim'
 repo = 'mattn/googlesuggest-complete-vim'
 on_event = 'InsertEnter'
 depends = ['webapi-vim']
+hook_add = '''
+set completefunc=googlesuggest#Complete
+'''
 
 [[plugins]]
 repo =  'Shougo/neosnippet'
@@ -785,7 +793,6 @@ function! s:eskk_initial_pre() abort
 endfunction
 "}}}
 '''
-
 #[[plugins]]
 #repo =  'cohama/lexima.vim'
 #on_event = 'InsertEnter' 
@@ -1100,7 +1107,6 @@ nunmap   <buffer>bb
 "}}}
 '''
 
-
 [[plugins]]
 repo = 'previm/previm'
 depends = 'open-browser.vim'
@@ -1199,5 +1205,12 @@ hook_add = '''
 vmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 '''
-
+[[plugins]]
+repo = 'soramugi/auto-ctags.vim'
+on_cmd = ['Ctags']
+hook_add = '''
+let g:auto_ctags_tags_name = 'tags'
+let g:auto_ctags_tags_args = ['--tag-relative=yes', '--recurse=yes', '--sort=yes']
+let g:auto_ctags_filetype_mode = 1
+'''
 # vim:set foldmethod=marker:

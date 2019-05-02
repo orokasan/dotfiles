@@ -53,7 +53,7 @@ let g:vimproc#download_windows_dll = 1
 "}}}
 "========================================================================
 "外観  {{{
-set shortmess+=IaTs
+set shortmess+=aTs
 set showtabline=2   "常にタブラインを表示
 set number          "行番号を表示
 set signcolumn=yes  "signcolumを常に表示
@@ -84,6 +84,12 @@ set helpheight=15 "and help.
 
 set ttyfast
 
+if has('GUI')
+    let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
+    set guioptions+=M
+    set guioptions+=C
+    let no_buffers_menu = 1
+endif
 "全角スペースを表示
 "コメント以外で全角スペースを指定しているので "scriptencoding"と、
 "このファイルのエンコードが一致するよう注意！
@@ -168,7 +174,8 @@ set winwidth=1
 set cmdwinheight=5
 " No equal window size.
 set noequalalways
-
+"ctags設定
+set tags=vim.tags
 "いい感じに折りたたみ状態を保存 {{{
 function! s:is_view_available() abort
   if !&buflisted || &buftype !=# ''
@@ -383,47 +390,6 @@ nnoremap <silent> <C-p> :Bclose<CR>
 "pandocが必要
 nnoremap <Leader>p <C-u> :!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 "}}}
-"========================================================================================
-"Gvim {{{
-if has('GUI')
-    set clipboard=unnamed
-    "ツールバー非表示
-    ""Nm秒後にカーソル点滅開始
-    set guicursor=n:blinkwait2000
-    "フォント
-    "ConsolasにPowerlineSymbolsをパッチしてある
-    "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
-"    set guifont=Consolas:h11:cDEFAULT
-"    set guifontwide=MS_Gothic:h12:cDEFAULT
-"    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
-"Nerdfont
-"https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
-    let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
-    set guioptions+=M
-"    set guioptions+=C
-    let no_buffers_menu = 1
-    let s:fontsize = '13.5'
-    let s:myguifont = 'Ricty_Diminished_with-icons:h' . s:fontsize .':cDEFAULT'
-    let &guifont = s:myguifont
-    let &guifontwide = s:myguifont
-    set renderoptions=type:directx,renmode:5,geom:1
-
-"    if has('kaoriya')
-"        autocmd vimrc SourcePost ?vimrc ScreenMode 6
-"    else
-        set lines=60 "ウィンドウの縦幅
-        set columns=120 " ウィンドウの横幅
-        winpos 2 17 " ウィンドウの起動時の位置
-    "全角文字を自動判定
-    set ambiwidth=auto
-"    endif
-
-else
-    set t_Co=256
-    set termguicolors
-    set ambiwidth=double
-endif
-"}}}
 "========================================================================
 "+kaoriya {{{
 if has('kaoriya')
@@ -566,11 +532,11 @@ else
 endif
 
 let g:lightline#bufferline#unnamed = '[unnamed]'
+let g:lightline#bufferline#filename_modifier = ':t'
 let g:lightline#bufferline#show_number = 2
 let g:lightline#bufferline#number_map = {
 \ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
-
 
 function! LLMode()
 return &filetype ==# 'unite' ? 'Unite' :
@@ -584,7 +550,6 @@ endfunction
 "例外filetype
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite)'
 
-
 function! LLInactiveFilename()
 return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
 endfunction
@@ -593,8 +558,13 @@ function! LLlineinfo() abort
     let l:col = col('.')
     let l:fixedcol = l:col <10 ? '  ' . l:col :
         \ l:col <100 ? ' ' . l:col : l:col
-    if winwidth(0) > 65
-        return printf('%s:%d#%d', l:fixedcol , line('.') , line('$') )
+    
+    if &filetype !~# s:ignore_filetype
+        return winwidth(0) > 65 ?
+            \  printf('%s:%d#%d', l:fixedcol , line('.') , line('$') ) :
+            \  printf('%s:%d', l:fixedcol , line('.') )
+        else
+            return printf('%d:%d', col('.') , line('.') )
     endif
 endfunction
 
@@ -627,9 +597,11 @@ function! s:llvarCharCount()
 endfunction
 
 function! LLCharcount()
-    if &filetype !~? s:ignore_filetype
+    if &filetype !~# s:ignore_filetype
         return winwidth(0) > 100 ? '[' . s:llcharcount . ']' . s:llcharallcount . 'w' :
             \ winwidth(0) > 65 ? '[' . s:llcharcount . ']w' : ''
+    else
+        return ''
     endif
 endfunction
 
@@ -642,7 +614,7 @@ let s:llgitbranch = ''
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgitcache()
 function! s:llgitcache()
     let l:git = gitbranch#name()
-    if &filetype !~? s:ignore_filetype && strlen(l:git)
+    if &filetype !~# s:ignore_filetype && strlen(l:git)
         let s:llgitbranch =  winwidth(0) > 100  ? ' '. l:git :' '
     else
         let s:llgitbranch = ''
@@ -658,7 +630,7 @@ endfunction
 function! LLMyFilepath()
 if &filetype ==# 'denite' 
     return LLDeniteSource()
-elseif &filetype !~? s:ignore_filetype
+elseif &filetype !~# s:ignore_filetype
     let l:ll_filepath = expand('%:~')
     let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
@@ -672,6 +644,7 @@ else
 endif
 
 endfunction
+
 function! LLDeniteMode()
     let l:mode_str=denite#get_status('raw_mode')
     call lightline#link(tolower(l:mode_str[0]))
@@ -690,10 +663,16 @@ endfunction
 function! LLDeniteSource()
     let l:linenr = denite#get_status('linenr')
     let l:sources = denite#get_status('sources')
-    let l:path =denite#get_status('path')
-    let denitesource = l:linenr . ' - '. '[' .l:sources . ']' . l:path
+    let l:p =denite#get_status('path')
+    let l:path = substitute(l:p, '[', '', 'g')
+    let l:path = substitute(l:path, ']', '', 'g')
+    let l:path = fnamemodify(l:path,':~')
+    if strlen(l:path) > 40
+        let l:path = fnamemodify(l:path,':t')
+    endif
+    let denitesource = l:linenr . ' - ' .l:sources . ' - [' . l:path . ']'
     if strlen(denitesource) > 100
-        return  l:linenr . ' - '. '[' .l:sources . ']'
+        return  l:linenr . ' - [' .l:sources . ']'
     else
         return denitesource
     endif
@@ -758,10 +737,51 @@ endfunction
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> :LineCharVCount<CR>
 "}}}
-set completefunc=googlesuggest#Complete
+"========================================================================================
+"Gvim {{{
+if has('GUI')
+    set clipboard=unnamed
+    "ツールバー非表示
+    ""Nm秒後にカーソル点滅開始
+    set guicursor=n:blinkwait2000
+    "フォント
+    "ConsolasにPowerlineSymbolsをパッチしてある
+    "https://qiita.com/s_of_p/items/b7ab2e4a9e484ceb9ee7
+"    set guifont=Consolas:h11:cDEFAULT
+"    set guifontwide=MS_Gothic:h12:cDEFAULT
+"    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
+"Nerdfont
+"https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
+    let s:fontsize = '13.5'
+    let s:font = 'Ricty_Diminished_with-icons'
+
+    let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
+    let &guifont = s:myguifont
+    let &guifontwide = s:myguifont
+    set renderoptions=type:directx,renmode:5,geom:1
+
+"    if has('kaoriya')
+"        autocmd vimrc SourcePost ?vimrc ScreenMode 6
+"    else
+        set lines=60 "ウィンドウの縦幅
+        set columns=120 " ウィンドウの横幅
+        winpos 2 10 " ウィンドウの起動時の位置
+    "全角文字を自動判定
+    set ambiwidth=auto
+"    endif
+
+else
+    set t_Co=256
+    set termguicolors
+    set ambiwidth=double
+endif
+"}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
 colorscheme iceberg
+"補完ポップアップメニューの色変更
+autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
+autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 "colorscheme hybrid
 "colorscheme gruvbox
 set background=dark

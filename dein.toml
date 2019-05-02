@@ -110,4 +110,8 @@ repo = 'vim-pandoc/vim-pandoc-syntax'
 hook_add = '''
 let g:pandoc#syntax#conceal#use = 0
 '''
+[[plugins]]
+repo = 'hrsh7th/vim-neco-calc'
+on_source = ['deoplete','neocomplete']
+
 # vim:set foldmethod=marker:
