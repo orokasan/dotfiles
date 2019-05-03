@@ -1,7 +1,9 @@
 "ork's _vimrc for Windows
 "今夜使いたいkey mapping
-"ciw => カーソル上の単語を削除してインサートモード
-"ci' => シングルクォート内のテキストを削除してインサートモード
+"*t) =>前方の)の手前まで削除して*
+"aw =>1単語の範囲
+"ap =>段落の範囲
+"<C-t>&<C-d>=> インデント増減
 "vim正規表現
 "https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
 "========================================================================
@@ -68,7 +70,7 @@ autocmd vimrc ColorScheme *  hi clear CursorLine
 set modelines=5     "モードライン設定
 set showmatch       "括弧入力時の対応する括弧を表示
 set matchtime=1     "括弧のハイライト時間(ミリ秒)
-
+set lazyredraw
 set visualbell      "ビープを停止
 set t_vb=
 set noerrorbells
@@ -78,7 +80,7 @@ nmap<silent> <Esc><Esc> :nohlsearch<CR>
 nmap<silent> <C-c><C-c> :nohlsearch<CR>
 " Display candidates by list.
 set wildmenu
-set wildmode=longest:full
+set wildmode=longest:full,full
 "
 set previewheight=8 " Adjust window size of preview 
 set helpheight=15 "and help.
@@ -116,14 +118,11 @@ endif
 "migemo有効化
 if has('migemo')
     set runtimepath+=$VIM/runtime
-    nnoremap / g/
-    nnoremap g/ /
 endif
 set virtualedit=block       " カーソルを文字が存在しない部分でも動けるようにする
 "set virtualedit=onemore "行末の1文字先までカーソルを移動できるように
 set scrolloff=5             "3行余裕を持たせてスクロール
 set display=lastline        "長い行をいい感じに表示
-"
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "set spelllang=en,cjk
@@ -131,8 +130,8 @@ set swapfile              " スワップファイルを作らない/作る
 set directory=~/vimfiles/swap
 set autoread                " 編集中のファイルが変更されたら自動で読み直す
 set undodir=~/vimfiles/undo "Undoファイルをまとめる
-set backup                  "backupファイルを作成
-set backupdir=~/vimfiles/backup
+set nobackup                  "backupファイルを作成
+"set backupdir=~/vimfiles/backup
 
 set textwidth=0             "自動改行をやめる
 set formatoptions+=mMj      "日本語の行の連結時には空白を入力しない。など
@@ -258,17 +257,28 @@ inoremap jk <esc>
 nnoremap Y y$
 xnoremap Y y$
 nnoremap vv 0v$
-" TABで対応ペアにジャンプ
 nmap <Tab> %
 vmap <Tab> %
 " 折り返し時に表示行単位での移動できるようにする
 nnoremap  j gj
 nnoremap  k gk
 nnoremap  J gJ
-" handy replace.
-nnoremap <Leader>*  *:<C-u>%s/<C-r>///g<C-f><Left><Left>
-vnoremap <Leader>*  y:<C-u>%s/<C-r>"//g<C-f><Left><Left>
-vnoremap <expr><CR> printf(':s/%s//g<C-f><Left><Left>', expand('<cword>'))
+
+" 。、に移動(f<C-K>._ を打つのは少し長いので)。cf<C-J>等の使い方も可。
+function! s:MapFT(key, char)
+    for cmd in ['f', 'F', 't', 'T']
+        execute 'noremap <silent> ' . cmd . a:key . ' ' . cmd . a:char
+    endfor
+endfunction
+call <SID>MapFT('<C-J>', '。')
+call <SID>MapFT('<C-U>', '、')
+" 前/次の「。、」の後に改行を挿入する
+nnoremap <silent> f<C-H> f。a<CR><Esc>
+nnoremap <silent> f<C-L> f、a<CR><Esc>
+nnoremap <silent> F<C-H> F。a<CR><Esc>
+nnoremap <silent> F<C-L> F、a<CR><Esc>
+nnoremap <silent> f<C-M> :call search('[、。]')<CR>a<CR><Esc>
+nnoremap <silent> F<C-M> :call search('[、。]', 'b')<CR>a<CR><Esc>
 
 imap <c-s> <Esc>:w<CR>a             "CTRL-sで保存
 nnoremap <silent><C-q> :close<CR>   "CTRL-qでclose
@@ -465,7 +475,7 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath()
 let g:lightline = {
 \ 'colorscheme': 'iceberg',
     \ 'active': {
-        \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','gitbranch'], [ 'readonly', 'relativepath'] ],
+        \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','git'], [ 'readonly', 'relativepath'] ],
         \ 'right': [ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'lineinfo'],
             \ ['charcount'], [ 'percent','IMEstatus'] 
         \ ]
@@ -488,7 +498,7 @@ let g:lightline = {
         \ 'mode': 'LLMode',
         \ 'charcount':'LLCharcount',
         \ 'eskk': 'LLeskk',
-        \ 'gitbranch':'LLgitbranch',
+        \ 'git':'LLgit',
         \ 'lineinfo':'LLlineinfo'
     \ },
     \ 'component_expand': {
@@ -580,7 +590,7 @@ let s:llcharallcount = ''
 
 function! s:llvarCharAllCount()
     let l:count = g:CharAllCount()
-    let s:llcharallcount = l:count == 0 ?   '---' :
+    let s:llcharallcount = l:count == 0 ?   '***' :
         \ l:count <10 ? '   ' . l:count :
         \ l:count <100 ? '  ' . l:count :
         \ l:count <1000 ? ' ' . l:count : l:count
@@ -591,8 +601,8 @@ endfunction
 
 function! s:llvarCharCount()
     let l:count = g:CharCount()
-    let s:llcharcount = l:count < 10 ? '--' . l:count :
-        \ l:count <100 ? '-' . l:count :
+    let s:llcharcount = l:count < 10 ? '**' . l:count :
+        \ l:count <100 ? '*' . l:count :
         \ l:count
 endfunction
 
@@ -623,14 +633,21 @@ function! s:llgitcache()
     endif
 endfunction
 
-function! LLgitbranch() abort
-    return s:llgitbranch
+function! LLgit() abort
+        return s:llgitbranch
 endfunction
 
+autocmd vimrc InsertEnter,BufEnter * call anzu#clear_search_status()
+
 function! LLMyFilepath()
-if &filetype ==# 'denite' 
+if &filetype ==# 'denite'
     return LLDeniteSource()
 elseif &filetype !~# s:ignore_filetype
+    if strlen(anzu#search_status())
+        if &filetype !~# s:ignore_filetype && winwidth(0) > 100
+            return anzu#search_status()
+        endif
+    else
     let l:ll_filepath = expand('%:~')
     let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
@@ -639,6 +656,7 @@ elseif &filetype !~# s:ignore_filetype
         \  l:ll_filepath
     let l:ll_modified = &modified ? '[+]' : ''
     return l:ll_fn . l:ll_modified
+    endif
 else
     return ''
 endif
@@ -782,6 +800,8 @@ colorscheme iceberg
 "補完ポップアップメニューの色変更
 autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
 autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd vimrc ColorScheme iceberg highlight clear Search
+autocmd vimrc ColorScheme iceberg highligh Search gui=underline
 "colorscheme hybrid
 "colorscheme gruvbox
 set background=dark

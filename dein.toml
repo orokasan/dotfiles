@@ -11,13 +11,81 @@ repo =  'roxma/vim-hug-neovim-rpc'
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
+frozen = '1'
 hook_add = '''
+"{{{
 let g:jasegment#model='knbc_bunsetu'
-let g:jasentence_endpat = '[。．？！]\+'
+
+let g:jasegment#highlight = 1
+"ハイライトを削除
+
+"~\.cache\dein\repos\github.com\deton\jasegment.vim\autoload\jasegment.vim に以下の関数を追加
+"function! jasegment#deletemark() abort
+"  silent! call matchdelete(s:hl_id)
+"endfunction
+
+function! Myjasegdel() abort
+if exists('*jasegment#deletemark')
+    call jasegment#deletemark()
+endif
+endfunction
+autocmd vimrc InsertEnter,BufEnter * call Myjasegdel()
+
+let g:jasegment_no_default_key_mappings = 1
+nmap <silent> e <Plug>JaSegmentMoveNE
+nmap <silent> w <Plug>JaSegmentMoveNW
+nmap <silent> b <Plug>JaSegmentMoveNB
+omap <silent> e <Plug>JaSegmentMoveOE
+omap <silent> w <Plug>JaSegmentMoveOW
+omap <silent> b <Plug>JaSegmentMoveOB
+xmap <silent> e <Plug>JaSegmentMoveVE
+xmap <silent> w <Plug>JaSegmentMoveVW
+xmap <silent> b <Plug>JaSegmentMoveVB
+
+nnoremap W w
+onoremap W w
+xnoremap W w
+nnoremap B b
+onoremap B b
+xnoremap B b
+nnoremap E e
+onoremap E e
+xnoremap E e
+
+omap <silent> aW <Plug>JaSegmentTextObjA
+omap <silent> iW <Plug>JaSegmentTextObjI
+xmap <silent> aW <Plug>JaSegmentTextObjVA
+xmap <silent> iW <Plug>JaSegmentTextObjVI
+"}}}
 '''
 
 [[plugins]]
 repo =  'kshenoy/vim-signature'
+hook_add = '''
+let g:SignatureMap = {
+    \ 'Leader'             :  "m",
+    \ 'PlaceNextMark'      :  "m,",
+    \ 'ToggleMarkAtLine'   :  "m.",
+    \ 'PurgeMarksAtLine'   :  "m-",
+    \ 'DeleteMark'         :  "dm",
+    \ 'PurgeMarks'         :  "m<Space>",
+    \ 'PurgeMarkers'       :  "m<BS>",
+    \ 'GotoNextLineAlpha'  :  "']",
+    \ 'GotoPrevLineAlpha'  :  "'[",
+    \ 'GotoNextSpotAlpha'  :  "`]",
+    \ 'GotoPrevSpotAlpha'  :  "`[",
+    \ 'GotoNextLineByPos'  :  "]'",
+    \ 'GotoPrevLineByPos'  :  "['",
+    \ 'GotoNextSpotByPos'  :  "]`",
+    \ 'GotoPrevSpotByPos'  :  "[`",
+    \ 'GotoNextMarker'     :  "]-",
+    \ 'GotoPrevMarker'     :  "[-",
+    \ 'GotoNextMarkerAny'  :  "]=",
+    \ 'GotoPrevMarkerAny'  :  "[=",
+    \ 'ListBufferMarks'    :  "m/",
+    \ 'ListBufferMarkers'  :  "m?"
+\ }
+'''
 
 [[plugins]]
 repo =  'maximbaz/lightline-ale'
@@ -91,27 +159,71 @@ nnoremap S :%s/
 '''
 
 [[plugins]]
-repo = 'vim-pandoc/vim-pandoc'
-hook_add = '''
-let g:pandoc#modules#disabled = ["formatting","chdir", "spell"]
-let g:pandoc#folding#fdc = 0
-let g:pandoc#filetypes#handled = ["pandoc", "markdown"]
-let g:pandoc#filetypes#pandoc_markdown=0
-'''
-
-[[plugins]]
 repo = 'Shougo/neco-syntax'
 hook_add = '''
 let g:neocomplete#sources#syntax#min_keyword_length = 3
 '''
 
 [[plugins]]
-repo = 'vim-pandoc/vim-pandoc-syntax'
-hook_add = '''
-let g:pandoc#syntax#conceal#use = 0
-'''
-[[plugins]]
 repo = 'hrsh7th/vim-neco-calc'
 on_source = ['deoplete','neocomplete']
 
+[[plugins]]
+repo = 'easymotion/vim-easymotion'
+hook_add = '''
+let g:EasyMotion_do_mapping = 0
+map , [em]
+nmap [em]f <Plug>(easymotion-overwin-f)
+xmap [em]f <Plug>(easymotion-bd-f)
+omap [em]f <Plug>(easymotion-bd-f)
+nmap [em]t <Plug>(easymotion-overwin-t)
+xmap [em]t <Plug>(easymotion-bd-t)
+omap [em]t <Plug>(easymotion-bd-t)
+nmap [em]w <Plug>(easymotion-bd-W)
+map [em]j <Plug>(easymotion-j)
+map [em]k <Plug>(easymotion-k)
+nmap ' <Plug>(easymotion-s2)
+xmap ' <Plug>(easymotion-s2)
+omap ' <Plug>(easymotion-s2)
+let g:EasyMotion_startofline = 0
+" Jump to first match with enter & space
+let g:EasyMotion_enter_jump_first = 1
+let g:EasyMotion_space_jump_first = 1
+let g:EasyMotion_use_migemo = 1
+'''
+
+[[plugins]]
+repo = 'tpope/vim-repeat'
+
+[[plugins]]
+repo = 'osyo-manga/vim-anzu'
+hook_add = '''
+map n <Plug>(is-nohl)<Plug>(anzu-n)
+map N <Plug>(is-nohl)<Plug>(anzu-N)
+let g:airline#extensions#anzu#enabled = 0
+'''
+
+[[plugins]]
+repo = 'haya14busa/is.vim'
+depends = 'is.vim'
+hook_add = '''
+let g:is#do_default_mapping = 0
+'''
+
+[[plugins]]
+repo = 'haya14busa/vim-asterisk'
+depends = 'is.vim'
+hook_add = '''
+let g:asterisk#keeppos = 1
+map *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
+map g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
+map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
+map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
+'''
+
+#[[plugins]]
+#repo = 'kana/vim-smartinput'
+#lazy = '1'
+#hook_add = '''
+#'''
 # vim:set foldmethod=marker:

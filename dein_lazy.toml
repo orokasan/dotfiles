@@ -192,7 +192,7 @@ call denite#custom#map('insert', '<C-f>',
 
 "need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
-      \ ['rg','--color', '--files','--hidden','--glob', '!.git'])
+      \ ['rg', '--files','--hidden','--glob', '!.git'])
 call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
 call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'final_opts', [])
@@ -746,6 +746,8 @@ let g:eskk#cursor_color = {
 \   'zenei': '#ffd700',
 \}
 nnoremap <silent><expr><C-y> <SID>eskk_inserttoggle()
+imap <C-j> <Plug>(eskk:toggle)
+cmap <C-j> <Plug>(eskk:toggle)
 "}}}
 '''
 hook_source = '''
@@ -822,11 +824,15 @@ endfunction
 #on_event = 'InsertEnter' 
 #hook_post_source = '''
 #"{{{
-#let g:lexima_map_escape = '<ESC>', '<CR>' ,'<BS>'
+#let g:lexima_no_default_rules = 1
+#call lexima#set_default_rules()
+#let g:lexima_enable_newline_rules = 1
+#let g:lexima_enable_endwise_rules = 1
 #call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
 #call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
 #call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
-#call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
+#	call lexima#add_rule({'char': '(', 'input': '()<Left>'})
+#"call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
 #call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
 #call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
 #call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
@@ -854,6 +860,7 @@ hook_add = '''
 nmap _ <Plug>(operator-replace)
 vmap _ <Plug>(operator-replace)
 '''
+
 
 [[plugins]]
 repo =  'tyru/open-browser.vim'
@@ -1025,7 +1032,6 @@ hook_add = '''
 nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
 nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
 nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
-nnoremap <silent>\\ :call <SID>tw_open_existing()<CR>
 nnoremap <silent><Leader>tu :<C-u>Denite -buffer-name=normal unite:tweetvim<CR>
 "}}}
 '''
