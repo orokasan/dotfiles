@@ -279,8 +279,8 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
-call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
-
+call denite#custom#map('normal', '<C-d>', '<denite:do_action:defx>', 'noremap')
+call denite#custom#map('insert', '<C-d>', '<denite:do_action:defx>', 'noremap')
 "}}}
 '''
 
@@ -313,11 +313,11 @@ hook_add = '''
 nnoremap <Leader>mn  :MemoNew<CR>
 nnoremap <Leader>ml  :<C-u>Denite 
     \ -buffer-name=normal
-    \ file/rec:~/memo<CR>
+    \ file/rec:~/GoogleDrive/memo<CR>
 nnoremap <Leader>mg  :MemoGrep<CR>
 " use denite (default 0)
 let g:memolist_denite = 1
-let g:memolist_path = "~/Google\ ドライブ/Memo"
+let g:memolist_path = "~/GoogleDrive/memo"
 '''
 
 [[plugins]]

@@ -252,20 +252,20 @@ nnoremap  k gk
 nnoremap  J gJ
 
 " 。、に移動(f<C-K>._ を打つのは少し長いので)。cf<C-J>等の使い方も可。
-function! s:MapFT(key, char)
-    for cmd in ['f', 'F', 't', 'T']
-        execute 'noremap <silent> ' . cmd . a:key . ' ' . cmd . a:char
-    endfor
-endfunction
-call <SID>MapFT('<C-J>', '。')
-call <SID>MapFT('<C-U>', '、')
-" 前/次の「。、」の後に改行を挿入する
-nnoremap <silent> f<C-H> f。a<CR><Esc>
-nnoremap <silent> f<C-L> f、a<CR><Esc>
-nnoremap <silent> F<C-H> F。a<CR><Esc>
-nnoremap <silent> F<C-L> F、a<CR><Esc>
-nnoremap <silent> f<C-M> :call search('[、。]')<CR>a<CR><Esc>
-nnoremap <silent> F<C-M> :call search('[、。]', 'b')<CR>a<CR><Esc>
+"function! s:MapFT(key, char)
+"    for cmd in ['f', 'F', 't', 'T']
+"        execute 'noremap <silent> ' . cmd . a:key . ' ' . cmd . a:char
+"    endfor
+"endfunction
+"call <SID>MapFT('<C-J>', '。')
+"call <SID>MapFT('<C-U>', '、')
+"" 前/次の「。、」の後に改行を挿入する
+"nnoremap <silent> f<C-H> f。a<CR><Esc>
+"nnoremap <silent> f<C-L> f、a<CR><Esc>
+"nnoremap <silent> F<C-H> F。a<CR><Esc>
+"nnoremap <silent> F<C-L> F、a<CR><Esc>
+"nnoremap <silent> f<C-M> :call search('[、。]')<CR>a<CR><Esc>
+"nnoremap <silent> F<C-M> :call search('[、。]', 'b')<CR>a<CR><Esc>
 
 tnoremap <C-o> <C-w>N
 imap <c-s> <Esc>:w<CR>a             "CTRL-sで保存
