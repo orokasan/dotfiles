@@ -11,7 +11,6 @@ repo =  'roxma/vim-hug-neovim-rpc'
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
-frozen = '1'
 hook_add = '''
 "{{{
 let g:jasegment#model='knbc_bunsetu'
@@ -63,13 +62,13 @@ xmap <silent> iW <Plug>JaSegmentTextObjVI
 repo =  'kshenoy/vim-signature'
 hook_add = '''
 let g:SignatureMap = {
-    \ 'Leader'             :  "m",
-    \ 'PlaceNextMark'      :  "m,",
-    \ 'ToggleMarkAtLine'   :  "m.",
-    \ 'PurgeMarksAtLine'   :  "m-",
-    \ 'DeleteMark'         :  "dm",
-    \ 'PurgeMarks'         :  "m<Space>",
-    \ 'PurgeMarkers'       :  "m<BS>",
+    \ 'Leader'             :  "M",
+    \ 'PlaceNextMark'      :  "M,",
+    \ 'ToggleMarkAtLine'   :  "M.",
+    \ 'PurgeMarksAtLine'   :  "M-",
+    \ 'DeleteMark'         :  "dM",
+    \ 'PurgeMarks'         :  "M<Space>",
+    \ 'PurgeMarkers'       :  "M<BS>",
     \ 'GotoNextLineAlpha'  :  "']",
     \ 'GotoPrevLineAlpha'  :  "'[",
     \ 'GotoNextSpotAlpha'  :  "`]",
@@ -82,9 +81,10 @@ let g:SignatureMap = {
     \ 'GotoPrevMarker'     :  "[-",
     \ 'GotoNextMarkerAny'  :  "]=",
     \ 'GotoPrevMarkerAny'  :  "[=",
-    \ 'ListBufferMarks'    :  "m/",
-    \ 'ListBufferMarkers'  :  "m?"
+    \ 'ListBufferMarks'    :  "M/",
+    \ 'ListBufferMarkers'  :  "M?"
 \ }
+nnoremap m '
 '''
 
 [[plugins]]
@@ -101,6 +101,7 @@ let g:lightline#ale#indicator_ok = "\uf43a"
 repo =  'Shougo/neomru.vim'
 hook_add ='''
 "denite-neomruでginaを無視
+let g:neomru#do_validate = 0
 let g:neomru#file_mru_ignore_pattern = 'gina://'
 let g:neomru#time_format = '%Y/%m/%d %H:%M:%S'
 let g:neomru#file_mru_limit = 100
@@ -112,6 +113,13 @@ repo =  'basyura/twibill.vim'
 
 [[plugins]]
 repo =  'mattn/webapi-vim'
+
+[[plugins]]
+repo =  'tyru/open-browser.vim'
+hook_add ='''
+nmap <Leader>o <Plug>(openbrowser-smart-search)
+vmap <Leader>o <Plug>(openbrowser-smart-search)
+'''
 
 [[plugins]]
 repo = 'cespare/vim-toml'
@@ -172,20 +180,11 @@ on_source = ['deoplete','neocomplete']
 repo = 'easymotion/vim-easymotion'
 hook_add = '''
 let g:EasyMotion_do_mapping = 0
-map , [em]
-nmap [em]f <Plug>(easymotion-overwin-f)
-xmap [em]f <Plug>(easymotion-bd-f)
-omap [em]f <Plug>(easymotion-bd-f)
-nmap [em]t <Plug>(easymotion-overwin-t)
-xmap [em]t <Plug>(easymotion-bd-t)
-omap [em]t <Plug>(easymotion-bd-t)
-nmap [em]w <Plug>(easymotion-bd-W)
-map [em]j <Plug>(easymotion-j)
-map [em]k <Plug>(easymotion-k)
+map ,j <Plug>(easymotion-j)
+map ,k <Plug>(easymotion-k)
 nmap ' <Plug>(easymotion-s2)
 xmap ' <Plug>(easymotion-s2)
 omap ' <Plug>(easymotion-s2)
-let g:EasyMotion_startofline = 0
 " Jump to first match with enter & space
 let g:EasyMotion_enter_jump_first = 1
 let g:EasyMotion_space_jump_first = 1
@@ -219,6 +218,13 @@ map *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
 map g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
 map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
 map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
+'''
+
+[[plugins]]
+repo = 'rhysd/clever-f.vim'
+hook_add = '''
+let g:clever_f_mark_char_color = "Underlined"
+let g:clever_f_hide_cursor_on_cmdline = 0
 '''
 
 #[[plugins]]

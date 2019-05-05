@@ -48,24 +48,23 @@ let g:loaded_netrwFileHandlers = 1
 "kaoriya-vimのpythonに揃える
 "64bit版を使用する
 "set runtimepath+='~/vimfiles'
-"set runtimepath+="C:\Program Files\Python37"
 let g:python_host_prog ='C:\Program Files (x86)\Python2.7\python.exe'
 let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
-"vimprocのダウンロード(for Win)
+"vimprocをダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
 "========================================================================
 "外観  {{{
-set shortmess+=aTs
+set shortmess+=AcaTs
 set showtabline=2   "常にタブラインを表示
 set number          "行番号を表示
 set signcolumn=yes  "signcolumを常に表示
 set laststatus=2    " ステータスラインを常に表示
 set cmdheight=1     "コマンドライン行数の設定
-set cursorline      "cusorlineをハイライト
 set noshowcmd       " 入力中のコマンドをステータスに表示しない
 set noshowmode      "モードを表示しない
-"cursorlineのhighlight syntaxをけす
+set cursorline      "cusorlineをハイライト
+"cursorlineのhighlight syntaxを消す(行番号ハイライトのみにする)
 autocmd vimrc ColorScheme *  hi clear CursorLine
 set modelines=5     "モードライン設定
 set showmatch       "括弧入力時の対応する括弧を表示
@@ -84,9 +83,9 @@ set wildmode=longest:full,full
 "
 set previewheight=8 " Adjust window size of preview 
 set helpheight=15 "and help.
-
 set ttyfast
-
+"補完ポップアップの最大数
+set pumheight=10
 if has('GUI')
     let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
     set guioptions+=M
@@ -115,10 +114,6 @@ endif
 "}}}
 "========================================================================
 "入力・編集 {{{
-"migemo有効化
-if has('migemo')
-    set runtimepath+=$VIM/runtime
-endif
 set virtualedit=block       " カーソルを文字が存在しない部分でも動けるようにする
 "set virtualedit=onemore "行末の1文字先までカーソルを移動できるように
 set scrolloff=5             "3行余裕を持たせてスクロール
@@ -144,19 +139,12 @@ set softtabstop=4           "<TAB>の空白変換数
 let g:vim_indent_cont = 4
 set autoindent              "自動インデント
 set shiftwidth=4            "vimが自動でインデントを行った際、設定する空白数
-"
+
 set ignorecase              " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
 set smartcase               " 検索文字列に大文字が含まれている場合は区別して検索する
 set incsearch               " 検索文字列入力時に順次対象文字列にヒットさせる
 set wrapscan                " 検索時に最後まで行ったら最初に戻る
 set hlsearch                " 検索語をハイライト表示
-"" Localize search options.
-"autocmd vimrc WinLeave *
-"\     let b:vimrc_pattern = @/
-"\   | let b:vimrc_hlsearch = &hlsearch
-"autocmd vimrc WinEnter *
-"\     let @/ = get(b:, 'vimrc_pattern', @/)
-"\   | let &l:hlsearch = get(b:, 'vimrc_hlsearch', &l:hlsearch)
 
 "Markdown用設定
 "autocmd! FileType markdown hi! def link markdownItalic Normal
@@ -172,7 +160,6 @@ else
   set viminfo=!,'300,<50,s10,h
 endif
 " Set minimal height for current window.
-" set winheight=20
 set winheight=1
 set winwidth=1
 " Set maximam maximam command line window.
@@ -280,6 +267,7 @@ nnoremap <silent> F<C-L> F、a<CR><Esc>
 nnoremap <silent> f<C-M> :call search('[、。]')<CR>a<CR><Esc>
 nnoremap <silent> F<C-M> :call search('[、。]', 'b')<CR>a<CR><Esc>
 
+tnoremap <C-o> <C-w>N
 imap <c-s> <Esc>:w<CR>a             "CTRL-sで保存
 nnoremap <silent><C-q> :close<CR>   "CTRL-qでclose
 inoremap <C-@> <ESC>                "For JIS keyboard
@@ -287,12 +275,11 @@ inoremap <C-@> <ESC>                "For JIS keyboard
 inoremap <F3> Last Change: .
 "日付を入力
 inoremap <expr><F2> strftime("%Y%m%d")
+cnoremap <expr><F2> strftime("%Y%m%d")
 
 "検索メッセージを非表示
 nnoremap <silent> n n
 nnoremap <silent> N N
-"Visualモードから検索
-vnoremap * "zy/<C-R>z<CR>
 "句読点を強引に挿入
 nnoremap <Leader>,         a、<Esc>
 nnoremap <Leader>.         a。<Esc>
@@ -366,15 +353,14 @@ nnoremap <C-j> <C-w>j|			" Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-k> <C-w>k|			" Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-l> <C-w>l|			" Ctrl + hjkl でウィンドウ間を移動
 "windowサイズ変更
-nnoremap <S-Left>  <C-w><<CR>
-nnoremap <S-Right> <C-w>><CR>
-nnoremap <S-Up>    <C-w>-<CR>
-nnoremap <S-Down>  <C-w>+<CR>
+nnoremap <S-Left>  <C-w><
+nnoremap <S-Right> <C-w>>
+nnoremap <S-Up>    <C-w>-
+nnoremap <S-Down>  <C-w>+
 "一時的にバッファを最大化
 nnoremap <silent> <Plug>(my-zoom-window)
       \ :<C-u>call <SID>toggle_window_zoom()<CR>
 nmap <Leader>wz <Plug>(my-zoom-window)
-nmap <Leader>w<C-z> <Plug>(my-zoom-window)
 function! s:toggle_window_zoom() abort "{{{
     if exists('t:zoom_winrestcmd')
         execute t:zoom_winrestcmd
@@ -476,8 +462,8 @@ let g:lightline = {
 \ 'colorscheme': 'iceberg',
     \ 'active': {
         \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','git'], [ 'readonly', 'relativepath'] ],
-        \ 'right': [ ['linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'lineinfo'],
-            \ ['charcount'], [ 'percent','IMEstatus'] 
+        \ 'right': [ ['lineinfo'],
+            \ ['charcount'], [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'percent','IMEstatus'] 
         \ ]
     \ },
     \ 'inactive': {
@@ -510,10 +496,10 @@ let g:lightline = {
     \ },
    \ 'component_type' : {
         \ 'buffers': 'tabsel',
-        \ 'linter_checking': 'left',
+        \ 'linter_checking': 'middle',
         \ 'linter_warnings': 'warning',
         \ 'linter_errors': 'error',
-        \ 'linter_ok': 'left'
+        \ 'linter_ok': 'middle'
     \ }
 \ }
 if !has('nvim')
@@ -528,9 +514,18 @@ endif
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 
-"    \ 'component_function_visible_condition': {
-"        \ 'mode': 1,
-"    \ }
+let g:component_function_visible_condition = {
+        \ 'readonly': 1,
+        \ 'denitebuf': 1,
+        \ 'inactivefn': 1,
+        \ 'relativepath': 1, 
+        \ 'mode': 1,
+        \ 'charcount': 1,
+        \ 'eskk': 1,
+        \ 'git': 1,
+        \ 'lineinfo': 1
+        \ }
+ 
 let g:lightline.tabline_separator = g:lightline.separator
 let g:lightline.tabline_subseparator = g:lightline.subseparator
 
@@ -575,7 +570,7 @@ function! LLlineinfo() abort
             \  printf('%s:%d', l:fixedcol , line('.') )
         else
             return printf('%d:%d', col('.') , line('.') )
-    endif
+        endif
 endfunction
 
 "lightlineに渡す変数の設定
@@ -594,9 +589,6 @@ function! s:llvarCharAllCount()
         \ l:count <10 ? '   ' . l:count :
         \ l:count <100 ? '  ' . l:count :
         \ l:count <1000 ? ' ' . l:count : l:count
-"        \ (l:count / 1000) . 'k'
-"        \ l:count <1000 ? l:count :
-"        \ (l:count / 1000) . 'k'
 endfunction
 
 function! s:llvarCharCount()
@@ -640,27 +632,36 @@ endfunction
 autocmd vimrc InsertEnter,BufEnter * call anzu#clear_search_status()
 
 function! LLMyFilepath()
+
 if &filetype ==# 'denite'
     return LLDeniteSource()
+
 elseif &filetype !~# s:ignore_filetype
     if strlen(anzu#search_status())
-        if &filetype !~# s:ignore_filetype && winwidth(0) > 100
-            return anzu#search_status()
-        endif
+        let l:anzu = anzu#search_status()
+            if winwidth(0) > 100
+                return strlen(l:anzu) < 30 ? l:anzu : matchstr(l:anzu,'(\d\+\/\d\+)')
+            else
+                return ''
+            endif
+
     else
-    let l:ll_filepath = expand('%:~')
-    let l:ll_filename = expand('%:t')
+        let l:ll_filepath = expand('%:~')
+        let l:ll_filename = expand('%:t')
 "パスの文字数とウィンドウサイズに応じて表示を変える
-    let l:ll_fn = winwidth(0) < 65 ? '' :
-        \ strlen(l:ll_filepath) > winwidth(0)-65 ? pathshorten(l:ll_filepath) :
-        \  l:ll_filepath
-    let l:ll_modified = &modified ? '[+]' : ''
-    return l:ll_fn . l:ll_modified
+        if winwidth(0) > 80
+            let l:ll_fn =  strlen(l:ll_filepath) < 40 ? l:ll_filepath :
+            \ strlen(pathshorten(l:ll_filepath)) < 40 ? pathshorten(l:ll_filepath) :
+            \ l:ll_filename
+        else
+            let l:ll_fn = l:ll_filename
+        endif
+        let l:ll_modified = &modified ? '[+]' : ''
+        return l:ll_fn . l:ll_modified
     endif
 else
     return ''
 endif
-
 endfunction
 
 function! LLDeniteMode()
@@ -685,12 +686,16 @@ function! LLDeniteSource()
     let l:path = substitute(l:p, '[', '', 'g')
     let l:path = substitute(l:path, ']', '', 'g')
     let l:path = fnamemodify(l:path,':~')
-    if strlen(l:path) > 40
+    if strlen(l:path) > 50
         let l:path = fnamemodify(l:path,':t')
+    endif
+    if strlen(l:sources) > 60
+        let l:sources = matchstr(l:sources, '.\+\ze:[') .
+            \ matchstr(l:sources, ']\zs.\+') 
     endif
     let denitesource = l:linenr . ' - ' .l:sources . ' - [' . l:path . ']'
     if strlen(denitesource) > 100
-        return  l:linenr . ' - [' .l:sources . ']'
+        return  l:linenr . ' - ' .l:sources . l:path
     else
         return denitesource
     endif
@@ -700,7 +705,7 @@ endfunction
 command! -bar LightlineUpdate    call lightline#init()|
   \ call lightline#colorscheme()|
   \ call lightline#update()
-"
+
 function! ProfileCursorMove() abort
   let profile_file = expand('~/log/vim-profile.log')
   if filereadable(profile_file)
@@ -787,7 +792,6 @@ if has('GUI')
     "全角文字を自動判定
     set ambiwidth=auto
 "    endif
-
 else
     set t_Co=256
     set termguicolors

@@ -32,8 +32,13 @@ nnoremap <silent> [denite]b :<C-u>Denite
 
 "デナイト・サーチ
 nnoremap <silent> ? :<C-u>Denite
-  	\ -buffer-name=search -auto-highlight
+  	\ -buffer-name=search
   	\ line<CR>
+
+nnoremap <silent> <Leader>/ :<C-u>Denite
+    \ -buffer-name=search -mode=normal
+    \ -auto-action='highlight'
+    \ anzu<CR>
 
 "デナイト・キーワードサーチ
 "nnoremap <silent> * :<C-u>DeniteCursorWord
@@ -54,7 +59,7 @@ nnoremap <silent> [denite]r :<C-u>Denite
 "コマンド履歴
 nnoremap <silent> [denite]c :<C-u>Denite
     \ -buffer-name=normal
-    \ -default-action='ex'
+    \ -default-action='execute'
     \ command_history<CR>
 
 "バッファディレクトリからgrep
@@ -121,7 +126,6 @@ nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
 
 "}}}
 '''
-
 hook_post_source = '''
 "{{{
 "denite option
@@ -192,7 +196,7 @@ call denite#custom#map('insert', '<C-f>',
 
 "need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
-      \ ['rg', '--files','--hidden','--glob', '!.git'])
+      \ ['rg', '--files','--glob', '!.git'])
 call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
 call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'final_opts', [])
@@ -201,8 +205,8 @@ call denite#custom#var('grep', 'default_opts',
       \ ['--vimgrep', '--no-heading'])
 
 " Change matchers.
-call denite#custom#source(
-	\ 'file_mru', 'matchers', ['matcher/regexp', 'matcher/project_files'])
+"call denite#custom#source(
+	"\ 'file_mru', 'matchers', ['matcher/regexp', 'matcher/project_files'])
 "call denite#custom#source(
 "	\ 'file/rec', 'matchers', ['matcher/cpsm'])
 
@@ -266,17 +270,23 @@ function! s:defx_open(context)
       call defx#call_action('cd', [dir])
       call defx#call_action('search', [path])
     else
-      execute('Defx "' . dir . '"' . file_search)
+      execute('Defx ' . dir . file_search)
   endif
 endfunction
 
 "action:defxを定義
-call denite#custom#action('buffer,directory,file,openable,dirmark', 'defx',
-        \ function('s:defx_open'))
+call denite#custom#action(
+    \ 'directory,file,openable,dirmark',
+    \ 'defx',
+    \  function('s:defx_open'))
 call denite#custom#map('_', '<C-d>', '<denite:do_action:defx>', 'noremap')
 
 "}}}
 '''
+
+[[plugins]]
+repo = 'orokasan/denite-anzu'
+on_source = ['denite.nvim']
 
 [[plugins]]
 repo =  'iyuuya/denite-ale'
@@ -295,6 +305,20 @@ on_source = ['denite.nvim','defx.nvim']
 repo =  'Shougo/unite.vim'
 on_cmd = ['Unite']
 on_source = 'TweetVim'
+
+[[plugins]]
+repo = 'glidenote/memolist.vim'
+on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
+hook_add = '''
+nnoremap <Leader>mn  :MemoNew<CR>
+nnoremap <Leader>ml  :<C-u>Denite 
+    \ -buffer-name=normal
+    \ file/rec:~/memo<CR>
+nnoremap <Leader>mg  :MemoGrep<CR>
+" use denite (default 0)
+let g:memolist_denite = 1
+let g:memolist_path = "~/Google\ ドライブ/Memo"
+'''
 
 [[plugins]]
 repo =  'Shougo/defx.nvim'
@@ -377,7 +401,7 @@ nnoremap <silent><buffer><expr> N
 \ defx#do_action('new_file')
 "need 'pip install Send2Trash'
 nnoremap <silent><buffer><expr> d
-\ defx#do_action('remove_trash')
+\ defx#async_action('remove_trash')
 nnoremap <silent><buffer><expr> r
 \ defx#do_action('rename')
 nnoremap <silent><buffer><expr> x
@@ -616,15 +640,13 @@ on_if = ''' !has('nvim') '''
 on_event = 'InsertEnter'
 hook_source = '''
 "{{{
-" Note: This option must set it in .vimrc (_vimrc).
-" NOT IN .gvimrc (_gvimrc)!
-" Disable AutoComplPop.
-" Use neocomplete.
-" Use smartcase.
 let g:neocomplete#enable_smart_case = 1
-let g:neocomplete#enable_auto_select = 1
+"let g:neocomplete#enable_auto_select = 1
+
+"vimprocを有効化すると初回の補完がちょっと遅くなる
 let g:neocomplete#use_vimproc = 1
-let g:neocomplete#min_keyword_length = 6
+let g:neocomplete#min_keyword_length = 4
+
 " Define keyword.
 " Plugin key-mappings.
 inoremap <expr><C-g>     neocomplete#undo_completion()
@@ -657,17 +679,15 @@ let g:neocomplete#enable_multibyte_completion = 1
 if !exists('g:neocomplete#keyword_patterns')
   let g:neocomplete#keyword_patterns = {}
 endif
-
 let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
-let g:neocomplete#max_list=50
-call neocomplete#custom#source('_', 'matchers', ['matcher_head','matcher_length'])
+let g:neocomplete#max_list=100
+"call neocomplete#custom#source('_', 'matchers', ['matcher_head','matcher_length'])
 " Change default converter.
 "call neocomplete#custom#source('_', 'converters',
 "\ ['converter_remove_overlap', 'converter_remove_last_paren',
 "    \  'converter_abbr'])
 call neocomplete#custom#source('eskk', 'rank', 500) 
-call neocomplete#custom#source('eskk','max_candidates', 50)
 call neocomplete#custom#source('vim', 'rank' , 250)
 call neocomplete#custom#source('buffer', 'mark', 'b')
 call neocomplete#custom#source('eskk', 'mark' , '▽')
@@ -675,14 +695,8 @@ call neocomplete#custom#source('eskk', 'max_menu_width', 80)
 let g:neocomplete#ignore_source_files = [
     \'member', 'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim' 
     \]
-"call neocomplete#init#enable()
-"call neocomplete#start_manual_complete()
-"execute 'NeoCompleteBufferMakeCache'
-"}}}
-'''
-hook_post_source = '''
 call neocomplete#initialize()
-"NeoCompleteBufferMakeCache
+"}}}
 '''
 
 [[plugins]]
@@ -726,18 +740,17 @@ on_source = 'neosnippet'
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
-on_event = 'InsertEnter'
+on_event = ['InsertEnter','CmdwinEnter']
 hook_add = '''
 "{{{
 let g:eskk#debug = 0
-let g:eskk#show_annotation = 1
 let g:eskk#rom_input_style = 'msime'
 let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
 let g:eskk#tab_select_completion = 1
 let g:eskk_revert_henkan_style = 'okuri'
 let g:eskk#large_dictionary = {'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
-
+let g:eskk#dictionary_save_count = 5
 let g:eskk#cursor_color = {
 \   'ascii': '#b4be82',
 \   'hira': '#e28878',
@@ -819,6 +832,7 @@ function! s:eskk_initial_pre() abort
 endfunction
 "}}}
 '''
+
 #[[plugins]]
 #repo =  'cohama/lexima.vim'
 #on_event = 'InsertEnter' 
@@ -859,15 +873,6 @@ on_map = {nv = '<Plug>'}
 hook_add = '''
 nmap _ <Plug>(operator-replace)
 vmap _ <Plug>(operator-replace)
-'''
-
-
-[[plugins]]
-repo =  'tyru/open-browser.vim'
-on_map = {nv = '<Plug>'}
-hook_add ='''
-nmap <Leader>o <Plug>(openbrowser-smart-search)
-vmap <Leader>o <Plug>(openbrowser-smart-search)
 '''
 
 [[plugins]]
@@ -1168,6 +1173,7 @@ let g:operator#surround#blocks['-'] = [
 repo = 'itchyny/vim-cursorword'
 on_map = {nv='<Plug>'}
 hook_add = '''
+let g:cursorword = 0
 function! s:toggle_vim_cursorword() abort
   let g:cursorword = g:cursorword ? 0 : 1
   call cursorword#matchadd()
@@ -1242,5 +1248,20 @@ hook_add = '''
 let g:auto_ctags_tags_name = 'tags'
 let g:auto_ctags_tags_args = ['--tag-relative=yes', '--recurse=yes', '--sort=yes']
 let g:auto_ctags_filetype_mode = 1
+'''
+
+[[plugins]]
+on_ft = 'toml'
+repo = 'cespare/vim-toml'
+
+[[plugins]]
+repo = 'haya14busa/vim-migemo'
+on_map = {n = '<Plug>'}
+hook_add = '''
+nmap <Leader>m <Plug>(migemo-searchchar)
+'''
+hook_source = '''
+nnoremap / g/
+nnoremap g/ /
 '''
 # vim:set foldmethod=marker:
