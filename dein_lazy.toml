@@ -1,5 +1,6 @@
 [[plugins]]
 repo =  'Shougo/denite.nvim'
+rev = 'ui'
 on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
 hook_add = '''
 "{{{
@@ -27,7 +28,7 @@ nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
 
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-  	\ -buffer-name=normal -mode=normal
+  	\ -buffer-name=normal 
   	\ buffer<CR>
 
 "デナイト・サーチ
@@ -36,23 +37,23 @@ nnoremap <silent> ? :<C-u>Denite
   	\ line<CR>
 
 nnoremap <silent> <Leader>/ :<C-u>Denite
-    \ -buffer-name=search -mode=normal
+    \ -buffer-name=search 
     \ -auto-action='highlight'
     \ anzu<CR>
 
 "デナイト・キーワードサーチ
 "nnoremap <silent> * :<C-u>DeniteCursorWord
 "  	\ -buffer-name=search
-"  	\ -auto-highlight -mode=normal line<CR>
+"  	\ -auto-highlight  line<CR>
 
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
-  	\ -mode=normal
+  	\ 
     \ -buffer-name=search
   	\ neoyank<CR>
 
 nnoremap <silent> [denite]r :<C-u>Denite
-  	\ -mode=normal
+  	\ 
     \ -buffer-name=search
   	\ register<CR>
 
@@ -65,7 +66,7 @@ nnoremap <silent> [denite]c :<C-u>Denite
 "バッファディレクトリからgrep
 nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
     \ -buffer-name=search
-    \ -no-empty -mode=normal grep<CR>
+    \ -no-empty  grep<CR>
 
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
@@ -89,26 +90,26 @@ nnoremap <silent> [denite]m :<C-u>Denite
     \ mark<CR>
 
 ":change
-nnoremap <silent> [denite]k :<C-u>Denite -mode=normal change jump<CR>
+nnoremap <silent> [denite]k :<C-u>Denite  change jump<CR>
 
 "searchバッファをresumeして開く
 nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
-    \ -resume -mode=normal -refresh<CR>
+    \ -resume  -refresh<CR>
 
 "open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
-	\ -buffer-name=search -mode=normal
+	\ -buffer-name=search 
 	\ ale<CR>
 
 nnoremap <silent><Leader>n :<C-u>Denite
     \ -cursor-pos=+1 -immediately
     \ -buffer-name=search -no-empty
-    \ -resume -mode=normal -refresh<CR>
+    \ -resume  -refresh<CR>
 
 nnoremap <silent><Leader>n :<C-u>Denite
     \ -cursor-pos=-1 -immediately
     \ -buffer-name=search -no-empty
-    \ -resume -mode=normal -refresh<CR>
+    \ -resume  -refresh<CR>
 
 "コマンド結果をdeniteに出力
 nnoremap [denite]o :<C-u>Denite
@@ -148,7 +149,6 @@ call denite#custom#option('_', {
 "buffer-normal
 call denite#custom#option('normal', {
 	\ 'winheight': 10,
-    \ 'mode' : 'normal',
     \ 'direction': 'dynamicbottom'
     \})
 "buffer-search
@@ -156,26 +156,6 @@ call denite#custom#option('search', {
     \ 'direction': 'dynamicbottom',
     \ 'winheight': 10
     \ })
-
-" Change mappings.
-call denite#custom#map(
-      \ 'insert',
-      \ '<C-n>',
-      \ '<denite:move_to_next_line>',
-      \ 'noremap'
-      \)
-call denite#custom#map(
-      \ 'insert',
-      \ '<C-p>',
-      \ '<denite:move_to_previous_line>',
-      \ 'noremap'
-      \)
-"C-h,C-lでディレクトリ移動
-call denite#custom#map('insert', '<C-l>', '<denite:do_action:default>', 'noremap')
-call denite#custom#map('insert', '<C-h>', '<denite:move_up_path>', 'noremap')
-"h,lでディレクトリ上下移動
-call denite#custom#map('normal', 'l', '<denite:do_action:default>', 'noremap')
-call denite#custom#map('normal', 'h', '<denite:move_up_path>', 'noremap')
 
 "sorter定義
 function! ToggleSorter(sorter) abort
@@ -191,8 +171,8 @@ function! ToggleSorter(sorter) abort
    return '<denite:nop>'
 endfunction
 
-call denite#custom#map('insert', '<C-f>',
-    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
+"call denite#custom#map('insert', '<C-f>',
+"    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
 
 "need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
@@ -279,9 +259,23 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
-call denite#custom#map('normal', '<C-d>', '<denite:do_action:defx>', 'noremap')
-call denite#custom#map('insert', '<C-d>', '<denite:do_action:defx>', 'noremap')
 "}}}
+'''
+
+[plugins.ftplugin]
+denite = '''
+  nnoremap <silent><buffer><expr> <CR>
+  \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> d
+  \ denite#do_map('do_action', 'delete')
+  nnoremap <silent><buffer><expr> p
+  \ denite#do_map('do_action', 'preview')
+  nnoremap <silent><buffer><expr> q
+  \ denite#do_map('quit')
+  nnoremap <silent><buffer><expr> i
+  \ denite#do_map('open_filter_buffer')
+  nnoremap <silent><buffer><expr> <Space>
+  \ denite#do_map('toggle_select').'j'
 '''
 
 [[plugins]]
@@ -571,8 +565,6 @@ function! s:check_back_space() abort "{{{
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
 " <S-TAB>: completion back.
-inoremap <silent><expr><S-TAB>
-    \ pumvisible() ? "\<C-p>" : "\<C-h>"
 inoremap <silent><expr><C-e> 
     \ deoplete#refresh()
 inoremap <silent><expr><C-g>
@@ -592,10 +584,9 @@ inoremap <expr><C-l>       deoplete#insert_candidate(0)
 "endfunction
 "call deoplete#custom#source('_', 'matchers',
 "      \ ['matcher_fuzzy', 'matcher_length'])
-call deoplete#custom#source('_', 'matchers', ['matcher_head'])
+call deoplete#custom#source('_', 'matchers', ['matcher_fuzzy'])
 call deoplete#custom#source('buffer', 'mark', 'b')
 call deoplete#custom#source('eskk', 'mark' , '▽')
-call deoplete#custom#source('eskk', 'max_menu_width', 80)
 call deoplete#custom#source('eskk', 'min_pattern_length', 1)
 "matcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
@@ -616,6 +607,7 @@ call deoplete#custom#source('_', 'converters', [
 " - mark_above = Mark shown for words N lines above.
 " - mark_below = Mark shown for words N lines below.
 " - mark_changes = Mark shown for words in the changelist.
+"call deoplete#custom#option('ignore_sources',{'_':['around','buffer']})
 call deoplete#custom#var('around', {
 \   'range_above': 20,
 \   'range_below': 20,
@@ -624,11 +616,11 @@ call deoplete#custom#var('around', {
 \   'mark_changes': '[*]',
 \})
 call deoplete#custom#option({
-    \ 'auto_complete_delay': 0,
+    \ 'auto_complete_delay': 1,
     \ 'skip_multibyte': v:false,
-    \ 'max_list': 30,
+    \ 'max_list': 100,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'filter',
+    \ 'prev_completion_mode': 'none',
     \ 'num_processes': 0
     \ })
 call deoplete#enable()

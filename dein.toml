@@ -216,4 +216,5 @@ repo = 'sainnhe/vim-color-forest-night'
 #lazy = '1'
 #hook_add = '''
 #'''
+
 # vim:set foldmethod=marker:
