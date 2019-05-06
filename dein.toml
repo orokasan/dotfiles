@@ -115,13 +115,6 @@ repo =  'basyura/twibill.vim'
 repo =  'mattn/webapi-vim'
 
 [[plugins]]
-repo =  'tyru/open-browser.vim'
-hook_add ='''
-nmap <Leader>o <Plug>(openbrowser-smart-search)
-vmap <Leader>o <Plug>(openbrowser-smart-search)
-'''
-
-[[plugins]]
 repo = 'cespare/vim-toml'
 
 [[plugins]]
@@ -177,47 +170,13 @@ repo = 'hrsh7th/vim-neco-calc'
 on_source = ['deoplete','neocomplete']
 
 [[plugins]]
-repo = 'easymotion/vim-easymotion'
-hook_add = '''
-let g:EasyMotion_do_mapping = 0
-map ,j <Plug>(easymotion-j)
-map ,k <Plug>(easymotion-k)
-nmap ' <Plug>(easymotion-s2)
-xmap ' <Plug>(easymotion-s2)
-omap ' <Plug>(easymotion-s2)
-" Jump to first match with enter & space
-let g:EasyMotion_enter_jump_first = 1
-let g:EasyMotion_space_jump_first = 1
-let g:EasyMotion_use_migemo = 1
-'''
-
-[[plugins]]
 repo = 'tpope/vim-repeat'
-
-[[plugins]]
-repo = 'osyo-manga/vim-anzu'
-hook_add = '''
-map n <Plug>(is-nohl)<Plug>(anzu-n)
-map N <Plug>(is-nohl)<Plug>(anzu-N)
-let g:airline#extensions#anzu#enabled = 0
-'''
 
 [[plugins]]
 repo = 'haya14busa/is.vim'
 depends = 'is.vim'
 hook_add = '''
 let g:is#do_default_mapping = 0
-'''
-
-[[plugins]]
-repo = 'haya14busa/vim-asterisk'
-depends = 'is.vim'
-hook_add = '''
-let g:asterisk#keeppos = 1
-map *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
-map g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
-map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
-map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 '''
 
 [[plugins]]
@@ -234,6 +193,23 @@ let g:clever_f_use_migemo = 1
 
 [[plugins]]
 repo = 'rhysd/vim-color-spring-night'
+hook_add = '''
+let g:spring_night_kill_bold = 1
+let g:spring_night_kill_italic = 1
+let g:spring_night_high_contrast = 0
+'''
+
+[[plugins]]
+repo = 'osyo-manga/vim-anzu'
+on_map = {nx = '<Plug>'}
+hook_add = '''
+map n <Plug>(is-nohl)<Plug>(anzu-n)
+map N <Plug>(is-nohl)<Plug>(anzu-N)
+let g:airline#extensions#anzu#enabled = 0
+'''
+
+[[plugins]]
+repo = 'sainnhe/vim-color-forest-night'
 
 #[[plugins]]
 #repo = 'kana/vim-smartinput'

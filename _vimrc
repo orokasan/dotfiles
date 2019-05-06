@@ -130,7 +130,6 @@ set nobackup                  "backupファイルを作成
 
 set textwidth=0             "自動改行をやめる
 set formatoptions+=mMj      "日本語の行の連結時には空白を入力しない。など
-
 set list                    "不可視文字の可視化
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 set tabstop=4               "<TAB>空白の表示設定
@@ -250,7 +249,9 @@ vmap <Tab> %
 nnoremap  j gj
 nnoremap  k gk
 nnoremap  J gJ
-
+" colorcolumn
+nnoremap <expr><Leader>cl
+    \ ":\<C-u>set colorcolumn=".(&cc == 0 ? v:count == 0 ? virtcol('.') : v:count : 0)."\<CR>"
 " 。、に移動(f<C-K>._ を打つのは少し長いので)。cf<C-J>等の使い方も可。
 "function! s:MapFT(key, char)
 "    for cmd in ['f', 'F', 't', 'T']
@@ -266,6 +267,9 @@ nnoremap  J gJ
 "nnoremap <silent> F<C-L> F、a<CR><Esc>
 "nnoremap <silent> f<C-M> :call search('[、。]')<CR>a<CR><Esc>
 "nnoremap <silent> F<C-M> :call search('[、。]', 'b')<CR>a<CR><Esc>
+" 空行単位移動
+vnoremap <C-j> }
+vnoremap <C-k> {
 
 tnoremap <C-o> <C-w>N
 imap <c-s> <Esc>:w<CR>a             "CTRL-sで保存
@@ -276,19 +280,18 @@ inoremap <F3> Last Change: .
 "日付を入力
 inoremap <expr><F2> strftime("%Y%m%d")
 cnoremap <expr><F2> strftime("%Y%m%d")
+" x でレジスタを使わない
+nnoremap x "_x
+"ddでヤンク
+nnoremap dd "0dd
+" 最後にヤンクしたテキストを貼り付け．
+nnoremap P "0P
+" スペルチェック
+nnoremap <Leader>. :<C-u>setl spell! spell?<CR>
 
 "検索メッセージを非表示
 nnoremap <silent> n n
 nnoremap <silent> N N
-"句読点を強引に挿入
-nnoremap <Leader>,         a、<Esc>
-nnoremap <Leader>.         a。<Esc>
-nnoremap <Leader>?         a？<Esc>
-nnoremap <Leader>!         a！<Esc>
-nnoremap <Leader>/         a/<Esc>
-nnoremap <Leader>\         a\<Esc>
-nnoremap <Leader><Space>   a <Esc>
-nnoremap <Leader><S-Space> a…<Esc>
 " <ESC>でのIME状態保存を無効化
 inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
@@ -333,7 +336,7 @@ function! s:smart_foldcloser() "{{{
   norm! zM
 endfunction
 "}}}
-
+tmap <Leader>w <C-w>
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -438,10 +441,7 @@ if dein#load_state(s:dein_dir)
     call dein#end()
     call dein#save_state()
 
-    if has('vim_starting')
-        call dein#call_hook('source')
-        autocmd MyAutoCmd VimEnter * call dein#call_hook('post_source')
-    else
+    if !has('vim_starting')
         call dein#call_hook('source')
         call dein#call_hook('post_source')
     endif
@@ -503,17 +503,16 @@ let g:lightline = {
     \ }
 \ }
 if !has('nvim')
-   let g:lightline.subseparator= { 'left': '', 'right': '' }
-   let g:lightline.separator= { 'left': '', 'right': '' }
+    let g:lightline.subseparator= { 'left': '', 'right': '' }
+    let g:lightline.separator= { 'left': '', 'right': '' }
 else
-    let g:lightline.subseparator= { 'left': '', 'right': '' }
-   let g:lightline.separator= { 'left': '', 'right': '' }
+    let g:lightline.subseparator= { 'left': '', 'right': '' }
+    let g:lightline.separator= { 'left': '', 'right': '' }
 endif
 "   let g:lightline.separator= { 'left': '', 'right': '' }
 "   let g:lightline.subseparator= { 'left': '', 'right': '' }
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
-
 let g:component_function_visible_condition = {
         \ 'readonly': 1,
         \ 'denitebuf': 1,
@@ -629,7 +628,8 @@ function! LLgit() abort
         return s:llgitbranch
 endfunction
 
-autocmd vimrc InsertEnter,BufEnter * call anzu#clear_search_status()
+autocmd vimrc InsertEnter,BufEnter * if exists('*anzu#clear_search_status') 
+    \| call anzu#clear_search_status() | endif
 
 function! LLMyFilepath()
 
@@ -800,8 +800,7 @@ endif
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
-"colorscheme iceberg
-colorscheme spring-night
+colorscheme iceberg
 "補完ポップアップメニューの色変更
 autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
 autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42

@@ -1155,9 +1155,9 @@ repo =  'rhysd/vim-operator-surround'
 depends = 'vim-operator-user'
 on_map = {nv= '<Plug>'}
 hook_add = '''
-map <silent>ta <Plug>(operator-surround-append)
-map <silent>td <Plug>(operator-surround-delete)
-map <silent>tr <Plug>(operator-surround-replace)
+map <silent>\a <Plug>(operator-surround-append)
+map <silent>\d <Plug>(operator-surround-delete)
+map <silent>\r <Plug>(operator-surround-replace)
 '''
 hook_source = '''
 "2バイト括弧を追加
@@ -1251,6 +1251,14 @@ let g:auto_ctags_filetype_mode = 1
 '''
 
 [[plugins]]
+repo =  'tyru/open-browser.vim'
+on_map = {nx = '<Plug>(openbrowser-'}
+hook_add ='''
+nmap <Leader>o <Plug>(openbrowser-smart-search)
+vmap <Leader>o <Plug>(openbrowser-smart-search)
+'''
+
+[[plugins]]
 on_ft = 'toml'
 repo = 'cespare/vim-toml'
 
@@ -1263,5 +1271,33 @@ nmap <Leader>m <Plug>(migemo-searchchar)
 hook_source = '''
 nnoremap / g/
 nnoremap g/ /
+'''
+
+[[plugins]]
+repo = 'easymotion/vim-easymotion'
+on_map = {nx = '<Plug>'}
+hook_add = '''
+let g:EasyMotion_do_mapping = 0
+map ,j <Plug>(easymotion-j)
+map ,k <Plug>(easymotion-k)
+nmap ' <Plug>(easymotion-s2)
+xmap ' <Plug>(easymotion-s2)
+omap ' <Plug>(easymotion-s2)
+" Jump to first match with enter & space
+let g:EasyMotion_enter_jump_first = 1
+let g:EasyMotion_space_jump_first = 1
+let g:EasyMotion_use_migemo = 1
+'''
+
+[[plugins]]
+repo = 'haya14busa/vim-asterisk'
+depends = 'is.vim'
+on_map = {nx = '<Plug>'}
+hook_add = '''
+let g:asterisk#keeppos = 1
+map *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
+map g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
+map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
+map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 '''
 # vim:set foldmethod=marker:
