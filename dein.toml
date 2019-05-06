@@ -232,6 +232,9 @@ let g:clever_f_chars_match_any_signs = ':;'
 let g:clever_f_use_migemo = 1
 '''
 
+[[plugins]]
+repo = 'rhysd/vim-color-spring-night'
+
 #[[plugins]]
 #repo = 'kana/vim-smartinput'
 #lazy = '1'

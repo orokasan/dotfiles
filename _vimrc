@@ -800,7 +800,8 @@ endif
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
-colorscheme iceberg
+"colorscheme iceberg
+colorscheme spring-night
 "補完ポップアップメニューの色変更
 autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
 autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
