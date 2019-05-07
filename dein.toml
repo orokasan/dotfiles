@@ -180,7 +180,7 @@ let g:is#do_default_mapping = 0
 '''
 
 [[plugins]]
-repo = 'rhysd/clever-f.vim'
+repo = 'orokasan/clever-f.vim'
 hook_add = '''
 let g:clever_f_mark_cursor = 0
 let g:clever_f_mark_char_color = "Underlined"

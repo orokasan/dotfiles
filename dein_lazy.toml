@@ -12,19 +12,19 @@ nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
-    \  file<CR>
+    \  file file:new<CR>
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
-    \  file/rec<CR>
+    \  file/rec file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
-  	\ file<CR>
+  	\ file file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
-  	\ file/rec<CR>
+  	\ file/rec file:new<CR>
 
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
@@ -34,11 +34,12 @@ nnoremap <silent> [denite]b :<C-u>Denite
 "デナイト・サーチ
 nnoremap <silent> ? :<C-u>Denite
   	\ -buffer-name=search
+    \ -start-filter
   	\ line<CR>
 
 nnoremap <silent> <Leader>/ :<C-u>Denite
     \ -buffer-name=search 
-    \ -auto-action='highlight'
+    \ -auto-highlight
     \ anzu<CR>
 
 "デナイト・キーワードサーチ
@@ -77,6 +78,7 @@ nnoremap <silent> [denite]u :<C-u>Denite
 "ヘルプ
 nnoremap <silent> [denite]h :<C-u>Denite
     \ -buffer-name=search
+    \ -start-filter
     \ help<CR>
 
 "最近使用したファイル-neomru
@@ -103,11 +105,6 @@ nnoremap <silent> [denite]a :<C-u>Denite
 
 nnoremap <silent><Leader>n :<C-u>Denite
     \ -cursor-pos=+1 -immediately
-    \ -buffer-name=search -no-empty
-    \ -resume  -refresh<CR>
-
-nnoremap <silent><Leader>n :<C-u>Denite
-    \ -cursor-pos=-1 -immediately
     \ -buffer-name=search -no-empty
     \ -resume  -refresh<CR>
 
@@ -259,18 +256,26 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
+
+autocmd vimrc FileType denite-filter imap <buffer><silent> <C-c> <C-[>q
+autocmd vimrc FileType denite-filter imap <buffer><silent> <CR> <C-[>q
+
 "}}}
 '''
 
 [plugins.ftplugin]
 denite = '''
-set scrolloff=1
+setlocal scrolloff=0
+nnoremap <silent><buffer><expr> <TAB>
+\ denite#do_map('choose_action')
   nnoremap <silent><buffer><expr> <CR>
   \ denite#do_map('do_action')
+  nnoremap <silent><buffer><expr> h
+  \ denite#do_map('move_up_path')
   nnoremap <silent><buffer><expr> d
   \ denite#do_map('do_action', 'delete')
-  nnoremap <silent><buffer><expr> d
-  \ denite#do_map('do_action', 'open')
+  nnoremap <silent><buffer><expr> l
+  \ denite#do_map('do_action')
   nnoremap <silent><buffer><expr> p
   \ denite#do_map('do_action', 'preview')
   nnoremap <silent><buffer><expr> q
@@ -1150,9 +1155,9 @@ repo =  'rhysd/vim-operator-surround'
 depends = 'vim-operator-user'
 on_map = {nv= '<Plug>'}
 hook_add = '''
-map <silent>\a <Plug>(operator-surround-append)
-map <silent>\d <Plug>(operator-surround-delete)
-map <silent>\r <Plug>(operator-surround-replace)
+map <silent>'a <Plug>(operator-surround-append)
+map <silent>'d <Plug>(operator-surround-delete)
+map <silent>'r <Plug>(operator-surround-replace)
 '''
 hook_source = '''
 "2バイト括弧を追加
@@ -1275,9 +1280,9 @@ hook_add = '''
 let g:EasyMotion_do_mapping = 0
 map ,j <Plug>(easymotion-j)
 map ,k <Plug>(easymotion-k)
-nmap ' <Plug>(easymotion-s2)
-xmap ' <Plug>(easymotion-s2)
-omap ' <Plug>(easymotion-s2)
+nmap \ <Plug>(easymotion-s2)
+xmap \ <Plug>(easymotion-s2)
+omap \ <Plug>(easymotion-s2)
 " Jump to first match with enter & space
 let g:EasyMotion_enter_jump_first = 1
 let g:EasyMotion_space_jump_first = 1

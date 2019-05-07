@@ -154,7 +154,7 @@ setlocal foldmethod=marker
 "
 "viminfo設定(nvimと設定分ける)
 if has('nvim')
-  set shada=!,'300,<50,s10,h
+  set shada
 else
   set viminfo=!,'300,<50,s10,h
 endif
@@ -283,7 +283,7 @@ cnoremap <expr><F2> strftime("%Y%m%d")
 " x でレジスタを使わない
 nnoremap x "_x
 "ddでヤンク
-nnoremap dd "0dd
+nnoremap dd "*dd
 " 最後にヤンクしたテキストを貼り付け．
 nnoremap P "0P
 " スペルチェック
@@ -544,7 +544,6 @@ let g:lightline#bufferline#number_map = {
 
 function! LLMode()
 return &filetype ==# 'unite' ? 'Unite' :
-    \ &filetype ==# 'denite' ? LLDeniteMode() :
     \ &filetype ==# 'help' ? 'Help' :
     \ &filetype ==# 'defx' ? 'Defx' :
     \ &filetype ==# 'gundo' ? 'Gundo' :
