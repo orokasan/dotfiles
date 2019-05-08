@@ -121,7 +121,7 @@ nnoremap <silent> [denite]d :<C-u>Denite
 nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
     \ -buffer-name=normal
     \ dirmark/add<CR>
-
+autocmd vimrc FileType denite hi link CursorLine ColorColumn
 "}}}
 '''
 hook_post_source = '''
@@ -211,9 +211,9 @@ let s:menus.string.command_candidates = [
 
 call denite#custom#var('menu', 'menus', s:menus)
 
-"call denite#custom#var('file/rec', 'command',
-"      \ ['ack', '-f','-r'])
-	" Ack command on grep source
+call denite#custom#var('file/rec', 'command',
+      \ ['ack', '-f','-r'])
+" Ack command on grep source
 	call denite#custom#var('grep', 'command', ['ack'])
 "	call denite#custom#var('grep', 'default_opts',
 "			\ ['--ackrc', $HOME.'/.ackrc', '-H', '-i', '-Q',
@@ -1152,7 +1152,7 @@ nunmap   <buffer>bb
 [[plugins]]
 repo = 'previm/previm'
 depends = 'open-browser.vim'
-on_ft = ['markdown']
+on_ft = ['markdown','md']
 hook_add = '''
 nnoremap <silent><Leader>pmd :PrevimOpen<CR>
 '''
@@ -1306,5 +1306,13 @@ map *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
 map g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
 map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
 map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
+'''
+
+[[plugins]]
+on_ft = ['markdown','md']
+repo ='plasticboy/vim-markdown'
+hook_add = '''
+"let g:vim_markdown_no_default_key_mappings = 1
+let g:vim_markdown_new_list_item_indent = 4
 '''
 # vim:set foldmethod=marker:
