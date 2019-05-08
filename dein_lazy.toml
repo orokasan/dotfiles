@@ -171,15 +171,15 @@ endfunction
 "call denite#custom#map('insert', '<C-f>',
 "    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
 
-"need rg for grep/file-rec
-call denite#custom#var('file/rec', 'command',
-      \ ['rg', '--files','--glob', '!.git'])
-call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
-call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'final_opts', [])
-call denite#custom#var('grep', 'separator', ['--'])
-call denite#custom#var('grep', 'default_opts',
-      \ ['--vimgrep', '--no-heading'])
+""need rg for grep/file-rec
+"call denite#custom#var('file/rec', 'command',
+"      \ ['rg', '--files','--glob', '!.git'])
+"call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
+"call denite#custom#var('grep', 'recursive_opts', [])
+"call denite#custom#var('grep', 'final_opts', [])
+"call denite#custom#var('grep', 'separator', ['--'])
+"call denite#custom#var('grep', 'default_opts',
+"      \ ['--vimgrep', '--no-heading'])
 
 " Change matchers.
 "call denite#custom#source(
@@ -211,10 +211,17 @@ let s:menus.string.command_candidates = [
 
 call denite#custom#var('menu', 'menus', s:menus)
 
-"" Ag command on grep/filerec source
-"call denite#custom#var('file_rec', 'command',
-"    \ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
-"call denite#custom#var('grep', 'command', ['ag'])
+"call denite#custom#var('file/rec', 'command',
+"      \ ['ack', '-f','-r'])
+	" Ack command on grep source
+	call denite#custom#var('grep', 'command', ['ack'])
+"	call denite#custom#var('grep', 'default_opts',
+"			\ ['--ackrc', $HOME.'/.ackrc', '-H', '-i', '-Q',
+"			\  '--nopager', '--nocolor', '--nogroup', '--column'])
+	call denite#custom#var('grep', 'recursive_opts', [])
+	call denite#custom#var('grep', 'pattern_opt', ['--match'])
+	call denite#custom#var('grep', 'separator', ['--'])
+	call denite#custom#var('grep', 'final_opts', [])
 
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
@@ -230,7 +237,7 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#path2directory(path)
-    execute('Denite file/rec:"' . dir .'"')
+    execute('Denite file/rec:"'. dir . '"')
   endif
 endfunction
 
