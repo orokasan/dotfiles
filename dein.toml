@@ -87,15 +87,6 @@ let g:SignatureMap = {
 nnoremap m '
 '''
 
-[[plugins]]
-repo =  'maximbaz/lightline-ale'
-depends = ['lightline']
-hook_add = '''
-let g:lightline#ale#indicator_checking = "\uf110"
-let g:lightline#ale#indicator_warnings = "\uf48f"
-let g:lightline#ale#indicator_errors = "\uf484"
-let g:lightline#ale#indicator_ok = "\uf43a"
-'''
 
 [[plugins]]
 repo =  'Shougo/neomru.vim'
@@ -203,13 +194,37 @@ let g:spring_night_high_contrast = 0
 repo = 'osyo-manga/vim-anzu'
 on_map = {nx = '<Plug>'}
 hook_add = '''
-map n <Plug>(is-nohl)<Plug>(anzu-n)
-map N <Plug>(is-nohl)<Plug>(anzu-N)
+nnoremap <expr> n anzu#mode#mapexpr("n", "", "zzzv")
+nnoremap <expr> N anzu#mode#mapexpr("N", "", "zzzv")
 let g:airline#extensions#anzu#enabled = 0
 '''
 
 [[plugins]]
 repo = 'sainnhe/vim-color-forest-night'
+
+[[plugins]]
+repo = 'moznion/hateblo.vim'
+depends = 'webapi.vim'
+
+[[plugins]]
+repo =  'iyuuya/denite-ale'
+on_source = ['denite.nvim']
+
+[[plugins]]
+repo =  'kana/vim-operator-user'
+
+[[plugins]]
+repo =  'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'orokasan/denite-anzu'
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+
+[[plugins]]
+repo =  'kmnk/denite-dirmark'
+on_source = ['denite.nvim','defx.nvim']
 
 #[[plugins]]
 #repo = 'kana/vim-smartinput'

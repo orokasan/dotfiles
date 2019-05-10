@@ -39,6 +39,8 @@ let g:loaded_netrw             = 1
 let g:loaded_netrwPlugin       = 1
 let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
+
+let g:loaded_godoc = 1
 "========================================================================
 "Python,vimproc
 "メモ
@@ -48,14 +50,13 @@ let g:loaded_netrwFileHandlers = 1
 "kaoriya-vimのpythonに揃える
 "64bit版を使用する
 "set runtimepath+='~/vimfiles'
-let g:python_host_prog ='C:\Program Files (x86)\Python2.7\python.exe'
-let g:python3_host_prog ='C:\Program Files\Python37\python.exe'
+let g:python3_host_prog ='python.exe'
 "vimprocをダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
 "========================================================================
 "外観  {{{
-set shortmess+=AcaTs
+set shortmess+=aAcsT
 set showtabline=2   "常にタブラインを表示
 set number          "行番号を表示
 set signcolumn=yes  "signcolumを常に表示
@@ -64,6 +65,8 @@ set cmdheight=1     "コマンドライン行数の設定
 set noshowcmd       " 入力中のコマンドをステータスに表示しない
 set noshowmode      "モードを表示しない
 set cursorline      "cusorlineをハイライト
+set list                    "不可視文字の可視化
+set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 "cursorlineのhighlight syntaxを消す(行番号ハイライトのみにする)
 autocmd vimrc ColorScheme *  hi clear CursorLine
 set modelines=5     "モードライン設定
@@ -92,6 +95,7 @@ if has('GUI')
     set guioptions+=C
     let no_buffers_menu = 1
 endif
+
 "全角スペースを表示
 "コメント以外で全角スペースを指定しているので "scriptencoding"と、
 "このファイルのエンコードが一致するよう注意！
@@ -130,8 +134,6 @@ set nobackup                  "backupファイルを作成
 
 set textwidth=0             "自動改行をやめる
 set formatoptions+=mMj      "日本語の行の連結時には空白を入力しない。など
-set list                    "不可視文字の可視化
-set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 set tabstop=4               "<TAB>空白の表示設定
 set expandtab
 set softtabstop=4           "<TAB>の空白変換数
@@ -154,7 +156,6 @@ setlocal foldmethod=marker
 "
 "viminfo設定(nvimと設定分ける)
 if has('nvim')
-  set shada
 else
   set viminfo=!,'300,<50,s10,h
 endif
@@ -245,9 +246,12 @@ xnoremap Y y$
 nnoremap vv 0v$
 nmap <Tab> %
 vmap <Tab> %
+"Qでマクロ
+nnoremap Q q
+xnoremap Q q
 " 折り返し時に表示行単位での移動できるようにする
-nnoremap  j gj
-nnoremap  k gk
+nnoremap <silent>j gj
+nnoremap  <silent>k gk
 nnoremap  J gJ
 " colorcolumn
 nnoremap <expr><Leader>cl
@@ -272,9 +276,9 @@ vnoremap <C-j> }
 vnoremap <C-k> {
 
 tnoremap <C-o> <C-w>N
-imap <c-s> <Esc>:w<CR>a             "CTRL-sで保存
-nnoremap <silent><C-q> :close<CR>   "CTRL-qでclose
-inoremap <C-@> <ESC>                "For JIS keyboard
+inoremap <c-s> <Esc>:w<CR>a
+nnoremap <silent><C-q> :bd<CR>
+nnoremap <silent>q :close<CR>
 "日付を入力(+kaoriya限定)
 inoremap <F3> Last Change: .
 "日付を入力
@@ -390,7 +394,8 @@ cnoremap <M-f> <S-Right>|" 前の単語へ移動
 "バッファを閉じてもウィンドウが閉じないようにする
 "need-Bclose
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
-nnoremap <silent> <C-p> :Bclose<CR>
+nnoremap <silent><C-p> :Bclose<CR>
+nnoremap <silent><C-@> :Bclose!<CR>
 "Markdown Docx出力
 "pandocが必要
 nnoremap <Leader>p <C-u> :!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
@@ -461,13 +466,13 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath()
 let g:lightline = {
 \ 'colorscheme': 'iceberg',
     \ 'active': {
-        \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','git'], [ 'readonly', 'relativepath'] ],
+        \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','git'], [ 'readonly', 'path'] ],
         \ 'right': [ ['lineinfo'],
-            \ ['charcount'], [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'percent','IMEstatus'] 
+            \ ['charcount'], [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'percent','IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
-        \ 'left': [['inactivefn']],
+        \ 'left': [['inactivefn','denitebuf','denitesource']],
         \ 'right': [[ 'lineinfo' ]]
     \ },
     \ 'tabline' : {
@@ -480,12 +485,13 @@ let g:lightline = {
         \ 'readonly':'LLReadonly',
         \ 'denitebuf': 'LLDeniteBuffer',
         \ 'inactivefn':'LLInactiveFilename',
-        \ 'relativepath':'LLMyFilepath',
+        \ 'path':'LLMyFilepath',
         \ 'mode': 'LLMode',
         \ 'charcount':'LLCharcount',
         \ 'eskk': 'LLeskk',
         \ 'git':'LLgit',
-        \ 'lineinfo':'LLlineinfo'
+        \ 'lineinfo':'LLlineinfo',
+        \ 'denitesource' : 'LLDeniteSource'
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
@@ -517,7 +523,7 @@ let g:component_function_visible_condition = {
         \ 'readonly': 1,
         \ 'denitebuf': 1,
         \ 'inactivefn': 1,
-        \ 'relativepath': 1, 
+        \ 'path': 1, 
         \ 'mode': 1,
         \ 'charcount': 1,
         \ 'eskk': 1,
@@ -545,6 +551,7 @@ let g:lightline#bufferline#number_map = {
 function! LLMode()
 return &filetype ==# 'unite' ? 'Unite' :
     \ &filetype ==# 'help' ? 'Help' :
+    \ &filetype ==# 'denite' ? 'Denite' :
     \ &filetype ==# 'defx' ? 'Defx' :
     \ &filetype ==# 'gundo' ? 'Gundo' :
     \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
@@ -630,24 +637,18 @@ endfunction
 autocmd vimrc InsertEnter,BufEnter * if exists('*anzu#clear_search_status') 
     \| call anzu#clear_search_status() | endif
 
+autocmd vimrc CmdlineLeave call lightline#update()
+
 function! LLMyFilepath()
-
-if &filetype ==# 'denite'
-    return LLDeniteSource()
-
-elseif &filetype !~# s:ignore_filetype
-    if strlen(anzu#search_status())
-        let l:anzu = anzu#search_status()
-            if winwidth(0) > 100
-                return strlen(l:anzu) < 30 ? l:anzu : matchstr(l:anzu,'(\d\+\/\d\+)')
-            else
-                return ''
-            endif
-
+    if &filetype ==# 'denite'
+        return LLDeniteSource()
+    elseif strlen(anzu#search_status())
+            return s:llanzu()
+    elseif &filetype !~# s:ignore_filetype
+        return ''
     else
         let l:ll_filepath = expand('%:~')
         let l:ll_filename = expand('%:t')
-"パスの文字数とウィンドウサイズに応じて表示を変える
         if winwidth(0) > 80
             let l:ll_fn =  strlen(l:ll_filepath) < 40 ? l:ll_filepath :
             \ strlen(pathshorten(l:ll_filepath)) < 40 ? pathshorten(l:ll_filepath) :
@@ -655,30 +656,33 @@ elseif &filetype !~# s:ignore_filetype
         else
             let l:ll_fn = l:ll_filename
         endif
-        let l:ll_modified = &modified ? '[+]' : ''
-        return l:ll_fn . l:ll_modified
+            let l:ll_modified = &modified ? '[+]' : ''
+            return l:ll_fn . l:ll_modified
     endif
-else
-    return ''
-endif
 endfunction
 
-function! LLDeniteMode()
-    let l:mode_str=denite#get_status('raw_mode')
-    call lightline#link(tolower(l:mode_str[0]))
-    return l:mode_str
+function! s:llanzu()
+let l:anzu = anzu#search_status()
+    if winwidth(0) > 100
+        return strlen(l:anzu) < 30 ? l:anzu : matchstr(l:anzu,'(\d\+\/\d\+)')
+    else
+        return ''
+    endif
 endfunction
 
 function! LLDeniteBuffer()
 if &filetype ==# 'denite'
     let l:buffer = denite#get_status('buffer_name')
-    return 'Denite ['. l:buffer . ']'
+    return l:buffer
+elseif &filetype ==# 'denite-filter'
+    return 'denite-filter'
 else
     return ''
 endif
 endfunction
 
 function! LLDeniteSource()
+if &filetype ==# 'denite'
     let l:linenr = denite#get_status('linenr')
     let l:sources = denite#get_status('sources')
     let l:p =denite#get_status('path')
@@ -698,6 +702,9 @@ function! LLDeniteSource()
     else
         return denitesource
     endif
+else
+    return ''
+endif
 endfunction
 
 "デバッグ用

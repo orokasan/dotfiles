@@ -2,6 +2,7 @@
 repo =  'Shougo/denite.nvim'
 rev = 'ui'
 on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
+on_source = 'defx.nvim'
 hook_add = '''
 "{{{
 nmap s [denite]
@@ -124,11 +125,10 @@ nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
 autocmd vimrc FileType denite hi link CursorLine ColorColumn
 "}}}
 '''
-hook_post_source = '''
+hook_source = '''
 "{{{
 "denite option
 call denite#custom#option('_', {
-	\ 'prompt': '>',
 	\ 'cursor_wrap': v:true,
 	\ 'winheight': 14,
 	\ 'statusline': v:false,
@@ -172,14 +172,14 @@ endfunction
 "    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
 
 ""need rg for grep/file-rec
-"call denite#custom#var('file/rec', 'command',
-"      \ ['rg', '--files','--glob', '!.git'])
-"call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
-"call denite#custom#var('grep', 'recursive_opts', [])
-"call denite#custom#var('grep', 'final_opts', [])
-"call denite#custom#var('grep', 'separator', ['--'])
-"call denite#custom#var('grep', 'default_opts',
-"      \ ['--vimgrep', '--no-heading'])
+call denite#custom#var('file/rec', 'command',
+      \ ['rg', '--files','-g', '!.git', '-g', '!*.tmp', '-g', '!AppData/**'])
+call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'final_opts', [])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'default_opts',
+      \ ['--vimgrep', '--no-heading'])
 
 " Change matchers.
 "call denite#custom#source(
@@ -211,24 +211,24 @@ let s:menus.string.command_candidates = [
 
 call denite#custom#var('menu', 'menus', s:menus)
 
-call denite#custom#var('file/rec', 'command',
-      \ ['ack', '-f','-r'])
+"call denite#custom#var('file/rec', 'command',
+"      \ ['ack', '-f','-r'])
 " Ack command on grep source
-	call denite#custom#var('grep', 'command', ['ack'])
+"	call denite#custom#var('grep', 'command', ['ack'])
 "	call denite#custom#var('grep', 'default_opts',
 "			\ ['--ackrc', $HOME.'/.ackrc', '-H', '-i', '-Q',
 "			\  '--nopager', '--nocolor', '--nogroup', '--column'])
-	call denite#custom#var('grep', 'recursive_opts', [])
-	call denite#custom#var('grep', 'pattern_opt', ['--match'])
-	call denite#custom#var('grep', 'separator', ['--'])
-	call denite#custom#var('grep', 'final_opts', [])
+"	call denite#custom#var('grep', 'recursive_opts', [])
+"	call denite#custom#var('grep', 'pattern_opt', ['--match'])
+"	call denite#custom#var('grep', 'separator', ['--'])
+"	call denite#custom#var('grep', 'final_opts', [])
 
 " Define alias
-call denite#custom#alias('source', 'file/rec/git', 'file/rec')
-call denite#custom#var('file/rec/git', 'command',
-	\ ['git', 'ls-files', '-co', '--exclude-standard'])
-call denite#custom#alias('source', 'file/rec/py', 'file/rec')
-call denite#custom#var('file/rec/py', 'command',['scantree.py'])
+"call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+"call denite#custom#var('file/rec/git', 'command',
+"	\ ['git', 'ls-files', '-co', '--exclude-standard'])
+"call denite#custom#alias('source', 'file/rec/py', 'file/rec')
+"call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 " Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 	\ [ '.git/', '.ropeproject/', '__pycache__/',
@@ -237,7 +237,8 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
 function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#path2directory(path)
-    execute('Denite file/rec:"'. dir . '"')
+    let sdir = '\"' . dir . '\"'
+    execute('Denite file/rec:' . sdir)
   endif
 endfunction
 
@@ -264,15 +265,16 @@ call denite#custom#action(
     \ 'defx',
     \  function('s:defx_open'))
 
+autocmd! BufEnter FileType denite-filter
 autocmd vimrc FileType denite-filter imap <buffer><silent> <C-c> <C-[>q
 autocmd vimrc FileType denite-filter imap <buffer><silent> <CR> <C-[>q
-
+autocmd vimrc FileType denite-filter set bufhidden=wipe
+autocmd vimrc BufEnter FileType denite-filter setlocal noswapfile
 "}}}
 '''
 
 [plugins.ftplugin]
 denite = '''
-setlocal scrolloff=0
 nnoremap <silent><buffer><expr> <TAB>
 \ denite#do_map('choose_action')
   nnoremap <silent><buffer><expr> <CR>
@@ -289,26 +291,18 @@ nnoremap <silent><buffer><expr> <TAB>
   \ denite#do_map('quit')
   nnoremap <silent><buffer><expr> i
   \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <Space>
+  nnoremap <silent><buffer><expr> w
   \ denite#do_map('toggle_select').'j'
+  nnoremap <silent><buffer><expr> <C-r>
+  \ denite#do_map('do_action','file/rec')
+  nnoremap <silent><buffer><expr> r
+  \ denite#do_map('redraw','file/rec')
 '''
-
-[[plugins]]
-repo = 'orokasan/denite-anzu'
-on_source = ['denite.nvim']
-
-[[plugins]]
-repo =  'iyuuya/denite-ale'
-on_source = ['denite.nvim']
 
 [[plugins]]
 repo =  'Shougo/neoyank.vim'
 on_event = 'TextYankPost'
 on_source = ['denite.nvim']
-
-[[plugins]]
-repo =  'kmnk/denite-dirmark'
-on_source = ['denite.nvim','defx.nvim']
 
 [[plugins]]
 repo =  'Shougo/unite.vim'
@@ -320,13 +314,20 @@ repo = 'glidenote/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn  :MemoNew<CR>
-nnoremap <Leader>ml  :<C-u>Denite 
+nnoremap <silent><Leader>ml  :<C-u>Denite 
     \ -buffer-name=normal
     \ file/rec:~/GoogleDrive/memo<CR>
-nnoremap <Leader>mg  :MemoGrep<CR>
+nnoremap <silent><Leader>mg  :<C-u>Denite 
+    \ -buffer-name=normal
+    \ grep:~/GoogleDrive/memo::<CR>
 " use denite (default 0)
 let g:memolist_denite = 1
 let g:memolist_path = "~/GoogleDrive/memo"
+let g:memolist_template_dir_path = "~/GoogleDrive/memo/template"
+let g:memolist_memo_suffix = "markdown"
+let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
+" categories prompt (default 0)
+let g:memolist_prompt_categories = 1
 '''
 
 [[plugins]]
@@ -346,12 +347,6 @@ nmap <silent> [denite]x <Plug>(defx):<C-u>Denite
 '''
 hook_source = '''
 "{{{
-
-augroup defx
-    autocmd!
-    autocmd BufEnter FileType defx set nohlsearch
-    autocmd BufLeave FileType defx set hlsearch
-augroup END
 
 call defx#custom#option('_', {
     \ 'winwidth': 44,
@@ -376,7 +371,21 @@ call defx#custom#option('_', {
 "      \ 'selected_icon': '✓',
 "      \ })
 
+function! s:get_defx_bufferdir(candidate) abort
+    if line('.') == 1
+        let path_mod  = 'h'
+    else
+        let path_mod = isdirectory(a:candidate) ? '' : 'h'
+    endif
+    return fnamemodify(a:candidate,'\":p:' . path_mod . '\"')
+endfunction
 
+function! Defx_to_denite_rec(context) abort
+        let narrow_dir = '\"' . s:get_defx_bufferdir(a:context.targets[0]) . '\"'
+        silent! execute('Denite
+        \ -default-action=defx
+        \ file/rec:' .  narrow_dir)
+endfunction
 "}}}
 '''
 [plugins.ftplugin]
@@ -444,24 +453,7 @@ nnoremap <silent><buffer><expr> <C-g>
 nnoremap <silent><buffer><expr> cd
 \ defx#do_action('change_vim_cwd')
 nnoremap <silent><buffer><expr> <C-r>
-\ defx#do_action('call','<SID>Defx_denite_rec')
-
-function! s:GetDefxBufferDir(candidate) abort
-    if line('.') == 1
-        let path_mod  = 'h'
-    else
-        let path_mod = isdirectory(a:candidate) ? '' : 'h'
-    endif
-    return fnamemodify(a:candidate,'":p:' . path_mod . '"')
-endfunction
-
-function! s:Defx_denite_rec(context) abort
-    let narrow_dir = s:GetDefxBufferDir(a:context.targets[0])
-    execute('Denite
-    \ -default-action=defx
-    \ file/rec:"' .  narrow_dir .'"
-    \ ')
-endfunction
+\ defx#do_action('call','Defx_to_denite_rec')
 
 "}}}
 '''
@@ -742,12 +734,8 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 '''
 
 [[plugins]]
-repo =  'Shougo/neosnippet-snippets'
-on_source = 'neosnippet'
-
-[[plugins]]
 repo =  'tyru/eskk.vim'
-on_event = ['InsertEnter','CmdwinEnter']
+on_event = ['InsertEnter','CmdlineEnter']
 hook_add = '''
 "{{{
 let g:eskk#debug = 0
@@ -774,8 +762,8 @@ hook_source = '''
 "{{{
 augroup myeskk
 autocmd!
-autocmd InsertLeave * call <SID>eskk_status()
-autocmd InsertEnter * call <SID>eskk_insert_config()
+autocmd InsertLeave,CmdlineEnter * call <SID>eskk_status()
+autocmd InsertEnter,CmdlineLeave * call <SID>eskk_insert_config()
 augroup END
  
 let s:eskk_insert_status = 0
@@ -835,6 +823,9 @@ function! s:eskk_initial_pre() abort
   call t.add_map('zr', '®')
   call t.add_map('z9', '（')
   call t.add_map('z0', '）')
+  call t.add_map('z-', '-')
+  call t.add_map('z{', '【')
+  call t.add_map('z}', '】')
   call eskk#register_mode_table('hira', t)
 endfunction
 "}}}
@@ -867,11 +858,6 @@ endfunction
 #call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
 #"}}}
 #'''
-
-[[plugins]]
-repo =  'kana/vim-operator-user'
-on_source = ['vim-operator-surround']
-on_source = ['vim-operator-replace']
 
 [[plugins]]
 repo = 'kana/vim-operator-replace'
@@ -992,7 +978,7 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 
 [[plugins]]
 repo =  'w0rp/ale'
-on_event = 'InsertEnter'
+on_event = 'InsertLeave'
 hook_source ='''
 "{{{
 "https://efcl.info/2015/09/10/introduce-textlint/
@@ -1013,6 +999,8 @@ let g:ale_set_quickfix = 0
 let g:ale_sign_column_always = 1
 let g:ale_lint_delay = 5000
 let g:ale_lint_on_enter = 0
+let g:ale_lint_on_text_changed = 0
+let g:ale_lint_on_filetype_changed = 0
 let g:ale_open_list = 0
 let g:ale_keep_list_window_open = 0
 let g:ale_sign_error = ''
@@ -1022,6 +1010,17 @@ let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_statusline_format = ['%d', '%d', '']
 "}}}
+'''
+
+[[plugins]]
+repo =  'maximbaz/lightline-ale'
+on_source = 'ale'
+depends = ['lightline.vim']
+hook_add = '''
+let g:lightline#ale#indicator_checking = "\uf110"
+let g:lightline#ale#indicator_warnings = "\uf48f"
+let g:lightline#ale#indicator_errors = "\uf484"
+let g:lightline#ale#indicator_ok = "\uf43a"
 '''
 
 [[plugins]]
@@ -1266,10 +1265,6 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 '''
 
 [[plugins]]
-on_ft = 'toml'
-repo = 'cespare/vim-toml'
-
-[[plugins]]
 repo = 'haya14busa/vim-migemo'
 on_map = {n = '<Plug>'}
 hook_add = '''
@@ -1287,10 +1282,14 @@ hook_add = '''
 let g:EasyMotion_do_mapping = 0
 map ,j <Plug>(easymotion-j)
 map ,k <Plug>(easymotion-k)
-nmap \ <Plug>(easymotion-s2)
-xmap \ <Plug>(easymotion-s2)
-omap \ <Plug>(easymotion-s2)
+nmap <Leader><Leader> <Plug>(easymotion-s2)
+imap <C-Space> <ESC><Plug>(easymotion-s2)
+xmap <Leader><Leader> <Plug>(easymotion-s2)
+omap <Leader><Leader> <Plug>(easymotion-s2)
 " Jump to first match with enter & space
+let g:EasyMotion_use_upper = 1
+let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
+let g:EasyMotion_smartcase = 1
 let g:EasyMotion_enter_jump_first = 1
 let g:EasyMotion_space_jump_first = 1
 let g:EasyMotion_use_migemo = 1
@@ -1312,7 +1311,9 @@ map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 on_ft = ['markdown','md']
 repo ='plasticboy/vim-markdown'
 hook_add = '''
-"let g:vim_markdown_no_default_key_mappings = 1
+let g:vim_markdown_no_default_key_mappings = 1
 let g:vim_markdown_new_list_item_indent = 4
+let g:vim_markdown_foldint_level = 0
 '''
+
 # vim:set foldmethod=marker:
