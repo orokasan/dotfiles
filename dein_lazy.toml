@@ -40,7 +40,6 @@ nnoremap <silent> ? :<C-u>Denite
 
 nnoremap <silent> <Leader>/ :<C-u>Denite
     \ -buffer-name=search 
-    \ -auto-highlight
     \ anzu<CR>
 
 "デナイト・キーワードサーチ
@@ -224,9 +223,9 @@ call denite#custom#var('menu', 'menus', s:menus)
 "	call denite#custom#var('grep', 'final_opts', [])
 
 " Define alias
-"call denite#custom#alias('source', 'file/rec/git', 'file/rec')
-"call denite#custom#var('file/rec/git', 'command',
-"	\ ['git', 'ls-files', '-co', '--exclude-standard'])
+call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+call denite#custom#var('file/rec/git', 'command',
+	\ ['git', 'ls-files', '-co', '--exclude-standard'])
 "call denite#custom#alias('source', 'file/rec/py', 'file/rec')
 "call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 " Change ignore_globs
@@ -269,7 +268,8 @@ autocmd! BufEnter FileType denite-filter
 autocmd vimrc FileType denite-filter imap <buffer><silent> <C-c> <C-[>q
 autocmd vimrc FileType denite-filter imap <buffer><silent> <CR> <C-[>q
 autocmd vimrc FileType denite-filter set bufhidden=wipe
-autocmd vimrc BufEnter FileType denite-filter setlocal noswapfile
+autocmd vimrc BufEnter FileType denite-filter setlocal noswapfile 
+autocmd vimrc FileType denite-filter setlocal signcolumn=no nonumber
 "}}}
 '''
 
@@ -762,8 +762,8 @@ hook_source = '''
 "{{{
 augroup myeskk
 autocmd!
-autocmd InsertLeave,CmdlineEnter * call <SID>eskk_status()
-autocmd InsertEnter,CmdlineLeave * call <SID>eskk_insert_config()
+autocmd InsertLeave * call <SID>eskk_status()
+autocmd InsertEnter * call <SID>eskk_insert_config()
 augroup END
  
 let s:eskk_insert_status = 0
@@ -1307,13 +1307,13 @@ map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
 map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 '''
 
-[[plugins]]
-on_ft = ['markdown','md']
-repo ='plasticboy/vim-markdown'
-hook_add = '''
-let g:vim_markdown_no_default_key_mappings = 1
-let g:vim_markdown_new_list_item_indent = 4
-let g:vim_markdown_foldint_level = 0
-'''
+#[[plugins]]
+#on_ft = ['markdown','md']
+#repo ='plasticboy/vim-markdown'
+#hook_add = '''
+#let g:vim_markdown_no_default_key_mappings = 1
+#let g:vim_markdown_new_list_item_indent = 4
+#let g:vim_markdown_foldint_level = 0
+#'''
 
 # vim:set foldmethod=marker:

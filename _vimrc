@@ -341,6 +341,7 @@ function! s:smart_foldcloser() "{{{
 endfunction
 "}}}
 tmap <Leader>w <C-w>
+
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -395,7 +396,6 @@ cnoremap <M-f> <S-Right>|" 前の単語へ移動
 "need-Bclose
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
 nnoremap <silent><C-p> :Bclose<CR>
-nnoremap <silent><C-@> :Bclose!<CR>
 "Markdown Docx出力
 "pandocが必要
 nnoremap <Leader>p <C-u> :!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>

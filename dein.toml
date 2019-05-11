@@ -194,8 +194,10 @@ let g:spring_night_high_contrast = 0
 repo = 'osyo-manga/vim-anzu'
 on_map = {nx = '<Plug>'}
 hook_add = '''
-nnoremap <expr> n anzu#mode#mapexpr("n", "", "zzzv")
-nnoremap <expr> N anzu#mode#mapexpr("N", "", "zzzv")
+nnoremap <expr> <Plug>(anzu-n-zzzv) anzu#mode#mapexpr("n", "", "zzzv")
+nnoremap <expr> <Plug>(anzu-N-zzzv) anzu#mode#mapexpr("N", "", "zzzv")
+nmap n <Plug>(is-nohl)<Plug>(anzu-n-zzzv)
+nmap N <Plug>(is-nohl)<Plug>(anzu-N-zzzv)
 let g:airline#extensions#anzu#enabled = 0
 '''
 
