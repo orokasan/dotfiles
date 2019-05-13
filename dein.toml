@@ -58,35 +58,34 @@ xmap <silent> iW <Plug>JaSegmentTextObjVI
 "}}}
 '''
 
-[[plugins]]
-repo =  'kshenoy/vim-signature'
-hook_add = '''
-let g:SignatureMap = {
-    \ 'Leader'             :  "M",
-    \ 'PlaceNextMark'      :  "M,",
-    \ 'ToggleMarkAtLine'   :  "M.",
-    \ 'PurgeMarksAtLine'   :  "M-",
-    \ 'DeleteMark'         :  "dM",
-    \ 'PurgeMarks'         :  "M<Space>",
-    \ 'PurgeMarkers'       :  "M<BS>",
-    \ 'GotoNextLineAlpha'  :  "']",
-    \ 'GotoPrevLineAlpha'  :  "'[",
-    \ 'GotoNextSpotAlpha'  :  "`]",
-    \ 'GotoPrevSpotAlpha'  :  "`[",
-    \ 'GotoNextLineByPos'  :  "]'",
-    \ 'GotoPrevLineByPos'  :  "['",
-    \ 'GotoNextSpotByPos'  :  "]`",
-    \ 'GotoPrevSpotByPos'  :  "[`",
-    \ 'GotoNextMarker'     :  "]-",
-    \ 'GotoPrevMarker'     :  "[-",
-    \ 'GotoNextMarkerAny'  :  "]=",
-    \ 'GotoPrevMarkerAny'  :  "[=",
-    \ 'ListBufferMarks'    :  "M/",
-    \ 'ListBufferMarkers'  :  "M?"
-\ }
-nnoremap m '
-'''
-
+#[[plugins]]
+#repo =  'kshenoy/vim-signature'
+#hook_add = '''
+#let g:SignatureMap = {
+#    \ 'Leader'             :  "M",
+#    \ 'PlaceNextMark'      :  "M,",
+#    \ 'ToggleMarkAtLine'   :  "M.",
+#    \ 'PurgeMarksAtLine'   :  "M-",
+#    \ 'DeleteMark'         :  "dM",
+#    \ 'PurgeMarks'         :  "M<Space>",
+#    \ 'PurgeMarkers'       :  "M<BS>",
+#    \ 'GotoNextLineAlpha'  :  "']",
+#    \ 'GotoPrevLineAlpha'  :  "'[",
+#    \ 'GotoNextSpotAlpha'  :  "`]",
+#    \ 'GotoPrevSpotAlpha'  :  "`[",
+#    \ 'GotoNextLineByPos'  :  "]'",
+#    \ 'GotoPrevLineByPos'  :  "['",
+#    \ 'GotoNextSpotByPos'  :  "]`",
+#    \ 'GotoPrevSpotByPos'  :  "[`",
+#    \ 'GotoNextMarker'     :  "]-",
+#    \ 'GotoPrevMarker'     :  "[-",
+#    \ 'GotoNextMarkerAny'  :  "]=",
+#    \ 'GotoPrevMarkerAny'  :  "[=",
+#    \ 'ListBufferMarks'    :  "M/",
+#    \ 'ListBufferMarkers'  :  "M?"
+#\ }
+#
+#'''
 
 [[plugins]]
 repo =  'Shougo/neomru.vim'
@@ -228,10 +227,14 @@ repo = 'cespare/vim-toml'
 repo =  'kmnk/denite-dirmark'
 on_source = ['denite.nvim','defx.nvim']
 
+[[plugins]]
+repo = 'skanehira/translate.vim'
 #[[plugins]]
 #repo = 'kana/vim-smartinput'
 #lazy = '1'
 #hook_add = '''
 #'''
+[[plugins]]
+repo = 'junegunn/fzf.vim'
 
 # vim:set foldmethod=marker:

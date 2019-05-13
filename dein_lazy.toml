@@ -30,6 +30,7 @@ nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
   	\ -buffer-name=normal 
+    \ -auto-action='highlight'
   	\ buffer<CR>
 
 "デナイト・サーチ
@@ -40,6 +41,7 @@ nnoremap <silent> ? :<C-u>Denite
 
 nnoremap <silent> <Leader>/ :<C-u>Denite
     \ -buffer-name=search 
+    \ -auto-action='highlight'
     \ anzu<CR>
 
 "デナイト・キーワードサーチ
@@ -135,6 +137,8 @@ call denite#custom#option('_', {
     \ 'highlight_mode_normal': 'Visual',
     \ 'highlight_mode_insert': 'Visual',
     \ 'highlight_matched_char' : 'Title',
+    \ 'direction': 'dynamicbottom',
+    \ 'filter_split_direction' : '',
     \ 'vertical_preview': v:true,
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
@@ -144,12 +148,10 @@ call denite#custom#option('_', {
 	\ })
 "buffer-normal
 call denite#custom#option('normal', {
-	\ 'winheight': 10,
-    \ 'direction': 'dynamicbottom'
+	\ 'winheight': 10
     \})
 "buffer-search
 call denite#custom#option('search', {
-    \ 'direction': 'dynamicbottom',
     \ 'winheight': 10
     \ })
 
@@ -172,7 +174,8 @@ endfunction
 
 ""need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
-      \ ['rg', '--files','-g', '!.git', '-g', '!*.tmp', '-g', '!AppData/**'])
+      \ ['rg', '--files', '--no-messages', 
+      \ '-g', '!.git', '-g', '!*.tmp', '-g', '!AppData/**'])
 call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
 call denite#custom#var('grep', 'recursive_opts', [])
 call denite#custom#var('grep', 'final_opts', [])
@@ -264,17 +267,22 @@ call denite#custom#action(
     \ 'defx',
     \  function('s:defx_open'))
 
-autocmd! BufEnter FileType denite-filter
+"autocmd! BufEnter FileType denite-filter
 autocmd vimrc FileType denite-filter imap <buffer><silent> <C-c> <C-[>q
 autocmd vimrc FileType denite-filter imap <buffer><silent> <CR> <C-[>q
-autocmd vimrc FileType denite-filter set bufhidden=wipe
-autocmd vimrc BufEnter FileType denite-filter setlocal noswapfile 
-autocmd vimrc FileType denite-filter setlocal signcolumn=no nonumber
+autocmd vimrc FileType denite-filter imap <buffer><silent> jk <C-[>q
+"autocmd vimrc FileType denite-filter set bufhidden=wipe
+"autocmd vimrc BufEnter FileType denite-filter setlocal noswapfile 
+"autocmd vimrc FileType denite-filter setlocal nonumber signcolumn=no
 "}}}
 '''
 
 [plugins.ftplugin]
 denite = '''
+set scrolloff=0
+setlocal signcolumn=no
+setlocal number
+
 nnoremap <silent><buffer><expr> <TAB>
 \ denite#do_map('choose_action')
   nnoremap <silent><buffer><expr> <CR>
@@ -627,8 +635,7 @@ call deoplete#custom#option({
     \ 'skip_multibyte': v:false,
     \ 'max_list': 100,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'none',
-    \ 'num_processes': 0
+    \ 'prev_completion_mode': 'none'
     \ })
 call deoplete#enable()
 "}}}
@@ -644,7 +651,7 @@ let g:neocomplete#enable_smart_case = 1
 
 "vimprocを有効化すると初回の補完がちょっと遅くなる
 let g:neocomplete#use_vimproc = 1
-let g:neocomplete#min_keyword_length = 4
+let g:neocomplete#min_keyword_length = 2
 
 " Define keyword.
 " Plugin key-mappings.
@@ -781,9 +788,8 @@ function! s:eskk_insert_config() abort
     endif
 endfunction
 
-function! s:define_LLeskk()
-    function! LLeskk() abort
-    if &filetype !~? '\v(vimfiler|gundo|defx|tweetvim)'
+function! s:define_LLmyeskk()
+    function! LLmyeskk() abort
         if eskk#is_enabled()
             return printf(get(a:000, 0, '[%s]'),
                 \ get(g:eskk#statusline_mode_strings,
@@ -793,9 +799,6 @@ function! s:define_LLeskk()
         else
             return printf('[--]')
         endif
-    else
-            return ''
-    endif
     endfunction
 endfunction
 
@@ -814,7 +817,7 @@ endfunction
 
 autocmd vimrc User eskk-initialize-post
       \ EskkMap -remap jj <ESC>
-autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre() | call <SID>define_LLeskk()
+autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre() | call <SID>define_LLmyeskk()
 function! s:eskk_initial_pre() abort
   let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
   call t.add_map('z ', '　')
@@ -1280,12 +1283,10 @@ repo = 'easymotion/vim-easymotion'
 on_map = {nx = '<Plug>'}
 hook_add = '''
 let g:EasyMotion_do_mapping = 0
-map ,j <Plug>(easymotion-j)
-map ,k <Plug>(easymotion-k)
-nmap <Leader><Leader> <Plug>(easymotion-s2)
+nmap , <Plug>(easymotion-s2)
 imap <C-Space> <ESC><Plug>(easymotion-s2)
-xmap <Leader><Leader> <Plug>(easymotion-s2)
-omap <Leader><Leader> <Plug>(easymotion-s2)
+xmap , <Plug>(easymotion-s2)
+omap , <Plug>(easymotion-s2)
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'

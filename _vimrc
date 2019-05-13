@@ -18,6 +18,7 @@ scriptencoding utf-8
 endif
 set fileencoding=utf-8     " 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
+set runtimepath+=~/.fzf
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 augroup vimrc
@@ -68,6 +69,7 @@ set cursorline      "cusorlineをハイライト
 set list                    "不可視文字の可視化
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 "cursorlineのhighlight syntaxを消す(行番号ハイライトのみにする)
+set signcolumn=no
 autocmd vimrc ColorScheme *  hi clear CursorLine
 set modelines=5     "モードライン設定
 set showmatch       "括弧入力時の対応する括弧を表示
@@ -92,7 +94,6 @@ set pumheight=10
 if has('GUI')
     let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
     set guioptions+=M
-    set guioptions+=C
     let no_buffers_menu = 1
 endif
 
@@ -240,6 +241,7 @@ nnoremap <leader>k O<ESC>j
 nnoremap ; :
 " Enter normal mode
 inoremap jk <esc>
+nnoremap m '
 "末尾までヤンク
 nnoremap Y y$
 xnoremap Y y$
@@ -340,7 +342,6 @@ function! s:smart_foldcloser() "{{{
   norm! zM
 endfunction
 "}}}
-tmap <Leader>w <C-w>
 
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>:bprev<CR>
@@ -410,7 +411,7 @@ if has('kaoriya')
     nnoremap <C-CR> :ScreenMode 6<CR>
     nnoremap <S-CR> :ScreenMode 1<CR>
     "背景透過
-    autocmd vimrc GUIEnter * set transparency=245
+    autocmd vimrc GUIEnter * set transparency=235
 endif
 
 if has('nvim')
@@ -552,16 +553,21 @@ function! LLMode()
 return &filetype ==# 'unite' ? 'Unite' :
     \ &filetype ==# 'help' ? 'Help' :
     \ &filetype ==# 'denite' ? 'Denite' :
+    \ &filetype ==# 'denite-filter' ? '' :
     \ &filetype ==# 'defx' ? 'Defx' :
     \ &filetype ==# 'gundo' ? 'Gundo' :
     \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
     \ lightline#mode()
 endfunction
 "例外filetype
-let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite)'
+let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
 
 function! LLInactiveFilename()
-return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
+    return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
+endfunction
+
+function! LLeskk() abort
+    return &filetype !~# s:ignore_filetype && exists('*LLmyeskk') ? LLmyeskk() : ''
 endfunction
 
 function! LLlineinfo() abort
@@ -642,9 +648,11 @@ autocmd vimrc CmdlineLeave call lightline#update()
 function! LLMyFilepath()
     if &filetype ==# 'denite'
         return LLDeniteSource()
+    elseif &filetype ==# 'denite-filter' && exists('*LLmyeskk')
+        return LLmyeskk()
     elseif strlen(anzu#search_status())
-            return s:llanzu()
-    elseif &filetype !~# s:ignore_filetype
+        return s:llanzu()
+    elseif &filetype ==# s:ignore_filetype
         return ''
     else
         let l:ll_filepath = expand('%:~')
@@ -674,15 +682,16 @@ function! LLDeniteBuffer()
 if &filetype ==# 'denite'
     let l:buffer = denite#get_status('buffer_name')
     return l:buffer
-elseif &filetype ==# 'denite-filter'
-    return 'denite-filter'
 else
     return ''
 endif
 endfunction
 
 function! LLDeniteSource()
-if &filetype ==# 'denite'
+    if &filetype !=# 'denite'
+        return ''
+    endif
+
     let l:linenr = denite#get_status('linenr')
     let l:sources = denite#get_status('sources')
     let l:p =denite#get_status('path')
@@ -696,15 +705,10 @@ if &filetype ==# 'denite'
         let l:sources = matchstr(l:sources, '.\+\ze:[') .
             \ matchstr(l:sources, ']\zs.\+') 
     endif
-    let denitesource = l:linenr . ' - ' .l:sources . ' - [' . l:path . ']'
-    if strlen(denitesource) > 100
-        return  l:linenr . ' - ' .l:sources . l:path
-    else
+    let denitesource = l:sources . ' - [' . l:path . ']'
+    "if strlen(denitesource) > 100
         return denitesource
-    endif
-else
-    return ''
-endif
+    "endif
 endfunction
 
 "デバッグ用
