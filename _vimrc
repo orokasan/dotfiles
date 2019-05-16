@@ -553,7 +553,6 @@ function! LLMode()
 return &filetype ==# 'unite' ? 'Unite' :
     \ &filetype ==# 'help' ? 'Help' :
     \ &filetype ==# 'denite' ? 'Denite' :
-    \ &filetype ==# 'denite-filter' ? '' :
     \ &filetype ==# 'defx' ? 'Defx' :
     \ &filetype ==# 'gundo' ? 'Gundo' :
     \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
@@ -567,7 +566,11 @@ function! LLInactiveFilename()
 endfunction
 
 function! LLeskk() abort
-    return &filetype !~# s:ignore_filetype && exists('*LLmyeskk') ? LLmyeskk() : ''
+    if &filetype ==# 'denite-filter'
+        return exists('*LLmyeskk') ? LLmyeskk() : ''
+    else
+        return &filetype !~# s:ignore_filetype && exists('*LLmyeskk') ? LLmyeskk() : ''
+    endif
 endfunction
 
 function! LLlineinfo() abort
@@ -648,13 +651,9 @@ autocmd vimrc CmdlineLeave call lightline#update()
 function! LLMyFilepath()
     if &filetype ==# 'denite'
         return LLDeniteSource()
-    elseif &filetype ==# 'denite-filter' && exists('*LLmyeskk')
-        return LLmyeskk()
     elseif strlen(anzu#search_status())
         return s:llanzu()
-    elseif &filetype ==# s:ignore_filetype
-        return ''
-    else
+    elseif &filetype !~# s:ignore_filetype
         let l:ll_filepath = expand('%:~')
         let l:ll_filename = expand('%:t')
         if winwidth(0) > 80
@@ -666,6 +665,8 @@ function! LLMyFilepath()
         endif
             let l:ll_modified = &modified ? '[+]' : ''
             return l:ll_fn . l:ll_modified
+    else
+        return ''
     endif
 endfunction
 
