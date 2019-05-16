@@ -689,6 +689,9 @@ inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function()
   return pumvisible() ? "\<C-y>" : "\<CR>"
 endfunction
+inoremap <silent><expr> <C-n>
+    \ pumvisible() ? "\<C-n>" :
+    \ neocomplete#start_manual_complete()
 " <TAB>: completion.
 inoremap <silent><expr> <TAB>
     \ pumvisible() ? "\<C-n>" :
@@ -711,9 +714,9 @@ let g:neocomplete#enable_multibyte_completion = 1
 if !exists('g:neocomplete#keyword_patterns')
   let g:neocomplete#keyword_patterns = {}
 endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
-let g:neocomplete#max_list=100
+"let g:neocomplete#keyword_patterns['default'] = '\k\+'
+let g:neocomplete#max_list=300
 "call neocomplete#custom#source('_', 'matchers', ['matcher_head','matcher_length'])
 " Change default converter.
 "call neocomplete#custom#source('_', 'converters',
@@ -725,7 +728,7 @@ call neocomplete#custom#source('buffer', 'mark', 'b')
 call neocomplete#custom#source('eskk', 'mark' , '▽')
 call neocomplete#custom#source('eskk', 'max_menu_width', 80)
 let g:neocomplete#ignore_source_files = [
-    \'member', 'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim' 
+    \'member', 'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim'
     \]
 call neocomplete#initialize()
 "}}}
