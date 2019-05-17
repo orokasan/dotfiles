@@ -255,6 +255,7 @@ xnoremap Q q
 nnoremap <silent>j gj
 nnoremap  <silent>k gk
 nnoremap  J gJ
+nnoremap gJ J
 " colorcolumn
 nnoremap <expr><Leader>cl
     \ ":\<C-u>set colorcolumn=".(&cc == 0 ? v:count == 0 ? virtcol('.') : v:count : 0)."\<CR>"
@@ -303,7 +304,7 @@ inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
 inoremap <silent><C-c> <ESC>
 "_vimrcを開く
-noremap <silent> <leader>vr :e ~/dotfiles/?vimrc<CR>
+noremap <silent> <leader>v :e ~/dotfiles/?vimrc<CR>
 "開いているVimscriptを読み込む
 nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
 if !exists('*s:source_script')  "{{{
@@ -399,7 +400,7 @@ cnoremap <M-f> <S-Right>|" 前の単語へ移動
 nnoremap <silent><C-p> :Bclose<CR>
 "Markdown Docx出力
 "pandocが必要
-nnoremap <Leader>p <C-u> :!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
+nnoremap <Leader>p <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 "}}}
 "========================================================================
 "+kaoriya {{{

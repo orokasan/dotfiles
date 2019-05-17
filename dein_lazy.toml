@@ -1309,10 +1309,10 @@ repo = 'easymotion/vim-easymotion'
 on_map = {nx = '<Plug>'}
 hook_add = '''
 let g:EasyMotion_do_mapping = 0
-nmap , <Plug>(easymotion-s2)
+nmap <TAB> <Plug>(easymotion-s2)
 imap <C-Space> <ESC><Plug>(easymotion-s2)
-xmap , <Plug>(easymotion-s2)
-omap , <Plug>(easymotion-s2)
+xmap <TAB> <Plug>(easymotion-s2)
+omap <Tab> <Plug>(easymotion-s2)
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
