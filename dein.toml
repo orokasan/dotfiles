@@ -237,4 +237,335 @@ repo = 'skanehira/translate.vim'
 [[plugins]]
 repo = 'junegunn/fzf.vim'
 
+[[plugins]]
+repo =  'Shougo/denite.nvim'
+#rev = 'ui'
+#on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
+#on_source = 'defx.nvim'
+hook_add = '''
+"{{{
+nmap s [denite]
+nnoremap [denite] <Nop>
+
+nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+    \  source<CR>
+
+"現在開いているファイルのディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
+    \  file file:new<CR>
+
+"現在開いているファイルのディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
+    \  file/rec file:new<CR>
+
+"ホームディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
+  	\ file file:new<CR>
+
+"ホームディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
+  	\ file/rec file:new<CR>
+
+"バッファ一覧
+nnoremap <silent> [denite]b :<C-u>Denite
+  	\ -buffer-name=normal 
+  	\ buffer<CR>
+
+"デナイト・サーチ
+nnoremap <silent> ? :<C-u>Denite
+  	\ -buffer-name=search
+    \ -start-filter
+  	\ line<CR>
+
+nnoremap <silent> <Leader>/ :<C-u>Denite
+    \ -buffer-name=search 
+    \ -auto-action='highlight'
+    \ anzu<CR>
+
+"デナイト・キーワードサーチ
+"nnoremap <silent> * :<C-u>DeniteCursorWord
+"  	\ -buffer-name=search
+"  	\ -auto-highlight  line<CR>
+
+"neoyank
+nnoremap <silent> [denite]y :<C-u>Denite
+  	\ 
+    \ -buffer-name=search
+  	\ neoyank<CR>
+
+nnoremap <silent> [denite]r :<C-u>Denite
+  	\ 
+    \ -buffer-name=search
+  	\ register<CR>
+
+"コマンド履歴
+nnoremap <silent> [denite]c :<C-u>Denite
+    \ -buffer-name=normal
+    \ -default-action='execute'
+    \ command_history<CR>
+
+"バッファディレクトリからgrep
+nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
+    \ -buffer-name=search
+    \ -no-empty  grep<CR>
+
+"メニュー
+nnoremap <silent> [denite]u :<C-u>Denite
+    \ -buffer_name=normal
+  	\ -winheight=5
+    \ menu<CR>
+
+"ヘルプ
+nnoremap <silent> [denite]h :<C-u>Denite
+    \ -buffer-name=search
+    \ -start-filter
+    \ help<CR>
+
+"最近使用したファイル-neomru
+nnoremap <silent> [denite]n :<C-u>Denite
+    \ -buffer-name=normal
+    \ file_mru<CR>
+
+"mark一覧
+nnoremap <silent> [denite]m :<C-u>Denite
+    \ -buffer-name=normal
+    \ mark<CR>
+
+":change
+nnoremap <silent> [denite]k :<C-u>Denite  change jump<CR>
+
+"searchバッファをresumeして開く
+nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
+    \ -resume  -refresh<CR>
+
+"open ale message
+nnoremap <silent> [denite]a :<C-u>Denite
+	\ -buffer-name=search 
+	\ ale<CR>
+
+nnoremap <silent><Leader>n :<C-u>Denite
+    \ -cursor-pos=+1 -immediately
+    \ -buffer-name=search -no-empty
+    \ -resume  -refresh<CR>
+
+"コマンド結果をdeniteに出力
+nnoremap [denite]o :<C-u>Denite
+    \ -buffer-name=search
+    \ output:
+
+nnoremap <silent> [denite]d :<C-u>Denite
+    \ -buffer-name=normal
+    \ dirmark<CR>
+
+"bookmark by "add"action
+nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
+    \ -buffer-name=normal
+    \ dirmark/add<CR>
+autocmd vimrc FileType denite hi link CursorLine ColorColumn
+"}}}
+call denite#custom#option('_', {
+	\ 'cursor_wrap': v:true,
+	\ 'winheight': 14,
+	\ 'statusline': v:false,
+    \ 'prompt' : '#',
+    \ 'filter_updatetime' : '100',
+    \ 'short_source_names': v:true,
+    \ 'highlight_mode_normal': 'Visual',
+    \ 'highlight_mode_insert': 'Visual',
+    \ 'highlight_matched_char' : 'Title',
+    \ 'direction': 'dynamicbottom',
+    \ 'filter_split_direction' : '',
+    \ 'vertical_preview': v:true,
+    \ 'quick_move_table': {
+        \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
+        \   'h' : 5, 'l' : 6, ';' : 7,
+        \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
+        \ }
+	\ })
+"buffer-normal
+call denite#custom#option('normal', {
+	\ 'winheight': 10
+    \})
+"buffer-search
+call denite#custom#option('search', {
+    \ 'winheight': 10
+    \ })
+
+"sorter定義
+function! ToggleSorter(sorter) abort
+   let sorters = split(b:denite_context.sorters, ',')
+   let idx = index(sorters, a:sorter)
+   if idx < 0
+       call add(sorters, a:sorter)
+   else
+       call remove(sorters, idx)
+   endif
+   let b:denite_new_context = {}
+   let b:denite_new_context.sorters = join(sorters, ',')
+   return '<denite:nop>'
+endfunction
+
+"call denite#custom#map('insert', '<C-f>',
+"    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
+
+""need rg for grep/file-rec
+call denite#custom#var('file/rec', 'command',
+      \ ['rg', '--files', '--no-messages', 
+      \ '-g', '!.git', '-g', '!*.tmp', '-g', '!AppData/**'])
+call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'final_opts', [])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'default_opts',
+      \ ['--vimgrep', '--no-heading'])
+
+" Change matchers.
+"call denite#custom#source(
+	"\ 'file_mru', 'matchers', ['matcher/regexp', 'matcher/project_files'])
+"call denite#custom#source(
+"	\ 'file/rec', 'matchers', ['matcher/cpsm'])
+
+" Add custom menus
+let s:menus = {
+    \ }
+let s:menus.window_size = {'description': 'Change window size' }
+let s:menus.window_size.command_candidates = [
+	\ ['120x60', 'set lines=60 columns=120'],
+	\ ['150x40', 'set lines=40 columns=150'],
+	\ ['240x40', 'set lines=40 columns=240'],
+	\ ['240x60', 'set lines=60 columns=240']
+	\ ]
+let s:menus.string = {'description': 'string utilities.'}
+let s:menus.string.command_candidates = [
+      \ ['format: reverse lines', 'g/^/m0'],
+      \ ['format: remove ^M', '%s///g'],
+      \ ['format: querystring', 'silent! %s/&amp;/\&/g | silent! %s/&/\r&/g | silent! %s/=/\r=/g'],
+      \ ['format: to smb', 'silent! %s/\\/\//g | silent! %s/^\(smb:\/\/\|\/\/\)\?/smb:\/\//g']
+      \ ]
+"let s:menus.vim = {'description': 'vim runtime.'}
+"let s:menus.vim.command_candidates = [
+"      \ ['upgrade: dein:deps', 'call dein#update()']
+"      \ ]
+
+call denite#custom#var('menu', 'menus', s:menus)
+
+"call denite#custom#var('file/rec', 'command',
+"      \ ['ack', '-f','-r'])
+" Ack command on grep source
+"	call denite#custom#var('grep', 'command', ['ack'])
+"	call denite#custom#var('grep', 'default_opts',
+"			\ ['--ackrc', $HOME.'/.ackrc', '-H', '-i', '-Q',
+"			\  '--nopager', '--nocolor', '--nogroup', '--column'])
+"	call denite#custom#var('grep', 'recursive_opts', [])
+"	call denite#custom#var('grep', 'pattern_opt', ['--match'])
+"	call denite#custom#var('grep', 'separator', ['--'])
+"	call denite#custom#var('grep', 'final_opts', [])
+
+" Define alias
+call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+call denite#custom#var('file/rec/git', 'command',
+	\ ['git', 'ls-files', '-co', '--exclude-standard'])
+"call denite#custom#alias('source', 'file/rec/py', 'file/rec')
+"call denite#custom#var('file/rec/py', 'command',['scantree.py'])
+" Change ignore_globs
+call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
+	\ [ '.git/', '.ropeproject/', '__pycache__/',
+	\   'venv/', 'images/','img/', 'fonts/'])
+
+function! s:denite_rec(context)
+    let path = a:context['targets'][0]['action__path']
+    let dir = denite#util#path2directory(path)
+    let sdir = '\"' . dir . '\"'
+    execute('Denite file/rec:' . sdir)
+  endif
+endfunction
+
+call denite#custom#action(
+    \ 'buffer,directory,file,openable,dirmark', 'file/rec',
+    \ function('s:denite_rec')
+    \ )
+
+"Defxで開く
+function! s:defx_open(context)
+    let path = a:context['targets'][0]['action__path']
+    let file = fnamemodify(path, ':p')
+    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
+    let dir = denite#util#path2directory(path)
+    if &filetype ==# 'defx'
+      call defx#call_action('cd', [dir])
+      call defx#call_action('search', [path])
+    else
+      execute('Defx ' . dir . file_search)
+    endif
+endfunction
+
+"action:defxを定義
+call denite#custom#action(
+    \ 'directory,file,openable,dirmark',
+    \ 'defx',
+    \  function('s:defx_open'))
+
+function! s:getdown(context)
+    let linen = line('.') + 1
+    "call cursor(linen, 0)
+    call setpos('.',['%',linen,0,0])
+endfunction
+
+call denite#custom#action(
+    \ 'directory,file,openable,dirmark',
+    \ 'down',
+    \  function('s:getdown'))
+
+"autocmd! BufEnter FileType denite-filter
+"autocmd vimrc FileType denite-filter imap <buffer><silent> <C-c> <C-[>q
+"autocmd vimrc FileType denite-filter imap <buffer><silent> <CR> <C-[>q
+autocmd vimrc FileType denite-filter imap <buffer><silent> jk <C-[>q
+"autocmd vimrc FileType denite-filter set bufhidden=wipe
+"autocmd vimrc BufEnter FileType denite-filter setlocal noswapfile 
+"autocmd vimrc FileType denite-filter setlocal nonumber signcolumn=no
+
+autocmd FileType denite-filter call s:denite_my_settings()
+function! s:denite_my_settings() abort
+  inoremap <silent><buffer><expr> <C-l>
+  \ denite#do_map('do_action')
+  inoremap <silent><buffer><expr> <C-c>
+  \ denite#do_map('quit')
+  inoremap <silent><buffer><expr> <TAB>
+  \ denite#do_map('choose_action')
+  inoremap <silent><buffer> <C-j>   <Esc><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
+  inoremap <silent><buffer> <C-k>   <Esc><C-w>p:call cursor(line('.')-1,0)<CR><C-w>pA
+endfunction
+"}}}
+'''
+[plugins.ftplugin]
+denite = '''
+set scrolloff=0
+setlocal signcolumn=no
+setlocal number
+
+nnoremap <silent><buffer><expr> j
+\ line('.') == line('$') ? 'gg' : 'j'
+nnoremap <silent><buffer><expr> k
+\ line('.') == 1 ? 'G' : 'k'
+nnoremap <silent><buffer><expr> <TAB>
+    \ denite#do_map('choose_action')
+nnoremap <silent><buffer><expr> <CR>
+    \ denite#do_map('do_action')
+nnoremap <silent><buffer><expr> h
+    \ denite#do_map('move_up_path')
+nnoremap <silent><buffer><expr> d
+    \ denite#do_map('do_action', 'delete')
+nnoremap <silent><buffer><expr> l
+    \ denite#do_map('do_action')
+nnoremap <silent><buffer><expr> p
+    \ denite#do_map('do_action', 'preview')
+nnoremap <silent><buffer><expr> q
+    \ denite#do_map('quit')
+nnoremap <silent><buffer><expr> i
+    \ denite#do_map('open_filter_buffer')
+nnoremap <silent><buffer><expr> w
+    \ denite#do_map('toggle_select').'j'
+nnoremap <silent><buffer><expr> <C-r>
+    \ denite#do_map('do_action','file/rec')
+'''
 # vim:set foldmethod=marker:
