@@ -9,6 +9,7 @@ nmap s [denite]
 nnoremap [denite] <Nop>
 
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+    \ -start-filter
     \  source<CR>
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
@@ -36,10 +37,11 @@ nnoremap <silent> [denite]b :<C-u>Denite
 nnoremap <silent> ? :<C-u>Denite
   	\ -buffer-name=search
     \ -start-filter
+    \ -auto-action='highlight'
   	\ line<CR>
 
-nnoremap <silent> <Leader>/ :<C-u>Denite
-    \ -buffer-name=search 
+nnoremap <silent> [denite]/ :<C-u>Denite
+    \ -buffer-name=search
     \ -auto-action='highlight'
     \ anzu<CR>
 
@@ -50,18 +52,17 @@ nnoremap <silent> <Leader>/ :<C-u>Denite
 
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
-  	\ 
     \ -buffer-name=search
-  	\ neoyank<CR>
+    \ neoyank<CR>
 
 nnoremap <silent> [denite]r :<C-u>Denite
-  	\ 
     \ -buffer-name=search
-  	\ register<CR>
+    \ register<CR>
 
 "コマンド履歴
 nnoremap <silent> [denite]c :<C-u>Denite
     \ -buffer-name=normal
+    \ -start-filter
     \ -default-action='execute'
     \ command_history<CR>
 
@@ -129,13 +130,13 @@ hook_source = '''
 "{{{
 "denite option
 call denite#custom#option('_', {
-	\ 'cursor_wrap': v:true,
 	\ 'winheight': 14,
 	\ 'statusline': v:false,
     \ 'short_source_names': v:true,
     \ 'highlight_mode_normal': 'Visual',
     \ 'highlight_mode_insert': 'Visual',
     \ 'highlight_matched_char' : 'Title',
+    \ 'filter_updatetime' : '100',
     \ 'direction': 'dynamicbottom',
     \ 'filter_split_direction' : '',
     \ 'vertical_preview': v:true,
