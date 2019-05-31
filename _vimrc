@@ -40,7 +40,6 @@ let g:loaded_netrw             = 1
 let g:loaded_netrwPlugin       = 1
 let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
-
 let g:loaded_godoc = 1
 "========================================================================
 "Python,vimproc
@@ -824,4 +823,4 @@ set background=dark
 "let ayucolor='dark'
 "colorscheme ayu
 "}}}
-"vim:set foldmethod=marker:
+"vim:set foldmethod=marker:"
