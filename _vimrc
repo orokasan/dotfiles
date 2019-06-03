@@ -68,7 +68,6 @@ set cursorline      "cusorlineをハイライト
 set list                    "不可視文字の可視化
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 "cursorlineのhighlight syntaxを消す(行番号ハイライトのみにする)
-set signcolumn=no
 autocmd vimrc ColorScheme *  hi clear CursorLine
 set modelines=5     "モードライン設定
 set showmatch       "括弧入力時の対応する括弧を表示
@@ -474,7 +473,7 @@ let g:lightline = {
     \ },
     \ 'inactive': {
         \ 'left': [['inactivefn','denitebuf','denitesource']],
-        \ 'right': [[ 'lineinfo' ]]
+        \ 'right': [[ 'percent' ]]
     \ },
     \ 'tabline' : {
     \ 'left': [['buffers']], 
