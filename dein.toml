@@ -239,4 +239,57 @@ repo = 'junegunn/fzf.vim'
 
 [[plugins]]
 repo = 'fuenor/JpFormat.vim'
+
+[[plugins]]
+repo = 'SidOfc/mkdx'
+on_ft = ['markdown','md']
+hook_source = '''
+" :h mkdx-settings
+let g:mkdx#settings = {
+      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
+      \ 'restore_visual':          1,
+      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1,
+      \                              'shifto': 1, 'shift': 0 },
+      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
+      \ 'tokens':                  { 'enter': ['-', '*', '>'],
+      \                              'bold': '**', 'italic': '*', 'strike': '',
+      \                              'list': '-', 'fence': '',
+      \                              'header': '#' },
+      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],
+      \                              'update_tree': 2,
+      \                              'initial_state': ' ' },
+      \ 'toc':                     { 'text': "Table of Contents", 'list_token': '-',
+      \                              'update_on_write': 1,
+      \                              'position': 0,
+      \                              'details': {
+      \                                 'enable': 0,
+      \                                 'summary': 'Click to expand {{toc.text}}',
+      \                                 'nesting_level': -1,
+      \                                 'child_count': 5,
+      \                                 'child_summary': 'show {{count}} items'
+      \                              }
+      \                            },
+      \ 'table':                   { 'divider': '|',
+      \                              'header_divider': '-',
+      \                              'align': {
+      \                                 'left':    [],
+      \                                 'center':  [],
+      \                                 'right':   [],
+      \                                 'default': 'center'
+      \                              }
+      \                            },
+      \ 'links':                   { 'external': {
+      \                                 'enable': 1, 'timeout': 3, 'host': '', 'relative': 1
+      \                              },
+      \                              'fragment': {
+      \                                 'jumplist': 1,
+      \                                 'complete': 1
+      \                              }
+      \                            },
+      \ 'highlight':               { 'enable': 1 },
+      \ 'auto_update':             { 'enable': 0 },
+      \ 'fold': { 'enable': 1 }
+    \ }
+'''
+
 # vim:set foldmethod=marker:
