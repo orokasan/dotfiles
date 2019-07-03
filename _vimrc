@@ -50,7 +50,7 @@ let g:loaded_godoc = 1
 "kaoriya-vimのpythonに揃える
 "64bit版を使用する
 "set runtimepath+='~/vimfiles'
-let g:python3_host_prog ='python.exe'
+"let g:python3_host_prog ='python.exe'
 "vimprocをダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
@@ -415,6 +415,7 @@ endif
 
 if has('nvim')
     set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+    set clipboard=unnamed
 endif
 
 "IME状態でカーソルカラー変更
@@ -508,13 +509,8 @@ let g:lightline = {
         \ 'linter_ok': 'middle'
     \ }
 \ }
-if !has('nvim')
     let g:lightline.subseparator= { 'left': '', 'right': '' }
     let g:lightline.separator= { 'left': '', 'right': '' }
-else
-    let g:lightline.subseparator= { 'left': '', 'right': '' }
-    let g:lightline.separator= { 'left': '', 'right': '' }
-endif
 "   let g:lightline.separator= { 'left': '', 'right': '' }
 "   let g:lightline.subseparator= { 'left': '', 'right': '' }
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
@@ -739,6 +735,10 @@ function! ProfileCursorMove() abort
   endfor
 endfunction
 "}}}
+"if has('nvim')
+"    set pumblend=15
+"    hi PmenuSel blend=0
+"endif
 "-----------------------------------------------------------------------
 "文字数カウント "{{{
 "1行カウント
@@ -822,4 +822,10 @@ set background=dark
 "let ayucolor='dark'
 "colorscheme ayu
 "}}}
+"itermでの背景透過時のPowerlineフォントの表示崩れを防ぐ
+"が、この設定で背景関連の透過が崩れる
+"https://qiita.com/tarosaiba/items/fcc399006025ebe9152c
+"highlight! Normal ctermbg=NONE guibg=NONE
+"highlight! NonText ctermbg=NONE guibg=NONE
+"highlight! LineNr ctermbg=NONE guibg=NONE
 "vim:set foldmethod=marker:"

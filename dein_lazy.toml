@@ -146,6 +146,14 @@ call denite#custom#option('_', {
         \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
         \ }
 	\ })
+if has('nvim')
+call denite#custom#option('_', {
+    \ 'split' : 'floating',
+    \ 'wincol' : &columns/3,
+    \ 'winwidth' : &columns - 10
+    \ })
+endif
+
 "buffer-normal
 call denite#custom#option('normal', {
 	\ 'winheight': 10
@@ -627,13 +635,13 @@ inoremap <expr><C-l>       deoplete#insert_candidate(0)
 "      \ ['matcher_fuzzy', 'matcher_length'])
 call deoplete#custom#source('_', 'matchers', ['matcher_fuzzy'])
 call deoplete#custom#source('buffer', 'mark', 'b')
-call deoplete#custom#source('eskk', 'mark' , '▽')
+call deoplete#custom#source('eskk', 'mark' , 'eskk')
 call deoplete#custom#source('eskk', 'min_pattern_length', 1)
 "matcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('eskk', 'rank', 500) 
 call deoplete#custom#source('vim', 'rank' , 250)
-call deoplete#custom#source('vim', 'min_pattern_length', 4)
+call deoplete#custom#source('vim', 'min_pattern_length', 2)
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
     \ 'converter_remove_overlap',
@@ -657,11 +665,11 @@ call deoplete#custom#var('around', {
 \   'mark_changes': '[*]',
 \})
 call deoplete#custom#option({
-    \ 'auto_complete_delay': 1,
+    \ 'auto_complete_delay': 0,
     \ 'skip_multibyte': v:false,
-    \ 'max_list': 100,
+    \ 'max_list': 500,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'none'
+    \ 'prev_completion_mode': 'filter'
     \ })
 call deoplete#enable()
 "}}}
@@ -779,7 +787,7 @@ let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
 let g:eskk#tab_select_completion = 1
 let g:eskk_revert_henkan_style = 'okuri'
-let g:eskk#large_dictionary = {'path': '~/.eskk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
+let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#dictionary_save_count = 5
 let g:eskk#cursor_color = {
 \   'ascii': '#b4be82',
