@@ -401,7 +401,11 @@ cnoremap <M-f> <S-Right>|" 前の単語へ移動
 nnoremap <silent><C-p> :Bclose<CR>
 "Markdown Docx出力
 "pandocが必要
-nnoremap <Leader>p <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
+if has('mac')
+    nnoremap <Leader>pd <C-u>:!pandoc '%:p' -o '%:p:r.docx' -F pandoc-crossref<CR>
+else
+    nnoremap <Leader>pd <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
+endif
 "}}}
 "========================================================================
 "+kaoriya {{{
@@ -793,14 +797,17 @@ if has('GUI')
 "    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
 "Nerdfont
 "https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
-    let s:fontsize = '13.5'
-    let s:font = 'Ricty_Diminished_with-icons'
+    if has('mac')
+        set guifont=Cica:h14
+    else
+        let s:fontsize = '13.5'
+        let s:font = 'Ricty_Diminished_with-icons'
 
-    let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
-    let &guifont = s:myguifont
-    let &guifontwide = s:myguifont
-    set renderoptions=type:directx,renmode:5,geom:1
-
+        let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
+        let &guifont = s:myguifont
+        let &guifontwide = s:myguifont
+        set renderoptions=type:directx,renmode:5,geom:1
+    endif
 "    if has('kaoriya')
 "        autocmd vimrc SourcePost ?vimrc ScreenMode 6
 "    else

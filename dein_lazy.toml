@@ -126,10 +126,8 @@ autocmd vimrc FileType denite hi link CursorLine ColorColumn
 '''
 hook_source = '''
 "{{{
-"denite option
 call denite#custom#option('_', {
 	\ 'winheight': 14,
-	\ 'statusline': v:false,
     \ 'short_source_names': v:true,
     \ 'highlight_mode_normal': 'Visual',
     \ 'highlight_mode_insert': 'Visual',
@@ -146,11 +144,19 @@ call denite#custom#option('_', {
         \ }
 	\ })
 if has('nvim')
-call denite#custom#option('_', {
-    \ 'split': 'floating',
-    \ 'wincol': &columns/3,
-    \ 'winwidth': &columns - 10
-    \ })
+""    call denite#custom#option('_', {
+"        \ 'split': 'floating',
+"        \ 'wincol': &columns/3,
+"        \ 'winwidth': &columns - 10
+"        \ })
+    call denite#custom#option('_', {
+        \ 'split': 'horizontal',
+        \ 'statusline' : v:false,
+        \ 'direction': 'dynamictop',
+        \ 'filter_split_direction' : ''
+        \ })
+else
+    call denite#custom#option('_', {'statusline': v:false } )
 endif
 "buffer-normal
 call denite#custom#option('normal', {
@@ -1075,6 +1081,10 @@ nnoremap <silent><Leader>tu :<C-u>Denite -buffer-name=normal unite:tweetvim<CR>
 hook_source = '''
 "{{{
 autocmd vimrc FileType tweetvim setlocal signcolumn=no nonumber
+if !executable('convert') || has('nvim')
+    autocmd vimrc FileType tweetvim setlocal signcolumn=no nonumber
+endif
+
 let g:tweetvim_tweet_per_page = 60
 let g:tweetvim_include_rts    = 1
 let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
@@ -1084,6 +1094,7 @@ let g:tweetvim_empty_separator = 1
 let g:tweetvim_display_time = 1
 let g:tweetvim_display_username = 1
 let g:tweetvim_tweet_limit = 560
+let g:tweetvim_display_icon = 1
 
 if !has('nvim')
     let g:tweetvim_async_post = 1
