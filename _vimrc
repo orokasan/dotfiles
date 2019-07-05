@@ -19,6 +19,7 @@ endif
 set fileencoding=utf-8     " 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 set runtimepath+=~/.fzf
+set runtimepath+=~/vimfiles
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 augroup vimrc
@@ -275,8 +276,8 @@ nnoremap <expr><Leader>cl
 " 空行単位移動
 vnoremap <C-j> }
 vnoremap <C-k> {
-
-tnoremap <C-o> <C-w>N
+tnoremap <C-[> <C-\><C-n>
+tnoremap <Esc> <C-\><C-n>
 inoremap <c-s> <Esc>:w<CR>a
 nnoremap <silent><C-q> :bd<CR>
 nnoremap <silent>q :close<CR>
@@ -355,6 +356,8 @@ nnoremap <leader>wo :only<CR>
 inoremap <C-f> <Right>|			" C-f で左へ移動
 inoremap <C-b> <Left>|			" C-b で右へ移動
 inoremap <C-h> <BS>|			" C-h でバックスペース
+inoremap <C-a> <HOME>
+inoremap <C-e> <END>
 "window移動
 nnoremap <C-h> <C-w>h|			" Ctrl + hjkl でウィンドウ間を移動
 nnoremap <C-j> <C-w>j|			" Ctrl + hjkl でウィンドウ間を移動
@@ -413,11 +416,14 @@ if has('kaoriya')
     autocmd vimrc GUIEnter * set transparency=235
 endif
 
+set termguicolors    " ターミナルでも True Color を使えるようにする。
 if has('nvim')
     set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
     set clipboard=unnamed
+    "float windowで補完するための設定
+    set completeopt-=preview
+    set wildoptions=pum
 endif
-
 "IME状態でカーソルカラー変更
 if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
@@ -509,8 +515,10 @@ let g:lightline = {
         \ 'linter_ok': 'middle'
     \ }
 \ }
+if !has('nvim')
     let g:lightline.subseparator= { 'left': '', 'right': '' }
     let g:lightline.separator= { 'left': '', 'right': '' }
+endif
 "   let g:lightline.separator= { 'left': '', 'right': '' }
 "   let g:lightline.subseparator= { 'left': '', 'right': '' }
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
@@ -527,8 +535,8 @@ let g:component_function_visible_condition = {
         \ 'lineinfo': 1
         \ }
  
-let g:lightline.tabline_separator = g:lightline.separator
-let g:lightline.tabline_subseparator = g:lightline.subseparator
+let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
+let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 
 if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
 else
@@ -626,7 +634,7 @@ autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgitcache()
 function! s:llgitcache()
     let l:git = gitbranch#name()
     if &filetype !~# s:ignore_filetype && strlen(l:git)
-        let s:llgitbranch =  winwidth(0) > 100  ? ' '. l:git :' '
+        let s:llgitbranch =  winwidth(0) > 100  ? ' '. l:git :''
     else
         let s:llgitbranch = ''
 "    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
@@ -814,12 +822,14 @@ colorscheme iceberg
 "補完ポップアップメニューの色変更
 autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
 autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd vimrc ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd vimrc ColorScheme iceberg highlight clear Search
 autocmd vimrc ColorScheme iceberg highligh Search gui=underline
 "colorscheme hybrid
 "colorscheme gruvbox
 set background=dark
 "let ayucolor='dark'
+
 "colorscheme ayu
 "}}}
 "itermでの背景透過時のPowerlineフォントの表示崩れを防ぐ

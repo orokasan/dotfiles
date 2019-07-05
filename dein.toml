@@ -208,6 +208,10 @@ repo = 'sainnhe/vim-color-forest-night'
 
 [[plugins]]
 repo = 'moznion/hateblo.vim'
+
+[[plugins]]
+repo = 'Shougo/deol.nvim'
+
 depends = 'webapi.vim'
 
 [[plugins]]

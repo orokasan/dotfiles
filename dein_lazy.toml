@@ -8,7 +8,6 @@ nmap s [denite]
 nnoremap [denite] <Nop>
 
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
-    \ -start-filter
     \  source<CR>
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
@@ -134,8 +133,8 @@ call denite#custom#option('_', {
     \ 'short_source_names': v:true,
     \ 'highlight_mode_normal': 'Visual',
     \ 'highlight_mode_insert': 'Visual',
+    \ 'prompt': '$',
     \ 'highlight_matched_char' : 'Title',
-    \ 'prompt' : '',
     \ 'max_dynamic_update_candidates' : '50000',
     \ 'direction': 'dynamicbottom',
     \ 'filter_split_direction' : '',
@@ -148,12 +147,11 @@ call denite#custom#option('_', {
 	\ })
 if has('nvim')
 call denite#custom#option('_', {
-    \ 'split' : 'floating',
-    \ 'wincol' : &columns/3,
-    \ 'winwidth' : &columns - 10
+    \ 'split': 'floating',
+    \ 'wincol': &columns/3,
+    \ 'winwidth': &columns - 10
     \ })
 endif
-
 "buffer-normal
 call denite#custom#option('normal', {
 	\ 'winheight': 10
@@ -249,7 +247,6 @@ function! s:denite_rec(context)
     let dir = denite#util#path2directory(path)
     let sdir = '\"' . dir . '\"'
     execute('Denite file/rec:' . sdir)
-  endif
 endfunction
 
 call denite#custom#action(
@@ -277,31 +274,12 @@ call denite#custom#action(
     \ 'defx',
     \  function('s:defx_open'))
 
-function! s:getdown(context)
-    let linen = line('.') + 1
-    "call cursor(linen, 0)
-    call setpos('.',['%',linen,0,0])
-endfunction
-
-call denite#custom#action(
-    \ 'directory,file,openable,dirmark',
-    \ 'down',
-    \  function('s:getdown'))
-
-"autocmd! BufEnter FileType denite-filter
-"autocmd vimrc FileType denite-filter imap <buffer><silent> <C-c> <C-[>q
-"autocmd vimrc FileType denite-filter imap <buffer><silent> <CR> <C-[>q
-autocmd vimrc FileType denite-filter imap <buffer><silent> jk <C-[>q
-"autocmd vimrc FileType denite-filter set bufhidden=wipe
-"autocmd vimrc BufEnter FileType denite-filter setlocal noswapfile 
-"autocmd vimrc FileType denite-filter setlocal nonumber signcolumn=no
-
 autocmd FileType denite-filter call s:denite_my_settings()
 function! s:denite_my_settings() abort
   inoremap <silent><buffer><expr> <C-l>
   \ denite#do_map('do_action')
-  inoremap <silent><buffer><expr> <C-c>
-  \ denite#do_map('quit')
+  imap <buffer> <C-[>
+  \ <Plug>(denite_filter_quit)
   inoremap <silent><buffer><expr> <TAB>
   \ denite#do_map('choose_action')
   inoremap <silent><buffer> <C-j>   <Esc><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
@@ -614,8 +592,6 @@ function! s:check_back_space() abort "{{{
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
 " <S-TAB>: completion back.
-inoremap <silent><expr><C-e> 
-    \ deoplete#refresh()
 inoremap <silent><expr><C-g>
     \ deoplete#undo_completion()
 inoremap <silent><expr><C-n>
@@ -627,21 +603,22 @@ inoremap <silent><expr><BS>
 "inoremap <silent><expr><C-l>       deoplete#complete_common_string()
 inoremap <expr><C-l>       deoplete#insert_candidate(0)
 "" <CR>: close popup and save indent.
-"inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-"function! s:my_cr_function() abort
-"  return pumvisible() ? deoplete#close_popup()."\<CR>" : "\<CR>"
-"endfunction
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function() abort
+  return pumvisible() ? deoplete#close_popup() : "\<CR>"
+endfunction
+
 "call deoplete#custom#source('_', 'matchers',
 "      \ ['matcher_fuzzy', 'matcher_length'])
 call deoplete#custom#source('_', 'matchers', ['matcher_fuzzy'])
 call deoplete#custom#source('buffer', 'mark', 'b')
 call deoplete#custom#source('eskk', 'mark' , 'eskk')
-call deoplete#custom#source('eskk', 'min_pattern_length', 1)
 "matcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
-call deoplete#custom#source('eskk', 'rank', 500) 
 call deoplete#custom#source('vim', 'rank' , 250)
+call deoplete#custom#source('file', 'rank', 1000)
 call deoplete#custom#source('vim', 'min_pattern_length', 2)
+"
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
     \ 'converter_remove_overlap',
@@ -650,13 +627,14 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_auto_paren',
     \ 'converter_auto_delimiter'
     \ ])
+"
 " Using custom variables to configure values
 " - range_above = Search for words N lines above.
 " - range_below = Search for words N lines below.
 " - mark_above = Mark shown for words N lines above.
 " - mark_below = Mark shown for words N lines below.
 " - mark_changes = Mark shown for words in the changelist.
-"call deoplete#custom#option('ignore_sources',{'_':['around','buffer']})
+call deoplete#custom#option('ignore_sources',{'_':['around']})
 call deoplete#custom#var('around', {
 \   'range_above': 20,
 \   'range_below': 20,
@@ -664,6 +642,9 @@ call deoplete#custom#var('around', {
 \   'mark_below': '[↓]',
 \   'mark_changes': '[*]',
 \})
+call deoplete#custom#option('sources', {
+    \ 'denite-filter': ['denite']
+    \ })
 call deoplete#custom#option({
     \ 'auto_complete_delay': 0,
     \ 'skip_multibyte': v:false,
@@ -782,10 +763,11 @@ on_event = ['InsertEnter','CmdlineEnter']
 hook_add = '''
 "{{{
 let g:eskk#debug = 0
-let g:eskk#rom_input_style = 'msime'
+let g:eskk#rom_input_style = 'skk'
 let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
 let g:eskk#tab_select_completion = 1
+let g:eskk#start_completion_length = 2
 let g:eskk_revert_henkan_style = 'okuri'
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#dictionary_save_count = 5
@@ -855,21 +837,25 @@ autocmd vimrc User eskk-initialize-post
       \ EskkMap -remap jj <ESC>
 autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre() | call <SID>define_LLmyeskk()
 function! s:eskk_initial_pre() abort
-  let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-  call t.add_map('z ', '　')
-  call t.add_map('~', '〜')
-  call t.add_map('zc', '©')
-  call t.add_map('zr', '®')
-  call t.add_map('z9', '（')
-  call t.add_map('z0', '）')
-  call t.add_map('z-', '-')
-  call t.add_map('z{', '【')
-  call t.add_map('z}', '】')
+    let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+    call t.add_map('z ', '　')
+    call t.add_map('~', '〜')
+    call t.add_map('zc', '©')
+    call t.add_map('zr', '®')
+    call t.add_map('z9', '（')
+    call t.add_map('z0', '）')
+    call t.add_map('z-', '-')
+    call t.add_map('z{', '【')
+    call t.add_map('z}', '】')
+    call t.add_map('>', '>')
+      " "1." のように数字の後のドットはそのまま入力
+    for n in range(10)
+      call t.add_map(n . '.', n . '.')
+    endfor
   call eskk#register_mode_table('hira', t)
 endfunction
 "}}}
 '''
-
 #[[plugins]]
 #repo =  'cohama/lexima.vim'
 #on_event = 'InsertEnter' 
@@ -1075,8 +1061,8 @@ let g:choosewin_label = 'ASDFGHJKL'
 
 [[plugins]]
 repo =  'basyura/TweetVim'
-on_cmd = ['TweetVimHomeTimeline','TweetVimSay']
-depends = ['twibill.vim','webapi-vim']
+on_cmd = ['TweetVimHomeTimeline', 'TweetVimSay']
+depends = ['twibill.vim', 'webapi-vim']
 hook_add = '''
 "{{{
 nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
@@ -1096,9 +1082,12 @@ let g:tweetvim_open_buffer_cmd = 'botright 44vsplit'
 let g:tweetvim_display_separator = 1
 let g:tweetvim_empty_separator = 1
 let g:tweetvim_display_time = 1
-let g:tweetvim_async_post = 1
 let g:tweetvim_display_username = 1
 let g:tweetvim_tweet_limit = 560
+
+if !has('nvim')
+    let g:tweetvim_async_post = 1
+endif
 
 function! s:tw_open_existing() abort
   let bnr = bufnr('[tweetvim]')
@@ -1109,6 +1098,7 @@ function! s:tw_open_existing() abort
   let wids = win_findbuf(bnr)
     call win_gotoid(wids[0])
 endfunction
+
 highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
 highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
 " 自動更新間隔（秒）
