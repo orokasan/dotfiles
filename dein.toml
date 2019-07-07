@@ -2,6 +2,10 @@
 repo = 'Shougo/dein.vim'
 
 [[plugins]]
+repo = 'Shougo/vimproc.vim'
+build =  'make' 
+
+[[plugins]]
 repo =  'roxma/nvim-yarp'
 #on_if = '!has('nvim')'
 
@@ -167,7 +171,6 @@ repo = 'tpope/vim-repeat'
 
 [[plugins]]
 repo = 'haya14busa/is.vim'
-depends = 'is.vim'
 hook_add = '''
 let g:is#do_default_mapping = 0
 '''
@@ -193,6 +196,20 @@ let g:spring_night_high_contrast = 0
 '''
 
 [[plugins]]
+repo = 'haya14busa/incsearch.vim'
+hook_add = '''
+let g:incsearch#auto_nohlsearch = 1
+'''
+
+[[plugins]]
+repo = 'haya14busa/incsearch-migemo.vim'
+hook_add = '''
+map m/ <Plug>(incsearch-migemo-/)
+map m? <Plug>(incsearch-migemo-?)
+map mg/ <Plug>(incsearch-migemo-stay)
+'''
+
+[[plugins]]
 repo = 'osyo-manga/vim-anzu'
 on_map = {nx = '<Plug>'}
 hook_add = '''
@@ -200,10 +217,10 @@ hook_add = '''
 "nnoremap <silent><expr> <Plug>(anzu-N-zzzv) anzu#mode#mapexpr("N", "", "zzzv")
 "nmap n <Plug>(is-nohl)<Plug>(anzu-n-zzzv)
 "nmap N <Plug>(is-nohl)<Plug>(anzu-N-zzzv)
-	nmap n <Plug>(anzu-n)
-	nmap N <Plug>(anzu-N)
-	nmap * <Plug>(anzu-star)
-	nmap # <Plug>(anzu-sharp)
+	nmap n <Plug>(is-nohl)<Plug>(anzu-n)
+	nmap N <Plug>(is-nohl)<Plug>(anzu-N)
+	nmap * <Plug>(is-nohl)<Plug>(anzu-star)
+	nmap # <Plug>(is-nohl)<Plug>(anzu-sharp)
 let g:airline#extensions#anzu#enabled = 0
 '''
 
@@ -212,11 +229,10 @@ repo = 'sainnhe/vim-color-forest-night'
 
 [[plugins]]
 repo = 'moznion/hateblo.vim'
+depends = 'webapi.vim'
 
 [[plugins]]
 repo = 'Shougo/deol.nvim'
-
-depends = 'webapi.vim'
 
 [[plugins]]
 repo =  'iyuuya/denite-ale'
@@ -305,4 +321,5 @@ repo = 'fuenor/JpFormat.vim'
 
 [[plugins]]
 repo = 'nixprime/cpsm'
+
 # vim:set foldmethod=marker:

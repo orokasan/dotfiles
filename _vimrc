@@ -468,7 +468,7 @@ syntax enable
 
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
-command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath()
+command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
 "-----------------------------------------------------------------------
 "lightline {{{
@@ -650,10 +650,11 @@ function! LLgit() abort
         return s:llgitbranch
 endfunction
 
-autocmd vimrc InsertEnter,BufEnter * if exists('*anzu#clear_search_status') 
-    \| call anzu#clear_search_status() | endif
+"autocmd vimrc InsertEnter,BufEnter * if exists('*anzu#clear_search_status') 
+"    \| call anzu#clear_search_status() | endif
 
-autocmd vimrc CmdlineLeave call lightline#update()
+autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
+"autocmd vimrc User IncSearchExecute :call execute('AnzuUpdateSearchStatus')
 
 function! LLMyFilepath()
     if &filetype ==# 'denite'
@@ -678,12 +679,12 @@ function! LLMyFilepath()
 endfunction
 
 function! s:llanzu()
-let l:anzu = anzu#search_status()
-    if winwidth(0) > 100
-        return strlen(l:anzu) < 30 ? l:anzu : matchstr(l:anzu,'(\d\+\/\d\+)')
-    else
-        return ''
-    endif
+let s:anzu = anzu#search_status()
+"    if winwidth(0) > 100
+        return strlen(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
+"    else
+"        return ''
+"    endif
 endfunction
 
 function! LLDeniteBuffer()
@@ -819,7 +820,6 @@ if has('GUI')
 "    endif
 else
     set t_Co=256
-    set termguicolors
     set ambiwidth=double
 endif
 "}}}

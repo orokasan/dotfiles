@@ -31,12 +31,12 @@ nnoremap <silent> [denite]b :<C-u>Denite
   	\ -buffer-name=normal 
   	\ buffer<CR>
 
-"デナイト・サーチ
-nnoremap <silent> ? :<C-u>Denite
-  	\ -buffer-name=search
-    \ -start-filter
-    \ -auto-action='highlight'
-  	\ line<CR>
+""デナイト・サーチ
+"nnoremap <silent> ? :<C-u>Denite
+"  	\ -buffer-name=search
+"    \ -start-filter
+"    \ -auto-action='highlight'
+"  	\ line<CR>
 
 nnoremap <silent> [denite]/ :<C-u>Denite
     \ -buffer-name=search
@@ -296,7 +296,6 @@ endfunction
 
 [plugins.ftplugin]
 denite = '''
-setlocal scrolloff=0
 setlocal signcolumn=yes
 
 nnoremap <silent><buffer><expr> j
@@ -600,8 +599,8 @@ endfunction "}}}
 " <S-TAB>: completion back.
 inoremap <silent><expr><C-g>
     \ deoplete#undo_completion()
-inoremap <silent><expr><C-n>
-    \ deoplete#mappings#manual_complete()
+"inoremap <silent><expr><C-n>
+"    \ deoplete#mappings#manual_complete()
 inoremap <silent><expr><C-h>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><BS>
@@ -625,14 +624,14 @@ call deoplete#custom#source('vim', 'rank' , 250)
 call deoplete#custom#source('file', 'rank', 1000)
 call deoplete#custom#source('vim', 'min_pattern_length', 2)
 "
-call deoplete#custom#source('_', 'converters', [
-    \ 'converter_remove_paren',
-    \ 'converter_remove_overlap',
-    \ 'converter_truncate_abbr',
-    \ 'converter_truncate_menu',
-    \ 'converter_auto_paren',
-    \ 'converter_auto_delimiter'
-    \ ])
+"call deoplete#custom#source('_', 'converters', [
+"    \ 'converter_remove_paren',
+"    \ 'converter_remove_overlap',
+"    \ 'converter_truncate_abbr',
+"    \ 'converter_truncate_menu',
+"    \ 'converter_auto_paren',
+"    \ 'converter_auto_delimiter'
+"    \ ])
 "
 " Using custom variables to configure values
 " - range_above = Search for words N lines above.
@@ -648,17 +647,17 @@ call deoplete#custom#var('around', {
 \   'mark_below': '[↓]',
 \   'mark_changes': '[*]',
 \})
-call deoplete#custom#option('sources', {
-    \ 'denite-filter': ['denite']
-    \ })
+"call deoplete#custom#option('sources', {
+"    \ 'denite-filter': ['denite']
+"    \ })
 call deoplete#custom#option({
-    \ 'auto_complete_delay': 0,
+    \ 'auto_complete_delay': 20,
     \ 'skip_multibyte': v:false,
-    \ 'max_list': 500,
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'filter'
     \ })
 call deoplete#enable()
+
 "}}}
 '''
 [[plugins]]
@@ -1080,9 +1079,9 @@ nnoremap <silent><Leader>tu :<C-u>Denite -buffer-name=normal unite:tweetvim<CR>
 
 hook_source = '''
 "{{{
-autocmd vimrc FileType tweetvim setlocal signcolumn=no nonumber
+autocmd vimrc FileType tweetvim setlocal nonumber
 if !executable('convert') || has('nvim')
-    autocmd vimrc FileType tweetvim setlocal signcolumn=no nonumber
+    autocmd vimrc FileType tweetvim setlocal signcolumn=no
 endif
 
 let g:tweetvim_tweet_per_page = 60
