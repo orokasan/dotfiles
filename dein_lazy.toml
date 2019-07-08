@@ -286,8 +286,8 @@ function! s:denite_my_settings() abort
   \ denite#do_map('do_action')
   imap <buffer> <C-[>
   \ <Plug>(denite_filter_quit)
-  inoremap <silent><buffer><expr> <TAB>
-  \ denite#do_map('choose_action')
+"  inoremap <silent><buffer><expr> <TAB>
+"  \ denite#do_map('choose_action')
   inoremap <silent><buffer> <C-j>   <Esc><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
   inoremap <silent><buffer> <C-k>   <Esc><C-w>p:call cursor(line('.')-1,0)<CR><C-w>pA
 endfunction
@@ -640,6 +640,7 @@ call deoplete#custom#source('vim', 'min_pattern_length', 2)
 " - mark_below = Mark shown for words N lines below.
 " - mark_changes = Mark shown for words in the changelist.
 call deoplete#custom#option('ignore_sources',{'_':['around']})
+call deoplete#custom#option('sources', {'denite-filter': 'denite'})
 call deoplete#custom#var('around', {
 \   'range_above': 20,
 \   'range_below': 20,
@@ -737,7 +738,7 @@ repo = 'mattn/googlesuggest-complete-vim'
 on_event = 'InsertEnter'
 depends = ['webapi-vim']
 hook_add = '''
-set completefunc=googlesuggest#Complete
+"set completefunc=googlesuggest#Complete
 '''
 
 [[plugins]]
@@ -861,6 +862,7 @@ function! s:eskk_initial_pre() abort
 endfunction
 "}}}
 '''
+
 #[[plugins]]
 #repo =  'cohama/lexima.vim'
 #on_event = 'InsertEnter' 
@@ -873,7 +875,7 @@ endfunction
 #call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
 #call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
 #call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
-#	call lexima#add_rule({'char': '(', 'input': '()<Left>'})
+#call lexima#add_rule({'char': '(', 'input': '()<Left>'})
 #"call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
 #call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
 #call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
