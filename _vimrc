@@ -51,7 +51,9 @@ let g:loaded_godoc = 1
 "kaoriya-vimのpythonに揃える
 "64bit版を使用する
 "set runtimepath+='~/vimfiles'
-"let g:python3_host_prog ='python.exe'
+if has('win64')
+    let g:python3_host_prog ='python.exe'
+endif
 "vimprocをダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
