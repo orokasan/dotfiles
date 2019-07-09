@@ -582,6 +582,13 @@ let g:defx_icons_extensions = {
     \}
 "}}}
 '''
+
+[[plugins]]
+repo = 'Shougo/deol.nvim'
+hook_add = '''
+nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
+'''
+
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
 on_if = ''' has('nvim') '''
