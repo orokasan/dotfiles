@@ -292,9 +292,7 @@ cnoremap <expr><F2> strftime("%Y%m%d")
 " x でレジスタを使わない
 nnoremap x "_x
 "ddでヤンク
-nnoremap dd "*dd
-" 最後にヤンクしたテキストを貼り付け．
-nnoremap P "0P
+nnoremap dd "0dd
 " スペルチェック
 nnoremap <Leader>. :<C-u>setl spell! spell?<CR>
 
