@@ -2,6 +2,10 @@
   "rules": {
     "preset-japanese": false,
     "preset-jtf-style": false,
+    "web-plus-db": true,
+    "ja-hiragana-keishikimeishi": true,
+    "ja-hiragana-fukushi": true,
+    "ja-hiragana-hojodoushi": true,
     "preset-ja-technical-writing": {
         "sentence-length": {
             max: 125
@@ -20,7 +24,7 @@
             "allowFullWidthQuestion": true
             },
         "ja-no-mixed-period":false,
-        "no-mix-dearu-desumasu": false
+        "no-mix-dearu-desumasu": false,
         }
     }
 }
