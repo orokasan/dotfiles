@@ -292,7 +292,7 @@ cnoremap <expr><F2> strftime("%Y%m%d")
 " x でレジスタを使わない
 nnoremap x "_x
 "ddでヤンク
-nnoremap dd "0dd
+nnoremap dd "+dd
 " スペルチェック
 nnoremap <Leader>. :<C-u>setl spell! spell?<CR>
 
@@ -846,4 +846,12 @@ set background=dark
 "highlight! Normal ctermbg=NONE guibg=NONE
 "highlight! NonText ctermbg=NONE guibg=NONE
 "highlight! LineNr ctermbg=NONE guibg=NONE
+if exists('g:vv')
+    VVset fontfamily='Cica'
+    VVset fontsize=14
+    VVset windowheight=100%
+    VVset windowwidth=60%
+    VVset windowleft=0
+    VVset windowtop=0k
+endif
 "vim:set foldmethod=marker:"
