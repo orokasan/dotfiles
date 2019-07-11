@@ -99,9 +99,15 @@ xmap <silent> iW <Plug>JaSegmentTextObjVI
 repo =  'Shougo/neomru.vim'
 hook_add ='''
 "denite-neomruでginaを無視
-let g:neomru#do_validate = 0
-let g:neomru#file_mru_ignore_pattern = ['gina://', 'term://']
-let g:neomru#time_format = '%Y/%m/%d %H:%M:%S'
+let g:neomru#do_validate = 1
+"let g:neomru#file_mru_ignore_pattern = 
+"      \'\~$\|\.\%(o\|exe\|dll\|bak\|zwc\|pyc\|sw[po]\)$'.
+"      \'\|\%(^\|/\)\.\%(hg\|git\|bzr\|svn\)\%($\|/\)'.
+"      \'\|^\%(\\\\\|/mnt/\|/media/\|/temp/\|/tmp/\|\%(/private\)\=/var/folders/\)'.
+"      \'\|\%(^\%(gina\)://\)'.
+"      \'\|\%(^\%(term\)://\)'
+let g:neomru#file_mru_ignore_pattern = 'gina://' . 'term://'
+let g:neomru#time_format = '%m/%d %H:%M'
 let g:neomru#file_mru_limit = 100
 let g:neomru#file_mru_path= '~/.cache/neomru/file'
 '''
