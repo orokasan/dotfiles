@@ -1,0 +1,18 @@
+{
+  "name": "ork",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "neovim": "^4.5.0",
+    "textlint": "^11.2.6",
+    "textlint-rule-ja-hiragana-fukushi": "^1.1.0",
+    "textlint-rule-preset-ja-technical-writing": "^4.0.0-1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
