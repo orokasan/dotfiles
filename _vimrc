@@ -802,7 +802,7 @@ if has('GUI')
     if has('mac')
         set guifont=Cica:h14
     else
-        let s:fontsize = '13.5'
+        let s:fontsize = '12'
         let s:font = 'Ricty_Diminished_with-icons'
 
         let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
