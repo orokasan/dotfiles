@@ -106,7 +106,7 @@ let g:neomru#do_validate = 1
 "      \'\|^\%(\\\\\|/mnt/\|/media/\|/temp/\|/tmp/\|\%(/private\)\=/var/folders/\)'.
 "      \'\|\%(^\%(gina\)://\)'.
 "      \'\|\%(^\%(term\)://\)'
-let g:neomru#file_mru_ignore_pattern = 'gina://' . 'term://'
+let g:neomru#file_mru_ignore_pattern = 'gina://'
 let g:neomru#time_format = '%m/%d %H:%M'
 let g:neomru#file_mru_limit = 100
 let g:neomru#file_mru_path= '~/.cache/neomru/file'
@@ -226,10 +226,10 @@ hook_add = '''
 "nnoremap <silent><expr> <Plug>(anzu-N-zzzv) anzu#mode#mapexpr("N", "", "zzzv")
 "nmap n <Plug>(is-nohl)<Plug>(anzu-n-zzzv)
 "nmap N <Plug>(is-nohl)<Plug>(anzu-N-zzzv)
-	nmap n <Plug>(is-nohl)<Plug>(anzu-n)
-	nmap N <Plug>(is-nohl)<Plug>(anzu-N)
-	nmap * <Plug>(is-nohl)<Plug>(anzu-star)
-	nmap # <Plug>(is-nohl)<Plug>(anzu-sharp)
+	nmap n <Plug>(is-nohl)<Plug>(anzu-n)zz
+	nmap N <Plug>(is-nohl)<Plug>(anzu-N)zz
+	nmap * <Plug>(is-nohl)<Plug>(anzu-star)zz
+	nmap # <Plug>(is-nohl)<Plug>(anzu-sharp)zz
 let g:airline#extensions#anzu#enabled = 0
 '''
 
@@ -255,6 +255,7 @@ repo =  'Shougo/neosnippet-snippets'
 
 [[plugins]]
 repo = 'orokasan/denite-anzu'
+merge = '0'
 
 [[plugins]]
 repo = 'cespare/vim-toml'
@@ -270,11 +271,11 @@ repo = 'skanehira/translate.vim'
 #lazy = '1'
 #hook_add = '''
 #'''
-[[plugins]]
-repo = 'junegunn/fzf.vim'
+#[[plugins]]
+#repo = 'junegunn/fzf.vim'
 
-[[plugins]]
-repo = 'fuenor/JpFormat.vim'
+#[[plugins]]
+#repo = 'fuenor/JpFormat.vim'
 
 #[[plugins]]
 #repo = 'SidOfc/mkdx'
@@ -330,5 +331,13 @@ repo = 'fuenor/JpFormat.vim'
 
 [[plugins]]
 repo = 'nixprime/cpsm'
+
+[[plugins]]
+repo = 'iamcco/markdown-preview.nvim'
+on_ft = ['markdown', 'pandoc.markdown', 'rmd']
+build = 'cd app & yarn install'
+
+[[plugins]]
+repo = 'deoplete-plugins/deoplete-jedi'
 
 # vim:set foldmethod=marker:

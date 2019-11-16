@@ -86,7 +86,6 @@ nmap<silent> <C-c><C-c> :nohlsearch<CR>
 " Display candidates by list.
 set wildmenu
 set wildmode=longest:full,full
-"
 set previewheight=8 " Adjust window size of preview 
 set helpheight=15 "and help.
 set ttyfast
@@ -159,6 +158,7 @@ setlocal foldmethod=marker
 "
 "viminfo設定(nvimと設定分ける)
 if has('nvim')
+    set shada=!,'300,<50,s10,h,rA:,rB:
 else
   set viminfo=!,'300,<50,s10,h
 endif
@@ -216,12 +216,12 @@ endfunction
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
 "eskk.vimと干渉するため停止している
+"
 let g:disable_IM_Control = 1
 if !exists('g:disable_IM_Control')
 " 「日本語入力固定モード」切替キー
     inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
 endif
-
 "}}}
 "========================================================================
 "Key mapping {{{
@@ -255,8 +255,8 @@ nnoremap Q q
 xnoremap Q q
 " 折り返し時に表示行単位での移動できるようにする
 nnoremap <silent>j gj
-nnoremap  <silent>k gk
-nnoremap  J gJ
+nnoremap <silent>k gk
+nnoremap J gJ
 nnoremap gJ J
 " colorcolumn
 nnoremap <expr><Leader>cl
@@ -295,7 +295,6 @@ nnoremap x "_x
 nnoremap dd "+dd
 " スペルチェック
 nnoremap <Leader>. :<C-u>setl spell! spell?<CR>
-
 "検索メッセージを非表示
 nnoremap <silent> n n
 nnoremap <silent> N N
@@ -403,11 +402,14 @@ nnoremap <silent><C-p> :Bclose<CR>
 "Markdown Docx出力
 "pandocが必要
 if has('mac')
-    nnoremap <Leader>pd <C-u>:!pandoc '%:p' -o '%:p:r.docx' -F pandoc-crossref<CR>
+    "nnoremap <Leader>pd <C-u>:!pandoc -f markdown+ignore_line_breaks -t docx --reference-doc='/Users/ork/.pandoc/reference.docx' -o '%:p:r.docx' '%:p'<CR>
+    nnoremap <Leader>pd <C-u>:!pandoc -f markdown+ignore_line_breaks -t docx --reference-doc=reference.docx -o '%:p:r.docx' '%:p'<CR>
 else
     nnoremap <Leader>pd <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
+
 "}}}
+
 "========================================================================
 "+kaoriya {{{
 if has('kaoriya')
@@ -667,7 +669,6 @@ function! LLMyFilepath()
         let l:ll_filename = expand('%:t')
         if winwidth(0) > 80
             let l:ll_fn =  strlen(l:ll_filepath) < 40 ? l:ll_filepath :
-            \ strlen(pathshorten(l:ll_filepath)) < 40 ? pathshorten(l:ll_filepath) :
             \ l:ll_filename
         else
             let l:ll_fn = l:ll_filename
@@ -798,6 +799,7 @@ if has('GUI')
 "    set guifontwide=MS_Gothic:h12:cDEFAULT
 "    set guifont=Ricty_Diminished_for_Powerline:h13:cDEFAULT
 "Nerdfont
+"
 "https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
     if has('mac')
         set guifont=Cica:h14
@@ -817,12 +819,15 @@ if has('GUI')
         set columns=120 " ウィンドウの横幅
         winpos 2 10 " ウィンドウの起動時の位置
     "全角文字を自動判定
-    set ambiwidth=auto
 "    endif
 else
     set t_Co=256
     set ambiwidth=double
 endif
+
+    if has('kaoriya')
+        set ambiwidth=auto
+    endif
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
@@ -854,4 +859,5 @@ if exists('g:vv')
     VVset windowleft=0
     VVset windowtop=0k
 endif
+
 "vim:set foldmethod=marker:"
