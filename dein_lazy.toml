@@ -152,7 +152,6 @@ if has('nvim')
     call denite#custom#option('_', {
         \ 'split': 'horizontal',
         \ 'statusline' : v:false,
-        \ 'direction': 'dynamictop',
         \ 'filter_split_direction' : ''
         \ })
 else
@@ -374,9 +373,9 @@ hook_source = '''
 "{{{
 
 call defx#custom#option('_', {
-    \ 'winwidth': 44,
+    \ 'winwidth': 35,
     \ 'split': 'vertical',
-    \ 'direction': 'botright',
+    \ 'direction': 'topleft',
     \ 'columns':'mark:indent:icons:filename',
     \ 'sort': 'TIME',
     \ 'ignored_files': '.*,ntuser*,desktop.ini'
@@ -598,21 +597,22 @@ hook_source = '''
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
-      \ deoplete#mappings#manual_complete()
+      \ deoplete#manual_complete()
 function! s:check_back_space() abort "{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
+inoremap <silent><expr> <C-n>
+    \ pumvisible() ? "\<C-n>" :
+    \ deoplete#manual_complete()
 " <S-TAB>: completion back.
 inoremap <silent><expr><C-g>
     \ deoplete#undo_completion()
-"inoremap <silent><expr><C-n>
-"    \ deoplete#mappings#manual_complete()
 inoremap <silent><expr><C-h>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><BS>
     \ deoplete#smart_close_popup()."\<C-h>"
-"inoremap <silent><expr><C-l>       deoplete#complete_common_string()
+inoremap <silent><expr><C-l>       deoplete#complete_common_string()
 inoremap <expr><C-l>       deoplete#insert_candidate(0)
 "" <CR>: close popup and save indent.
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
@@ -631,23 +631,22 @@ call deoplete#custom#source('vim', 'rank' , 250)
 call deoplete#custom#source('file', 'rank', 1000)
 call deoplete#custom#source('vim', 'min_pattern_length', 2)
 "
-"call deoplete#custom#source('_', 'converters', [
-"    \ 'converter_remove_paren',
-"    \ 'converter_remove_overlap',
-"    \ 'converter_truncate_abbr',
-"    \ 'converter_truncate_menu',
-"    \ 'converter_auto_paren',
-"    \ 'converter_auto_delimiter'
-"    \ ])
-"
+call deoplete#custom#source('_', 'converters', [
+    \ 'converter_remove_paren',
+    \ 'converter_remove_overlap',
+    \ 'converter_truncate_abbr',
+    \ 'converter_truncate_menu',
+    \ 'converter_auto_paren',
+    \ 'converter_auto_delimiter'
+    \ ])
+
 " Using custom variables to configure values
 " - range_above = Search for words N lines above.
 " - range_below = Search for words N lines below.
 " - mark_above = Mark shown for words N lines above.
 " - mark_below = Mark shown for words N lines below.
 " - mark_changes = Mark shown for words in the changelist.
-call deoplete#custom#option('ignore_sources',{'_':['around']})
-call deoplete#custom#option('sources', {'denite-filter': 'denite'})
+"call deoplete#custom#option('ignore_sources',{'_':['around']})
 call deoplete#custom#var('around', {
 \   'range_above': 20,
 \   'range_below': 20,
@@ -655,14 +654,14 @@ call deoplete#custom#var('around', {
 \   'mark_below': '[↓]',
 \   'mark_changes': '[*]',
 \})
-"call deoplete#custom#option('sources', {
-"    \ 'denite-filter': ['denite']
-"    \ })
+call deoplete#custom#option('sources', {
+    \ 'denite-filter': ['denite']
+    \ })
 call deoplete#custom#option({
     \ 'auto_complete_delay': 20,
     \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'filter'
+    \ 'prev_completion_mode': 'mirror'
     \ })
 call deoplete#enable()
 
@@ -681,7 +680,7 @@ let g:neocomplete#enable_smart_case = 1
 let g:neocomplete#use_vimproc = 1
 let g:neocomplete#min_keyword_length = 2
 " Define keyword.
-" Plugin key-mappings.
+" Plugin key-madeinppings.
 inoremap <expr><C-g>     neocomplete#undo_completion()
 inoremap <expr><C-l>     neocomplete#complete_common_string()
 " Recommended key-mappings.
@@ -780,8 +779,13 @@ let g:eskk#rom_input_style = 'msime'
 let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
 let g:eskk#tab_select_completion = 1
-let g:eskk#start_completion_length = 2
+let g:eskk#start_completion_length = 3
 let g:eskk_revert_henkan_style = 'okuri'
+let g:eskk#dictionary = {
+\	'path': "~/GoogleDrive/rc/.skk-jisyo",
+\	'sorted': 0,
+\	'encoding': 'utf-8',
+\}
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#dictionary_save_count = 5
 let g:eskk#cursor_color = {
@@ -801,6 +805,7 @@ hook_source = '''
 augroup myeskk
 autocmd!
 autocmd InsertLeave * call <SID>eskk_status()
+"autocmd InsertLeave * call <SID>normalcolumn()
 autocmd InsertEnter * call <SID>eskk_insert_config()
 augroup END
  
@@ -809,15 +814,25 @@ let s:eskk_inserton = 0
 let g:eskk_my_toggle_status = 0
 
 function! s:eskk_status() abort
-let s:eskk_inserton = eskk#is_enabled() ? 1 : 0
-let g:eskk_my_toggle_status = s:eskk_insert_status ? 1 : s:eskk_inserton ? 1 : 0
+    let s:eskk_inserton = eskk#is_enabled() ? 1 : 0
+    let g:eskk_my_toggle_status = s:eskk_insert_status ? 1 : s:eskk_inserton ? 1 : 0
 endfunction
 
 function! s:eskk_insert_config() abort
-    if s:eskk_inserton || s:eskk_insert_status
+    if &filetype ==# 'denite-filter'
+    else
+    if s:eskk_inserton || s:eskk_insert_status 
         call eskk#enable()
     endif
+    endif
 endfunction
+
+"autocmd InsertEnter * call s:denite_eskk_off()
+"function! s:denite_eskk_off() abort
+"    if &filetype ==# 'denite-filter'
+"        call eskk#disable()
+"    endif
+"endfunction
 
 function! s:define_LLmyeskk()
     function! LLmyeskk() abort
@@ -846,8 +861,38 @@ function! s:eskk_inserttoggle() abort
     endif
 endfunction
 
-autocmd vimrc User eskk-initialize-post
-      \ EskkMap -remap jj <ESC>
+"IME/skkの状態に応じてsigncolumnの色を変える（WIP）
+"SignColumn     xxx ctermfg=239 ctermbg=235 guifg=#444b71 guibg=#1e2132
+autocmd vimrc User eskk-enable-post hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#e2a478 guibg=#2a3158
+"autocmd vimrc CursorMovedI * call s:eskkmodecolumn()
+autocmd vimrc User eskk-disable-post hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#cdd1e6 guibg=#2a3158
+
+"function! s:eskkmodecolumn() abort
+"    let eskk_mode = eskk#get_mode()
+"    if !has_key(g:eskk#cursor_color, eskk_mode)
+"        return
+"    endif
+"    
+"    let color = g:eskk#cursor_color[eskk_mode]
+"    if type(color) == type([]) && len(color) >= 2
+"        execute 'highlight CursorLineNr guibg=' . color[&background ==# 'light' ? 0 : 1]
+"    elseif type(color) == type("") && color !=# ''
+"        execute 'highlight CursorLineNr guibg=' . color
+"    endif
+"endfunction
+
+function! s:insertcolumn()
+    hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#84a0c6 guibg=#2a3158
+endfunction
+
+function! s:normalcolumn()
+    if !g:eskk_my_toggle_status
+        hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#cdd1e6 guibg=#2a3158
+    endif
+endfunction
+
+"autocmd vimrc User eskk-initialize-post
+"      \ EskkMap -remap ll <C-j>
 autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre() | call <SID>define_LLmyeskk()
 function! s:eskk_initial_pre() abort
     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
@@ -860,7 +905,6 @@ function! s:eskk_initial_pre() abort
     call t.add_map('z-', '-')
     call t.add_map('z{', '【')
     call t.add_map('z}', '】')
-    call t.add_map('>', '>')
       " "1." のように数字の後のドットはそのまま入力
     for n in range(10)
       call t.add_map(n . '.', n . '.')
@@ -870,33 +914,35 @@ endfunction
 "}}}
 '''
 
-#[[plugins]]
-#repo =  'cohama/lexima.vim'
-#on_event = 'InsertEnter' 
-#hook_post_source = '''
-#"{{{
-#let g:lexima_no_default_rules = 1
-#call lexima#set_default_rules()
-#let g:lexima_enable_newline_rules = 1
-#let g:lexima_enable_endwise_rules = 1
-#call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
-#call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
-#call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
-#call lexima#add_rule({'char': '(', 'input': '()<Left>'})
-#"call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
-#call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
-#call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
-#call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
-#call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
-#call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
-#call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
-#call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
-#call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
-#call lexima#add_rule({'char': '[', 'at': '\%#』', 'leave': 1})
-#call lexima#add_rule({'char': '[', 'at': '\%#」', 'leave': 1})
-#call lexima#add_rule({'char': '[', 'at': '\%#）', 'leave': 1})
-#"}}}
-#'''
+[[plugins]]
+repo =  'cohama/lexima.vim'
+on_if = 'has("nvim")'
+on_event = 'InsertEnter' 
+hook_post_source = '''
+"{{{
+let g:lexima_no_default_rules = 1
+call lexima#set_default_rules()
+let g:lexima_enable_newline_rules = 1
+let g:lexima_enable_endwise_rules = 1
+call lexima#add_rule({'char': '「', 'input': '「', 'input_after': '」'})
+call lexima#add_rule({'char': '『', 'input': '『', 'input_after': '』'})
+call lexima#add_rule({'char': '【', 'input': '【', 'input_after': '】'})
+call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
+call lexima#add_rule({'char': '(', 'input': '(', 'input_after':')'})
+"call lexima#add_rule({'char': '（', 'input': '（', 'input_after': '）'})
+"call lexima#add_rule({'char': '<BS>', 'at': '「', 'input': '<BS>', 'delete' : 1})
+"call lexima#add_rule({'char': '<BS>', 'at': '『', 'input': '<BS>', 'delete' : 1})
+"call lexima#add_rule({'char': '<BS>', 'at': '【', 'input': '<BS>', 'delete' : 1})
+"call lexima#add_rule({'char': '<BS>', 'at': '（', 'input': '<BS>', 'delete' : 1})
+"call lexima#add_rule({'char': '(', 'at': '\%#)', 'leave': 1})
+"call lexima#add_rule({'char': '"', 'at': '\%#"', 'leave': 1})
+"call lexima#add_rule({'char': '[', 'at': '\%#]', 'leave': 1})
+"call lexima#add_rule({'char': '{', 'at': '\%#}', 'leave': 1})
+"call lexima#add_rule({'char': '『', 'at': '\%#』', 'leave': 1})
+"call lexima#add_rule({'char': '「', 'at': '\%#」', 'leave': 1})
+"call lexima#add_rule({'char': '（', 'at': '\%#）', 'leave': 1})
+"}}}
+'''
 
 [[plugins]]
 repo = 'kana/vim-operator-replace'
@@ -914,7 +960,6 @@ hook_add = '''
 nnoremap <Leader>aa :<C-u>Gina status --short<CR>
 nnoremap <Leader>ac :<C-u>Gina commit<CR>
 nnoremap <Leader>ap :<C-u>Gina push<CR>
-
 '''
 hook_post_source = '''
 "{{{
@@ -983,7 +1028,6 @@ call gina#custom#mapping#nmap(
 "\ 'setlocal winfixheight',
 "\)
 "}}}
-
 '''
 
 [[plugins]]
@@ -1031,8 +1075,10 @@ let g:ale_linters = {
     \ 'markdown': ['textlint'],
     \ 'pandoc' : ['textlint'],
     \ 'vim':['vint'],
+    \ 'python': ['flake8'],
     \ 'text':['textlint']
     \ }
+
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 0
 let g:ale_sign_column_always = 1
@@ -1042,12 +1088,18 @@ let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_filetype_changed = 0
 let g:ale_open_list = 0
 let g:ale_keep_list_window_open = 0
-let g:ale_sign_error = ''
-let g:ale_sign_warning = ''
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_statusline_format = ['%d', '%d', '']
+if has('mac')
+    let g:ale_sign_error = ''
+    let g:ale_sign_warning = ''
+    let g:ale_statusline_format = ['%d', '%d', '']
+else
+    let g:ale_sign_error = ''
+    let g:ale_sign_warning = ''
+    let g:ale_statusline_format = ['%d', '%d', '']
+endif
 "}}}
 '''
 
@@ -1056,10 +1108,17 @@ repo =  'maximbaz/lightline-ale'
 on_source = 'ale'
 depends = ['lightline.vim']
 hook_add = '''
-let g:lightline#ale#indicator_checking = "\uf110"
-let g:lightline#ale#indicator_warnings = "\uf48f"
-let g:lightline#ale#indicator_errors = "\uf484"
-let g:lightline#ale#indicator_ok = "\uf43a"
+if has('mac')
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = ''
+    let g:lightline#ale#indicator_errors = ''
+    let g:lightline#ale#indicator_ok = ""
+else
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = "\uf48f"
+    let g:lightline#ale#indicator_errors = "\uf484"
+    let g:lightline#ale#indicator_ok = "\uf43a"
+endif
 '''
 
 [[plugins]]
@@ -1201,6 +1260,7 @@ repo = 'previm/previm'
 depends = 'open-browser.vim'
 on_ft = ['markdown','md']
 hook_add = '''
+let g:previm_open_cmd = 'open -a Safari'
 nnoremap <silent><Leader>pmd :PrevimOpen<CR>
 '''
 
@@ -1361,5 +1421,24 @@ map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 #let g:vim_markdown_new_list_item_indent = 4
 #let g:vim_markdown_foldint_level = 0
 #'''
+
+[[plugins]]
+repo = 'davidhalter/jedi-vim'
+on_ft = ['python']
+hook_add = '''
+let g:jedi#auto_vim_configuration = 0
+'''
+
+[[plugins]]
+repo = 'thinca/vim-quickrun'
+on_cmd = ['QuickRun']
+hook_add = '''
+let g:quickrun#config = { '_' : {
+    \ 'outputter/buffer/split' : 'botright',
+    \ 'outputter/buffer/append'
+    \ }
+
+}
+'''
 
 # vim:set foldmethod=marker:
