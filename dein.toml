@@ -238,7 +238,7 @@ repo = 'sainnhe/vim-color-forest-night'
 
 [[plugins]]
 repo = 'moznion/hateblo.vim'
-depends = 'webapi.vim'
+depends = 'webapi-vim'
 
 [[plugins]]
 repo =  'iyuuya/denite-ale'
@@ -339,5 +339,15 @@ build = 'cd app & yarn install'
 
 [[plugins]]
 repo = 'deoplete-plugins/deoplete-jedi'
+
+[[plugins]]
+repo = 'tpope/vim-commentary'
+
+
+[[plugins]]
+repo = 'majutsushi/tagbar'
+
+[[plugins]]
+repo = 'tpope/vim-fugitive'
 
 # vim:set foldmethod=marker:
