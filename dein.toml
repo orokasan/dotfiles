@@ -343,10 +343,6 @@ repo = 'deoplete-plugins/deoplete-jedi'
 [[plugins]]
 repo = 'tpope/vim-commentary'
 
-
-[[plugins]]
-repo = 'majutsushi/tagbar'
-
 [[plugins]]
 repo = 'tpope/vim-fugitive'
 
