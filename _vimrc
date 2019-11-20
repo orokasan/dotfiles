@@ -653,7 +653,7 @@ function! LLgit() abort
         return s:llgitbranch
 endfunction
 
-autocmd vimrc InsertEnter,BufEnter, CursorMoved * if exists('*anzu#clear_search_status') 
+autocmd vimrc InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status') 
     \| call anzu#clear_search_status() | endif
 
 autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
