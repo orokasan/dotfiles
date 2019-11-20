@@ -1032,24 +1032,24 @@ vmap _ <Plug>(operator-replace)
 # "}}}
 # '''
 
-[[plugins]]
-repo =  'sjl/gundo.vim'
-on_cmd = 'GundoToggle'
-hook_add = '''
-nnoremap U :<C-u>GundoToggle<CR>
-'''
-hook_source = '''
-"{{{
-let g:gundo_help =1 
-let g:gundo_prefer_python3 = 1
-let g:gundo_auto_preview = 0
-let g:gundo_width = 50
-let g:gundo_right = 1
-let g:gundo_preview_height = 20
-let g:gundo_preview_bottom = 0
-let g:gundo_playback_delay = 500
-"}}}
-'''
+# [[plugins]]
+# repo =  'sjl/gundo.vim'
+# on_cmd = 'GundoToggle'
+# hook_add = '''
+# nnoremap U :<C-u>GundoToggle<CR>
+# '''
+# hook_source = '''
+# "{{{
+# let g:gundo_help =1 
+# let g:gundo_prefer_python3 = 1
+# let g:gundo_auto_preview = 0
+# let g:gundo_width = 50
+# let g:gundo_right = 1
+# let g:gundo_preview_height = 20
+# let g:gundo_preview_bottom = 0
+# let g:gundo_playback_delay = 500
+# "}}}
+# '''
 
 [[plugins]]
 repo =  'nathanaelkane/vim-indent-guides'
@@ -1294,7 +1294,7 @@ hook_source = '''
 let g:operator#surround#blocks = {}
 let g:operator#surround#blocks['-'] = [
 \   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
-\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
+\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['K'] },
 \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
 \ ]
 '''
@@ -1462,5 +1462,12 @@ let g:quickrun_config = {
 [[plugins]]
 repo = 'mbbill/undotree'
 on_cmd = ['UndotreeToggle']
+hook_add = '''
+let g:undotree_SetFocusWhenToggle = 1
+'''
+
+[[plugins]]
+repo = 'majutsushi/tagbar'
+on_cmd = ['Tagbar']
 
 # vim:set foldmethod=marker:
