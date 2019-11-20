@@ -653,11 +653,11 @@ function! LLgit() abort
         return s:llgitbranch
 endfunction
 
-"autocmd vimrc InsertEnter,BufEnter * if exists('*anzu#clear_search_status') 
-"    \| call anzu#clear_search_status() | endif
+autocmd vimrc InsertEnter,BufEnter, CursorMoved * if exists('*anzu#clear_search_status') 
+    \| call anzu#clear_search_status() | endif
 
 autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
-"autocmd vimrc User IncSearchExecute :call execute('AnzuUpdateSearchStatus')
+autocmd vimrc User IncSearchExecute :call execute('AnzuUpdateSearchStatus')
 
 function! LLMyFilepath()
     if &filetype ==# 'denite'
