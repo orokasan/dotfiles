@@ -425,6 +425,8 @@ nnoremap <silent><buffer><expr> m
 \ defx#async_action('move')
 nnoremap <silent><buffer><expr> p
 \ defx#async_action('paste')
+nnoremap <silent><buffer><expr> <C-l>
+\ <C-l> <C-w>l 
 nnoremap <silent><buffer><expr> l 
 \ defx#is_directory() ?
 \ defx#do_action('open') :
@@ -953,82 +955,82 @@ nmap _ <Plug>(operator-replace)
 vmap _ <Plug>(operator-replace)
 '''
 
-[[plugins]]
-repo =  'lambdalisue/gina.vim'
-on_cmd = ['Gina']
-hook_add = '''
-nnoremap <Leader>aa :<C-u>Gina status --short<CR>
-nnoremap <Leader>ac :<C-u>Gina commit<CR>
-nnoremap <Leader>ap :<C-u>Gina push<CR>
-'''
-hook_post_source = '''
-"{{{
-call gina#custom#command#alias('branch', 'br')
-call gina#custom#command#option('br', '-v', 'v')
-call gina#custom#command#option(
-\ '/\%(log\|reflog\)',
-\ '--opener', 'vsplit'
-\)
+# [[plugins]]
+# repo =  'lambdalisue/gina.vim'
+# on_cmd = ['Gina']
+# hook_add = '''
+# nnoremap <Leader>aa :<C-u>Gina status --short<CR>
+# nnoremap <Leader>ac :<C-u>Gina commit<CR>
+# nnoremap <Leader>ap :<C-u>Gina push<CR>
+# '''
+# hook_post_source = '''
+# "{{{
+# call gina#custom#command#alias('branch', 'br')
+# call gina#custom#command#option('br', '-v', 'v')
+# call gina#custom#command#option(
+# \ '/\%(log\|reflog\)',
+# \ '--opener', 'vsplit'
+# \)
 
-call gina#custom#command#option(
-\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-\ '--opener' , '10split'
-\)
-call gina#custom#command#option(
-\ 'log', '--group', 'log-viewer'
-\)
-call gina#custom#command#option(
-\ 'status', '--group', 'status-viewer'
-\)
-call gina#custom#command#option(
-\ 'reflog', '--group', 'reflog-viewer'
-\)
-call gina#custom#command#option(
-\ 'commit', '-v|--verbose'
-\)
-call gina#custom#command#option(
-\ '/\%(status\|commit\)',
-\ '-u|--untracked-files'
-\)
-call gina#custom#command#option(
-\ '/\%(status\|changes\)',
-\ '--ignore-submodules'
-\)
+# call gina#custom#command#option(
+# \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+# \ '--opener' , '10split'
+# \)
+# call gina#custom#command#option(
+# \ 'log', '--group', 'log-viewer'
+# \)
+# call gina#custom#command#option(
+# \ 'status', '--group', 'status-viewer'
+# \)
+# call gina#custom#command#option(
+# \ 'reflog', '--group', 'reflog-viewer'
+# \)
+# call gina#custom#command#option(
+# \ 'commit', '-v|--verbose'
+# \)
+# call gina#custom#command#option(
+# \ '/\%(status\|commit\)',
+# \ '-u|--untracked-files'
+# \)
+# call gina#custom#command#option(
+# \ '/\%(status\|changes\)',
+# \ '--ignore-submodules'
+# \)
 
-call gina#custom#action#alias(
-\ 'branch', 'track',
-\ 'checkout:track'
-\)
-call gina#custom#action#alias(
-\ 'branch', 'merge',
-\ 'commit:merge'
-\)
-call gina#custom#action#alias(
-\ 'branch', 'rebase',
-\ 'commit:rebase'
-\)
+# call gina#custom#action#alias(
+# \ 'branch', 'track',
+# \ 'checkout:track'
+# \)
+# call gina#custom#action#alias(
+# \ 'branch', 'merge',
+# \ 'commit:merge'
+# \)
+# call gina#custom#action#alias(
+# \ 'branch', 'rebase',
+# \ 'commit:rebase'
+# \)
 
-call gina#custom#mapping#nmap(
-\ 'branch', 'g<CR>',
-\ '<Plug>(gina-commit-checkout-track)'
-\)
-call gina#custom#mapping#nmap(
-\ 'status', '<C-^>',
-\ ':<C-u>Gina commit<CR>',
-\ {'noremap': 1, 'silent': 1}
-\)
-call gina#custom#mapping#nmap(
-\ 'commit', '<C-^>',
-\ ':<C-u>Gina status<CR>',
-\ {'noremap': 1, 'silent': 1}
-\)
+# call gina#custom#mapping#nmap(
+# \ 'branch', 'g<CR>',
+# \ '<Plug>(gina-commit-checkout-track)'
+# \)
+# call gina#custom#mapping#nmap(
+# \ 'status', '<C-^>',
+# \ ':<C-u>Gina commit<CR>',
+# \ {'noremap': 1, 'silent': 1}
+# \)
+# call gina#custom#mapping#nmap(
+# \ 'commit', '<C-^>',
+# \ ':<C-u>Gina status<CR>',
+# \ {'noremap': 1, 'silent': 1}
+# \)
 
-"call gina#custom#execute(
-"\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-"\ 'setlocal winfixheight',
-"\)
-"}}}
-'''
+# "call gina#custom#execute(
+# "\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
+# "\ 'setlocal winfixheight',
+# "\)
+# "}}}
+# '''
 
 [[plugins]]
 repo =  'sjl/gundo.vim'
@@ -1126,6 +1128,20 @@ repo =  't9md/vim-choosewin'
 on_map = {n = '<Plug>'}
 hook_add = '''
 nmap - <Plug>(choosewin)
+
+let s:keymap = {
+      \ '0':     'tab_first',
+      \ '[':     'tab_prev',
+      \ ']':     'tab_next',
+      \ '$':     'tab_last',
+      \ 'x':     'tab_close',
+      \ ';':     'win_land',
+      \ '-':     'previous',
+      \ 's':     'swap',
+      \ 'S':     'swap_stay',
+      \ "\<CR>": 'win_land',
+      \ }
+let g:choosewin_keymap = s:keymap
 '''
 hook_source = '''
 let g:choosewin_blink_on_land = 0
@@ -1433,12 +1449,18 @@ let g:jedi#auto_vim_configuration = 0
 repo = 'thinca/vim-quickrun'
 on_cmd = ['QuickRun']
 hook_add = '''
-let g:quickrun#config = { '_' : {
-    \ 'outputter/buffer/split' : 'botright',
-    \ 'outputter/buffer/append'
+let g:quickrun_config = {
+        \ '_' : {
+        \ 'outputter/buffer/append' : 1
+        \ },
+        \ 'python': {
+        \ 'command': 'python3'
+        \ }
     \ }
-
-}
 '''
+
+[[plugins]]
+repo = 'mbbill/undotree'
+on_cmd = ['UndotreeToggle']
 
 # vim:set foldmethod=marker:
