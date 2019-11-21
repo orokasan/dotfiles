@@ -346,4 +346,37 @@ repo = 'tpope/vim-commentary'
 [[plugins]]
 repo = 'tpope/vim-fugitive'
 
+[[plugins]]
+repo = 't9md/vim-textmanip'
+hook_add = '''
+xmap <C-x> <Plug>(textmanip-duplicate-down)
+nmap <C-x> <Plug>(textmanip-duplicate-down)
+xmap <C-X> <Plug>(textmanip-duplicate-up)
+nmap <C-X> <Plug>(textmanip-duplicate-up)
+
+xmap <C-j> <Plug>(textmanip-move-down)
+xmap <C-k> <Plug>(textmanip-move-up)
+xmap <C-h> <Plug>(textmanip-move-left)
+xmap <C-l> <Plug>(textmanip-move-right)
+
+" toggle insert/replace with <F10>
+" nmap <F10> <Plug>(textmanip-toggle-mode)
+" xmap <F10> <Plug>(textmanip-toggle-mode)
+'''
+[[plugins]]
+repo = 'Shougo/unite-outline'
+
+[[plugins]]
+repo = 'lifepillar/vim-solarized8'
+hook_add ='''
+let g:solarized_old_cursor_style = 1
+let g:solarized_italics = 0
+let g:solarized_statusline = 'flat'
+'''
+
+[[plugins]]
+repo = 'mhartington/oceanic-next'
+
+[[plugins]]
+repo = 'orokasan/vim-quack-lightline'
 # vim:set foldmethod=marker:

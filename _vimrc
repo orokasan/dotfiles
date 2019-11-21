@@ -478,7 +478,7 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() 
 "lightline-bufferline
 "lightline-ale
 let g:lightline = {
-\ 'colorscheme': 'iceberg',
+\ 'colorscheme': 'quack',
     \ 'active': {
         \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','git'], [ 'readonly', 'path'] ],
         \ 'right': [ ['lineinfo'],
@@ -541,7 +541,7 @@ let g:component_function_visible_condition = {
         \ 'git': 1,
         \ 'lineinfo': 1
         \ }
- 
+
 let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
 let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 
@@ -831,7 +831,8 @@ endif
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
-colorscheme iceberg
+" autocmd vimrc ColorScheme solarized8 highlight clear Comment
+" autocmd vimrc ColorScheme solarized8 highlight Comment ctermfg=14 guifg=#586e75
 "補完ポップアップメニューの色変更
 autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
 autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
@@ -840,8 +841,9 @@ autocmd vimrc ColorScheme iceberg highlight clear Search
 autocmd vimrc ColorScheme iceberg highligh Search gui=underline
 "colorscheme hybrid
 "colorscheme gruvbox
-set background=dark
 "let ayucolor='dark'
+set background=dark
+colorscheme solarized8
 
 "colorscheme ayu
 "}}}

@@ -4,7 +4,7 @@ on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
 on_source = 'defx.nvim'
 hook_add = '''
 "{{{
-nmap s [denite]
+nmap <TAB> [denite]
 nnoremap [denite] <Nop>
 
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
@@ -760,7 +760,6 @@ hook_source = '''
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
@@ -1404,10 +1403,10 @@ repo = 'easymotion/vim-easymotion'
 on_map = {nx = '<Plug>'}
 hook_add = '''
 let g:EasyMotion_do_mapping = 0
-nmap <TAB> <Plug>(easymotion-s2)
+nmap s <Plug>(easymotion-s2)
 imap <C-Space> <ESC><Plug>(easymotion-s2)
-xmap <TAB> <Plug>(easymotion-s2)
-omap <Tab> <Plug>(easymotion-s2)
+xmap s <Plug>(easymotion-s2)
+omap s <Plug>(easymotion-s2)
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
