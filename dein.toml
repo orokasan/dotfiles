@@ -226,10 +226,10 @@ hook_add = '''
 "nnoremap <silent><expr> <Plug>(anzu-N-zzzv) anzu#mode#mapexpr("N", "", "zzzv")
 "nmap n <Plug>(is-nohl)<Plug>(anzu-n-zzzv)
 "nmap N <Plug>(is-nohl)<Plug>(anzu-N-zzzv)
-	nmap n <Plug>(is-nohl)<Plug>(anzu-n)zz
-	nmap N <Plug>(is-nohl)<Plug>(anzu-N)zz
-	nmap * <Plug>(is-nohl)<Plug>(anzu-star)zz
-	nmap # <Plug>(is-nohl)<Plug>(anzu-sharp)zz
+	nmap n <Plug>(is-nohl)<Plug>(anzu-n)
+	nmap N <Plug>(is-nohl)<Plug>(anzu-N)
+	nmap * <Plug>(is-nohl)<Plug>(anzu-star)
+	nmap # <Plug>(is-nohl)<Plug>(anzu-sharp)
 let g:airline#extensions#anzu#enabled = 0
 '''
 
@@ -343,8 +343,8 @@ repo = 'deoplete-plugins/deoplete-jedi'
 [[plugins]]
 repo = 'tpope/vim-commentary'
 
-[[plugins]]
-repo = 'tpope/vim-fugitive'
+#[[plugins]]
+#repo = 'tpope/vim-fugitive'
 
 [[plugins]]
 repo = 't9md/vim-textmanip'
@@ -379,4 +379,27 @@ repo = 'mhartington/oceanic-next'
 
 [[plugins]]
 repo = 'orokasan/vim-quack-lightline'
+
+[[plugins]]
+#repo = 'itchyny/vim-parenmatch'
+repo = 'orokasan/vim-parenmatch'
+hook_add = '''
+'''
+
+[[plugins]]
+repo =  'maximbaz/lightline-ale'
+depends = ['lightline.vim']
+hook_add = '''
+if has('mac')
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = ''
+    let g:lightline#ale#indicator_errors = ''
+    let g:lightline#ale#indicator_ok = ""
+else
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = "\uf48f"
+    let g:lightline#ale#indicator_errors = "\uf484"
+    let g:lightline#ale#indicator_ok = "\uf43a"
+endif
+'''
 # vim:set foldmethod=marker:

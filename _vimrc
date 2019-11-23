@@ -12,13 +12,12 @@
 "encode
 set encoding=utf-8         "vim 内部のエンコーディグ
 if !has('nvim')
-scriptencoding utf-8,cp932 "vimrcのエンコーディング
+    scriptencoding utf-8,cp932 "vimrcのエンコーディング
 else
 scriptencoding utf-8
 endif
 set fileencoding=utf-8     " 既定のファイル保存エンコーディング
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
-set runtimepath+=~/.fzf
 set runtimepath+=~/vimfiles
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
@@ -42,6 +41,7 @@ let g:loaded_netrwPlugin       = 1
 let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
+let g:loaded_matchparen = 1
 "========================================================================
 "Python,vimproc
 "メモ
@@ -71,12 +71,13 @@ set cursorline      "cusorlineをハイライト
 set list                    "不可視文字の可視化
 set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
 "cursorlineのhighlight syntaxを消す(行番号ハイライトのみにする)
-autocmd vimrc ColorScheme *  hi clear CursorLine
+" autocmd vimrc ColorScheme *  hi clear CursorLine
 set modelines=5     "モードライン設定
 set showmatch       "括弧入力時の対応する括弧を表示
 set matchtime=1     "括弧のハイライト時間(ミリ秒)
 set lazyredraw
 set visualbell      "ビープを停止
+set fillchars+=vert:\ 
 set t_vb=
 set noerrorbells
 set hidden          " バッファが編集中でもその他のファイルを開けるように
@@ -126,13 +127,31 @@ set display=lastline        "長い行をいい感じに表示
 "日本語の文章構造に対応するやつ
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
 "set spelllang=en,cjk
+let s:initdir = {
+    \ 'undo': expand('~/vimfiles/undo/'),
+    \ 'swap': expand('~/vimfiles/swap/')
+    \ }
+autocmd vimrc VimEnter * call <SID>makeconfigdir()
+"{{{
+function! s:makeconfigdir() abort
+    for key in keys(s:initdir)
+        let l:a = s:initdir[key]
+        if !isdirectory(l:a)
+            " call mkdir(s:initdir[key])
+            let l:b = iconv(l:a, &encoding, &termencoding)
+            call mkdir(l:b, 'p')
+        endif
+    endfor
+endfunction
+"}}}
 set swapfile              " スワップファイルを作らない/作る
 set directory=~/vimfiles/swap
-set autoread                " 編集中のファイルが変更されたら自動で読み直す
 set undodir=~/vimfiles/undo "Undoファイルをまとめる
+set autoread                " 編集中のファイルが変更されたら自動で読み直す
+set undofile
 set nobackup                  "backupファイルを作成
+set autochdir               " カレントディレクトリを自動で設定
 "set backupdir=~/vimfiles/backup
-
 set textwidth=0             "自動改行をやめる
 set formatoptions+=mMj      "日本語の行の連結時には空白を入力しない。など
 set tabstop=4               "<TAB>空白の表示設定
@@ -145,7 +164,7 @@ set shiftwidth=4            "vimが自動でインデントを行った際、設
 set ignorecase              " 検索文字列が小文字の場合は大文字小文字を区別なく検索する
 set smartcase               " 検索文字列に大文字が含まれている場合は区別して検索する
 set incsearch               " 検索文字列入力時に順次対象文字列にヒットさせる
-set gdefault
+"set gdefault
 set wrapscan                " 検索時に最後まで行ったら最初に戻る
 set hlsearch                " 検索語をハイライト表示
 
@@ -155,13 +174,14 @@ autocmd vimrc FileType markdown set commentstring=<\!--\ %s\ -->
 
 "folding設定
 setlocal foldmethod=marker
-"
+
 "viminfo設定(nvimと設定分ける)
 if has('nvim')
-    set shada=!,'300,<50,s10,h,rA:,rB:
+"    set shada=!,:10,'300,<50,s10,h,@10
 else
   set viminfo=!,'300,<50,s10,h
 endif
+
 " Set minimal height for current window.
 set winheight=1
 set winwidth=1
@@ -198,19 +218,19 @@ augroup MyAutoCmd
   autocmd MyAutoCmd BufWinLeave * call s:mkview()
   autocmd MyAutoCmd BufReadPost * call s:loadview()
 augroup END
+"ディレクトリが保存時無い場合に自動的に作成
+"https://vim-jp.org/vim-users-jp/2011/02/20/Hack-202.html
+augroup vimrc-auto-mkdir  " {{{
+  autocmd!
+  autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+  function! s:auto_mkdir(dir, force)  " {{{
+    if !isdirectory(a:dir) && (a:force ||
+    \    input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
+      call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+    endif
+  endfunction  " }}}
+augroup END  " }}}
 "}}}
-" Make directory automatically. {{{
-" --------------------------------------
-" http://vim-users.jp/2011/02/hack202/
-autocmd MyAutoCmd BufWritePre *
-      \ call s:mkdir_as_necessary(expand('<afile>:p:h'), v:cmdbang)
-function! s:mkdir_as_necessary(dir, force) abort
-  if !isdirectory(a:dir) && &l:buftype ==# '' &&
-        \ (a:force || input(printf('"%s" does not exist. Create? [y/N]',
-        \              a:dir)) =~? '^y\%[es]$')
-    call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-  endif
-endfunction
 "}}}
 "日本語入力固定モード
 "IM-control.vimが必要
@@ -247,9 +267,11 @@ nnoremap m '
 "末尾までヤンク
 nnoremap Y y$
 xnoremap Y y$
-nnoremap vv 0v$
+nnoremap vv V
+nnoremap V v$
 nmap <Tab> %
 vmap <Tab> %
+xmap <Tab> %
 "Qでマクロ
 nnoremap Q q
 xnoremap Q q
@@ -277,8 +299,6 @@ nnoremap <expr><Leader>cl
 "nnoremap <silent> f<C-M> :call search('[、。]')<CR>a<CR><Esc>
 "nnoremap <silent> F<C-M> :call search('[、。]', 'b')<CR>a<CR><Esc>
 " 空行単位移動
-vnoremap <C-j> }
-vnoremap <C-k> {
 tnoremap <C-[> <C-\><C-n>
 tnoremap <Esc> <C-\><C-n>
 inoremap <c-s> <Esc>:w<CR>a
@@ -294,7 +314,7 @@ nnoremap x "_x
 "ddでヤンク
 nnoremap dd "+dd
 " スペルチェック
-nnoremap <Leader>. :<C-u>setl spell! spell?<CR>
+"nnoremap <Leader>. :<C-u>setl spell! spell?<CR>
 "検索メッセージを非表示
 nnoremap <silent> n n
 nnoremap <silent> N N
@@ -323,7 +343,7 @@ endif  "}}}
 "lでfoldingを展開
 nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
 "CTRL-SPACEで閉じる
-nnoremap <silent><C-Space> :<C-u>call <SID>smart_foldcloser()<CR>
+nnoremap <silent><Space><Space> :<C-u>call <SID>smart_foldcloser()<CR>
 function! s:smart_foldcloser() "{{{
   if foldlevel('.') == 0
     norm! zM
@@ -353,16 +373,16 @@ nnoremap <leader>wo :only<CR>
 "nnoremap <S-l> <End>
 "nnoremap <S-h> <Home>
 " インサートモード時はちょっとemacs like なキーバインド
-inoremap <C-f> <Right>|			" C-f で左へ移動
-inoremap <C-b> <Left>|			" C-b で右へ移動
-inoremap <C-h> <BS>|			" C-h でバックスペース
+inoremap <C-f> <Right>|            " C-f で左へ移動
+inoremap <C-b> <Left>|            " C-b で右へ移動
+inoremap <C-h> <BS>|            " C-h でバックスペース
 inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 "window移動
-nnoremap <C-h> <C-w>h|			" Ctrl + hjkl でウィンドウ間を移動
-nnoremap <C-j> <C-w>j|			" Ctrl + hjkl でウィンドウ間を移動
-nnoremap <C-k> <C-w>k|			" Ctrl + hjkl でウィンドウ間を移動
-nnoremap <C-l> <C-w>l|			" Ctrl + hjkl でウィンドウ間を移動
+nnoremap <C-h> <C-w>h|            " Ctrl + hjkl でウィンドウ間を移動
+nnoremap <C-j> <C-w>j|            " Ctrl + hjkl でウィンドウ間を移動
+nnoremap <C-k> <C-w>k|            " Ctrl + hjkl でウィンドウ間を移動
+nnoremap <C-l> <C-w>l|            " Ctrl + hjkl でウィンドウ間を移動
 "windowサイズ変更
 nnoremap <S-Left>  <C-w><
 nnoremap <S-Right> <C-w>>
@@ -481,23 +501,24 @@ let g:lightline = {
 \ 'colorscheme': 'quack',
     \ 'active': {
         \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','git'], [ 'readonly', 'path'] ],
-        \ 'right': [ ['lineinfo'],
-            \ ['charcount'], [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'percent','IMEstatus']
+        \ 'right': [
+            \ ['lineinfo'],
+            \ ['charcount'],
+            \ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'percent','IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
-        \ 'left': [['inactivefn','denitebuf','denitesource']],
+        \ 'left': [['inactivefn']],
         \ 'right': [[ 'percent' ]]
     \ },
     \ 'tabline' : {
-    \ 'left': [['buffers']], 
-    \ 'right': [ ['winnr'],['fileencoding','filetype'] ]
+    \ 'left': [['buffers'], ['denitesource']],
+    \ 'right': [['winnr'],['fileencoding','filetype'] ]
     \ },
     \ 'component':{
     \},
     \ 'component_function': {
         \ 'readonly':'LLReadonly',
-        \ 'denitebuf': 'LLDeniteBuffer',
         \ 'inactivefn':'LLInactiveFilename',
         \ 'path':'LLMyFilepath',
         \ 'mode': 'LLMode',
@@ -505,14 +526,15 @@ let g:lightline = {
         \ 'eskk': 'LLeskk',
         \ 'git':'LLgit',
         \ 'lineinfo':'LLlineinfo',
+        \ 'denitebuf': 'LLDeniteBuffer',
         \ 'denitesource' : 'LLDeniteSource'
     \ },
     \ 'component_expand': {
-        \ 'buffers': 'lightline#bufferline#buffers',
+        \ 'buffers': 'LLmybufferline',
+        \ 'denitesource' : 'LLDeniteSource',
         \ 'linter_checking': 'lightline#ale#checking',
         \ 'linter_warnings': 'lightline#ale#warnings',
-        \ 'linter_errors': 'lightline#ale#errors',
-        \ 'linter_ok': 'lightline#ale#ok'
+        \ 'linter_errors': 'lightline#ale#errors'
     \ },
    \ 'component_type' : {
         \ 'buffers': 'tabsel',
@@ -522,6 +544,7 @@ let g:lightline = {
         \ 'linter_ok': 'middle'
     \ }
 \ }
+
 if !has('nvim')
     let g:lightline.subseparator= { 'left': '', 'right': '' }
     let g:lightline.separator= { 'left': '', 'right': '' }
@@ -530,11 +553,18 @@ endif
 "   let g:lightline.subseparator= { 'left': '', 'right': '' }
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
+function! LLmybufferline() abort
+    if &filetype ==# 'denite' || 'denite-filter'
+        return LLDeniteBuffer()
+    else
+        return lightline#bufferline#buffers()
+    endif
+endfunction
 let g:component_function_visible_condition = {
         \ 'readonly': 1,
         \ 'denitebuf': 1,
         \ 'inactivefn': 1,
-        \ 'path': 1, 
+        \ 'path': 1,
         \ 'mode': 1,
         \ 'charcount': 1,
         \ 'eskk': 1,
@@ -560,13 +590,13 @@ let g:lightline#bufferline#number_map = {
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
 
 function! LLMode()
-return &filetype ==# 'unite' ? 'Unite' :
-    \ &filetype ==# 'help' ? 'Help' :
-    \ &filetype ==# 'denite' ? 'Denite' :
-    \ &filetype ==# 'defx' ? 'Defx' :
-    \ &filetype ==# 'gundo' ? 'Gundo' :
-    \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
-    \ lightline#mode()
+    return &filetype ==# 'unite' ? 'Unite' :
+        \ &filetype ==# 'help' ? 'Help' :
+        \ &filetype ==# 'denite' ? 'Denite' :
+        \ &filetype ==# 'defx' ? 'Defx' :
+        \ &filetype ==# 'gundo' ? 'Gundo' :
+        \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
+        \ lightline#mode()
 endfunction
 "例外filetype
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
@@ -587,7 +617,6 @@ function! LLlineinfo() abort
     let l:col = col('.')
     let l:fixedcol = l:col <10 ? '  ' . l:col :
         \ l:col <100 ? ' ' . l:col : l:col
-    
     if &filetype !~# s:ignore_filetype
         return winwidth(0) > 65 ?
             \  printf('%s:%d#%d', l:fixedcol , line('.') , line('$') ) :
@@ -681,25 +710,25 @@ function! LLMyFilepath()
 endfunction
 
 function! s:llanzu()
-let s:anzu = anzu#search_status()
-"    if winwidth(0) > 100
-        return strlen(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
-"    else
-"        return ''
-"    endif
+    let s:anzu = anzu#search_status()
+    "    if winwidth(0) > 100
+            return strlen(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
+    "    else
+    "        return ''
+    "    endif
 endfunction
 
 function! LLDeniteBuffer()
-if &filetype ==# 'denite'
-    let l:buffer = denite#get_status('buffer_name')
-    return l:buffer
-else
-    return ''
-endif
+    if &filetype ==# 'denite' || 'denite-filter'
+        let l:buffer = denite#get_status('buffer_name')
+        return l:buffer
+    else
+        return ''
+    endif
 endfunction
 
 function! LLDeniteSource()
-    if &filetype !=# 'denite'
+    if &filetype !=# 'denite' || 'denite-filter'
         return ''
     endif
 
@@ -745,7 +774,7 @@ function! ProfileCursorMove() abort
     autocmd CursorHold <buffer> profile pause | q
   augroup END
 
-  for i in range(100)
+  for i in range(500)
     call feedkeys('j')
   endfor
 endfunction
@@ -758,28 +787,31 @@ endfunction
 "文字数カウント "{{{
 "1行カウント
 function! g:CharCount()
-	let l:line = getline(line('.'))
-	return strlen(substitute(l:line, '.', 'x','g'))
+    let l:line = getline(line('.'))
+    return strlen(substitute(l:line, '.', 'x','g'))
 endfunction
 
 "全体カウント
 function! g:CharAllCount()
-	let l:result = 0
-	for l:linenum in range(0, line('$'))
-		let l:line = getline(l:linenum)
-		let l:result += strlen(substitute(l:line, '.', 'x','g'))
-	endfor
-	return l:result
+    if &filetype ==# 'help' || 'denite'
+        return
+    endif
+    let l:result = 0
+    for l:linenum in range(0, line('$'))
+        let l:line = getline(l:linenum)
+        let l:result += strlen(substitute(l:line, '.', 'x','g'))
+    endfor
+    return l:result
 endfunction
 "選択範囲の行をカウント
 function! g:LineCharVCount() range
-	let l:result = 0
-	for l:linenum in range(a:firstline, a:lastline)
-		let l:line = getline(l:linenum)
-		let l:result += strlen(substitute(l:line, '.', 'x','g'))
-	endfor
-	echo ' [WordCount] -- ' . l:result . ' : ' . g:CharAllCount() .
-				\ ' -- [選択行の字数:全体の字数]'
+    let l:result = 0
+    for l:linenum in range(a:firstline, a:lastline)
+        let l:line = getline(l:linenum)
+        let l:result += strlen(substitute(l:line, '.', 'x','g'))
+    endfor
+    echo ' [WordCount] -- ' . l:result . ' : ' . g:CharAllCount() .
+                \ ' -- [選択行の字数:全体の字数]'
 endfunction
 "呼び出す
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
@@ -831,17 +863,18 @@ endif
 "}}}
 "-----------------------------------------------------------------------
 "colorscheme-plugin {{{
-" autocmd vimrc ColorScheme solarized8 highlight clear Comment
-" autocmd vimrc ColorScheme solarized8 highlight Comment ctermfg=14 guifg=#586e75
 "補完ポップアップメニューの色変更
 autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
 autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd vimrc ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd vimrc ColorScheme iceberg highlight clear Search
 autocmd vimrc ColorScheme iceberg highligh Search gui=underline
-"colorscheme hybrid
-"colorscheme gruvbox
-"let ayucolor='dark'
+autocmd vimrc ColorScheme solarized8 highlight! VertSplit guifg=#05252C guibg=#05252C
+autocmd vimrc ColorScheme solarized8 highlight! link EndOfBuffer Comment
+autocmd vimrc ColorScheme solarized8 highlight! NormalFloat guibg=#05252C
+
+" autocmd vimrc ColorScheme solarized8 highlight clear SignColumn
+" autocmd vimrc ColorScheme solarized8 highlight link  SignColumn LineNr
 set background=dark
 colorscheme solarized8
 
@@ -861,5 +894,6 @@ if exists('g:vv')
     VVset windowleft=0
     VVset windowtop=0k
 endif
-
+let g:parenmatch_highlight = 0
+hi! link ParenMatch MatchParen
 "vim:set foldmethod=marker:"

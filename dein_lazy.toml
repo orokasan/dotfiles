@@ -4,7 +4,7 @@ on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
 on_source = 'defx.nvim'
 hook_add = '''
 "{{{
-nmap <TAB> [denite]
+nmap s [denite]
 nnoremap [denite] <Nop>
 
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
@@ -19,34 +19,33 @@ nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
     \  file/rec file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
-  	\ file file:new<CR>
+nnoremap <silent> [denite]t :<C-u>Denite
+      \ file::~/ file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
-  	\ file/rec file:new<CR>
+nnoremap <silent> [denite]T :<C-u>Denite
+      \ file/rec::~/ file:new<CR>
 
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-  	\ -buffer-name=normal 
-  	\ buffer<CR>
+      \ -buffer-name=normal 
+      \ buffer<CR>
 
 ""デナイト・サーチ
 "nnoremap <silent> ? :<C-u>Denite
-"  	\ -buffer-name=search
+"      \ -buffer-name=search
 "    \ -start-filter
 "    \ -auto-action='highlight'
-"  	\ line<CR>
+"      \ line<CR>
 
 nnoremap <silent> [denite]/ :<C-u>Denite
     \ -buffer-name=search
-    \ -auto-action='highlight'
     \ anzu<CR>
 
 "デナイト・キーワードサーチ
 "nnoremap <silent> * :<C-u>DeniteCursorWord
-"  	\ -buffer-name=search
-"  	\ -auto-highlight  line<CR>
+"      \ -buffer-name=search
+"      \ -auto-highlight  line<CR>
 
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
@@ -72,7 +71,7 @@ nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
     \ -buffer_name=normal
-  	\ -winheight=5
+      \ -winheight=5
     \ menu<CR>
 
 "ヘルプ
@@ -100,8 +99,8 @@ nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
 
 "open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
-	\ -buffer-name=search 
-	\ ale<CR>
+    \ -buffer-name=search 
+    \ ale<CR>
 
 nnoremap <silent><Leader>n :<C-u>Denite
     \ -cursor-pos=+1 -immediately
@@ -127,39 +126,40 @@ autocmd vimrc FileType denite hi link CursorLine ColorColumn
 hook_source = '''
 "{{{
 call denite#custom#option('_', {
-	\ 'winheight': 14,
+    \ 'winheight': 14,
     \ 'short_source_names': v:true,
     \ 'highlight_mode_normal': 'Visual',
     \ 'highlight_mode_insert': 'Visual',
-    \ 'prompt': '$',
+    \ 'prompt': '#',
     \ 'highlight_matched_char' : 'Title',
     \ 'max_dynamic_update_candidates' : '50000',
     \ 'direction': 'dynamicbottom',
     \ 'filter_split_direction' : '',
-    \ 'vertical_preview': v:true,
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
         \   'h' : 5, 'l' : 6, ';' : 7,
         \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
         \ }
-	\ })
+    \ })
 if has('nvim')
-""    call denite#custom#option('_', {
-"        \ 'split': 'floating',
-"        \ 'wincol': &columns/3,
-"        \ 'winwidth': &columns - 10
-"        \ })
     call denite#custom#option('_', {
-        \ 'split': 'horizontal',
-        \ 'statusline' : v:false,
-        \ 'filter_split_direction' : ''
+        \ 'split': 'floating',
+        \ 'filter_split_direction': '',
+        \ 'wincol': &columns/10,
+        \ 'winwidth': &columns*5/6
         \ })
+    " call denite#custom#option('_', {
+    "     \ 'split': 'horizontal',
+    "     \ 'statusline' : v:false,
+    "     \ 'filter_split_direction' : ''
+    " \ 'vertical_preview': v:true,
+    "     \ })
 else
     call denite#custom#option('_', {'statusline': v:false } )
 endif
 "buffer-normal
 call denite#custom#option('normal', {
-	\ 'winheight': 10
+    \ 'winheight': 10
     \})
 "buffer-search
 call denite#custom#option('search', {
@@ -196,20 +196,20 @@ call denite#custom#var('grep', 'default_opts',
 
 " Change matchers.
 "call denite#custom#source(
-	"\ 'file_mru', 'matchers', ['matcher/regexp', 'matcher/project_files'])
+    "\ 'file_mru', 'matchers', ['matcher/regexp', 'matcher/project_files'])
 "call denite#custom#source(
-"	\ 'file/rec', 'matchers', ['matcher/cpsm'])
+"    \ 'file/rec', 'matchers', ['matcher/cpsm'])
 
 " Add custom menus
 let s:menus = {
     \ }
 let s:menus.window_size = {'description': 'Change window size' }
 let s:menus.window_size.command_candidates = [
-	\ ['120x60', 'set lines=60 columns=120'],
-	\ ['150x40', 'set lines=40 columns=150'],
-	\ ['240x40', 'set lines=40 columns=240'],
-	\ ['240x60', 'set lines=60 columns=240']
-	\ ]
+    \ ['120x60', 'set lines=60 columns=120'],
+    \ ['150x40', 'set lines=40 columns=150'],
+    \ ['240x40', 'set lines=40 columns=240'],
+    \ ['240x60', 'set lines=60 columns=240']
+    \ ]
 let s:menus.string = {'description': 'string utilities.'}
 let s:menus.string.command_candidates = [
       \ ['format: reverse lines', 'g/^/m0'],
@@ -227,25 +227,34 @@ call denite#custom#var('menu', 'menus', s:menus)
 "call denite#custom#var('file/rec', 'command',
 "      \ ['ack', '-f','-r'])
 " Ack command on grep source
-"	call denite#custom#var('grep', 'command', ['ack'])
-"	call denite#custom#var('grep', 'default_opts',
-"			\ ['--ackrc', $HOME.'/.ackrc', '-H', '-i', '-Q',
-"			\  '--nopager', '--nocolor', '--nogroup', '--column'])
-"	call denite#custom#var('grep', 'recursive_opts', [])
-"	call denite#custom#var('grep', 'pattern_opt', ['--match'])
-"	call denite#custom#var('grep', 'separator', ['--'])
-"	call denite#custom#var('grep', 'final_opts', [])
+"    call denite#custom#var('grep', 'command', ['ack'])
+"    call denite#custom#var('grep', 'default_opts',
+"            \ ['--ackrc', $HOME.'/.ackrc', '-H', '-i', '-Q',
+"            \  '--nopager', '--nocolor', '--nogroup', '--column'])
+"    call denite#custom#var('grep', 'recursive_opts', [])
+"    call denite#custom#var('grep', 'pattern_opt', ['--match'])
+"    call denite#custom#var('grep', 'separator', ['--'])
+"    call denite#custom#var('grep', 'final_opts', [])
 
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#var('file/rec/git', 'command',
-	\ ['git', 'ls-files', '-co', '--exclude-standard'])
+    \ ['git', 'ls-files', '-co', '--exclude-standard'])
 "call denite#custom#alias('source', 'file/rec/py', 'file/rec')
 "call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 " Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-	\ [ '.git/', '.ropeproject/', '__pycache__/',
-	\   'venv/', 'images/','img/', 'fonts/'])
+    \ [ '.git/', '.ropeproject/', '__pycache__/',
+    \   'venv/', 'images/','img/', 'fonts/'])
+
+function! s:candidate_grep(context) abort
+    let path = a:context['targets'][0]['action__path']
+    let dir = denite#util#path2directory(path)
+    let sources_queue = a:context['sources_queue'] + [[
+          \ {'name': 'grep', 'args': [path, '', '!']},
+          \ ]]
+    return {'is_interactive': v:false, 'sources_queue': sources_queue}
+endfunction
 
 function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
@@ -254,6 +263,10 @@ function! s:denite_rec(context)
     execute('Denite file/rec:' . sdir)
 endfunction
 
+call denite#custom#action(
+    \ 'buffer,directory,file,openable', 'grep',
+    \ function('s:candidate_grep')
+    \ )
 call denite#custom#action(
     \ 'buffer,directory,file,openable,dirmark', 'file/rec',
     \ function('s:denite_rec')
@@ -278,25 +291,16 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
-
-autocmd FileType denite-filter call s:denite_my_settings()
-function! s:denite_my_settings() abort
-  inoremap <silent><buffer><expr> <C-l>
-  \ denite#do_map('do_action')
-  imap <buffer> <C-[>
-  \ <Plug>(denite_filter_quit)
-"  inoremap <silent><buffer><expr> <TAB>
-"  \ denite#do_map('choose_action')
-  inoremap <silent><buffer> <C-j>   <Esc><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
-  inoremap <silent><buffer> <C-k>   <Esc><C-w>p:call cursor(line('.')-1,0)<CR><C-w>pA
-endfunction
 "}}}
 '''
 
 [plugins.ftplugin]
 denite = '''
 setlocal signcolumn=yes
-
+setlocal nocursorline
+if has('nvim')
+    setlocal winblend=20
+endif
 nnoremap <silent><buffer><expr> j
 \ line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k
@@ -321,6 +325,15 @@ nnoremap <silent><buffer><expr> w
     \ denite#do_map('toggle_select').'j'
 nnoremap <silent><buffer><expr> <C-r>
     \ denite#do_map('do_action','file/rec')
+nnoremap <silent><buffer><expr> <C-s>
+    \ denite#do_map('change_sorters', 'sorter/rank,sorter/word')
+'''
+denite-filter = '''
+nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
+nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
+inoremap <silent><buffer> <C-[> <ESC>q
+imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)
+nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
 '''
 
 [[plugins]]
@@ -586,6 +599,7 @@ let g:defx_icons_extensions = {
 
 [[plugins]]
 repo = 'Shougo/deol.nvim'
+on_cmd = ['Deol']
 hook_add = '''
 nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
 '''
@@ -596,6 +610,7 @@ on_if = ''' has('nvim') '''
 on_event = 'InsertEnter'
 hook_source = '''
 "{{{
+let g:deoplete#enable_at_startup = 1
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
@@ -607,16 +622,22 @@ endfunction "}}}
 inoremap <silent><expr> <C-n>
     \ pumvisible() ? "\<C-n>" :
     \ deoplete#manual_complete()
-" <S-TAB>: completion back.
+'''
+hook_post_source = '''
 inoremap <silent><expr><C-g>
     \ deoplete#undo_completion()
 inoremap <silent><expr><C-h>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><BS>
     \ deoplete#smart_close_popup()."\<C-h>"
-inoremap <silent><expr><C-l>       deoplete#complete_common_string()
-inoremap <expr><C-l>       deoplete#insert_candidate(0)
+inoremap <silent><expr><C-l> 
+    \ deoplete#complete_common_string()
+inoremap <expr><silent> <C-f>
+    \ pumvisible() ? deoplete#close_popup() : "\<C-f>"
 "" <CR>: close popup and save indent.
+function! s:my_cr_function() abort
+    return deoplete#close_popup() . "\<CR>"
+endfunction
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort
   return pumvisible() ? deoplete#close_popup() : "\<CR>"
@@ -665,10 +686,10 @@ call deoplete#custom#option({
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'mirror'
     \ })
-call deoplete#enable()
-
+call deoplete#initialize()
 "}}}
 '''
+
 [[plugins]]
 repo = 'Shougo/neocomplete.vim'
 on_if = ''' !has('nvim') '''
@@ -783,9 +804,9 @@ let g:eskk#tab_select_completion = 1
 let g:eskk#start_completion_length = 3
 let g:eskk_revert_henkan_style = 'okuri'
 let g:eskk#dictionary = {
-\	'path': "~/GoogleDrive/rc/.skk-jisyo",
-\	'sorted': 0,
-\	'encoding': 'utf-8',
+\    'path': "~/GoogleDrive/rc/.skk-jisyo",
+\    'sorted': 0,
+\    'encoding': 'utf-8',
 \}
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#dictionary_save_count = 5
@@ -864,10 +885,9 @@ endfunction
 
 "IME/skkの状態に応じてsigncolumnの色を変える（WIP）
 "SignColumn     xxx ctermfg=239 ctermbg=235 guifg=#444b71 guibg=#1e2132
-autocmd vimrc User eskk-enable-post hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#e2a478 guibg=#2a3158
+autocmd vimrc User eskk-enable-post hi link CursorLineNr Incsearch
 "autocmd vimrc CursorMovedI * call s:eskkmodecolumn()
 autocmd vimrc User eskk-disable-post hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#cdd1e6 guibg=#2a3158
-
 "function! s:eskkmodecolumn() abort
 "    let eskk_mode = eskk#get_mode()
 "    if !has_key(g:eskk#cursor_color, eskk_mode)
@@ -948,7 +968,7 @@ call lexima#add_rule({'char': '(', 'input': '(', 'input_after':')'})
 [[plugins]]
 repo = 'kana/vim-operator-replace'
 depends = 'vim-operator-user'
-on_map = {nv = '<Plug>'}
+on_map = {nv = '<Plug>(operator-replace'}
 hook_add = '''
 nmap _ <Plug>(operator-replace)
 vmap _ <Plug>(operator-replace)
@@ -1104,27 +1124,10 @@ endif
 "}}}
 '''
 
-[[plugins]]
-repo =  'maximbaz/lightline-ale'
-on_source = 'ale'
-depends = ['lightline.vim']
-hook_add = '''
-if has('mac')
-    let g:lightline#ale#indicator_checking = "\uf110"
-    let g:lightline#ale#indicator_warnings = ''
-    let g:lightline#ale#indicator_errors = ''
-    let g:lightline#ale#indicator_ok = ""
-else
-    let g:lightline#ale#indicator_checking = "\uf110"
-    let g:lightline#ale#indicator_warnings = "\uf48f"
-    let g:lightline#ale#indicator_errors = "\uf484"
-    let g:lightline#ale#indicator_ok = "\uf43a"
-endif
-'''
 
 [[plugins]]
 repo =  't9md/vim-choosewin'
-on_map = {n = '<Plug>'}
+on_map = {n = '<Plug>(choosewin'}
 hook_add = '''
 nmap - <Plug>(choosewin)
 
@@ -1389,7 +1392,7 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 
 [[plugins]]
 repo = 'haya14busa/vim-migemo'
-on_map = {n = '<Plug>'}
+on_map = {n = '<Plug>(migemo-searchchar'}
 hook_add = '''
 nmap <Leader>m <Plug>(migemo-searchchar)
 '''
@@ -1400,13 +1403,14 @@ nnoremap g/ /
 
 [[plugins]]
 repo = 'easymotion/vim-easymotion'
-on_map = {nx = '<Plug>'}
+on_map = {nx = '<Plug>(easymotion'}
 hook_add = '''
+nnoremap Z z
 let g:EasyMotion_do_mapping = 0
-nmap s <Plug>(easymotion-s2)
-imap <C-Space> <ESC><Plug>(easymotion-s2)
-xmap s <Plug>(easymotion-s2)
-omap s <Plug>(easymotion-s2)
+ nmap <silent>z <Plug>(easymotion-s2)
+ imap <silent><C-z> <ESC><Plug>(easymotion-s2)
+ xmap <silent>z <Plug>(easymotion-s2)
+ omap <silent>z <Plug>(easymotion-s2)
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
@@ -1422,10 +1426,10 @@ depends = 'is.vim'
 on_map = {nx = '<Plug>'}
 hook_add = '''
 let g:asterisk#keeppos = 1
-map *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
-map g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
-map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
-map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
+map *  <Plug>(is-nohl-1)<Plug>(asterisk-z*)
+map g* <Plug>(is-nohl-1)<Plug>(asterisk-gz*)
+map #  <Plug>(is-nohl-1)<Plug>(asterisk-z#)
+map g# <Plug>(is-nohl-1)<Plug>(asterisk-gz#)
 '''
 
 #[[plugins]]
@@ -1468,5 +1472,9 @@ let g:undotree_SetFocusWhenToggle = 1
 [[plugins]]
 repo = 'majutsushi/tagbar'
 on_cmd = ['Tagbar']
+
+[[plugins]]
+repo = 'cocopon/colorswatch.vim'
+on_cmd = ['ColorSwatchGenerate']
 
 # vim:set foldmethod=marker:
