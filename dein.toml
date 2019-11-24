@@ -182,6 +182,10 @@ repo = 'tpope/vim-repeat'
 repo = 'haya14busa/is.vim'
 hook_add = '''
 let g:is#do_default_mapping = 0
+nmap * *<Plug>(is-nohl)
+nmap g* g*<Plug>(is-nohl)
+nmap # #<Plug>(is-nohl)
+nmap g# g#<Plug>(is-nohl)
 '''
 
 [[plugins]]
@@ -226,10 +230,10 @@ hook_add = '''
 "nnoremap <silent><expr> <Plug>(anzu-N-zzzv) anzu#mode#mapexpr("N", "", "zzzv")
 "nmap n <Plug>(is-nohl)<Plug>(anzu-n-zzzv)
 "nmap N <Plug>(is-nohl)<Plug>(anzu-N-zzzv)
-	nmap n <Plug>(is-nohl)<Plug>(anzu-n)
-	nmap N <Plug>(is-nohl)<Plug>(anzu-N)
-	nmap * <Plug>(is-nohl)<Plug>(anzu-star)
-	nmap # <Plug>(is-nohl)<Plug>(anzu-sharp)
+	nmap n <Plug>(is-nohl)<Plug>(anzu-n)zvzz
+	nmap N <Plug>(is-nohl)<Plug>(anzu-N)zvzz
+	nmap * <Plug>(is-nohl)<Plug>(anzu-star)zvzz
+	nmap # <Plug>(is-nohl)<Plug>(anzu-sharp)zvzz
 let g:airline#extensions#anzu#enabled = 0
 '''
 
@@ -343,8 +347,8 @@ repo = 'deoplete-plugins/deoplete-jedi'
 [[plugins]]
 repo = 'tpope/vim-commentary'
 
-#[[plugins]]
-#repo = 'tpope/vim-fugitive'
+[[plugins]]
+repo = 'tpope/vim-fugitive'
 
 [[plugins]]
 repo = 't9md/vim-textmanip'
@@ -384,6 +388,8 @@ repo = 'orokasan/vim-quack-lightline'
 #repo = 'itchyny/vim-parenmatch'
 repo = 'orokasan/vim-parenmatch'
 hook_add = '''
+let g:parenmatch_highlight = 0
+hi! link ParenMatch MatchParen
 '''
 
 [[plugins]]
@@ -402,4 +408,24 @@ else
     let g:lightline#ale#indicator_ok = "\uf43a"
 endif
 '''
+[[plugins]]
+repo = 'easymotion/vim-easymotion'
+hook_add = '''
+let g:EasyMotion_do_mapping = 0
+nmap , <Plug>(easymotion-s2)
+imap <C-z> <ESC><Plug>(easymotion-s2)
+xmap , <Plug>(easymotion-s2)
+omap , <Plug>(easymotion-s2)
+" Jump to first match with enter & space
+let g:EasyMotion_use_upper = 1
+let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
+let g:EasyMotion_smartcase = 1
+let g:EasyMotion_enter_jump_first = 1
+let g:EasyMotion_space_jump_first = 1
+let g:EasyMotion_use_migemo = 1
+'''
+
+[[plugins]]
+repo = 'LeafCage/foldCC.vim'
+
 # vim:set foldmethod=marker:
