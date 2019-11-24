@@ -41,6 +41,7 @@ let g:loaded_netrwPlugin       = 1
 let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
+
 let g:loaded_matchparen = 1
 "========================================================================
 "Python,vimproc
@@ -177,7 +178,7 @@ setlocal foldmethod=marker
 
 "viminfo設定(nvimと設定分ける)
 if has('nvim')
-"    set shada=!,:10,'300,<50,s10,h,@10
+  set shada=!,:10,'300,<50,s10,h,@10
 else
   set viminfo=!,'300,<50,s10,h
 endif
@@ -192,32 +193,33 @@ set noequalalways
 "ctags設定
 set tags=vim.tags
 "いい感じに折りたたみ状態を保存 {{{
-function! s:is_view_available() abort
-  if !&buflisted || &buftype !=# ''
-    return 0
-  elseif !filewritable(expand('%:p'))
-    return 0
-  endif
-  return 1
-endfunction
+    function! s:is_view_available() abort
+      if !&buflisted || &buftype !=# ''
+        return 0
+      elseif !filewritable(expand('%:p'))
+        return 0
+      endif
+      return 1
+    endfunction
 
-function! s:mkview() abort
-   if s:is_view_available()
-    silent! mkview
-  endif
-endfunction
+    function! s:mkview() abort
+       if s:is_view_available()
+        silent! mkview
+      endif
+    endfunction
 
-function! s:loadview() abort
-  if s:is_view_available()
-    silent! loadview
-  endif
-endfunction
+    function! s:loadview() abort
+      if s:is_view_available()
+        silent! loadview
+      endif
+    endfunction
 
-augroup MyAutoCmd
-  autocmd!
-  autocmd MyAutoCmd BufWinLeave * call s:mkview()
-  autocmd MyAutoCmd BufReadPost * call s:loadview()
-augroup END
+    augroup MyAutoCmd
+      autocmd!
+      autocmd MyAutoCmd BufWinLeave * call s:mkview()
+      autocmd MyAutoCmd BufReadPost * call s:loadview()
+    augroup END
+set viewoptions-=options
 "ディレクトリが保存時無い場合に自動的に作成
 "https://vim-jp.org/vim-users-jp/2011/02/20/Hack-202.html
 augroup vimrc-auto-mkdir  " {{{
@@ -343,23 +345,27 @@ endif  "}}}
 "lでfoldingを展開
 nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
 "CTRL-SPACEで閉じる
-nnoremap <silent><Space><Space> :<C-u>call <SID>smart_foldcloser()<CR>
+"nnoremap <silent>h :silent! call <SID>smart_foldcloser()<CR>
+" nnoremap <silent><expr>h col('.') != 1 ? "h" : <SID>smart_foldcloser()
 function! s:smart_foldcloser() "{{{
-  if foldlevel('.') == 0
+    if col('.') != 1
+        call execute('h')
+    endif
+    if foldlevel('.') == 0
     norm! zM
     return
-  endif
+    endif
 
-  let foldc_lnum = foldclosed('.')
-  norm! zc
-  if foldc_lnum == -1
+    let foldc_lnum = foldclosed('.')
+    norm! zc
+    if foldc_lnum == -1
     return
-  endif
+    endif
 
-  if foldclosed('.') != foldc_lnum
+    if foldclosed('.') != foldc_lnum
     return
-  endif
-  norm! zM
+    endif
+    norm! zM
 endfunction
 "}}}
 
