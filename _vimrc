@@ -6,7 +6,7 @@
 "<C-t>&<C-d>=> インデント増減
 "vim正規表現
 "https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
-"========================================================================
+"======================================================================
 "基本設定 {{{
 "
 "encode
@@ -43,7 +43,7 @@ let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 
 let g:loaded_matchparen = 1
-"========================================================================
+"======================================================================
 "Python,vimproc
 "メモ
 "インストールはAll Userで
@@ -58,7 +58,7 @@ endif
 "vimprocをダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
-"========================================================================
+"======================================================================
 "外観  {{{
 set shortmess+=aAcsT
 set showtabline=2   "常にタブラインを表示
@@ -119,7 +119,7 @@ endif
 "  call ZenkakuSpace()
 "endif
 "}}}
-"========================================================================
+"======================================================================
 "入力・編集 {{{
 set virtualedit=block       " カーソルを文字が存在しない部分でも動けるようにする
 "set virtualedit=onemore "行末の1文字先までカーソルを移動できるように
@@ -192,7 +192,8 @@ set cmdwinheight=5
 set noequalalways
 "ctags設定
 set tags=vim.tags
-"いい感じに折りたたみ状態を保存 {{{
+"いい感じに折りたたみ状態を保存
+"{{{
     function! s:is_view_available() abort
       if !&buflisted || &buftype !=# ''
         return 0
@@ -233,7 +234,11 @@ augroup vimrc-auto-mkdir  " {{{
   endfunction  " }}}
 augroup END  " }}}
 "}}}
-"}}}
+"transparent completions menu
+if has('nvim')
+    set pumblend=15
+    hi! PmenuSel blend=0
+endif
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
@@ -245,7 +250,7 @@ if !exists('g:disable_IM_Control')
     inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
 endif
 "}}}
-"========================================================================
+"======================================================================
 "Key mapping {{{
 
 let mapleader = "\<Space>"
@@ -343,14 +348,9 @@ if !exists('*s:source_script')  "{{{
   endfunction
 endif  "}}}
 "lでfoldingを展開
-nnoremap <expr>l foldclosed('.') != -1 ? 'zo' : 'l'
-"CTRL-SPACEで閉じる
-"nnoremap <silent>h :silent! call <SID>smart_foldcloser()<CR>
-" nnoremap <silent><expr>h col('.') != 1 ? "h" : <SID>smart_foldcloser()
+nnoremap <silent><C-l> zo
+nnoremap <silent><C-h> :silent! call <SID>smart_foldcloser()<CR>
 function! s:smart_foldcloser() "{{{
-    if col('.') != 1
-        call execute('h')
-    endif
     if foldlevel('.') == 0
     norm! zM
     return
@@ -368,7 +368,6 @@ function! s:smart_foldcloser() "{{{
     norm! zM
 endfunction
 "}}}
-
 "画面分割マッピング
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -379,16 +378,16 @@ nnoremap <leader>wo :only<CR>
 "nnoremap <S-l> <End>
 "nnoremap <S-h> <Home>
 " インサートモード時はちょっとemacs like なキーバインド
-inoremap <C-f> <Right>|            " C-f で左へ移動
-inoremap <C-b> <Left>|            " C-b で右へ移動
-inoremap <C-h> <BS>|            " C-h でバックスペース
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
+inoremap <C-h> <BS>
 inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 "window移動
-nnoremap <C-h> <C-w>h|            " Ctrl + hjkl でウィンドウ間を移動
-nnoremap <C-j> <C-w>j|            " Ctrl + hjkl でウィンドウ間を移動
-nnoremap <C-k> <C-w>k|            " Ctrl + hjkl でウィンドウ間を移動
-nnoremap <C-l> <C-w>l|            " Ctrl + hjkl でウィンドウ間を移動
+" nnoremap <C-h> <C-w>h
+" nnoremap <C-j> <C-w>j
+" nnoremap <C-k> <C-w>k
+" nnoremap <C-l> <C-w>l
 "windowサイズ変更
 nnoremap <S-Left>  <C-w><
 nnoremap <S-Right> <C-w>>
@@ -408,6 +407,22 @@ function! s:toggle_window_zoom() abort "{{{
         vertical resize
     endif
 endfunction  "}}}
+" add fold marker
+nnoremap  z[     :<C-u>call <SID>put_foldmarker(0)<CR>
+nnoremap  z]     :<C-u>call <SID>put_foldmarker(1)<CR>
+function! s:put_foldmarker(foldclose_p) "{{{
+    let crrstr = getline('.')
+    let padding = crrstr ==# '' ? '' : crrstr =~# '\s$' ? '' : ' '
+    let [cms_start, cms_end] = ['', '']
+    let outside_a_comment_p = synIDattr(synID(line('.'), col('$')-1, 1), 'name') !~? 'comment'
+    if outside_a_comment_p
+        let cms_start = matchstr(&commentstring,'\V\s\*\zs\.\+\ze%s')
+        let cms_end = matchstr(&commentstring,'\V%s\zs\.\+')
+    endif
+    let fmr = split(&foldmarker, ',')[a:foldclose_p]. (v:count ? v:count : '')
+    exe 'norm! A'. padding. cms_start. fmr. cms_end
+endfunction
+"}}}
 "バッファ移動
 nnoremap <silent><Leader>h :bprev!<CR>|
 nnoremap <silent><Leader>l :bnext!<CR>|
@@ -435,8 +450,7 @@ else
 endif
 
 "}}}
-
-"========================================================================
+"======================================================================
 "+kaoriya {{{
 if has('kaoriya')
     "autodate 'Last Change: .'
@@ -462,7 +476,7 @@ if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
 endif
 "}}}
-"========================================================================
+"======================================================================
 "dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -499,7 +513,7 @@ command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
-"-----------------------------------------------------------------------
+"======================================================================
 "lightline {{{
 "lightline-bufferline
 "lightline-ale
@@ -584,7 +598,7 @@ let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
 else
     let g:lightline.component += {
-        \'IMEstatus':'%{IMStatus("-JP-")}'
+        \'IMEstatus':'%{IMStatus("======================================================================JP-")}'
         \}
 endif
 
@@ -785,11 +799,7 @@ function! ProfileCursorMove() abort
   endfor
 endfunction
 "}}}
-"if has('nvim')
-"    set pumblend=15
-"    hi PmenuSel blend=0
-"endif
-"-----------------------------------------------------------------------
+"======================================================================
 "文字数カウント "{{{
 "1行カウント
 function! g:CharCount()
@@ -823,7 +833,7 @@ endfunction
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> :LineCharVCount<CR>
 "}}}
-"========================================================================================
+"======================================================================
 "Gvim {{{
 if has('GUI')
     set clipboard=unnamed
@@ -867,7 +877,7 @@ endif
         set ambiwidth=auto
     endif
 "}}}
-"-----------------------------------------------------------------------
+"======================================================================
 "colorscheme-plugin {{{
 "補完ポップアップメニューの色変更
 autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
@@ -886,20 +896,5 @@ colorscheme solarized8
 
 "colorscheme ayu
 "}}}
-"itermでの背景透過時のPowerlineフォントの表示崩れを防ぐ
-"が、この設定で背景関連の透過が崩れる
-"https://qiita.com/tarosaiba/items/fcc399006025ebe9152c
-"highlight! Normal ctermbg=NONE guibg=NONE
-"highlight! NonText ctermbg=NONE guibg=NONE
-"highlight! LineNr ctermbg=NONE guibg=NONE
-if exists('g:vv')
-    VVset fontfamily='Cica'
-    VVset fontsize=14
-    VVset windowheight=100%
-    VVset windowwidth=60%
-    VVset windowleft=0
-    VVset windowtop=0k
-endif
-let g:parenmatch_highlight = 0
-hi! link ParenMatch MatchParen
+set foldtext=FoldCCtext()
 "vim:set foldmethod=marker:"
