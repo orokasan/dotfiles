@@ -99,7 +99,7 @@ nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
 
 "open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
-    \ -buffer-name=search 
+    \ -buffer-name=search
     \ ale<CR>
 
 nnoremap <silent><Leader>n :<C-u>Denite
@@ -163,6 +163,11 @@ call denite#custom#option('normal', {
     \})
 "buffer-search
 call denite#custom#option('search', {
+    \ 'winheight': 10
+    \ })
+call denite#custom#option('default', {
+    \ 'start_filter': v:true ,
+    \ 'immediately_1': v:true,
     \ 'winheight': 10
     \ })
 
@@ -297,7 +302,6 @@ call denite#custom#action(
 [plugins.ftplugin]
 denite = '''
 setlocal signcolumn=yes
-setlocal nocursorline
 if has('nvim')
     setlocal winblend=20
 endif
@@ -332,6 +336,7 @@ denite-filter = '''
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
 inoremap <silent><buffer> <C-[> <ESC>q
+inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
 imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)
 nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
 '''
@@ -633,7 +638,7 @@ inoremap <silent><expr><BS>
 inoremap <silent><expr><C-l> 
     \ deoplete#complete_common_string()
 inoremap <expr><silent> <C-f>
-    \ pumvisible() ? deoplete#close_popup() : "\<C-f>"
+    \ pumvisible() ? deoplete#close_popup() : "<Right>"
 "" <CR>: close popup and save indent.
 function! s:my_cr_function() abort
     return deoplete#close_popup() . "\<CR>"
@@ -1131,6 +1136,18 @@ on_map = {n = '<Plug>(choosewin'}
 hook_add = '''
 nmap - <Plug>(choosewin)
 
+let s:base1 = [ '#93a1a1', 14 ]
+let g:choosewin_color_overlay = {
+      \ 'gui': ['#839496']
+      \ }
+let g:choosewin_color_overlay_current = {
+      \ 'gui': ['#859900']
+      \ }
+let g:choosewin_overlay_font_size = 'small'
+let g:choosewin_overlay_clear_multibyte = 1
+let g:choosewin_tabline_replace = 0
+let g:choosewin_overlay_enable = 1
+let g:choosewin_statusline_replace = 0
 let s:keymap = {
       \ '0':     'tab_first',
       \ '[':     'tab_prev',
@@ -1144,10 +1161,10 @@ let s:keymap = {
       \ "\<CR>": 'win_land',
       \ }
 let g:choosewin_keymap = s:keymap
+let g:choosewin_label = 'HJKLADFG'
+let g:choosewin_blink_on_land = 0
 '''
 hook_source = '''
-let g:choosewin_blink_on_land = 0
-let g:choosewin_label = 'ASDFGHJKL'
 '''
 
 [[plugins]]
@@ -1401,35 +1418,17 @@ nnoremap / g/
 nnoremap g/ /
 '''
 
-[[plugins]]
-repo = 'easymotion/vim-easymotion'
-on_map = {nx = '<Plug>(easymotion'}
-hook_add = '''
-nnoremap Z z
-let g:EasyMotion_do_mapping = 0
- nmap <silent>z <Plug>(easymotion-s2)
- imap <silent><C-z> <ESC><Plug>(easymotion-s2)
- xmap <silent>z <Plug>(easymotion-s2)
- omap <silent>z <Plug>(easymotion-s2)
-" Jump to first match with enter & space
-let g:EasyMotion_use_upper = 1
-let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
-let g:EasyMotion_smartcase = 1
-let g:EasyMotion_enter_jump_first = 1
-let g:EasyMotion_space_jump_first = 1
-let g:EasyMotion_use_migemo = 1
-'''
 
-[[plugins]]
-repo = 'haya14busa/vim-asterisk'
-depends = 'is.vim'
-on_map = {nx = '<Plug>'}
+#[[plugins]]
+#repo = 'haya14busa/vim-asterisk'
+#depends = 'is.vim'
+#on_map = {nx = '<Plug>(asterisk'}
 hook_add = '''
 let g:asterisk#keeppos = 1
-map *  <Plug>(is-nohl-1)<Plug>(asterisk-z*)
-map g* <Plug>(is-nohl-1)<Plug>(asterisk-gz*)
-map #  <Plug>(is-nohl-1)<Plug>(asterisk-z#)
-map g# <Plug>(is-nohl-1)<Plug>(asterisk-gz#)
+map *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
+map g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
+map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
+map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 '''
 
 #[[plugins]]
