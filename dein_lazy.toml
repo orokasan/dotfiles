@@ -422,7 +422,7 @@ function! Defx_to_denite_rec(context) abort
 endfunction
 ''' # }}}
 [plugins.ftplugin]
-defx = ''' # {{{
+defx = ''' " {{{
 setlocal signcolumn=no
 " Define mappings
 nnoremap <silent><buffer><expr> <CR>

@@ -3,7 +3,6 @@
 "*t) =>前方の)の手前まで削除して*
 "aw =>1単語の範囲
 "ap =>段落の範囲
-"<C-t>&<C-d>=> インデント増減
 "vim正規表現
 "https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
 
