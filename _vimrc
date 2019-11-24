@@ -6,7 +6,7 @@
 "<C-t>&<C-d>=> インデント増減
 "vim正規表現
 "https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
-"======================================================================
+"---------------------------------------------------------------------
 "基本設定 {{{
 "
 "encode
@@ -43,7 +43,7 @@ let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 
 let g:loaded_matchparen = 1
-"======================================================================
+"---------------------------------------------------------------------
 "Python,vimproc
 "メモ
 "インストールはAll Userで
@@ -58,7 +58,7 @@ endif
 "vimprocをダウンロード(for Win)
 let g:vimproc#download_windows_dll = 1
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "外観  {{{
 set shortmess+=aAcsT
 set showtabline=2   "常にタブラインを表示
@@ -119,7 +119,7 @@ endif
 "  call ZenkakuSpace()
 "endif
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "入力・編集 {{{
 set virtualedit=block       " カーソルを文字が存在しない部分でも動けるようにする
 "set virtualedit=onemore "行末の1文字先までカーソルを移動できるように
@@ -250,7 +250,7 @@ if !exists('g:disable_IM_Control')
     inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
 endif
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "Key mapping {{{
 
 let mapleader = "\<Space>"
@@ -450,7 +450,7 @@ else
 endif
 
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "+kaoriya {{{
 if has('kaoriya')
     "autodate 'Last Change: .'
@@ -476,7 +476,7 @@ if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
 endif
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -513,7 +513,7 @@ command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "lightline {{{
 "lightline-bufferline
 "lightline-ale
@@ -598,7 +598,7 @@ let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
 else
     let g:lightline.component += {
-        \'IMEstatus':'%{IMStatus("======================================================================JP-")}'
+        \'IMEstatus':'%{IMStatus("---------------------------------------------------------------------JP-")}'
         \}
 endif
 
@@ -799,7 +799,7 @@ function! ProfileCursorMove() abort
   endfor
 endfunction
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "文字数カウント "{{{
 "1行カウント
 function! g:CharCount()
@@ -833,7 +833,7 @@ endfunction
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> :LineCharVCount<CR>
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "Gvim {{{
 if has('GUI')
     set clipboard=unnamed
@@ -877,7 +877,7 @@ endif
         set ambiwidth=auto
     endif
 "}}}
-"======================================================================
+"---------------------------------------------------------------------
 "colorscheme-plugin {{{
 "補完ポップアップメニューの色変更
 autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
@@ -896,5 +896,4 @@ colorscheme solarized8
 
 "colorscheme ayu
 "}}}
-set foldtext=FoldCCtext()
 "vim:set foldmethod=marker:"
