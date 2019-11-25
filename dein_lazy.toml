@@ -7,65 +7,54 @@ nmap s [denite]
 nnoremap [denite] <Nop>
 
 nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+    \ -start-filter
     \  source<CR>
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
+    \ -start-filter
     \  file file:new<CR>
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
+    \ -start-filter
     \  file/rec file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>Denite
+    \ -start-filter
       \ file::~/ file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]T :<C-u>Denite
+    \ -start-filter
       \ file/rec::~/ file:new<CR>
 
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-      \ -buffer-name=normal 
+      \ -buffer-name=normal
       \ buffer<CR>
-
-""デナイト・サーチ
-"nnoremap <silent> ? :<C-u>Denite
-"      \ -buffer-name=search
-"    \ -start-filter
-"    \ -auto-action='highlight'
-"      \ line<CR>
 
 nnoremap <silent> [denite]/ :<C-u>Denite
     \ -buffer-name=search
     \ anzu<CR>
 
-"デナイト・キーワードサーチ
-"nnoremap <silent> * :<C-u>DeniteCursorWord
-"      \ -buffer-name=search
-"      \ -auto-highlight  line<CR>
-
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
     \ -buffer-name=search
-    \ neoyank<CR>
-
-nnoremap <silent> [denite]r :<C-u>Denite
-    \ -buffer-name=search
-    \ register<CR>
+    \ neoyank register<CR>
 
 "コマンド履歴
 nnoremap <silent> [denite]c :<C-u>Denite
     \ -buffer-name=normal
-    \ -start-filter
     \ -default-action='execute'
     \ command_history<CR>
 
 "バッファディレクトリからgrep
 nnoremap <silent> [denite]g :<C-u>DeniteBufferDir
     \ -buffer-name=search
-    \ -no-empty  grep<CR>
+    \ -start-filter
+    \ grep:::!<CR>
 
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
@@ -90,10 +79,12 @@ nnoremap <silent> [denite]m :<C-u>Denite
     \ mark<CR>
 
 ":change
-nnoremap <silent> [denite]k :<C-u>Denite  change jump<CR>
+nnoremap <silent> [denite]k :<C-u>Denite change<CR>
+":jump
+nnoremap <silent> [denite]j :<C-u>Denite jump <CR>
 
-"searchバッファをresumeして開く
-nnoremap <silent><C-n> :<C-u>Denite -buffer-name=search
+"resumeして開く
+nnoremap <silent> [denite]r :<C-u>Denite
     \ -resume  -refresh<CR>
 
 "open ale message
@@ -163,7 +154,6 @@ call denite#custom#option('search', {
     \ 'winheight': 10
     \ })
 call denite#custom#option('default', {
-    \ 'start_filter': v:true ,
     \ 'immediately_1': v:true,
     \ 'winheight': 10
     \ })
@@ -331,6 +321,12 @@ nnoremap <silent><buffer><expr> <C-s>
 denite-filter = ''' " {{{
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
+inoremap <silent><buffer><expr><BS> col('.') ==# 1
+    \ ? denite#do_map('move_up_path')
+    \ : "\<BS>"
+inoremap <silent><buffer><expr><C-h> col('.') ==# 1
+    \ ? denite#do_map('move_up_path')
+    \ : "\<BS>"
 inoremap <silent><buffer> <C-[> <ESC>q
 inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
 imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)
@@ -792,42 +788,46 @@ let g:eskk#cursor_color = {
 \   'abbrev': '#4169e1',
 \   'zenei': '#ffd700',
 \}
-nnoremap <silent><expr><C-y> <SID>eskk_inserttoggle()
+nnoremap <silent><expr><C-j> <SID>eskk_inserttoggle()
 imap <C-j> <Plug>(eskk:toggle)
 cmap <C-j> <Plug>(eskk:toggle)
 ''' # }}}
 hook_source = ''' " {{{
 augroup myeskk
 autocmd!
-autocmd InsertLeave * call <SID>eskk_status()
-"autocmd InsertLeave * call <SID>normalcolumn()
-autocmd InsertEnter * call <SID>eskk_insert_config()
+    autocmd InsertLeave * call <SID>eskk_save_status()
+    autocmd InsertEnter * call <SID>eskk_insert_status()
 augroup END
- 
-let s:eskk_insert_status = 0
-let s:eskk_inserton = 0
-let g:eskk_my_toggle_status = 0
 
-function! s:eskk_status() abort
-    let s:eskk_inserton = eskk#is_enabled() ? 1 : 0
-    let g:eskk_my_toggle_status = s:eskk_insert_status ? 1 : s:eskk_inserton ? 1 : 0
+let s:eskk_status = 0
+let g:eskk_toggle_status = 0
+
+function! s:eskk_save_status() abort
+    if g:eskk_toggle_status | exec s:eskk_hl | endif
+    let s:eskk_status = eskk#is_enabled() ? 1 : 0
 endfunction
 
-function! s:eskk_insert_config() abort
-    if &filetype ==# 'denite-filter'
-    else
-    if s:eskk_inserton || s:eskk_insert_status 
+function! s:eskk_insert_status() abort
+    if &filetype ==# 'denite-filter' | return | endif
+    if g:eskk_toggle_status
+        call eskk#enable()
+    elseif s:eskk_status
         call eskk#enable()
     endif
-    endif
 endfunction
 
-"autocmd InsertEnter * call s:denite_eskk_off()
-"function! s:denite_eskk_off() abort
-"    if &filetype ==# 'denite-filter'
-"        call eskk#disable()
-"    endif
-"endfunction
+function! s:eskk_inserttoggle() abort
+    if s:eskk_status || g:eskk_toggle_status
+        let s:eskk_status = 0
+        let g:eskk_toggle_status = 0
+        silent exec s:linenr_hl
+        echo 'eskk status off'
+    else
+        let g:eskk_toggle_status = 1
+        silent exec s:eskk_hl
+        echo 'eskk status on'
+    endif
+endfunction
 
 function! s:define_LLmyeskk()
     function! LLmyeskk() abort
@@ -836,58 +836,14 @@ function! s:define_LLmyeskk()
                 \ get(g:eskk#statusline_mode_strings,
                 \ eskk#get_current_instance().mode, '??'))
         elseif mode() !=# 'i'
-            return g:eskk_my_toggle_status ? printf('[あ]') : printf('[--]')
+            return g:eskk_toggle_status || s:eskk_status ? printf('[あ]') : printf('[--]')
         else
             return printf('[--]')
         endif
     endfunction
 endfunction
-
-function! s:eskk_inserttoggle() abort
-    if s:eskk_insert_status || s:eskk_inserton
-        let s:eskk_insert_status = 0
-        let s:eskk_inserton = 0
-        let g:eskk_my_toggle_status = 0
-        echo 'eskk status off'
-    else
-        let s:eskk_insert_status = 1
-        let g:eskk_my_toggle_status = 1
-        echo 'eskk status on'
-    endif
-endfunction
-
-"IME/skkの状態に応じてsigncolumnの色を変える（WIP）
-"SignColumn     xxx ctermfg=239 ctermbg=235 guifg=#444b71 guibg=#1e2132
-autocmd vimrc User eskk-enable-post hi link CursorLineNr Incsearch
-"autocmd vimrc CursorMovedI * call s:eskkmodecolumn()
-autocmd vimrc User eskk-disable-post hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#cdd1e6 guibg=#2a3158
-"function! s:eskkmodecolumn() abort
-"    let eskk_mode = eskk#get_mode()
-"    if !has_key(g:eskk#cursor_color, eskk_mode)
-"        return
-"    endif
-"    
-"    let color = g:eskk#cursor_color[eskk_mode]
-"    if type(color) == type([]) && len(color) >= 2
-"        execute 'highlight CursorLineNr guibg=' . color[&background ==# 'light' ? 0 : 1]
-"    elseif type(color) == type("") && color !=# ''
-"        execute 'highlight CursorLineNr guibg=' . color
-"    endif
-"endfunction
-
-function! s:insertcolumn()
-    hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#84a0c6 guibg=#2a3158
-endfunction
-
-function! s:normalcolumn()
-    if !g:eskk_my_toggle_status
-        hi CursorLineNr ctermfg=253 ctermbg=237 gui=bold guifg=#cdd1e6 guibg=#2a3158
-    endif
-endfunction
-
-"autocmd vimrc User eskk-initialize-post
-"      \ EskkMap -remap ll <C-j>
 autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre() | call <SID>define_LLmyeskk()
+
 function! s:eskk_initial_pre() abort
     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
     call t.add_map('z ', '　')
@@ -905,6 +861,55 @@ function! s:eskk_initial_pre() abort
     endfor
   call eskk#register_mode_table('hira', t)
 endfunction
+"IME/skkの状態に応じてsigncolumnの色を変える（WIP）
+function! s:gethighlight(hi) abort
+    redir => hl
+    silent execute 'highlight ' . a:hi
+    redir END
+    let hl = substitute(hl, '\w*\ze\s\{3}', '', 'g')
+    let hl = substitute(hl, 'xxx', '', '')
+    let hl = substitute(hl, '\n', '', '')
+    let hl = substitute(hl, 'links to .*', '', 'g')
+    return hl
+endfunction
+
+let s:eskk_hl = 'highlight CursorLineNr cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#073642 guibg=#b58900'
+silent! let s:linenr_hl ='highlight! CursorLineNr ' .  s:gethighlight('CursorLineNr')
+
+autocmd vimrc User eskk-enable-post silent execute s:eskk_hl
+autocmd vimrc User eskk-disable-post call s:eskk_Nr()
+" autocmd vimrc User eskk-disable-post silent execute s:linenr_hl
+
+function! s:eskk_ascii()
+    if eskk#get_mode() ==# 'ascii'
+       let s:eskk_status = 0
+    endif
+endfunction
+
+function! s:eskk_Nr()
+    if mode() !=# 'i'
+        if eskk#get_mode() ==# 'ascii'
+           let s:eskk_status = 0
+           silent exec s:linenr_hl
+        endif
+    else
+        silent exec s:linenr_hl
+    endif
+endfunction
+
+"function! s:eskkmodecolumn() abort
+"    let eskk_mode = eskk#get_mode()
+"    if !has_key(g:eskk#cursor_color, eskk_mode)
+"        return
+"    endif
+"    
+"    let color = g:eskk#cursor_color[eskk_mode]
+"    if type(color) == type([]) && len(color) >= 2
+"        execute 'highlight CursorLineNr guibg=' . color[&background ==# 'light' ? 0 : 1]
+"    elseif type(color) == type("") && color !=# ''
+"        execute 'highlight CursorLineNr guibg=' . color
+"    endif
+"endfunction
 ''' # }}}
 
 [[plugins]]
@@ -1332,10 +1337,6 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 ''' # }}}
 
 [[plugins]]
-repo = 'junegunn/limelight.vim'
-on_cmd = 'Limelight'
-
-[[plugins]]
 repo = 'junegunn/vim-easy-align'
 on_map = '<Plug>(EasyAlign)'
 hook_add = '''
@@ -1360,27 +1361,12 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 '''
 
 [[plugins]]
-repo = 'haya14busa/vim-migemo'
-on_map = {n = '<Plug>(migemo-searchchar'}
-hook_add = '''
-nmap <Leader>m <Plug>(migemo-searchchar)
-'''
-hook_source = '''
-nnoremap / g/
-nnoremap g/ /
-'''
-
-
-#[[plugins]]
-#repo = 'haya14busa/vim-asterisk' {{{
-#depends = 'is.vim'
-#on_map = {nx = '<Plug>(asterisk'}
-hook_add = '''
-let g:asterisk#keeppos = 1
-map *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
-map g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
-map #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
-map g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
+repo = 'haya14busa/incsearch-migemo.vim'
+on_map = { nx = '<Plug>(incsearch-migemo-' }
+hook_add = ''' " {{{
+map m/ <Plug>(incsearch-migemo-/)
+map m? <Plug>(incsearch-migemo-?)
+map mg/ <Plug>(incsearch-migemo-stay)
 ''' # }}}
 
 #[[plugins]]
@@ -1405,7 +1391,8 @@ on_cmd = ['QuickRun']
 hook_add = ''' " {{{
 let g:quickrun_config = {
         \ '_' : {
-        \ 'outputter/buffer/append' : 1
+        \ 'outputter/buffer/append' : 1,
+        \ 'runner'    : 'vimproc'
         \ },
         \ 'python': {
         \ 'command': 'python3'
@@ -1427,5 +1414,9 @@ on_cmd = ['Tagbar']
 [[plugins]]
 repo = 'cocopon/colorswatch.vim'
 on_cmd = ['ColorSwatchGenerate']
+
+[[plugins]]
+repo = 'norcalli/nvim-colorizer.lua'
+on_cmd = ['ColorizerToggle']
 
 # vim:set foldmethod=marker:
