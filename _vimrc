@@ -226,8 +226,8 @@ nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
 nnoremap <silent>j gj
 nnoremap <silent>k gk
 " moving tip/end of a line
-nnoremap <S-l> ^
-nnoremap <S-h> $
+nnoremap <S-l> $
+nnoremap <S-h> ^
 nnoremap 0 ^
 xnoremap 0 ^
 nnoremap ^ 0
@@ -474,8 +474,8 @@ function! s:Bclose(bang, buffer) "{{{
   execute 'bdelete'.a:bang.' '.btarget
   execute wcurrent.'wincmd w'
 endfunction
+let g:bclose_multiple = 1
 command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
-nnoremap <silent> <Leader>bd :Bclose<CR>
 nnoremap <silent><C-p> :Bclose<CR>
 "}}}
 
@@ -896,8 +896,10 @@ function! ProfileCursorMove() abort
     autocmd CursorHold <buffer> profile pause | q
   augroup END
 
-  for i in range(500)
+  for i in range(10000)
     call feedkeys('j')
+    call feedkeys('j')
+    call feedkeys('k')
   endfor
 endfunction
 "}}}
@@ -913,13 +915,11 @@ autocmd vimrc ColorScheme iceberg highligh Search gui=underline
 autocmd vimrc ColorScheme solarized8 highlight! VertSplit guifg=#05252C guibg=#05252C
 autocmd vimrc ColorScheme solarized8 highlight! link EndOfBuffer Comment
 autocmd vimrc ColorScheme solarized8 highlight! NormalFloat guibg=#05252C
+autocmd vimrc ColorScheme solarized8 highlight clear Underlined
+autocmd vimrc ColorScheme solarized8 highlight! Underlined gui=underline,bold
 
-" autocmd vimrc ColorScheme solarized8 highlight clear SignColumn
-" autocmd vimrc ColorScheme solarized8 highlight link  SignColumn LineNr
 set background=dark
 colorscheme solarized8
-
-"colorscheme ayu
 "}}}
 
 "vim:set foldmethod=marker:"
