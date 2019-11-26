@@ -139,7 +139,8 @@ set hlsearch
 " for markdown
 "autocmd! FileType markdown hi! def link markdownItalic Normal
 autocmd vimrc FileType markdown set commentstring=<\!--\ %s\ -->
-
+"completion
+set complete=.,w,b,u
 " Folding
 setlocal foldmethod=marker
 
@@ -541,10 +542,10 @@ if has('nvim')
     set clipboard=unnamed
     "float windowで補完するための設定
     set completeopt-=preview
+    "set completeopt+=popuphidden
     set wildoptions=pum
 endif
 "}}}
-
 "dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'

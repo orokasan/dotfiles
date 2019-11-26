@@ -763,6 +763,7 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 ''' # }}}
+
 [[plugins]]
 repo =  'tyru/eskk.vim'
 on_event = ['InsertEnter','CmdlineEnter']
@@ -779,6 +780,7 @@ let g:eskk#dictionary = {
 \    'sorted': 0,
 \    'encoding': 'utf-8',
 \}
+
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#dictionary_save_count = 5
 let g:eskk#cursor_color = {
@@ -793,6 +795,8 @@ imap <C-j> <Plug>(eskk:toggle)
 cmap <C-j> <Plug>(eskk:toggle)
 ''' # }}}
 hook_source = ''' " {{{
+
+"TODO :qitta
 augroup myeskk
 autocmd!
     autocmd InsertLeave * call <SID>eskk_save_status()
@@ -1100,6 +1104,7 @@ endif
 
 [[plugins]]
 repo =  't9md/vim-choosewin'
+#TODO:qitta
 on_map = {n = '<Plug>(choosewin'}
 hook_add = ''' " {{{
 nmap - <Plug>(choosewin)
@@ -1269,7 +1274,7 @@ hook_source = ''' " {{{
 "2バイト括弧を追加
 let g:operator#surround#blocks = {}
 let g:operator#surround#blocks['-'] = [
-\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
+\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
 \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['K'] },
 \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
 \ ]
@@ -1362,6 +1367,7 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 
 [[plugins]]
 repo = 'haya14busa/incsearch-migemo.vim'
+#TODO:qitta
 on_map = { nx = '<Plug>(incsearch-migemo-' }
 hook_add = ''' " {{{
 map m/ <Plug>(incsearch-migemo-/)
@@ -1402,6 +1408,7 @@ let g:quickrun_config = {
 
 [[plugins]]
 repo = 'mbbill/undotree'
+#TODO:qitta
 on_cmd = ['UndotreeToggle']
 hook_add = '''
 let g:undotree_SetFocusWhenToggle = 1
@@ -1419,4 +1426,15 @@ on_cmd = ['ColorSwatchGenerate']
 repo = 'norcalli/nvim-colorizer.lua'
 on_cmd = ['ColorizerToggle']
 
+[[plugins]]
+repo = 'voldikss/vim-translate-me'
+#TODO:qitta
+on_map = { nx = '<Plug>Translate' }
+hook_add = '''
+  nmap <silent> <Leader>t <Plug>TranslateW
+  vmap <silent> <Leader>t <Plug>TranslateWV
+  let g:vtm_target_lang = 'ja'
+  let g:vtm_default_engines = ['google']
+  let g:vtm_default_mapping = 0
+'''
 # vim:set foldmethod=marker:

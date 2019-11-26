@@ -34,11 +34,12 @@ repo = 'deton/jasentence.vim'
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
-hook_add = '''
-"{{{
+#TODO:qitta
+hook_add = ''' "{{{
 let g:jasegment#model='knbc_bunsetu'
 let g:jasegment#highlight = 1
-'''
+'''# }}} 
+
 [plugins.ftplugin]
 markdown = '''" {{{
 nmap <silent> e <Plug>JaSegmentMoveNE
@@ -159,7 +160,10 @@ let g:gruvbox_guisp_fallback = 'bg'
 repo = 'markonm/traces.vim'
 hook_add ='''
 let g:traces_num_range_preview = 1
-nnoremap S :%s/
+nnoremap S :<C-u>%s/
+vnoremap S :%s/
+nnoremap gs :%s///g<Left><Left><Left>
+vnoremap gs :<C-u>%s///g<Left><Left><Left>
 '''
 
 [[plugins]]
@@ -179,6 +183,7 @@ repo = 'tpope/vim-repeat'
 
 [[plugins]]
 repo = 'haya14busa/is.vim'
+#TODO:qitta
 hook_add = ''' " {{{
 let g:is#do_default_mapping = 0
 ''' # }}}
@@ -257,8 +262,8 @@ repo = 'cespare/vim-toml'
 repo =  'kmnk/denite-dirmark'
 on_source = ['denite.nvim','defx.nvim']
 
-[[plugins]]
-repo = 'skanehira/translate.vim'
+# [[plugins]]
+# repo = 'skanehira/translate.vim'
 
 #[[plugins]]
 #repo = 'kana/vim-smartinput'
@@ -333,6 +338,10 @@ build = 'cd app & yarn install'
 
 [[plugins]]
 repo = 'deoplete-plugins/deoplete-jedi'
+hook_add = '''
+let g:deoplete#sources#jedi#statement_length = 30
+let g:deoplete#sources#jedi#show_docstring = 1
+'''
 
 [[plugins]]
 repo = 'tpope/vim-commentary'
@@ -432,7 +441,7 @@ hook_add = ''' "{{{
 
 [[plugins]]
 repo = 'mhinz/vim-startify'
-hook_add = '''
+hook_add = ''' " {{{
 let g:startify_files_number = 5
 let g:startify_list_order = [
         \ ['♻  Most Recently Used Files :'],
@@ -447,5 +456,14 @@ let g:startify_list_order = [
 let g:startify_bookmarks = ["~/dotfiles/_vimrc", "~/dotfiles/dein.toml", "~/dotfiles/dein_lazy.toml"]
 autocmd User Startified for key in ['b','s','t','v'] |
           \ execute 'nunmap <buffer>' key | endfor
+''' # }}}
+
+[[plugins]]
+repo = 'ncm2/float-preview.nvim'
+#TODO:qitta
+hook_add = '''
+let g:float_preview#docked = 0
+let g:float_preview#max_height = 5
 '''
+
 # vim:set foldmethod=marker:
