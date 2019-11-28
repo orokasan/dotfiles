@@ -51,24 +51,24 @@ omap <silent> b <Plug>JaSegmentMoveOB
 xmap <silent> e <Plug>JaSegmentMoveVE
 xmap <silent> w <Plug>JaSegmentMoveVW
 xmap <silent> b <Plug>JaSegmentMoveVB
-nnoremap W w
-onoremap W w
-xnoremap W w
-nnoremap B b
-onoremap B b
-xnoremap B b
-nnoremap E e
-onoremap E e
-xnoremap E e
-omap <silent> aW <Plug>JaSegmentTextObjA
-omap <silent> iW <Plug>JaSegmentTextObjI
-xmap <silent> aW <Plug>JaSegmentTextObjVA
-xmap <silent> iW <Plug>JaSegmentTextObjVI
+nnoremap <buffer> W w
+onoremap <buffer> W w
+xnoremap <buffer> W w
+nnoremap <buffer> B b
+onoremap <buffer> B b
+xnoremap <buffer> B b
+nnoremap <buffer> E e
+onoremap <buffer> E e
+xnoremap <buffer> E e
+omap <silent><buffer> aW <Plug>JaSegmentTextObjA
+omap <silent><buffer> iW <Plug>JaSegmentTextObjI
+xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
+xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
 ''' # }}}
 
 #[[plugins]]
-#repo =  'kshenoy/vim-signature' {{{
-#hook_add = '''
+#repo =  'ksh <buffer>enoy/vim-signature' {{{
+#hook_add = ' <buffer>''
 #let g:SignatureMap = {
 #    \ 'Leader'             :  "M",
 #    \ 'PlaceNextMark'      :  "M,",
@@ -106,7 +106,7 @@ let g:neomru#do_validate = 1
 "      \'\|^\%(\\\\\|/mnt/\|/media/\|/temp/\|/tmp/\|\%(/private\)\=/var/folders/\)'.
 "      \'\|\%(^\%(gina\)://\)'.
 "      \'\|\%(^\%(term\)://\)'
-let g:neomru#file_mru_ignore_pattern = 'gina://'
+let g:neomru#file_mru_ignore_pattern = 'term://'
 let g:neomru#time_format = '%m/%d %H:%M'
 let g:neomru#file_mru_limit = 100
 let g:neomru#file_mru_path= '~/.cache/neomru/file'
@@ -123,6 +123,269 @@ repo = 'cespare/vim-toml'
 
 [[plugins]]
 repo =  'itchyny/lightline.vim'
+depends = ['lightline-bufferline']
+hook_add = ''' " {{{
+let g:lightline = {
+\ 'colorscheme': 'quack',
+    \ 'active': {
+        \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','git'], [ 'readonly', 'path'] ],
+        \ 'right': [
+            \ ['lineinfo'],
+            \ ['charcount'],
+            \ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'percent','IMEstatus']
+        \ ]
+    \ },
+    \ 'inactive': {
+        \ 'left': [['inactivefn']],
+        \ 'right': [[ 'percent' ]]
+    \ },
+    \ 'tabline' : {
+        \ 'left': [['buffers'], ['denitesource']],
+        \ 'right': [['tab'],['fileencoding','filetype'] ]
+    \ },
+    \ 'component':{
+    \},
+    \ 'component_function': {
+        \ 'readonly':'LLReadonly',
+        \ 'inactivefn':'LLInactiveFilename',
+        \ 'path':'LLMyFilepath',
+        \ 'mode': 'LLMode',
+        \ 'charcount':'LLCharcount',
+        \ 'eskk': 'LLeskk',
+        \ 'tab': 'LLtabnr',
+        \ 'git':'LLgit',
+        \ 'lineinfo':'LLlineinfo',
+        \ 'denitebuf': 'LLDeniteBuffer',
+        \ 'denitesource' : 'LLDeniteSource'
+    \ },
+    \ 'component_expand': {
+        \ 'buffers': 'LLmybufferline',
+        \ 'denitesource' : 'LLDeniteSource',
+        \ 'linter_checking': 'lightline#ale#checking',
+        \ 'linter_warnings': 'lightline#ale#warnings',
+        \ 'linter_errors': 'lightline#ale#errors'
+    \ },
+   \ 'component_type' : {
+        \ 'buffers': 'tabsel',
+        \ 'linter_checking': 'middle',
+        \ 'linter_warnings': 'warning',
+        \ 'linter_errors': 'error',
+        \ 'linter_ok': 'middle'
+    \ }
+\ }
+
+if !has('nvim')
+    let g:lightline.subseparator= { 'left': '', 'right': '' }
+    let g:lightline.separator= { 'left': '', 'right': '' }
+endif
+"   let g:lightline.separator= { 'left': '', 'right': '' }
+"   let g:lightline.subseparator= { 'left': '', 'right': '' }
+"    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
+"    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
+function! LLmybufferline() abort
+    if &filetype ==# 'denite' || &filetype ==# 'denite-filter'
+        return LLDeniteBuffer()
+    else
+        return lightline#bufferline#buffers()
+    endif
+endfunction
+let g:component_function_visible_condition = {
+        \ 'readonly': 1,
+        \ 'denitebuf': 1,
+        \ 'inactivefn': 1,
+        \ 'path': 1,
+        \ 'mode': 1,
+        \ 'charcount': 1,
+        \ 'eskk': 1,
+        \ 'git': 1,
+        \ 'lineinfo': 1
+        \ }
+
+let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
+let g:lightline.tabline_separator= { 'left': '', 'right': '' }
+
+if !exists('g:disable_IM_Control') && g:disable_IM_Control == 1
+    let g:lightline.component += {
+        \'IMEstatus':'%{IMStatus("-JP-")}'
+        \}
+endif
+
+let g:lightline#bufferline#unnamed = '[unnamed]'
+let g:lightline#bufferline#filename_modifier = ':t'
+let g:lightline#bufferline#show_number = 2
+let g:lightline#bufferline#number_map = {
+\ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
+\ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
+
+function! LLMode()
+    return &filetype ==# 'unite' ? 'Unite' :
+        \ &filetype ==# 'help' ? 'Help' :
+        \ &filetype ==# 'denite' ? 'Denite' :
+        \ &filetype ==# 'defx' ? 'Defx' :
+        \ &filetype ==# 'gundo' ? 'Gundo' :
+        \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
+        \ lightline#mode()
+endfunction
+
+function! LLMyFilepath()
+    if &filetype ==# 'denite'
+        return LLDeniteSource()
+    elseif exists('*anzu#search_status') && strlen(anzu#search_status())
+        return s:llanzu()
+    elseif &filetype !~# s:ignore_filetype
+        let l:ll_filepath = expand('%:~')
+        let l:ll_filename = expand('%:t')
+        if winwidth(0) > 80
+            let l:ll_fn =  strlen(l:ll_filepath) < 40 ? l:ll_filepath :
+            \ l:ll_filename
+        else
+            let l:ll_fn = l:ll_filename
+        endif
+            let l:ll_modified = &modified ? '[+]' : ''
+            return l:ll_fn . l:ll_modified
+    else
+        return ''
+    endif
+endfunction
+
+"例外filetype
+let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
+
+function! LLInactiveFilename()
+    return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
+endfunction
+
+function! LLeskk() abort
+    if &filetype ==# 'denite-filter'
+        return exists('*LLmyeskk') ? LLmyeskk() : '[  ]'
+    else
+        return &filetype !~# s:ignore_filetype && exists('*LLmyeskk') ? LLmyeskk() : ''
+    endif
+endfunction
+
+function! LLlineinfo() abort
+    let l:col = col('.')
+    let l:fixedcol = l:col <10 ? '  ' . l:col :
+        \ l:col <100 ? ' ' . l:col : l:col
+    if &filetype !~# s:ignore_filetype
+        return winwidth(0) > 65 ?
+            \  printf('%s:%d#%d', l:fixedcol , line('.') , line('$') ) :
+            \  printf('%s:%d', l:fixedcol , line('.') )
+        else
+            return printf('%d:%d', col('.') , line('.') )
+        endif
+endfunction
+
+" 文字数カウント {{{
+" lightlineに渡す変数の設定
+augroup CharCounter
+    autocmd!
+    autocmd BufNew,BufEnter,TextChanged,CursorMoved,CursorMovedI * call <SID>llvarCharCount()
+    autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>llvarCharAllCount()
+augroup END
+
+let s:llcharcount = ''
+let s:llcharallcount = ''
+
+function! s:llvarCharAllCount()
+    let l:count = 0
+    for l in range(0, line('$'))
+        let l:count += strchars(getline(l))
+    endfor
+    let s:llcharallcount = l:count == 0 ?   '***' :
+        \ l:count <10 ? '   ' . l:count :
+        \ l:count <100 ? '  ' . l:count :
+        \ l:count <1000 ? ' ' . l:count : l:count
+endfunction
+
+function! s:llvarCharCount()
+    let l:count = strchars(getline('.'))
+    let s:llcharcount = l:count < 10 ? '**' . l:count :
+        \ l:count <100 ? '*' . l:count :
+        \ l:count
+endfunction
+
+function! LLCharcount()
+    if &filetype =~# s:ignore_filetype | return | endif
+        return winwidth(0) > 70 ? '[' . s:llcharcount . ']' . s:llcharallcount . 'w' :
+            \ winwidth(0) > 65 ? '[' . s:llcharcount . ']w' : ''
+endfunction
+"}}}
+
+function! LLReadonly()
+"    return &readonly ? '⭤' : ''
+    return &readonly ? '' : ''
+endfunction
+
+function! LLtabnr() abort
+    return tabpagenr('$') > 1 ? tabpagenr().':'.tabpagenr('$').'«' : '«'
+endfunction
+
+function! LLgit() abort
+        return s:llgitbranch
+endfunction
+
+" 重いのでキャッシュする
+autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgitcache()
+function! s:llgitcache()
+    let s:llgitbranch = ''
+    if !exists('*gitbranch#name') | return | endif
+    let l:git = gitbranch#name()
+    if &filetype !~# s:ignore_filetype && len(l:git)
+        let s:llgitbranch =  winwidth(0) > 100  ? ' '. l:git :''
+    else
+        let s:llgitbranch = ''
+"    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
+"      \strlen(_) ? ' ⭠': ''
+    endif
+endfunction
+
+" 検索ステータスを表示 (vim-anzuを利用) {{{
+autocmd vimrc InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status') 
+    \| call anzu#clear_search_status() | endif
+
+autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
+autocmd vimrc User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
+
+function! s:llanzu()
+    let s:anzu = anzu#search_status()
+    return strlen(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
+endfunction "}}}
+
+" Deniteステータス {{{
+function! LLDeniteBuffer()
+    if &filetype ==#  'denite-filter' || &filetype ==# 'denite'
+        let l:buffer = denite#get_status('buffer_name')
+        return l:buffer
+    else
+        return ''
+    endif
+endfunction
+
+function! LLDeniteSource()
+    if &filetype !=# 'denite-filter' && &filetype !=# 'denite'
+        return ''
+    endif
+    let l:linenr = denite#get_status('linenr')
+    let l:sources = denite#get_status('sources')
+    let l:p =denite#get_status('path')
+    let l:path = substitute(l:p, '[', '', 'g')
+    let l:path = substitute(l:path, ']', '', 'g')
+    let l:path = fnamemodify(l:path,':~')
+    if strlen(l:path) > 50
+        let l:path = fnamemodify(l:path,':t')
+    endif
+    if strlen(l:sources) > 60
+        let l:sources = matchstr(l:sources, '.\+\ze:[') .
+            \ matchstr(l:sources, ']\zs.\+') 
+    endif
+    let denitesource = l:sources . ' - [' . l:path . ']'
+    "if strlen(denitesource) > 100
+        return denitesource
+    "endif
+endfunction
+" }}}
+''' # }}}
 
 [[plugins]]
 repo =  'mengelbrecht/lightline-bufferline'
@@ -137,16 +400,23 @@ repo = 'Shougo/context_filetype.vim'
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
+hook_add = '''
+autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
+autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd vimrc ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd vimrc ColorScheme iceberg highlight clear Search
+autocmd vimrc ColorScheme iceberg highligh Search gui=underline
+'''
 
-[[plugins]]
-repo =  'w0ng/vim-hybrid'
+# [[plugins]]
+# repo =  'w0ng/vim-hybrid'
 
-[[plugins]]
-repo ='ayu-theme/ayu-vim'
+# [[plugins]]
+# repo ='ayu-theme/ayu-vim'
 
-[[plugins]]
-repo = 'yarisgutierrez/ayu-lightline'
-depends = ['lightline.vim']
+# [[plugins]]
+# repo = 'yarisgutierrez/ayu-lightline'
+# depends = ['lightline.vim']
 
 [[plugins]]
 repo =  'morhetz/gruvbox'
@@ -156,6 +426,7 @@ let g:gruvbox_italicize_comments = 0
 let g:gruvbox_invert_selection = 0
 let g:gruvbox_guisp_fallback = 'bg'
 ''' # }}}
+
 [[plugins]]
 repo = 'markonm/traces.vim'
 hook_add ='''
@@ -204,14 +475,6 @@ let g:clever_f_sings_match_any_signs =
 ''' # }}}
 
 [[plugins]]
-repo = 'rhysd/vim-color-spring-night'
-hook_add = ''' " {{{
-let g:spring_night_kill_bold = 1
-let g:spring_night_kill_italic = 1
-let g:spring_night_high_contrast = 0
-''' # }}}
-
-[[plugins]]
 repo = 'haya14busa/incsearch.vim'
 hook_add = '''
 let g:incsearch#auto_nohlsearch = 1
@@ -232,14 +495,12 @@ let g:airline#extensions#anzu#enabled = 0
 ''' # }}}
 
 [[plugins]]
-repo = 'sainnhe/vim-color-forest-night'
-
-[[plugins]]
 repo = 'moznion/hateblo.vim'
 depends = 'webapi-vim'
 
 [[plugins]]
-repo =  'iyuuya/denite-ale'
+#repo =  'iyuuya/denite-ale'
+repo =  'orokasan/denite-ale'
 on_source = ['denite.nvim']
 
 [[plugins]]
@@ -262,14 +523,6 @@ repo = 'cespare/vim-toml'
 repo =  'kmnk/denite-dirmark'
 on_source = ['denite.nvim','defx.nvim']
 
-# [[plugins]]
-# repo = 'skanehira/translate.vim'
-
-#[[plugins]]
-#repo = 'kana/vim-smartinput'
-#lazy = '1'
-#hook_add = '''
-#'''
 #[[plugins]]
 #repo = 'junegunn/fzf.vim'
 
@@ -370,10 +623,16 @@ hook_add =''' " {{{
 let g:solarized_old_cursor_style = 1
 let g:solarized_italics = 0
 let g:solarized_statusline = 'flat'
+autocmd vimrc ColorScheme solarized8_flat highlight! VertSplit guifg=#05252C guibg=#05252C
+autocmd vimrc ColorScheme solarized8_flat highlight! link EndOfBuffer Comment
+autocmd vimrc ColorScheme solarized8_flat highlight! NormalFloat guibg=#05252C
+autocmd vimrc ColorScheme solarized8_flat highlight clear Underlined
+autocmd vimrc ColorScheme solarized8_flat highlight! Underlined gui=underline,bold
+colorscheme solarized8_flat
 ''' # }}}
 
-[[plugins]]
-repo = 'mhartington/oceanic-next'
+# [[plugins]]
+# repo = 'mhartington/oceanic-next'
 
 [[plugins]]
 repo = 'orokasan/vim-quack-lightline'
@@ -400,27 +659,30 @@ else
     let g:lightline#ale#indicator_errors = "\uf484"
     let g:lightline#ale#indicator_ok = "\uf43a"
 endif
+
 ''' # }}}
 
 [[plugins]]
 repo = 'easymotion/vim-easymotion'
 hook_add = ''' " {{{
 let g:EasyMotion_do_mapping = 0
-nmap , <Plug>(easymotion-s2)
+nmap m <Plug>(easymotion-s2)
+nmap M <Plug>(easymotion-overwin-f2)
 imap <C-z> <ESC><Plug>(easymotion-s2)
-xmap , <Plug>(easymotion-s2)
-omap , <Plug>(easymotion-s2)
+xmap m <Plug>(easymotion-s2)
+omap m <Plug>(easymotion-s2)
+map gj <Plug>(easymotion-sol-j)
+map gk <Plug>(easymotion-sol-k)
+
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
-let g:EasyMotion_keys = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ;'
+let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
 let g:EasyMotion_smartcase = 1
-let g:EasyMotion_enter_jump_first = 1
 let g:EasyMotion_space_jump_first = 1
 let g:EasyMotion_use_migemo = 1
 let g:EasyMotion_prompt = '{n}>>> '
-let g:EasyMotion_off_screen_search = 1
 let g:EasyMotion_verbose = 0
-hi link EasyMotionTarget Title
+hi link EasyMotionTarget Type
 hi link EasyMotionShade  Comment
 hi link EasyMotionTarget2First MatchParen
 hi link EasyMotionTarget2Second MatchParen
@@ -452,8 +714,15 @@ let g:startify_list_order = [
         \ 'sessions',
         \ ['☺  Bookmark :'],
         \ 'bookmarks',
+        \ ['Commands :'],
+        \ 'commands'
         \ ]
 let g:startify_bookmarks = ["~/dotfiles/_vimrc", "~/dotfiles/dein.toml", "~/dotfiles/dein_lazy.toml"]
+let g:startify_commands = [
+    \ {'di': ['DeinInstall', 'DeinInstall']},
+    \ {'du': ['DeinUpdate', 'DeinUpdate']},
+    \ {'dr': ['DeinRecache', 'DeinRecache']}
+    \ ]
 autocmd User Startified for key in ['b','s','t','v'] |
           \ execute 'nunmap <buffer>' key | endfor
 ''' # }}}
@@ -465,5 +734,10 @@ hook_add = '''
 let g:float_preview#docked = 0
 let g:float_preview#max_height = 5
 '''
+[[plugins]]
+repo = 'orokasan/denite-my-source'
+
+[[plugins]]
+repo = 'N0nki/denite-markdown'
 
 # vim:set foldmethod=marker:

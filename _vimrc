@@ -107,10 +107,12 @@ set ttyfast
 " max candidate of completion menu
 set pumheight=10
 set ambiwidth=double
+
+set background=dark
 "}}}
 
 " Editing {{{
-set virtualedit=onemore     "move cursor to one more char than end of line
+set virtualedit=block     "move cursor to one more char than end of line
 set scrolloff=5
 set display=lastline
 " add japanese matchpairs
@@ -141,9 +143,6 @@ set hlsearch
 autocmd vimrc FileType markdown set commentstring=<\!--\ %s\ -->
 "completion
 set complete=.,w,b,u
-" Folding
-setlocal foldmethod=marker
-
 " viminfo
 if has('nvim')
   set shada=!,:10,'300,<50,s10,h,@10
@@ -223,12 +222,17 @@ endif
 let mapleader = "\<Space>"
 " improved insert
 nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
+nnoremap <CR> o<ESC>
+nnoremap \ O<ESC>
+
 " moving visible lines by j/k
 nnoremap <silent>j gj
 nnoremap <silent>k gk
 " moving tip/end of a line
 nnoremap <S-l> $
 nnoremap <S-h> ^
+vnoremap <S-l> $
+vnoremap <S-h> ^
 nnoremap 0 ^
 xnoremap 0 ^
 nnoremap ^ 0
@@ -242,7 +246,9 @@ nnoremap <leader>k O<ESC>j
 nnoremap ; :
 " Enter normal mode
 inoremap jk <esc>
-nnoremap m '
+" change mark keymapping
+nnoremap ` m
+nnoremap ! `
 " yank to end of line
 nnoremap Y y$
 xnoremap Y y$
@@ -282,6 +288,22 @@ nnoremap <expr><Leader>cl
 "}}}
 tnoremap <C-[> <C-\><C-n>
 tnoremap <Esc> <C-\><C-n>
+tnoremap <A-h> <C-\><C-N><C-w>h
+tnoremap <A-j> <C-\><C-N><C-w>j
+tnoremap <A-k> <C-\><C-N><C-w>k
+tnoremap <A-l> <C-\><C-N><C-w>l
+inoremap <A-h> <C-\><C-N><C-w>h
+inoremap <A-j> <C-\><C-N><C-w>j
+inoremap <A-k> <C-\><C-N><C-w>k
+inoremap <A-l> <C-\><C-N><C-w>l
+
+if has('nvim')
+  " Neovim 用
+autocmd vimrc TermOpen * set nonumber signcolumn=no
+else
+  " Vim 用
+  autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
+endif
 " save like Word
 inoremap <c-s> <Esc>:w<CR>a
 " close window
@@ -305,7 +327,8 @@ inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
 inoremap <silent><C-c> <ESC>
 " open vimrc quickly
-noremap <silent> <leader>v :e ~/dotfiles/?vimrc<CR>
+nnoremap <silent> <leader>v :e ~/dotfiles/?vimrc<CR>
+nnoremap <silent> <Leader>sv :<C-u>source $MYVIMRC<CR>
 " source opening vim script
 nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
 if !exists('*s:source_script')  "{{{
@@ -322,7 +345,8 @@ if !exists('*s:source_script')  "{{{
           \)
   endfunction
 endif  "}}}
-
+" make temp file
+command! OpenTempfile :edit `=tempname()`
 " open folding
 nnoremap <silent><C-l> zo
 " smart folding closer
@@ -345,7 +369,9 @@ function! s:smart_foldcloser() "{{{
     norm! zM
 endfunction
 "}}}
-
+" edit fold column
+set fillchars=fold:\ 
+autocmd vimrc ColorScheme * hi! link Folded NonText
 " add fold marker
 nnoremap  z[     :<C-u>call <SID>put_foldmarker(0)<CR>
 nnoremap  z]     :<C-u>call <SID>put_foldmarker(1)<CR>
@@ -546,7 +572,8 @@ if has('nvim')
     set wildoptions=pum
 endif
 "}}}
-"dein.vim {{{
+
+""dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 
@@ -581,298 +608,22 @@ syntax enable
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
+
 "}}}
 
-" lightline.vim {{{
-let g:lightline = {
-\ 'colorscheme': 'quack',
-    \ 'active': {
-        \ 'left': [ ['mode', 'paste'],['eskk','denitebuf','git'], [ 'readonly', 'path'] ],
-        \ 'right': [
-            \ ['lineinfo'],
-            \ ['charcount'],
-            \ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'percent','IMEstatus']
-        \ ]
-    \ },
-    \ 'inactive': {
-        \ 'left': [['inactivefn']],
-        \ 'right': [[ 'percent' ]]
-    \ },
-    \ 'tabline' : {
-    \ 'left': [['buffers'], ['denitesource']],
-    \ 'right': [['winnr'],['fileencoding','filetype'] ]
-    \ },
-    \ 'component':{
-    \},
-    \ 'component_function': {
-        \ 'readonly':'LLReadonly',
-        \ 'inactivefn':'LLInactiveFilename',
-        \ 'path':'LLMyFilepath',
-        \ 'mode': 'LLMode',
-        \ 'charcount':'LLCharcount',
-        \ 'eskk': 'LLeskk',
-        \ 'git':'LLgit',
-        \ 'lineinfo':'LLlineinfo',
-        \ 'denitebuf': 'LLDeniteBuffer',
-        \ 'denitesource' : 'LLDeniteSource'
-    \ },
-    \ 'component_expand': {
-        \ 'buffers': 'LLmybufferline',
-        \ 'denitesource' : 'LLDeniteSource',
-        \ 'linter_checking': 'lightline#ale#checking',
-        \ 'linter_warnings': 'lightline#ale#warnings',
-        \ 'linter_errors': 'lightline#ale#errors'
-    \ },
-   \ 'component_type' : {
-        \ 'buffers': 'tabsel',
-        \ 'linter_checking': 'middle',
-        \ 'linter_warnings': 'warning',
-        \ 'linter_errors': 'error',
-        \ 'linter_ok': 'middle'
-    \ }
-\ }
+" etc... {{{
 
-if !has('nvim')
-    let g:lightline.subseparator= { 'left': '', 'right': '' }
-    let g:lightline.separator= { 'left': '', 'right': '' }
-endif
-"   let g:lightline.separator= { 'left': '', 'right': '' }
-"   let g:lightline.subseparator= { 'left': '', 'right': '' }
-"    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
-"    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
-function! LLmybufferline() abort
-    if &filetype ==# 'denite' || 'denite-filter'
-        return LLDeniteBuffer()
-    else
-        return lightline#bufferline#buffers()
-    endif
-endfunction
-let g:component_function_visible_condition = {
-        \ 'readonly': 1,
-        \ 'denitebuf': 1,
-        \ 'inactivefn': 1,
-        \ 'path': 1,
-        \ 'mode': 1,
-        \ 'charcount': 1,
-        \ 'eskk': 1,
-        \ 'git': 1,
-        \ 'lineinfo': 1
-        \ }
-
-let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
-let g:lightline.tabline_separator= { 'left': '', 'right': '' }
-
-if exists('g:disable_IM_Control') && g:disable_IM_Control == 1
-else
-    let g:lightline.component += {
-        \'IMEstatus':'%{IMStatus("---------------------------------------------------------------------JP-")}'
-        \}
-endif
-
-let g:lightline#bufferline#unnamed = '[unnamed]'
-let g:lightline#bufferline#filename_modifier = ':t'
-let g:lightline#bufferline#show_number = 2
-let g:lightline#bufferline#number_map = {
-\ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
-\ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
-
-function! LLMode()
-    return &filetype ==# 'unite' ? 'Unite' :
-        \ &filetype ==# 'help' ? 'Help' :
-        \ &filetype ==# 'denite' ? 'Denite' :
-        \ &filetype ==# 'defx' ? 'Defx' :
-        \ &filetype ==# 'gundo' ? 'Gundo' :
-        \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
-        \ lightline#mode()
-endfunction
-
-function! LLMyFilepath()
-    if &filetype ==# 'denite'
-        return LLDeniteSource()
-    elseif strlen(anzu#search_status())
-        return s:llanzu()
-    elseif &filetype !~# s:ignore_filetype
-        let l:ll_filepath = expand('%:~')
-        let l:ll_filename = expand('%:t')
-        if winwidth(0) > 80
-            let l:ll_fn =  strlen(l:ll_filepath) < 40 ? l:ll_filepath :
-            \ l:ll_filename
-        else
-            let l:ll_fn = l:ll_filename
-        endif
-            let l:ll_modified = &modified ? '[+]' : ''
-            return l:ll_fn . l:ll_modified
-    else
-        return ''
-    endif
-endfunction
-
-"例外filetype
-let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
-
-function! LLInactiveFilename()
-    return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
-endfunction
-
-function! LLeskk() abort
-    if &filetype ==# 'denite-filter'
-        return exists('*LLmyeskk') ? LLmyeskk() : ''
-    else
-        return &filetype !~# s:ignore_filetype && exists('*LLmyeskk') ? LLmyeskk() : ''
-    endif
-endfunction
-
-function! LLlineinfo() abort
-    let l:col = col('.')
-    let l:fixedcol = l:col <10 ? '  ' . l:col :
-        \ l:col <100 ? ' ' . l:col : l:col
-    if &filetype !~# s:ignore_filetype
-        return winwidth(0) > 65 ?
-            \  printf('%s:%d#%d', l:fixedcol , line('.') , line('$') ) :
-            \  printf('%s:%d', l:fixedcol , line('.') )
-        else
-            return printf('%d:%d', col('.') , line('.') )
-        endif
-endfunction
-
-" 文字数カウント {{{
-" lightlineに渡す変数の設定
-augroup CharCounter
-    autocmd!
-    autocmd BufNew,BufEnter,TextChanged,CursorMoved,CursorMovedI * call <SID>llvarCharCount()
-    autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>llvarCharAllCount()
-augroup END
-
-let s:llcharcount = ''
-let s:llcharallcount = ''
-
-"全体カウント
-function! s:llvarCharAllCount()
-    let l:count = g:CharAllCount()
-    let s:llcharallcount = l:count == 0 ?   '***' :
-        \ l:count <10 ? '   ' . l:count :
-        \ l:count <100 ? '  ' . l:count :
-        \ l:count <1000 ? ' ' . l:count : l:count
-endfunction
-function! g:CharAllCount() "{{{
-    if &filetype ==# 'help' || 'denite'
-        return
-    endif
-    let l:result = 0
-    for l:linenum in range(0, line('$'))
-        let l:line = getline(l:linenum)
-        let l:result += strlen(substitute(l:line, '.', 'x','g'))
-    endfor
-    return l:result
-endfunction "}}}
-
-"1行カウント
-function! s:llvarCharCount()
-    let l:count = g:CharCount()
-    let s:llcharcount = l:count < 10 ? '**' . l:count :
-        \ l:count <100 ? '*' . l:count :
-        \ l:count
-endfunction
-function! g:CharCount() "{{{
-    let l:line = getline(line('.'))
-    return strlen(substitute(l:line, '.', 'x','g'))
-endfunction "}}}
-
-function! LLCharcount()
-    if &filetype !~# s:ignore_filetype
-        return winwidth(0) > 70 ? '[' . s:llcharcount . ']' . s:llcharallcount . 'w' :
-            \ winwidth(0) > 65 ? '[' . s:llcharcount . ']w' : ''
-    else
-        return ''
-    endif
-endfunction
 "選択範囲の行をカウント {{{
 function! g:LineCharVCount() range
-    let l:result = 0
+    let l:result = 0                           
     for l:linenum in range(a:firstline, a:lastline)
-        let l:line = getline(l:linenum)
-        let l:result += strlen(substitute(l:line, '.', 'x','g'))
-    endfor
-    echo ' [WordCount] -- ' . l:result . ' : ' . g:CharAllCount() .
-                \ ' -- [選択行の字数:全体の字数]'
+        let l:result += strchars(getline(l:linenum))
+    endfor                                     
+    return l:result
 endfunction "}}}
 "呼び出せる
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> :LineCharVCount<CR>
-"}}}
-
-function! LLReadonly()
-"    return &readonly ? '⭤' : ''
-    return &readonly ? '' : ''
-endfunction
-
-function! LLgit() abort
-        return s:llgitbranch
-endfunction
-" 重いのでキャッシュする
-let s:llgitbranch = ''
-autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgitcache()
-function! s:llgitcache()
-    let l:git = gitbranch#name()
-    if &filetype !~# s:ignore_filetype && strlen(l:git)
-        let s:llgitbranch =  winwidth(0) > 100  ? ' '. l:git :''
-    else
-        let s:llgitbranch = ''
-"    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
-"      \strlen(_) ? ' ⭠': ''
-    endif
-endfunction
-
-" 検索ステータスを表示 (vim-anzuを利用) {{{
-autocmd vimrc InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status') 
-    \| call anzu#clear_search_status() | endif
-
-autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
-autocmd vimrc User IncSearchExecute :call execute('AnzuUpdateSearchStatus')
-
-function! s:llanzu()
-    let s:anzu = anzu#search_status()
-    "    if winwidth(0) > 100
-            return strlen(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
-    "    else
-    "        return ''
-    "    endif
-endfunction "}}}
-
-" Deniteステータス {{{
-function! LLDeniteBuffer()
-    if &filetype ==# 'denite' || 'denite-filter'
-        let l:buffer = denite#get_status('buffer_name')
-        return l:buffer
-    else
-        return ''
-    endif
-endfunction
-
-function! LLDeniteSource()
-    if &filetype !=# 'denite' || 'denite-filter'
-        return ''
-    endif
-
-    let l:linenr = denite#get_status('linenr')
-    let l:sources = denite#get_status('sources')
-    let l:p =denite#get_status('path')
-    let l:path = substitute(l:p, '[', '', 'g')
-    let l:path = substitute(l:path, ']', '', 'g')
-    let l:path = fnamemodify(l:path,':~')
-    if strlen(l:path) > 50
-        let l:path = fnamemodify(l:path,':t')
-    endif
-    if strlen(l:sources) > 60
-        let l:sources = matchstr(l:sources, '.\+\ze:[') .
-            \ matchstr(l:sources, ']\zs.\+') 
-    endif
-    let denitesource = l:sources . ' - [' . l:path . ']'
-    "if strlen(denitesource) > 100
-        return denitesource
-    "endif
-endfunction
-"}}}
 
 " パフォーマンスのチェック {{{
 command! -bar LightlineUpdate    call lightline#init()|
@@ -905,22 +656,4 @@ function! ProfileCursorMove() abort
 endfunction
 "}}}
 "}}}
-
-" Colorscheme  {{{
-"補完ポップアップメニューの色変更
-autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
-autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd vimrc ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd vimrc ColorScheme iceberg highlight clear Search
-autocmd vimrc ColorScheme iceberg highligh Search gui=underline
-autocmd vimrc ColorScheme solarized8 highlight! VertSplit guifg=#05252C guibg=#05252C
-autocmd vimrc ColorScheme solarized8 highlight! link EndOfBuffer Comment
-autocmd vimrc ColorScheme solarized8 highlight! NormalFloat guibg=#05252C
-autocmd vimrc ColorScheme solarized8 highlight clear Underlined
-autocmd vimrc ColorScheme solarized8 highlight! Underlined gui=underline,bold
-
-set background=dark
-colorscheme solarized8
-"}}}
-
-"vim:set foldmethod=marker:"
+"vim:set foldmethod=marker:se foldcolumn=1

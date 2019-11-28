@@ -32,7 +32,7 @@ nnoremap <silent> [denite]T :<C-u>Denite
 
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-      \ -buffer-name=normal
+      \ -buffer-name=stay
       \ buffer<CR>
 
 nnoremap <silent> [denite]/ :<C-u>Denite
@@ -85,11 +85,12 @@ nnoremap <silent> [denite]j :<C-u>Denite jump <CR>
 
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
-    \ -resume  -refresh<CR>
+    \ -resume<CR>
 
 "open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
-    \ -buffer-name=search
+    \ -buffer-name=stay
+    \ -post-action=open
     \ ale<CR>
 
 nnoremap <silent><Leader>n :<C-u>Denite
@@ -98,9 +99,15 @@ nnoremap <silent><Leader>n :<C-u>Denite
     \ -resume  -refresh<CR>
 
 "コマンド結果をdeniteに出力
-nnoremap [denite]o :<C-u>Denite
+nnoremap [denite]p :<C-u>Denite
     \ -buffer-name=search
     \ output:
+
+" markdown TOC
+nnoremap <silent> [denite]o :<C-u>Denite
+    \ -buffer-name=stay
+    \ -post-action=open
+    \ markdown<CR>
 
 nnoremap <silent> [denite]d :<C-u>Denite
     \ -buffer-name=normal
@@ -113,38 +120,47 @@ nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
 autocmd vimrc FileType denite hi link CursorLine ColorColumn
 ''' #}}}
 hook_source = ''' " {{{
-call denite#custom#option('_', {
-    \ 'winheight': 14,
-    \ 'short_source_names': v:true,
-    \ 'highlight_mode_normal': 'Visual',
-    \ 'highlight_mode_insert': 'Visual',
-    \ 'prompt': '#',
-    \ 'highlight_matched_char' : 'Title',
-    \ 'max_dynamic_update_candidates' : '50000',
-    \ 'direction': 'dynamicbottom',
-    \ 'filter_split_direction' : '',
-    \ 'quick_move_table': {
-        \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
-        \   'h' : 5, 'l' : 6, ';' : 7,
-        \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
-        \ }
-    \ })
 if has('nvim')
     call denite#custom#option('_', {
         \ 'split': 'floating',
         \ 'filter_split_direction': '',
         \ 'wincol': &columns/10,
         \ 'winwidth': &columns*5/6
+        \ } )
+    call denite#custom#option('stay',{
+        \ 'wincol': &columns/2-2,
+        \ 'winwidth': &columns*3/4-5,
+        \ 'winheight': 10,
+        \ 'winrow' : &lines - 12
         \ })
-    " call denite#custom#option('_', {
+   " call denite#custom#option('_', {
     "     \ 'split': 'horizontal',
     "     \ 'statusline' : v:false,
     "     \ 'filter_split_direction' : ''
-    " \ 'vertical_preview': v:true,
     "     \ })
 else
-    call denite#custom#option('_', {'statusline': v:false } )
+    call denite#custom#option('_', {'statusline': v:false,
+    \ 'direction': 'dynamicbottom'
+    } )
 endif
+
+call denite#custom#option('_', {
+    \ 'winheight': 15,
+    \ 'short_source_names': v:true,
+    \ 'highlight_mode_normal': 'Visual',
+    \ 'highlight_mode_insert': 'Visual',
+    \ 'prompt': '#',
+    \ 'highlight_matched_char' : 'Title',
+    \ 'max_dynamic_update_candidates' : '50000',
+    \ 'filter_split_direction' : '',
+    \ 'vertical_preview': v:true,
+    \ 'quick_move_table': {
+        \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
+        \   'h' : 5, 'l' : 6, ';' : 7,
+        \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
+        \ }
+    \ })
+
 "buffer-normal
 call denite#custom#option('normal', {
     \ 'winheight': 10
@@ -154,27 +170,11 @@ call denite#custom#option('search', {
     \ 'winheight': 10
     \ })
 call denite#custom#option('default', {
-    \ 'immediately_1': v:true,
     \ 'winheight': 10
     \ })
 
-"sorter定義
-function! ToggleSorter(sorter) abort
-   let sorters = split(b:denite_context.sorters, ',')
-   let idx = index(sorters, a:sorter)
-   if idx < 0
-       call add(sorters, a:sorter)
-   else
-       call remove(sorters, idx)
-   endif
-   let b:denite_new_context = {}
-   let b:denite_new_context.sorters = join(sorters, ',')
-   return '<denite:nop>'
-endfunction
-
 "call denite#custom#map('insert', '<C-f>',
 "    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
-
 ""need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
       \ ['rg', '--files', '--no-messages', 
@@ -185,12 +185,6 @@ call denite#custom#var('grep', 'final_opts', [])
 call denite#custom#var('grep', 'separator', ['--'])
 call denite#custom#var('grep', 'default_opts',
       \ ['--vimgrep', '--no-heading'])
-
-" Change matchers.
-"call denite#custom#source(
-    "\ 'file_mru', 'matchers', ['matcher/regexp', 'matcher/project_files'])
-"call denite#custom#source(
-"    \ 'file/rec', 'matchers', ['matcher/cpsm'])
 
 " Add custom menus
 let s:menus = {
@@ -209,35 +203,21 @@ let s:menus.string.command_candidates = [
       \ ['format: querystring', 'silent! %s/&amp;/\&/g | silent! %s/&/\r&/g | silent! %s/=/\r=/g'],
       \ ['format: to smb', 'silent! %s/\\/\//g | silent! %s/^\(smb:\/\/\|\/\/\)\?/smb:\/\//g']
       \ ]
-"let s:menus.vim = {'description': 'vim runtime.'}
-"let s:menus.vim.command_candidates = [
-"      \ ['upgrade: dein:deps', 'call dein#update()']
-"      \ ]
 
 call denite#custom#var('menu', 'menus', s:menus)
-
-"call denite#custom#var('file/rec', 'command',
-"      \ ['ack', '-f','-r'])
-" Ack command on grep source
-"    call denite#custom#var('grep', 'command', ['ack'])
-"    call denite#custom#var('grep', 'default_opts',
-"            \ ['--ackrc', $HOME.'/.ackrc', '-H', '-i', '-Q',
-"            \  '--nopager', '--nocolor', '--nogroup', '--column'])
-"    call denite#custom#var('grep', 'recursive_opts', [])
-"    call denite#custom#var('grep', 'pattern_opt', ['--match'])
-"    call denite#custom#var('grep', 'separator', ['--'])
-"    call denite#custom#var('grep', 'final_opts', [])
 
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
-"call denite#custom#alias('source', 'file/rec/py', 'file/rec')
-"call denite#custom#var('file/rec/py', 'command',['scantree.py'])
 " Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ [ '.git/', '.ropeproject/', '__pycache__/',
-    \   'venv/', 'images/','img/', 'fonts/'])
+    \ 'venv/', 'images/','img/', 'fonts/',
+    \ '*~', '*.o', '*.exe', '*.bak',
+    \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
+    \ '.hg/', '.git/', '.bzr/', '.svn/',
+    \ 'tags', 'tags-*'])
 
 function! s:candidate_grep(context) abort
     let path = a:context['targets'][0]['action__path']
@@ -283,6 +263,7 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
+
 ''' # }}}
 
 [plugins.ftplugin]
@@ -311,7 +292,7 @@ nnoremap <silent><buffer><expr> q
     \ denite#do_map('quit')
 nnoremap <silent><buffer><expr> i
     \ denite#do_map('open_filter_buffer')
-nnoremap <silent><buffer><expr> w
+nnoremap <silent><buffer><expr> t
     \ denite#do_map('toggle_select').'j'
 nnoremap <silent><buffer><expr> <C-r>
     \ denite#do_map('do_action','file/rec')
@@ -372,19 +353,18 @@ nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
 nnoremap <silent> <Plug>(defx) :<C-u>Defx<CR>
 nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
-
-nmap <silent> [denite]x <Plug>(defx):<C-u>Denite
-    \ -buffer-name=normal
-    \ defx/dirmark<CR>
 ''' # }}}
 hook_source = ''' " {{{
+
 call defx#custom#option('_', {
     \ 'winwidth': 35,
     \ 'split': 'vertical',
     \ 'direction': 'topleft',
     \ 'columns':'mark:indent:icons:filename',
+    \ 'toggle' : v:true,
     \ 'sort': 'TIME',
-    \ 'ignored_files': '.*,ntuser*,desktop.ini'
+    \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
+    \ 'ignored_files':  '.*, ntuser*, desktop.ini , __pycache__'
     \ })
 "call defx#custom#column('indent', {
 "    \ 'indent': ' |'
@@ -419,6 +399,12 @@ endfunction
 ''' # }}}
 [plugins.ftplugin]
 defx = ''' " {{{
+nmap <silent><buffer> [denite]d <Plug>(defx):<C-u>Denite
+    \ -buffer-name=normal
+    \ defx/dirmark<CR>
+nmap <silent><buffer> [denite]h <Plug>(defx):<C-u>Denite
+    \ -buffer-name=normal
+    \ defx/history<CR>
 setlocal signcolumn=no
 " Define mappings
 nnoremap <silent><buffer><expr> <CR>
@@ -429,8 +415,6 @@ nnoremap <silent><buffer><expr> m
 \ defx#async_action('move')
 nnoremap <silent><buffer><expr> p
 \ defx#async_action('paste')
-nnoremap <silent><buffer><expr> <C-l>
-\ <C-l> <C-w>l 
 nnoremap <silent><buffer><expr> l 
 \ defx#is_directory() ?
 \ defx#do_action('open') :
@@ -476,8 +460,6 @@ nnoremap <silent><buffer><expr> j
 \ line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k
 \ line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <C-l>
-\ defx#do_action('redraw')
 nnoremap <silent><buffer><expr> <C-g>
 \ defx#do_action('print')
 nnoremap <silent><buffer><expr> cd
@@ -874,10 +856,11 @@ function! s:gethighlight(hi) abort
     let hl = substitute(hl, 'xxx', '', '')
     let hl = substitute(hl, '\n', '', '')
     let hl = substitute(hl, 'links to .*', '', 'g')
+    let hl = match(hl, 'guibg') == -1 ? 'guibg=#002b36 ' . hl : hl
     return hl
 endfunction
-
-let s:eskk_hl = 'highlight CursorLineNr cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#073642 guibg=#b58900'
+" s:linenr = 'highlight! CursorLineNr cterm=bold ctermfg=11 gui=bold guifg=#839496'
+let s:eskk_hl = 'highlight CursorLineNr guibg=#b58900 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#073642 '
 silent! let s:linenr_hl ='highlight! CursorLineNr ' .  s:gethighlight('CursorLineNr')
 
 autocmd vimrc User eskk-enable-post silent execute s:eskk_hl
@@ -1108,19 +1091,26 @@ repo =  't9md/vim-choosewin'
 on_map = {n = '<Plug>(choosewin'}
 hook_add = ''' " {{{
 nmap - <Plug>(choosewin)
-
-let s:base1 = [ '#93a1a1', 14 ]
-let g:choosewin_color_overlay = {
-      \ 'gui': ['#839496']
+" let g:choosewin_overlay_font_size = 'small'
+" let g:choosewin_overlay_clear_multibyte = 1
+" let g:choosewin_overlay_enable = 1
+" let g:choosewin_color_overlay = {
+"    \ 'gui': ['#839496']
+"    \ }
+" let g:choosewin_color_overlay_current = {
+"    \ 'gui': ['#859900']
+"    \ }
+let g:choosewin_color_label_current = {
+      \ 'gui': ['#859900' , '#002b36', 'bold']
       \ }
-let g:choosewin_color_overlay_current = {
-      \ 'gui': ['#859900']
+let g:choosewin_color_label = {
+      \ 'gui': [ '#073642', '#fdf6e3', 'bold']
       \ }
-let g:choosewin_overlay_font_size = 'small'
-let g:choosewin_overlay_clear_multibyte = 1
+let g:choosewin_color_other = {
+      \ 'gui': ['#002b36', '#657b83']
+      \ }
 let g:choosewin_tabline_replace = 0
-let g:choosewin_overlay_enable = 1
-let g:choosewin_statusline_replace = 0
+let g:choosewin_statusline_replace = 1
 let s:keymap = {
       \ '0':     'tab_first',
       \ '[':     'tab_prev',
@@ -1138,119 +1128,117 @@ let g:choosewin_label = 'HJKLADFG'
 let g:choosewin_blink_on_land = 0
 ''' # }}}
 
-[[plugins]]
-repo =  'basyura/TweetVim'
-on_cmd = ['TweetVimHomeTimeline', 'TweetVimSay']
-depends = ['twibill.vim', 'webapi-vim']
-hook_add = ''' " {{{
-nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
-nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
-nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
-nnoremap <silent><Leader>tu :<C-u>Denite -buffer-name=normal unite:tweetvim<CR>
-''' # }}}
-hook_source = ''' " {{{
-autocmd vimrc FileType tweetvim setlocal nonumber
-if !executable('convert') || has('nvim')
-    autocmd vimrc FileType tweetvim setlocal signcolumn=no
-endif
-
-let g:tweetvim_tweet_per_page = 60
-let g:tweetvim_include_rts    = 1
-let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-let g:tweetvim_open_buffer_cmd = 'botright 44vsplit'
-let g:tweetvim_display_separator = 1
-let g:tweetvim_empty_separator = 1
-let g:tweetvim_display_time = 1
-let g:tweetvim_display_username = 1
-let g:tweetvim_tweet_limit = 560
-let g:tweetvim_display_icon = 1
-
-if !has('nvim')
-    let g:tweetvim_async_post = 1
-endif
-
-function! s:tw_open_existing() abort
-  let bnr = bufnr('[tweetvim]')
-  if bnr == -1
-    echoerr 'call TweetVim!:'
-    return
-  endif
-  let wids = win_findbuf(bnr)
-    call win_gotoid(wids[0])
-endfunction
-
-highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
-highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-" 自動更新間隔（秒）
-"https://gist.github.com/rhysd/4201877
-let s:tweetvim_update_interval_seconds = 60
-let s:tweetvim_timestamp = reltime()[0]
-function! s:tweetvim_autoupdate()
-    let current = reltime()[0]
-    if current - s:tweetvim_timestamp > s:tweetvim_update_interval_seconds
-        call feedkeys("\<Plug>(tweetvim_action_reload)")
-        let s:tweetvim_timestamp = current
-    endif
-    call feedkeys(mode() ==# 'i' ? "\<C-g>\<ESC>" : "g\<ESC>", 'n')
-endfunction
-
-function! s:tweetvim_setup_autoupdate()
-    augroup vimrc-tweetvim-autoupdate
-        autocmd!
-        autocmd CursorHold * call <SID>tweetvim_autoupdate()
-    augroup END
-endfunction
-
-" 自動更新開始と終了用コマンド
-command! -nargs=0 TweetVimAutoUpdate call <SID>tweetvim_setup_autoupdate()
-command! -nargs=0 TweetVimStopAutoUpdate autocmd! vimrc-tweetvim-autoupdate
-
-autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
-autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-''' # }}}
-[plugins.ftplugin]
-tweetvim_say = ''' " {{{
-" マッピング
-" 挿入・通常モードでsayバッファを閉じる
-nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
-inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
-''' # }}}
-
-[plugins.ftplugin]
-tweetvim = ''' " {{{
-"各種アクション
-nnoremap <buffer>S          :<C-u>TweetVimSay<CR>
-nnoremap <buffer>m          :<C-u>TweetVimMentions<CR>
-nnoremap <buffer>dd :Denite -buffer-name=normal -direction='dynamicbottom' unite:tweetvim<CR>
-nnoremap <buffer>j          }j
-nnoremap <buffer>k          k{j
-nnoremap <buffer>th         :TweetVimHomeTimeline<CR>
-nnoremap <buffer>r          :redraw<CR>
-nmap     <buffer>c          <Plug>(tweetvim_action_in_reply_to)
-nmap     <buffer><Leader>F  <Plug>(tweetvim_action_remove_favorite)
-nmap     <buffer><Leader>d  <Plug>(tweetvim_action_remove_status)
-nmap     <buffer>o          <Plug>(tweetvim_action_open_links)
-nmap     <silent><buffer>q  :bd<CR>
-nmap     <buffer><Tab>      <Plug>(tweetvim_action_reload)
-"ページの先頭に戻ったときにリロード
-nmap     <buffer><silent>gg gg<Plug>(tweetvim_action_reload)
-"ページ移動をff/bb から f/b に
-nmap     <buffer>f          <Plug>(tweetvim_action_page_next)
-nmap     <buffer>b          <Plug>(tweetvim_action_page_previous)
-nnoremap <silent> <buffer>n <C-d>
-nnoremap <silent> <buffer>p <C-u>
-"不要なマップを除去
-nunmap   <buffer>ff
-nunmap   <buffer>bb
-" tweetvim バッファに移動したときに自動リロード
-"autocmd BufEnter * call <SID>tweetvim_reload()
-" filetype が tweetvim ならツイートをリロード
-"function! s:tweetvim_reload()
-"    if &filetype ==# 'tweetvim'
-"        call feedkeys("\<Plug>(tweetvim_action_reload)")
-"    endif
-"endfunction
-''' # }}}
+#[[plugins]]
+#repo =  'basyura/TweetVim'
+#on_cmd = ['TweetVimHomeTimeline', 'TweetVimSay']
+#depends = ['twibill.vim', 'webapi-vim']
+#hook_add = ''' " {{{
+#nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
+#nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
+#nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
+#nnoremap <silent><Leader>tu :<C-u>Denite -buffer-name=normal unite:tweetvim<CR>
+#''' # }}}
+#hook_source = ''' " {{{
+#autocmd vimrc FileType tweetvim setlocal nonumber
+#if !executable('convert') || has('nvim')
+#    autocmd vimrc FileType tweetvim setlocal signcolumn=no
+#endif
+#
+#let g:tweetvim_tweet_per_page = 60
+#let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
+#let g:tweetvim_open_buffer_cmd = 'botright 15vsplit'
+#let g:tweetvim_display_time = 1
+#let g:tweetvim_display_username = 1
+#let g:tweetvim_display_separator = 0
+#let g:tweetvim_tweet_limit = 560
+#let g:tweetvim_display_icon = 1
+# if !has('nvim')
+#    let g:tweetvim_async_post = 1
+#endif
+#
+#function! s:tw_open_existing() abort
+#
+#endfunction let bnr = bufnr('[tweetvim]')                                                  
+#  if bnr == -1
+#    echoerr 'call TweetVim!:'
+#    return
+#  endif
+#  let wids = win_findbuf(bnr)
+#    call win_gotoid(wids[0])
+#endfunction
+#
+#" highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
+#" highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
+#" 自動更新間隔（秒）
+#"https://gist.github.com/rhysd/4201877
+#let s:tweetvim_update_interval_seconds = 60
+#let s:tweetvim_timestamp = reltime()[0]
+#function! s:tweetvim_autoupdate()
+#    let current = reltime()[0]
+#    if current - s:tweetvim_timestamp > s:tweetvim_update_interval_seconds
+#        call feedkeys("\<Plug>(tweetvim_action_reload)")
+#        let s:tweetvim_timestamp = current
+#    endif
+#    call feedkeys(mode() ==# 'i' ? "\<C-g>\<ESC>" : "g\<ESC>", 'n')
+#endfunction
+#
+#function! s:tweetvim_setup_autoupdate()
+#    augroup vimrc-tweetvim-autoupdate
+#        autocmd!
+#        autocmd CursorHold * call <SID>tweetvim_autoupdate()
+#    augroup END
+#endfunction
+#
+#" 自動更新開始と終了用コマンド
+#" command! -nargs=0 TweetVimAutoUpdate call <SID>tweetvim_setup_autoupdate()
+#" command! -nargs=0 TweetVimStopAutoUpdate autocmd! vimrc-tweetvim-autoupdate
+#
+#" autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
+#" autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
+#''' # }}}
+#[plugins.ftplugin]
+#tweetvim_say = ''' " {{{
+#" マッピング
+#" 挿入・通常モードでsayバッファを閉じる
+#nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
+#inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
+#''' # }}}
+#
+#[plugins.ftplugin]
+#tweetvim = ''' " {{{
+#"各種アクション
+#nnoremap <buffer>S          :<C-u>TweetVimSay<CR>
+#nnoremap <buffer>m          :<C-u>TweetVimMentions<CR>
+#nnoremap <buffer>dd :Denite -buffer-name=normal -direction='dynamicbottom' unite:tweetvim<CR>
+#" nnoremap <buffer>j          }j
+#" nnoremap <buffer>k          k{j
+#nnoremap <buffer>th         :TweetVimHomeTimeline<CR>
+#nnoremap <buffer>r          :redraw<CR>
+#nmap     <buffer>c          <Plug>(tweetvim_action_in_reply_to)
+#nmap     <buffer><Leader>F  <Plug>(tweetvim_action_remove_favorite)
+#nmap     <buffer><Leader>d  <Plug>(tweetvim_action_remove_status)
+#nmap     <buffer>o          <Plug>(tweetvim_action_open_links)
+#nmap     <silent><buffer>q  :bd<CR>
+#nmap     <buffer><Tab>      <Plug>(tweetvim_action_reload)
+#"ページの先頭に戻ったときにリロード
+#nmap     <buffer><silent>gg gg<Plug>(tweetvim_action_reload)
+#"ページ移動をff/bb から f/b に
+#nmap     <buffer>f          <Plug>(tweetvim_action_page_next)
+#nmap     <buffer>b          <Plug>(tweetvim_action_page_previous)
+#nnoremap <silent> <buffer>n <C-d>
+#nnoremap <silent> <buffer>p <C-u>
+#"不要なマップを除去
+#nunmap   <buffer>ff
+#nunmap   <buffer>bb
+#" tweetvim バッファに移動したときに自動リロード
+#"autocmd BufEnter * call <SID>tweetvim_reload()
+#" filetype が tweetvim ならツイートをリロード
+#"function! s:tweetvim_reload()
+#"    if &filetype ==# 'tweetvim'
+#"        call feedkeys("\<Plug>(tweetvim_action_reload)")
+#"    endif
+#"endfunction
+#''' # }}}
 
 [[plugins]]
 repo = 'previm/previm'
@@ -1370,9 +1358,8 @@ repo = 'haya14busa/incsearch-migemo.vim'
 #TODO:qitta
 on_map = { nx = '<Plug>(incsearch-migemo-' }
 hook_add = ''' " {{{
-map m/ <Plug>(incsearch-migemo-/)
-map m? <Plug>(incsearch-migemo-?)
-map mg/ <Plug>(incsearch-migemo-stay)
+map g/ <Plug>(incsearch-migemo-/)
+map g? <Plug>(incsearch-migemo-?)
 ''' # }}}
 
 #[[plugins]]
