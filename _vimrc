@@ -461,16 +461,17 @@ endfunction  "}}}
 nnoremap <silent><Leader>h :bprev!<CR>|
 nnoremap <silent><Leader>l :bnext!<CR>|
 
-" commandline mapping
-cnoremap <C-a> <Home>
-cnoremap <C-b> <Left>
-cnoremap <C-d> <Del>
-cnoremap <C-e> <End>
-cnoremap <C-f> <Right>
-cnoremap <C-n> <Down>
-cnoremap <C-p> <Up>
-cnoremap <M-b> <S-Left>
-cnoremap <M-f> <S-Right>
+" <s>commandline mapping<s>
+" !! USE <CTRL-f> !!
+" cnoremap <C-a> <Home>
+" cnoremap <C-b> <Left>
+" cnoremap <C-d> <Del>
+" cnoremap <C-e> <End>
+" cnoremap <C-f> <Right>
+" cnoremap <C-n> <Down>
+" cnoremap <C-p> <Up>
+" cnoremap <M-b> <S-Left>
+" cnoremap <M-f> <S-Right>
 " don't let close window when closing buffer
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
 " Display an error message. {{{
