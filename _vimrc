@@ -65,6 +65,7 @@ function! s:makeconfigdir() abort
     endfor
 endfunction
 "}}}
+set autochdir               " set current directory to editing file dir automatically
 set swapfile
 set directory=~/vimfiles/swap
 set undofile
@@ -119,7 +120,8 @@ set display=lastline
 set showmatch       " highlight matched pairs
 set matchtime=1     " highlighting long
 set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
-set autochdir               " set current directory to editing file dir automatically
+
+set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
 set tabstop=4               " number of spaces inserted by <TAB>
 set expandtab
@@ -127,7 +129,7 @@ set softtabstop=4
 let g:vim_indent_cont = 4
 set autoindent
 set shiftwidth=4            " number of spaces inserted when auto indentation by vim
-set formatoptions+=mMj
+set formatoptions+=mMjo
 
 " Searching
 set ignorecase
@@ -256,17 +258,20 @@ xnoremap Y y$
 nnoremap vv V
 nnoremap V v$
 
-nmap <Tab> %
-vmap <Tab> %
-xmap <Tab> %
-
+nnoremap <Tab> %
+vnoremap <Tab> %
+xnoremap <Tab> %
+nnoremap <C-p> <C-i>
+vnoremap <C-p> <C-i>
+xnoremap <C-p> <C-i>
 " macro by 'Q'
 nnoremap Q q
 xnoremap Q q
-
 nnoremap J gJ
 nnoremap gJ J
-
+inoremap z] 」
+inoremap z} 』
+inoremap z) ）
 " colorcolumn
 nnoremap <expr><Leader>cl
     \ ":\<C-u>set colorcolumn=".(&cc == 0 ? v:count == 0 ? virtcol('.') : v:count : 0)."\<CR>"

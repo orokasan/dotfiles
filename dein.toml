@@ -31,6 +31,9 @@ repo = 'vim-jp/vimdoc-ja'
 [[plugins]]
 on_if = '!has("kaoriya")'
 repo = 'deton/jasentence.vim'
+hook_add = '''
+let g:jasentence_endpat = '[、。，．？！]\+'
+'''
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
