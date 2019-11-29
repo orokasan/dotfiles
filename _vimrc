@@ -530,7 +530,7 @@ function! s:Bclose(bang, buffer) "{{{
 endfunction
 let g:bclose_multiple = 1
 command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
-nnoremap <silent><C-p> :Bclose<CR>
+nnoremap <silent><Leader>q :Bclose<CR>
 "}}}
 
 " pandoc
@@ -682,5 +682,21 @@ function! ProfileCursorMove() abort
   endfor
 endfunction
 "}}}
+" rainbowstreaming
+nnoremap <Leader>r :<C-u>call <SID>rainbowstream()<CR>
+function! s:rainbowstream()
+    split
+    terminal rainbowstream
+    resize 13
+endfunction
+
+" yank searched results
+function! s:search(pat)
+let l:cache = []
+execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
+call setreg(v:register,join(l:cache, "\n"))
+endfunction
+command! -nargs=* SearchYank call s:search(<q-args>)
+
 "}}}
 "vim:set foldmethod=marker:se foldcolumn=1

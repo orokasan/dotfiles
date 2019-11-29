@@ -116,9 +116,6 @@ let g:neomru#file_mru_path= '~/.cache/neomru/file'
 ''' # }}}
 
 [[plugins]]
-repo =  'basyura/twibill.vim'
-
-[[plugins]]
 repo =  'mattn/webapi-vim'
 
 [[plugins]]

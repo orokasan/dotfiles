@@ -264,6 +264,19 @@ call denite#custom#action(
     \ 'defx',
     \  function('s:defx_open'))
 
+"sorter定義
+function! ToggleSorter(sorter) abort
+   let sorters = split(b:denite_context.sorters, ',')
+   let idx = index(sorters, a:sorter)
+   if idx < 0
+       call add(sorters, a:sorter)
+   else
+       call remove(sorters, idx)
+   endif
+   let b:denite_new_context = {}
+   let b:denite_new_context.sorters = join(sorters, ',')
+   return '<denite:nop>'
+endfunction
 ''' # }}}
 
 [plugins.ftplugin]
@@ -294,6 +307,8 @@ nnoremap <silent><buffer><expr> i
     \ denite#do_map('open_filter_buffer')
 nnoremap <silent><buffer><expr> t
     \ denite#do_map('toggle_select').'j'
+nnoremap <silent><buffer><expr> r
+    \ denite#do_map('toggle_matchers:regexp')
 nnoremap <silent><buffer><expr> <C-r>
     \ denite#do_map('do_action','file/rec')
 nnoremap <silent><buffer><expr> <C-s>
@@ -351,7 +366,7 @@ on_cmd = 'Defx'
 hook_add = ''' " {{{
 nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
-nnoremap <silent> <Plug>(defx) :<C-u>Defx<CR>
+nnoremap <silent> <Plug>(defx) :<C-u>Defx ~/<CR>
 nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
 ''' # }}}
 hook_source = ''' " {{{
@@ -361,8 +376,8 @@ call defx#custom#option('_', {
     \ 'split': 'vertical',
     \ 'direction': 'topleft',
     \ 'columns':'mark:indent:icons:filename',
-    \ 'toggle' : v:true,
     \ 'sort': 'TIME',
+    \ 'resume': v:true,
     \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
     \ 'ignored_files':  '.*, ntuser*, desktop.ini , __pycache__'
     \ })
@@ -773,12 +788,11 @@ let g:eskk#cursor_color = {
 \   'abbrev': '#4169e1',
 \   'zenei': '#ffd700',
 \}
-nnoremap <silent><expr><C-j> <SID>eskk_inserttoggle()
 imap <C-j> <Plug>(eskk:toggle)
 cmap <C-j> <Plug>(eskk:toggle)
 ''' # }}}
 hook_source = ''' " {{{
-
+nnoremap <silent><C-j> :call <SID>eskk_inserttoggle()<CR>
 "TODO :qitta
 augroup myeskk
 autocmd!
@@ -807,11 +821,11 @@ function! s:eskk_inserttoggle() abort
     if s:eskk_status || g:eskk_toggle_status
         let s:eskk_status = 0
         let g:eskk_toggle_status = 0
-        silent exec s:linenr_hl
+        silent! exec s:linenr_hl
         echo 'eskk status off'
     else
         let g:eskk_toggle_status = 1
-        silent exec s:eskk_hl
+        silent! exec s:eskk_hl
         echo 'eskk status on'
     endif
 endfunction
