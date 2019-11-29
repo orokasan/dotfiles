@@ -293,24 +293,42 @@ nnoremap <expr><Leader>cl
 "}}}
 tnoremap <C-[> <C-\><C-n>
 tnoremap <Esc> <C-\><C-n>
-tnoremap <A-h> <C-\><C-N><C-w>h
-tnoremap <A-j> <C-\><C-N><C-w>j
-tnoremap <A-k> <C-\><C-N><C-w>k
-tnoremap <A-l> <C-\><C-N><C-w>l
-inoremap <A-h> <C-\><C-N><C-w>h
-inoremap <A-j> <C-\><C-N><C-w>j
-inoremap <A-k> <C-\><C-N><C-w>k
-inoremap <A-l> <C-\><C-N><C-w>l
+if has('mac')
+    tnoremap ˙ <C-\><C-N><C-w>h
+    tnoremap ∆  <C-\><C-N><C-w>j
+    tnoremap ˚ <C-\><C-N><C-w>k
+    tnoremap Ò  <C-\><C-N><C-w>l
+    tnoremap <C-w><C-w>  <C-\><C-N><C-w>w
+    inoremap ˙ <C-\><C-N><C-w>h
+    inoremap ∆  <C-\><C-N><C-w>j
+    inoremap ˚ <C-\><C-N><C-w>k
+    inoremap Ò  <C-\><C-N><C-w>l
+    inoremap <C-w><C-w>  <C-\><C-N><C-w>p
+
+else
+    tnoremap <A-h> <C-\><C-N><C-w>h
+    tnoremap <A-j> <C-\><C-N><C-w>j
+    tnoremap <A-k> <C-\><C-N><C-w>k
+    tnoremap <A-l> <C-\><C-N><C-w>l
+    inoremap <A-h> <C-\><C-N><C-w>h
+    inoremap <A-j> <C-\><C-N><C-w>j
+    inoremap <A-k> <C-\><C-N><C-w>k
+    inoremap <A-l> <C-\><C-N><C-w>l
+endif
+"terminal
 
 if has('nvim')
-  " Neovim 用
-autocmd vimrc TermOpen * set nonumber signcolumn=no
-else
-  " Vim 用
-  autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
+    autocmd vimrc TermOpen * set nonumber signcolumn=no | startinsert
 endif
-" save like Word
-inoremap <c-s> <Esc>:w<CR>a
+
+ if has('nvim')
+   " Neovim 用
+   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
+ else
+   " Vim 用
+   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
+ endif
+
 " close window
 nnoremap <silent><C-q> :bd<CR>
 " close buffer
@@ -409,10 +427,13 @@ inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 "
 " move between windows
-" nnoremap <C-h> <C-w>h
-" nnoremap <C-j> <C-w>j
-" nnoremap <C-k> <C-w>k
-" nnoremap <C-l> <C-w>l
+inoremap <C-w>h <ESC><C-w>h
+inoremap <C-w>j <ESC><C-w>j
+inoremap <C-w>k <ESC><C-w>k
+inoremap <C-w>l <ESC><C-w>l
+nnoremap <C-w><C-w> <ESC><C-w>p
+inoremap <C-w><C-w> <ESC><C-w>p
+nnoremap <C-w><C-u> <ESC><C-w><C-w>
 "
 " change window size
 nnoremap <S-Left>  <C-w><

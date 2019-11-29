@@ -1091,6 +1091,7 @@ repo =  't9md/vim-choosewin'
 on_map = {n = '<Plug>(choosewin'}
 hook_add = ''' " {{{
 nmap - <Plug>(choosewin)
+nmap - <C-\><C-n><Plug>(choosewin)
 " let g:choosewin_overlay_font_size = 'small'
 " let g:choosewin_overlay_clear_multibyte = 1
 " let g:choosewin_overlay_enable = 1
