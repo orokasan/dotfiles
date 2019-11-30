@@ -16,10 +16,19 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 unsetopt list_types
 setopt auto_cd
 setopt pushd_ignore_dups
-
 #PROMPT
 autoload -U promptinit; promptinit
 prompt pure
+
+# cdした際のディレクトリをディレクトリスタックへ自動追加
+setopt auto_pushd
+# ディレクトリスタックへの追加の際に重複させない
+setopt pushd_ignore_dups
+# 自動でpushdを実行
+setopt auto_pushd
+# pushdから重複を削除
+setopt pushd_ignore_dups
+
 # ALIAS {{{
 # general
 alias ls='ls -G'
@@ -78,7 +87,6 @@ alias wipe="git checkout . && git clean -fd"
 # tig
 alias t="tig"
 alias ta="tig --all"
-alias g='git'
 
 alias -g L='| less'
 alias -g H='| head'
@@ -132,6 +140,28 @@ ls_abbrev() {
         echo "$ls_result"
     fi
 }
+
+# bindkey
+
+# vi-like mapping
+bindkey -v
+bindkey -M viins '\er' history-incremental-pattern-search-forward
+bindkey -M viins '^?'  backward-delete-char
+bindkey -M viins '^A'  beginning-of-line
+bindkey -M viins '^B'  backward-char
+bindkey -M viins '^D'  delete-char-or-list
+bindkey -M viins '^E'  end-of-line
+bindkey -M viins '^F'  forward-char
+bindkey -M viins '^G'  send-break
+bindkey -M viins '^H'  backward-delete-char
+bindkey -M viins '^K'  kill-line
+bindkey -M viins '^N'  down-line-or-history
+bindkey -M viins '^P'  up-line-or-history
+bindkey -M viins '^R'  history-incremental-pattern-search-backward
+bindkey -M viins '^U'  backward-kill-line
+bindkey -M viins '^W'  backward-kill-word
+bindkey -M viins '^Y'  yank
+
 cdpath=(.. ~)
 autoload -Uz select-word-style
 select-word-style default
@@ -139,6 +169,7 @@ zstyle ':zle:*' word-chars "_-./;@"
 zstyle ':zle:*' word-style unspecified
 zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion::complete:*' use-cache true
 bindkey '^r' history-incremental-pattern-search-backward
 bindkey '^s' history-incremental-pattern-search-forward
 # 例 ls まで打ってCtrl+pでlsコマンドをさかのぼる、Ctrl+bで逆順
@@ -179,3 +210,11 @@ if ! zplug check --verbose; then
     fi
 fi
 zplug load
+# fgコマンドの%を省略
+fg() {
+    if [[ $# -eq 1 && $1 = - ]]; then
+        builtin fg %-
+    else
+        builtin fg %"$@"
+    fi
+}
