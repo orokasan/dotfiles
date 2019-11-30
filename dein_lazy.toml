@@ -333,6 +333,8 @@ nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
 repo =  'Shougo/neoyank.vim'
 on_event = 'TextYankPost'
 on_source = ['denite.nvim']
+hook_add = '''
+'''
 
 [[plugins]]
 repo =  'Shougo/unite.vim'
@@ -366,7 +368,7 @@ on_cmd = 'Defx'
 hook_add = ''' " {{{
 nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
-nnoremap <silent> <Plug>(defx) :<C-u>Defx ~/<CR>
+nnoremap <silent> <Plug>(defx) :<C-u>Defx<CR>
 nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
 ''' # }}}
 hook_source = ''' " {{{
@@ -942,6 +944,9 @@ call lexima#add_rule({'char': '<TAB>', 'at': '\%#}', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#』', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#」', 'leave': 1})
 call lexima#add_rule({'char': '<TAB>', 'at': '\%#）', 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': "\%#'", 'leave': 1})
+call lexima#add_rule({'char': '<TAB>', 'at': '\%#"', 'leave': 1})
+
 ''' # }}}
 
 [[plugins]]
@@ -1078,7 +1083,7 @@ let g:ale_linters = {
     \ 'python': ['flake8'],
     \ 'text':['textlint']
     \ }
-
+let g:ale_echo_msg_format = '%code: %%s [%linter%]'
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 0
 let g:ale_sign_column_always = 1
@@ -1264,7 +1269,7 @@ depends = 'open-browser.vim'
 on_ft = ['markdown','md']
 hook_add = '''
 let g:previm_open_cmd = 'open -a Safari'
-nnoremap <silent><Leader>pmd :PrevimOpen<CR>
+nnoremap <silent><Leader>mp :PrevimOpen<CR>
 '''
 
 [[plugins]]

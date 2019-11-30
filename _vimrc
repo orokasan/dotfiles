@@ -249,7 +249,9 @@ nnoremap ` m
 nnoremap ! `
 " yank to end of line
 nnoremap Y y$
-xnoremap Y y$
+xnoremap Y y$gv<ESC>
+xnoremap y ygv<ESC>
+
 " 'v' behave more compatible with 'y'
 nnoremap vv V
 nnoremap V v$
@@ -699,17 +701,15 @@ execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
-
 " my plugins
 set runtimepath+=expand('~/.cache/dein/repos/github.com/orokasan/denite-ale/')
 "}}}
-
 " Memo {{{
 "今夜使いたいkey mapping
 "*t) =>前方の)の手前まで削除して*
 "vim正規表現
 "https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
+" input apostrophe -> <A-]>
+"https://support.apple.com/ja-jp/guide/mac-help/mh27474/mac
 " }}}
 "vim:set foldmethod=marker:se foldcolumn=1
-
-
