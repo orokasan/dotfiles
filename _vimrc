@@ -1,10 +1,4 @@
-"ork's _vimrc
-"今夜使いたいkey mapping
-"*t) =>前方の)の手前まで削除して*
-"aw =>1単語の範囲
-"ap =>段落の範囲
-"vim正規表現
-"https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
+"ork's vimrc
 
 " Basic setting {{{
 set encoding=utf-8
@@ -65,7 +59,7 @@ function! s:makeconfigdir() abort
     endfor
 endfunction
 "}}}
-set autochdir               " set current directory to editing file dir automatically
+" set autochdir               " set current directory to editing file dir automatically
 set swapfile
 set directory=~/vimfiles/swap
 set undofile
@@ -227,7 +221,8 @@ let mapleader = "\<Space>"
 "nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
 nnoremap <CR> o<ESC>
 nnoremap \ O<ESC>
-
+" select all
+nnoremap <C-g><C-g> ggVG
 " moving visible lines by j/k
 nnoremap <silent>j gj
 nnoremap <silent>k gk
@@ -270,9 +265,11 @@ nnoremap Q q
 xnoremap Q q
 nnoremap J gJ
 nnoremap gJ J
+
 inoremap z] 」
 inoremap z} 』
 inoremap z) ）
+
 " colorcolumn
 nnoremap <expr><Leader>cl
     \ ":\<C-u>set colorcolumn=".(&cc == 0 ? v:count == 0 ? virtcol('.') : v:count : 0)."\<CR>"
@@ -295,6 +292,8 @@ nnoremap <expr><Leader>cl
 tnoremap <C-[> <C-\><C-n>
 tnoremap <Esc> <C-\><C-n>
 if has('mac')
+    " can't map A- on Mac
+    " ref. https://qiita.com/delphinus/items/aea16e82de2145d2a6b7
     tnoremap ˙ <C-\><C-N><C-w>h
     tnoremap ∆  <C-\><C-N><C-w>j
     tnoremap ˚ <C-\><C-N><C-w>k
@@ -537,9 +536,9 @@ nnoremap <silent><Leader>q :Bclose<CR>
 " pandoc
 if has('mac')
     "nnoremap <Leader>pd <C-u>:!pandoc -f markdown+ignore_line_breaks -t docx --reference-doc='/Users/ork/.pandoc/reference.docx' -o '%:p:r.docx' '%:p'<CR>
-    nnoremap <Leader>pd <C-u>:!pandoc -f markdown+ignore_line_breaks -t docx --reference-doc=reference.docx -o '%:p:r.docx' '%:p'<CR>
+    nnoremap <Leader>md <C-u>:!pandoc -f markdown+ignore_line_breaks -t docx --reference-doc=reference.docx -o '%:p:r.docx' '%:p'<CR>
 else
-    nnoremap <Leader>pd <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
+    nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
 "}}}
 
@@ -547,7 +546,7 @@ endif
 if has('GUI')
     let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
     set guioptions+=M
-    set clipboard=unnamed
+    set clipboard+=unnamed
     ""Nm秒後にカーソル点滅開始
     set guicursor=n:blinkwait2000
     let no_buffers_menu = 1
@@ -562,9 +561,9 @@ if has('GUI')
         let &guifontwide = s:myguifont
         set renderoptions=type:directx,renmode:5,geom:1
     endif
-        set lines=60 "ウィンドウの縦幅
-        set columns=120 " ウィンドウの横幅
-        winpos 2 10 " ウィンドウの起動時の位置
+    set lines=60 "ウィンドウの縦幅
+    set columns=120 " ウィンドウの横幅
+    winpos 2 10 " ウィンドウの起動時の位置
 endif
 "}}}
 
@@ -593,12 +592,13 @@ endif
 " Neovim {{{
 if has('nvim')
     set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
-    set clipboard=unnamed
     "float windowで補完するための設定
+    set clipboard+=unnamed
     set completeopt-=preview
     "set completeopt+=popuphidden
     set wildoptions=pum
 endif
+
 "}}}
 
 ""dein.vim {{{
@@ -683,6 +683,7 @@ function! ProfileCursorMove() abort
   endfor
 endfunction
 "}}}
+
 " rainbowstreaming
 nnoremap <Leader>r :<C-u>call <SID>rainbowstream()<CR>
 function! s:rainbowstream()
@@ -699,5 +700,16 @@ call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
 
+" my plugins
+set runtimepath+=expand('~/.cache/dein/repos/github.com/orokasan/denite-ale/')
 "}}}
+
+" Memo {{{
+"今夜使いたいkey mapping
+"*t) =>前方の)の手前まで削除して*
+"vim正規表現
+"https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
+" }}}
 "vim:set foldmethod=marker:se foldcolumn=1
+
+
