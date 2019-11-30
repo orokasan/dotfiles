@@ -223,7 +223,8 @@ endif
 
 let mapleader = "\<Space>"
 " improved insert
-nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
+" in neovim, 'cc' overwrite unnamed register.
+"nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
 nnoremap <CR> o<ESC>
 nnoremap \ O<ESC>
 
