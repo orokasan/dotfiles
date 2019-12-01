@@ -85,18 +85,19 @@ nnoremap <silent> [denite]j :<C-u>Denite jump <CR>
 
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
+    \ -start-filter
+    \ -buffer-name=search
+    \ -resume<CR>
+
+nnoremap <silent> [denite]R :<C-u>Denite
+    \ -start-filter
+    \ -buffer-name=default
     \ -resume<CR>
 
 "open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
     \ -buffer-name=stay
-    \ -post-action=open
     \ ale<CR>
-
-nnoremap <silent><Leader>n :<C-u>Denite
-    \ -cursor-pos=+1 -immediately
-    \ -buffer-name=search -no-empty
-    \ -resume  -refresh<CR>
 
 "コマンド結果をdeniteに出力
 nnoremap [denite]p :<C-u>Denite
@@ -106,7 +107,6 @@ nnoremap [denite]p :<C-u>Denite
 " markdown TOC
 nnoremap <silent> [denite]o :<C-u>Denite
     \ -buffer-name=stay
-    \ -post-action=open
     \ markdown<CR>
 
 nnoremap <silent> [denite]d :<C-u>Denite
@@ -118,6 +118,22 @@ nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
     \ -buffer-name=normal
     \ dirmark/add<CR>
 autocmd vimrc FileType denite hi link CursorLine ColorColumn
+
+" move next candidate
+nnoremap <silent> [denite]. :<C-u>Denite
+    \ -buffer-name=stay
+    \ -resume
+    \ -cursor-pos=+1
+    \ -immediately
+    \ ale<CR>
+
+nnoremap <silent> [denite], :<C-u>Denite
+    \ -resume
+    \ -buffer-name=stay
+    \ -cursor-pos=-1
+    \ -immediately
+    \ ale<CR>
+
 ''' #}}}
 hook_source = ''' " {{{
 if has('nvim')
@@ -244,6 +260,11 @@ call denite#custom#action(
     \ function('s:denite_rec')
     \ )
 
+" action jump
+" function! s:denite_jump()
+"     let line = a:context['targets'][0]['action__line']
+"     let col = a:context['targets'][0]['action__col']
+
 "Defxで開く
 function! s:defx_open(context)
     let path = a:context['targets'][0]['action__path']
@@ -333,8 +354,6 @@ nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
 repo =  'Shougo/neoyank.vim'
 on_event = 'TextYankPost'
 on_source = ['denite.nvim']
-hook_add = '''
-'''
 
 [[plugins]]
 repo =  'Shougo/unite.vim'
