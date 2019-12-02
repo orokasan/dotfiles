@@ -36,7 +36,6 @@ alias ll='ls -l'        # 多用します
 alias la='ls -A'        # 多用します
 alias l='ls -CF'
 alias du='du -sh *'     # ディレクトリごとにサブディレクトリ含む合計容量を出力します
-alias open='gnome-open' # htmlファイルをopenすればブラウザで開くことができます
 alias caddy='ruby /opt/caddy/caddy/caddy.rb'
 alias terminal='gnome-terminal --hide-menubar'
 alias tm='terminal'     # tm ./ で現在いるディレクトリでターミナルを複製できます
