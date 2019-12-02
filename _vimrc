@@ -9,7 +9,6 @@ else
 endif
 set fileencoding=utf-8
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
-set runtimepath+=~/vimfiles
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 augroup vimrc
@@ -19,8 +18,8 @@ augroup END
 let g:loaded_gzip              = 1
 let g:loaded_tar               = 1
 let g:loaded_tarPlugin         = 1
-let g:loaded_zip               = 1
-let g:loaded_zipPlugin         = 1
+" let g:loaded_zip               = 1
+" let g:loaded_zipPlugin         = 1
 let g:loaded_rrhelper          = 1
 let g:loaded_2html_plugin      = 1
 let g:loaded_vimball           = 1
@@ -81,7 +80,7 @@ set noshowmode      " don't let show current mode on commandline
 set cursorline      " highlight cursorline
 " autocmd vimrc ColorScheme *  hi clear CursorLine
 set list            " show invisible character
-set listchars=tab:»-,trail:-,extends:»,precedes:«,nbsp:%
+set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors   " ターミナルでも True Color を使えるようにする。
 set lazyredraw
@@ -134,9 +133,6 @@ set incsearch
 set wrapscan
 set hlsearch
 
-" for markdown
-"autocmd! FileType markdown hi! def link markdownItalic Normal
-autocmd vimrc FileType markdown set commentstring=<\!--\ %s\ -->
 "completion
 set complete=.,w,b,u
 " viminfo
@@ -241,6 +237,7 @@ xnoremap 4 $
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
 " Convenience key for getting to command mode
+
 nnoremap ; :
 " Enter normal mode
 inoremap jk <esc>
@@ -262,9 +259,6 @@ xnoremap <Tab> %
 nnoremap <C-p> <C-i>
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
-" macro by 'Q'
-nnoremap Q q
-xnoremap Q q
 nnoremap J gJ
 nnoremap gJ J
 
@@ -291,6 +285,10 @@ nnoremap <expr><Leader>cl
 "nnoremap <silent> f<C-M> :call search('[、。]')<CR>a<CR><Esc>
 "nnoremap <silent> F<C-M> :call search('[、。]', 'b')<CR>a<CR><Esc>
 "}}}
+"terminal
+
+" if using iTerm2, map option key to Meta
+" Preference -> Profile -> Keys
 tnoremap <C-[> <C-\><C-n>
 tnoremap <Esc> <C-\><C-n>
 if has('mac')
@@ -317,24 +315,21 @@ else
     inoremap <A-k> <C-\><C-N><C-w>k
     inoremap <A-l> <C-\><C-N><C-w>l
 endif
-"terminal
 
 if has('nvim')
     autocmd vimrc TermOpen * set nonumber signcolumn=no | startinsert
 endif
 
- if has('nvim')
-   " Neovim 用
-   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
- else
-   " Vim 用
-   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
- endif
+ " if has('nvim')
+ "   " Neovim 用
+ "   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
+ " else
+ "   " Vim 用
+ "   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
+ " endif
 
 " close window
 nnoremap <silent><C-q> :bd<CR>
-" close buffer
-nnoremap <silent>q :close<CR>
 " insert date
 inoremap <expr><F2> strftime("%Y%m%d")
 cnoremap <expr><F2> strftime("%Y%m%d")
@@ -444,7 +439,8 @@ nnoremap <S-Up>    <C-w>-
 nnoremap <S-Down>  <C-w>+
 
 " maximize buffer window size temporally
-nmap <Leader>wz <Plug>(my-zoom-window)
+nmap <C-w>z <Plug>(my-zoom-window)
+nmap <C-w><C-z> <Plug>(my-zoom-window)
 "{{{
 nnoremap <silent> <Plug>(my-zoom-window)
       \ :<C-u>call <SID>toggle_window_zoom()<CR>
@@ -460,8 +456,8 @@ function! s:toggle_window_zoom() abort
 endfunction  "}}}
 
 " moving around between buffers
-nnoremap <silent><Leader>h :bprev!<CR>|
-nnoremap <silent><Leader>l :bnext!<CR>|
+nnoremap <silent><Leader>h :bprev!<CR>
+nnoremap <silent><Leader>l :bnext!<CR>
 
 " <s>commandline mapping<s>
 " !! USE <CTRL-f> !!
@@ -532,13 +528,20 @@ function! s:Bclose(bang, buffer) "{{{
 endfunction
 let g:bclose_multiple = 1
 command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
-nnoremap <silent><Leader>q :Bclose<CR>
 "}}}
-
+nnoremap Q :<C-u>Bclose<CR>
+xnoremap Q :<C-u>Bclose<CR>
 " pandoc
+" pandoc-crossref
+" put config file to ~/.pandoc-crossref/config.yaml
+" http://lierdakil.github.io/pandoc-crossref/
+    function! s:pandoc_md_to_docx()
+        let t = expand('~/dotfiles/pandoc/reference.docx')
+        let s = "!pandoc -s --filter pandoc-crossref -f  markdown+ignore_line_breaks -t docx --reference-doc=" . t . " '%:p' -o '%:p:r.docx'"
+        execute s
+    endfunction
 if has('mac')
-    "nnoremap <Leader>pd <C-u>:!pandoc -f markdown+ignore_line_breaks -t docx --reference-doc='/Users/ork/.pandoc/reference.docx' -o '%:p:r.docx' '%:p'<CR>
-    nnoremap <Leader>md <C-u>:!pandoc -f markdown+ignore_line_breaks -t docx --reference-doc=reference.docx -o '%:p:r.docx' '%:p'<CR>
+    nnoremap <Leader>md <C-u>:call <SID>pandoc_md_to_docx()<CR>
 else
     nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
@@ -702,8 +705,9 @@ call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
 " my plugins
-set runtimepath+=expand('~/.cache/dein/repos/github.com/orokasan/denite-ale/')
+set runtimepath+=~/.cache/dein/repos/github.com/orokasan/denite-ale/
 "}}}
+
 " Memo {{{
 "今夜使いたいkey mapping
 "*t) =>前方の)の手前まで削除して*
@@ -712,4 +716,6 @@ set runtimepath+=expand('~/.cache/dein/repos/github.com/orokasan/denite-ale/')
 " input apostrophe -> <A-]>
 "https://support.apple.com/ja-jp/guide/mac-help/mh27474/mac
 " }}}
-"vim:set foldmethod=marker:se foldcolumn=1
+au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
+au vimrc BufRead .textlintrc set ft=json
+" vim:set foldmethod=marker:
