@@ -1,27 +1,23 @@
 {
   "rules": {
-    "preset-japanese": false,
-    "preset-jtf-style": false,
     "ja-hiragana-keishikimeishi": true,
     "ja-hiragana-fukushi": true,
     "ja-hiragana-hojodoushi": true,
-    "web-plus-db": true,
 //    "max-appearence-count-of-words": { "limit": 5 },
     "apostrophe": true,
     "common-misspellings":true,
-    "no-dead-link": {
-        "checkRelative": true,
-        "baseURI": null,
-        "ignore": [],
-        "preferGET": [],
-        "ignoreRedirects": false,
-        "retry": 3
-        },
-    // "prh": { "rulePaths" : ["~/node_modules/prh/prh-rules/media/WEB+DB_PRESS.yml"] },
+    "prh": {
+        "rulePaths" : [
+            "/usr/local/lib/node_modules/prh/prh-rules/media/WEB+DB_PRESS.yml",
+            "/usr/local/lib/node_modules/prh/prh-rules/files/markdown.yml"
+            ],
     "preset-ja-technical-writing": {
         "sentence-length": {
             max: 125
             },
+        "max-comma": {
+               max: 5
+           },
         "max-ten": {
             "max" : 3
             },
@@ -37,11 +33,11 @@
             },
         "no-doubled-joshi": {
                     // 助詞のtoken同士の距離が2以下ならエラー
-                    "min_interval" : 4,
+                    "min_interval" : 3,
                     // 例外を許可するかどうか
                     "strict": false,
                     // 助詞のうち「も」「や」は複数回の出現を許す
-                    "allow": ["とか", "たり"],
+                    "allow": ["とか", "たり","にも"],
                     // 文区切り文字の配列
                 },
         "ja-no-mixed-period":false,
