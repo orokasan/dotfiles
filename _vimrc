@@ -1,5 +1,4 @@
 "ork's vimrc
-
 " Basic setting {{{
 set encoding=utf-8
 if !has('nvim')
@@ -454,7 +453,8 @@ function! s:toggle_window_zoom() abort
         vertical resize
     endif
 endfunction  "}}}
-
+" close help by q
+autocmd vimrc FileType help nnoremap <buffer> q <C-w>c
 " moving around between buffers
 nnoremap <silent><Leader>h :bprev!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
@@ -718,4 +718,36 @@ set runtimepath+=~/.cache/dein/repos/github.com/orokasan/denite-ale/
 " }}}
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 au vimrc BufRead .textlintrc set ft=json
+
+    " " Go example
+    " call lsp#add_filetype_config({
+    "       \ 'filetype': 'go',
+    "       \ 'name': 'gopls',
+    "       \ 'cmd': 'gopls'
+    "       \ })
+    " " Python example
+    " call lsp#add_filetype_config({
+    "       \ 'filetype': 'python',
+    "       \ 'name': 'pyls',
+    "       \ 'cmd': 'pyls'
+    "       \ })
+    " " Rust example
+    " call lsp#add_filetype_config({
+    "       \ 'filetype': 'rust',
+    "       \ 'name': 'rls',
+    "       \ 'cmd': 'rls',
+    "       \ 'capabilities': {
+    "       \   'clippy_preference': 'on',
+    "       \   'all_targets': v:false,
+    "       \   'build_on_save': v:true,
+    "       \   'wait_to_build': 0
+    "       \ }})
+"  augroup LspEFM
+"    au!
+"    autocmd User lsp_setup call lsp#register_server({
+"        \ 'name': 'efm-langserver',
+"        \ 'cmd': {server_info->['efm-langserver', '-c=/Users/ork/.config/efm-langserver/config.yaml']},
+"        \ 'whitelist': ['vim', 'eruby', 'markdown', 'yaml'],
+"        \ })
+"  augroup END
 " vim:set foldmethod=marker:
