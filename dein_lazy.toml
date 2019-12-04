@@ -13,7 +13,7 @@ nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
     \ -start-filter
-    \  file file:new<CR>
+    \  file/rec file:new<CR>
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
@@ -21,9 +21,9 @@ nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
     \  file/rec file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]t :<C-u>Denite
+nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
     \ -start-filter
-      \ file::~/ file:new<CR>
+      \ file:: file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]T :<C-u>Denite
@@ -181,7 +181,7 @@ call denite#custom#option('_', {
     \ 'prompt': '#',
     \ 'highlight_matched_char' : 'Title',
     \ 'max_dynamic_update_candidates' : '50000',
-    \ 'filter_split_direction' : 'botright',
+    \ 'filter_split_direction' : '',
     \ 'vertical_preview': v:true,
     \ 'statusline': v:false,
     \ 'direction': 'dynamicbottom',
@@ -203,7 +203,9 @@ call denite#custom#option('search', {
 
 "call denite#custom#map('insert', '<C-f>',
 "    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
+
 ""need rg for grep/file-rec
+
 call denite#custom#var('file/rec', 'command',
       \ ['rg', '--files', '--no-messages', 
       \ '-g', '!.git', '-g', '!*.tmp', '-g', '!AppData/**'])
@@ -234,19 +236,20 @@ let s:menus.string.command_candidates = [
 
 call denite#custom#var('menu', 'menus', s:menus)
 
-call denite#custom#source('file/rec', 'matchers', ['matcher/regexp'])
+call denite#custom#source('file/rec', 'matchers', ['matcher/fruzzy'])
+call denite#custom#source('file', 'matchers', ['matcher/fruzzy'])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
 " Change ignore_globs
-call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-    \ [ '.git/', '.ropeproject/', '__pycache__/',
-    \ 'venv/', 'images/','img/', 'fonts/',
-    \ '*~', '*.o', '*.exe', '*.bak',
-    \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
-    \ '.hg/', '.git/', '.bzr/', '.svn/',
-    \ 'tags', 'tags-*'])
+" call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
+"     \ [ '.git/', '.ropeproject/', '__pycache__/',
+"     \ 'venv/', 'images/','img/', 'fonts/',
+"     \ '*~', '*.o', '*.exe', '*.bak',
+"     \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
+"     \ '.hg/', '.git/', '.bzr/', '.svn/',
+"     \ 'tags', 'tags-*'])
 
 function! s:candidate_grep(context) abort
     let path = a:context['targets'][0]['action__path']
@@ -319,10 +322,10 @@ setlocal signcolumn=yes
 if has('nvim')
     setlocal winblend=20
 endif
-nnoremap <silent><buffer><expr> j
-\ line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr> k
-\ line('.') == 1 ? 'G' : 'k'
+" nnoremap <silent><buffer><expr> j
+" \ line('.') == line('$') ? 'gg' : 'j'
+" nnoremap <silent><buffer><expr> k
+" \ line('.') == 1 ? 'G' : 'k'
 nnoremap <silent><buffer><expr> <TAB>
     \ denite#do_map('choose_action')
 nnoremap <silent><buffer><expr> <CR>
@@ -664,18 +667,9 @@ call deoplete#custom#source('eskk', 'mark' , 'eskk')
 call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('vim', 'rank' , 250)
 call deoplete#custom#source('file', 'rank', 1000)
-call deoplete#custom#source('neosnippet', 'rank', 500)
+call deoplete#custom#source('neosnippet', 'rank', 100)
 call deoplete#custom#source('vim', 'min_pattern_length', 2)
 "
-call deoplete#custom#source('_', 'converters', [
-    \ 'converter_remove_paren',
-    \ 'converter_remove_overlap',
-    \ 'converter_truncate_abbr',
-    \ 'converter_truncate_menu',
-    \ 'converter_auto_paren',
-    \ 'converter_auto_delimiter'
-    \ ])
-
 " Using custom variables to configure values
 " - range_above = Search for words N lines above.
 " - range_below = Search for words N lines below.
@@ -683,6 +677,7 @@ call deoplete#custom#source('_', 'converters', [
 " - mark_below = Mark shown for words N lines below.
 " - mark_changes = Mark shown for words in the changelist.
 "call deoplete#custom#option('ignore_sources',{'_':['around']})
+"
 call deoplete#custom#var('around', {
 \   'range_above': 20,
 \   'range_below': 20,
@@ -699,6 +694,14 @@ call deoplete#custom#option({
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'mirror'
     \ })
+call deoplete#custom#source('_', 'converters', [
+    \ 'converter_remove_paren',
+    \ 'converter_remove_overlap',
+    \ 'converter_truncate_abbr',
+    \ 'converter_truncate_menu',
+    \ 'converter_auto_paren',
+    \ 'converter_auto_delimiter'
+    \ ])
 call deoplete#initialize()
 ''' # }}}
 
@@ -1489,5 +1492,14 @@ hook_add = '''
 let g:deoplete#sources#jedi#statement_length = 30
 let g:deoplete#sources#jedi#show_docstring = 1
 '''
+
+[[plugins]]
+repo = 'raghur/fruzzy'
+on_source = ['denite.nvim']
+hook_source = '''
+let g:fruzzy#usenative = 1
+let g:fruzzy#sortonempty = 0
+'''
+hook_post_update = 'call fruzzy#install()'
 
 # vim:set foldmethod=marker:
