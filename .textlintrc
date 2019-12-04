@@ -10,7 +10,8 @@
         "rulePaths" : [
             "/usr/local/lib/node_modules/prh/prh-rules/media/WEB+DB_PRESS.yml",
             "/usr/local/lib/node_modules/prh/prh-rules/files/markdown.yml"
-            ],
+            ]
+        },
     "preset-ja-technical-writing": {
         "sentence-length": {
             max: 125
