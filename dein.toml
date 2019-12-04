@@ -118,7 +118,7 @@ let g:lightline = {
         \ 'right': [[ 'percent' ]]
     \ },
     \ 'tabline' : {
-        \ 'left': [['buffers'], ['denitesource']],
+        \ 'left': [['buffers'], ['tabdenitesource']],
         \ 'right': [['tab'],['fileencoding','filetype'] ]
     \ },
     \ 'component':{
@@ -134,7 +134,6 @@ let g:lightline = {
         \ 'git':'LLgit',
         \ 'lineinfo':'LLlineinfo',
         \ 'denitebuf': 'LLDeniteBuffer',
-        \ 'denitesource' : 'LLDeniteSource'
     \ },
     \ 'component_expand': {
         \ 'buffers': 'LLmybufferline',
@@ -244,15 +243,18 @@ endfunction
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
 
 function! LLInactiveFilename()
+    if &filetype ==# 'denite'
+        return LLDeniteSource()
+    endif
     return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
 endfunction
 
 function! LLeskk() abort
-    if &filetype ==# 'denite-filter'
-        return exists('*LLmyeskk') ? LLmyeskk() : '[  ]'
-    else
-        return &filetype !~# s:ignore_filetype && exists('*LLmyeskk') ? LLmyeskk() : ''
-    endif
+        if !exists('*LLmyeskk')
+            return '[  ]'
+        else
+            return &filetype !~# s:ignore_filetype && exists('*LLmyeskk') ? LLmyeskk() : ''
+        endif
 endfunction
 
 function! LLlineinfo() abort
@@ -261,8 +263,8 @@ function! LLlineinfo() abort
         \ l:col <100 ? ' ' . l:col : l:col
     if &filetype !~# s:ignore_filetype
         return winwidth(0) > 65 ?
-            \  printf('%s:%d#%d', l:fixedcol , line('.') , line('$') ) :
-            \  printf('%s:%d', l:fixedcol , line('.') )
+            \  printf('%s:%d«%d', l:fixedcol , line('.') , line('$') ) :
+            \  printf('%s:%d', l:fixedcol , line('.') )
         else
             return printf('%d:%d', col('.') , line('.') )
         endif
@@ -284,26 +286,24 @@ function! s:llvarCharAllCount()
     for l in range(0, line('$'))
         let l:count += strchars(getline(l))
     endfor
-    let s:llcharallcount = l:count == 0 ?   '***' :
-        \ l:count <10 ? '   ' . l:count :
+    let s:llcharallcount = l:count <10 ? '   ' . l:count :
         \ l:count <100 ? '  ' . l:count :
         \ l:count <1000 ? ' ' . l:count : l:count
 endfunction
 
 function! s:llvarCharCount()
     let l:count = strchars(getline('.'))
-    let s:llcharcount = l:count < 10 ? '**' . l:count :
-        \ l:count <100 ? '*' . l:count :
+    let s:llcharcount = l:count < 10 ? '  ' . l:count :
+        \ l:count <100 ? ' ' . l:count :
         \ l:count
 endfunction
 
 function! LLCharcount()
     if &filetype =~# s:ignore_filetype | return | endif
-        return winwidth(0) > 70 ? '[' . s:llcharcount . ']' . s:llcharallcount . 'w' :
-            \ winwidth(0) > 65 ? '[' . s:llcharcount . ']w' : ''
+        return winwidth(0) > 70 ? '' . s:llcharcount . '|' . s:llcharallcount:
+            \ winwidth(0) > 65 ? '' . s:llcharcount : ''
 endfunction
 "}}}
-
 function! LLReadonly()
 "    return &readonly ? '⭤' : ''
     return &readonly ? '' : ''
@@ -346,7 +346,7 @@ endfunction "}}}
 
 " Deniteステータス {{{
 function! LLDeniteBuffer()
-    if &filetype ==#  'denite-filter' || &filetype ==# 'denite'
+    if &filetype ==# 'denite'
         let l:buffer = denite#get_status('buffer_name')
         return l:buffer
     else
@@ -355,9 +355,9 @@ function! LLDeniteBuffer()
 endfunction
 
 function! LLDeniteSource()
-    if &filetype !=# 'denite-filter' && &filetype !=# 'denite'
-        return ''
-    endif
+    " if &filetype !=# 'denite-filter' && &filetype !=# 'denite'
+    "     return ''
+    " endif
     let l:linenr = denite#get_status('linenr')
     let l:sources = denite#get_status('sources')
     let l:p =denite#get_status('path')
@@ -515,8 +515,8 @@ repo = 'cespare/vim-toml'
 repo =  'kmnk/denite-dirmark'
 on_source = ['denite.nvim','defx.nvim']
 
-#[[plugins]]
-#repo = 'junegunn/fzf.vim'
+[[plugins]]
+repo = 'junegunn/fzf.vim'
 
 [[plugins]]
 repo = 'fuenor/JpFormat.vim'
@@ -580,13 +580,6 @@ repo = 'nixprime/cpsm'
 repo = 'iamcco/markdown-preview.nvim'
 on_ft = ['markdown', 'pandoc.markdown', 'rmd']
 build = 'cd app & yarn install'
-
-[[plugins]]
-repo = 'deoplete-plugins/deoplete-jedi'
-hook_add = '''
-let g:deoplete#sources#jedi#statement_length = 30
-let g:deoplete#sources#jedi#show_docstring = 1
-'''
 
 [[plugins]]
 repo = 'tpope/vim-commentary'
@@ -733,4 +726,33 @@ repo = 'N0nki/denite-markdown'
 [[plugins]]
 repo = 'ryanoasis/vim-devicons'
 
+# [[plugins]]
+# repo = 'neovim/nvim-lsp'
+#
+# [[plugins]]
+# repo = 'Shougo/deoplete-lsp'
+# hook_add = '''
+#     " " Python example
+#      call lsp#add_filetype_config({
+#            \ 'filetype': 'python',
+#            \ 'name': 'pyls',
+#            \ 'cmd': 'pyls'
+#            \ })
+# '''
+
+# [[plugins]]
+# repo = 'prabirshrestha/vim-lsp'
+# hook_add = '''
+# if executable('pyls')
+#     " pip install python-language-server
+#     au User lsp_setup call lsp#register_server({
+#         \ 'name': 'pyls',
+#         \ 'cmd': {server_info->['pyls']},
+#         \ 'whitelist': ['python'],
+#         \ })
+# endif
+# '''
+
+# [[plugins]]
+# repo = 'prabirshrestha/async.vim'
 # vim:set foldmethod=marker:

@@ -136,30 +136,43 @@ nnoremap <silent> [denite], :<C-u>Denite
 
 ''' #}}}
 hook_source = ''' " {{{
-if has('nvim')
-    call denite#custom#option('_', {
-        \ 'split': 'floating',
-        \ 'filter_split_direction': '',
-        \ 'wincol': &columns/10,
-        \ 'winwidth': &columns*5/6
-        \ } )
-    call denite#custom#option('stay',{
-        \ 'wincol': &columns/2-2,
-        \ 'winwidth': &columns*3/4-5,
-        \ 'winheight': 10,
-        \ 'winrow' : &lines - 12
-        \ })
+" if has('nvim')
+"     call denite#custom#option('_', {
+"         \ 'split': 'floating',
+"         \ 'filter_split_direction': '',
+"         \ 'wincol': &columns/10,
+"         \ 'winwidth': &columns*5/6
+"         \ } )
+"     call denite#custom#option('stay',{
+"         \ 'wincol': &columns/2-2,
+"         \ 'winwidth': &columns*3/4-5,
+"         \ 'winheight': 10,
+"         \ 'winrow' : &lines - 12
+"         \ })
+"    " call denite#custom#option('_', {
+"     "     \ 'split': 'horizontal',
+"     "     \ 'statusline' : v:false,
+"     "     \ 'filter_split_direction' : ''
+"     "     \ })
+" else
+     " call denite#custom#option('_', {
+     " \ 'statusline': v:false,
+     " \ 'direction': 'dynamicbottom'
+     " } )
+" endif
+
+    " call denite#custom#option('stay',{
+    "     \ 'split': 'floating',
+    "     \ 'wincol': &columns/2-2,
+    "     \ 'winwidth': &columns*3/4-5,
+    "     \ 'winheight': 10,
+    "     \ 'winrow' : &lines - 12
+    "     \ })
    " call denite#custom#option('_', {
     "     \ 'split': 'horizontal',
     "     \ 'statusline' : v:false,
     "     \ 'filter_split_direction' : ''
     "     \ })
-else
-    call denite#custom#option('_', {'statusline': v:false,
-    \ 'direction': 'dynamicbottom'
-    } )
-endif
-
 call denite#custom#option('_', {
     \ 'winheight': 15,
     \ 'short_source_names': v:true,
@@ -170,6 +183,8 @@ call denite#custom#option('_', {
     \ 'max_dynamic_update_candidates' : '50000',
     \ 'filter_split_direction' : '',
     \ 'vertical_preview': v:true,
+    \ 'statusline': v:false,
+    \ 'direction': 'dynamicbottom',
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
         \   'h' : 5, 'l' : 6, ';' : 7,
@@ -339,16 +354,12 @@ nnoremap <silent><buffer><expr> <C-s>
 denite-filter = ''' " {{{
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
-inoremap <silent><buffer><expr><BS> col('.') ==# 1
-    \ ? denite#do_map('move_up_path')
-    \ : "\<BS>"
-inoremap <silent><buffer><expr><C-h> col('.') ==# 1
-    \ ? denite#do_map('move_up_path')
-    \ : "\<BS>"
-inoremap <silent><buffer> <C-[> <ESC>q
+inoremap <silent><buffer> <C-j>  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
+inoremap <silent><buffer> <C-k>  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
 inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
 imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)
-nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
+imap <silent><buffer> <C-[> <Plug>(denite_filter_quit)
+imap <silent><buffer> <ESC> <Plug>(denite_filter_quit)
 ''' # }}}
 
 [[plugins]]
