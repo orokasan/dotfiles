@@ -36,6 +36,8 @@ let g:loaded_matchparen = 1
 " Memo
 if has('win64')
     let g:python3_host_prog ='python.exe'
+elseif has('mac')
+    let g:python3_host_prog = '/usr/local/bin/python3'
 endif
 
 " Backup
@@ -98,10 +100,10 @@ set previewheight=8 " Adjust window size of preview
 set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
-set pumheight=10
+set pumheight=15 " default
 set ambiwidth=double
-
 set background=dark
+
 "}}}
 
 " Editing {{{
@@ -197,7 +199,6 @@ if has('nvim')
     set pumblend=15
     hi! PmenuSel blend=0
 endif
-
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
@@ -605,7 +606,6 @@ if has('nvim')
 endif
 
 "}}}
-
 ""dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -645,13 +645,12 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() 
 "}}}
 
 " etc... {{{
-
 "選択範囲の行をカウント {{{
 function! g:LineCharVCount() range
-    let l:result = 0                           
+    let l:result = 0
     for l:linenum in range(a:firstline, a:lastline)
         let l:result += strchars(getline(l:linenum))
-    endfor                                     
+    endfor
     return l:result
 endfunction "}}}
 "呼び出せる

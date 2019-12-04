@@ -258,18 +258,29 @@ function! LLeskk() abort
 endfunction
 
 function! LLlineinfo() abort
-    let l:col = col('.')
-    let l:fixedcol = l:col <10 ? '  ' . l:col :
-        \ l:col <100 ? ' ' . l:col : l:col
+    let info = {'c': col('.'), 'l': line('.') }
+    let l:fcol =
+        \ info['c'] < 10 ? '  ' . info['c'] :
+        \ info['c'] < 100 ? ' ' . info['c'] : info['c']
+    let l:fline = info['l'] < 10 ? ' ' . info['l'] : info['l']
+
     if &filetype !~# s:ignore_filetype
         return winwidth(0) > 65 ?
-            \  printf('%s:%d«%d', l:fixedcol , line('.') , line('$') ) :
-            \  printf('%s:%d', l:fixedcol , line('.') )
+            \  printf('%s:%s«%d', fcol , fline , line('$') ) :
+            \  printf('%s:%s', fcol , fline )
         else
-            return printf('%d:%d', col('.') , line('.') )
+            return printf('%s:%s', fcol , fline )
         endif
 endfunction
 
+function! LLCharcount()
+    if &filetype !~# s:ignore_filetype
+        return winwidth(0) > 70 ? '' . s:llcharcount . '|' . s:llcharallcount:
+            \ winwidth(0) > 65 ? '' . s:llcharcount : ''
+    else
+        return ''
+    endif
+endfunction
 " 文字数カウント {{{
 " lightlineに渡す変数の設定
 augroup CharCounter
@@ -296,12 +307,6 @@ function! s:llvarCharCount()
     let s:llcharcount = l:count < 10 ? '  ' . l:count :
         \ l:count <100 ? ' ' . l:count :
         \ l:count
-endfunction
-
-function! LLCharcount()
-    if &filetype =~# s:ignore_filetype | return | endif
-        return winwidth(0) > 70 ? '' . s:llcharcount . '|' . s:llcharallcount:
-            \ winwidth(0) > 65 ? '' . s:llcharcount : ''
 endfunction
 "}}}
 function! LLReadonly()
@@ -713,6 +718,7 @@ autocmd User Startified for key in ['b','s','t','v'] |
 ''' # }}}
 
 [[plugins]]
+on_if ='has("nvim")'
 repo = 'ncm2/float-preview.nvim'
 #TODO:qitta
 hook_add = '''
@@ -755,4 +761,5 @@ repo = 'ryanoasis/vim-devicons'
 
 # [[plugins]]
 # repo = 'prabirshrestha/async.vim'
+
 # vim:set foldmethod=marker:
