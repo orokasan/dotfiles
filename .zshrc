@@ -1,5 +1,8 @@
 export LANG=ja_JP.UTF-8
+
 export PATH="$HOME/bin:$PATH"
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 autoload -Uz compinit
 compinit
 setopt share_history
@@ -37,7 +40,6 @@ alias la='ls -A'        # 多用します
 alias l='ls -CF'
 alias du='du -sh *'     # ディレクトリごとにサブディレクトリ含む合計容量を出力します
 alias caddy='ruby /opt/caddy/caddy/caddy.rb'
-alias terminal='gnome-terminal --hide-menubar'
 alias tm='terminal'     # tm ./ で現在いるディレクトリでターミナルを複製できます
 alias reload='source ~/.zshrc' # .zshrc編集中は多用してます
 alias ssh='TERM=xterm ssh'
@@ -55,15 +57,15 @@ alias nvi='nvim'
 alias vimdiff='nvim -d'
 
 # dotfiles
-alias dot='cd ~/dev/src/github.com/reireias/dotfiles'
+alias dot='cd ~/dotfiles/'
 alias zshconfig='nvim ~/.zshrc'
 alias vimconfig='nvim ~/.vimrc'
 
 # grep
 alias g='grep --color=always'
-alias grep='grep --color=always'
 alias jgrep='grep --include="*.java"'
 alias jsgrep='grep --include="*.js"'
+alias pygrep='grep --include="*.py"'
 alias fgrep='find ./ | grep'
 alias ngrep='grep --exclude-dir={node_modules,.nuxt}'
 
@@ -143,23 +145,23 @@ ls_abbrev() {
 # bindkey
 
 # vi-like mapping
-bindkey -v
-bindkey -M viins '\er' history-incremental-pattern-search-forward
-bindkey -M viins '^?'  backward-delete-char
-bindkey -M viins '^A'  beginning-of-line
-bindkey -M viins '^B'  backward-char
-bindkey -M viins '^D'  delete-char-or-list
-bindkey -M viins '^E'  end-of-line
-bindkey -M viins '^F'  forward-char
-bindkey -M viins '^G'  send-break
-bindkey -M viins '^H'  backward-delete-char
-bindkey -M viins '^K'  kill-line
-bindkey -M viins '^N'  down-line-or-history
-bindkey -M viins '^P'  up-line-or-history
-bindkey -M viins '^R'  history-incremental-pattern-search-backward
-bindkey -M viins '^U'  backward-kill-line
-bindkey -M viins '^W'  backward-kill-word
-bindkey -M viins '^Y'  yank
+ bindkey -v
+ bindkey -M viins '\er' history-incremental-pattern-search-forward
+ bindkey -M viins '^?'  backward-delete-char
+ bindkey -M viins '^A'  beginning-of-line
+ bindkey -M viins '^B'  backward-char
+ bindkey -M viins '^D'  delete-char-or-list
+ bindkey -M viins '^E'  end-of-line
+ bindkey -M viins '^F'  forward-char
+ bindkey -M viins '^G'  send-break
+ bindkey -M viins '^H'  backward-delete-char
+ bindkey -M viins '^K'  kill-line
+ bindkey -M viins '^N'  down-line-or-history
+ bindkey -M viins '^P'  up-line-or-history
+ bindkey -M viins '^R'  history-incremental-pattern-search-backward
+ bindkey -M viins '^U'  backward-kill-line
+ bindkey -M viins '^W'  backward-kill-word
+ bindkey -M viins '^Y'  yank
 
 cdpath=(.. ~)
 autoload -Uz select-word-style
@@ -169,14 +171,14 @@ zstyle ':zle:*' word-style unspecified
 zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion::complete:*' use-cache true
-bindkey '^r' history-incremental-pattern-search-backward
-bindkey '^s' history-incremental-pattern-search-forward
-# 例 ls まで打ってCtrl+pでlsコマンドをさかのぼる、Ctrl+bで逆順
-autoload -Uz history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^p" history-beginning-search-backward-end
-bindkey "^b" history-beginning-search-forward-end
+# bindkey '^r' history-incremental-pattern-search-backward
+# bindkey '^s' history-incremental-pattern-search-forward
+# # 例 ls まで打ってCtrl+pでlsコマンドをさかのぼる、Ctrl+bで逆順
+# autoload -Uz history-search-end
+# zle -N history-beginning-search-backward-end history-search-end
+# zle -N history-beginning-search-forward-end history-search-end
+# bindkey "^p" history-beginning-search-backward-end
+# bindkey "^b" history-beginning-search-forward-end
 # cdr タブでリストを表示
 autoload -Uz add-zsh-hook
 autoload -Uz chpwd_recent_dirs cdr
@@ -193,9 +195,6 @@ function mkcd() {
     mkdir -p $1 && cd $1
   fi
 }
-# zsh-syntax-highlighting
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 #zplug
 bindkey -e
 
@@ -209,6 +208,9 @@ if ! zplug check --verbose; then
     fi
 fi
 zplug load
+# zsh-syntax-highlighting
+source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
 # fgコマンドの%を省略
 fg() {
     if [[ $# -eq 1 && $1 = - ]]; then
@@ -216,4 +218,54 @@ fg() {
     else
         builtin fg %"$@"
     fi
+}
+
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_COMPLETION_TRIGGER=''
+bindkey '^T' fzf-completion
+bindkey '^I' $fzf_default_completion
+export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+export FZF_DEFAULT_OPTS='--height 40% --reverse'
+export FZF_CTRL_T_COMMAND='rg --files --hidden --glob "!.git/*"'
+ export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+
+# 一発でディレクトリ移動
+fd() {
+  local dir
+  dir=$(find ${1:-.} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
+
+# 差分を確認しながらステージング
+fga() {
+  modified_files=$(git status --short | awk '{print $2}') &&
+  selected_files=$(echo "$modified_files" | fzf -m --preview 'git diff {}') &&
+  git add $selected_files
+}
+
+# プレビューしながらvimで開く
+fvim() {
+  files=$(git ls-files) &&
+  selected_files=$(echo "$files" | fzf -m --preview 'head -100 {}') &&
+  vim $selected_files
+}
+
+fh() {
+  eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')
+}
+# fkill - kill processes - list only the ones you can kill. Modified the earlier script.
+fkill() {
+    local pid 
+    if [ "$UID" != "0" ]; then
+        pid=$(ps -f -u $UID | sed 1d | fzf -m | awk '{print $2}')
+    else
+        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+    fi  
+
+    if [ "x$pid" != "x" ]
+    then
+        echo $pid | xargs kill -${1:-9}
+    fi  
 }
