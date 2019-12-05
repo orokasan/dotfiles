@@ -6,29 +6,39 @@ hook_add = ''' "{{{
 nmap s [denite]
 nnoremap [denite] <Nop>
 
-nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
     \ -start-filter
     \  source<CR>
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+    \ -start-filter
+    \  file/rec file:new<CR>
+
+nnoremap <silent> [denite]f :<C-u>DeniteProjectDir
+    \ -start-filter
+    \  file/rec file:new<CR>
+
+nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
 
 "現在開いているファイルのディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
     \ -start-filter
-    \  file/rec file:new<CR>
+    \  file file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]t :<C-u>Denite
     \ -start-filter
-      \ file:: file:new<CR>
+    \ -path=$HOME
+    \ file file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]T :<C-u>Denite
     \ -start-filter
-      \ file/rec::~/ file:new<CR>
+    \ -path=$HOME
+    \ file/rec::~/ file:new<CR>
 
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
@@ -85,12 +95,10 @@ nnoremap <silent> [denite]j :<C-u>Denite jump <CR>
 
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
-    \ -start-filter
     \ -buffer-name=search
     \ -resume<CR>
 
 nnoremap <silent> [denite]R :<C-u>Denite
-    \ -start-filter
     \ -buffer-name=default
     \ -resume<CR>
 
@@ -201,6 +209,14 @@ call denite#custom#option('search', {
     \ 'winheight': 10
     \ })
 
+call denite#custom#option('stay',{
+    \ 'split': 'floating',
+    \ 'resume': v:true,
+    \ 'wincol': &columns/2-2,
+    \ 'winwidth': &columns*3/4-5,
+    \ 'winheight': 10,
+    \ 'winrow' : &lines - 12
+    \ })
 "call denite#custom#map('insert', '<C-f>',
 "    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
 
@@ -357,9 +373,11 @@ nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
 inoremap <silent><buffer> <C-j>  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 inoremap <silent><buffer> <C-k>  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
 inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
-imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)
-imap <silent><buffer> <C-[> <Plug>(denite_filter_quit)
-imap <silent><buffer> <ESC> <Plug>(denite_filter_quit)
+imap <silent><buffer> <C-c> <Plug>(denite_filter_update)
+imap <silent><buffer> <C-[> <Plug>(denite_filter_update)
+imap <silent><buffer> <ESC> <Plug>(denite_filter_update)
+imap <silent><buffer><C-q> <Plug>(denite_filter_quit)q
+nmap <silent><buffer>q <Plug>(denite_filter_quit)q
 ''' # }}}
 
 [[plugins]]
@@ -399,8 +417,11 @@ on_cmd = 'Defx'
 hook_add = ''' " {{{
 nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
+nmap <Leader>E <Plug>(defxprojectdir)
+
 nnoremap <silent> <Plug>(defx) :<C-u>Defx<CR>
 nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
+nnoremap <silent> <Plug>(defxprojectdir) :<C-u>Defx -search=`expand('~/')`<CR>
 ''' # }}}
 hook_source = ''' " {{{
 
@@ -414,9 +435,6 @@ call defx#custom#option('_', {
     \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
     \ 'ignored_files':  '.*, ntuser*, desktop.ini , __pycache__'
     \ })
-"call defx#custom#column('indent', {
-"    \ 'indent': ' |'
-"    \ })
 "call defx#custom#column('filename', {
 "      \ 'directory_icon': '',
 "      \ 'opened_icon': '',
