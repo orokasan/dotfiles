@@ -329,10 +329,12 @@ endif
  " endif
 
 " close window
-nnoremap <silent><C-q> :bd<CR>
+nnoremap <C-q> :bd<CR>
 " insert date
 inoremap <expr><F2> strftime("%Y%m%d")
 cnoremap <expr><F2> strftime("%Y%m%d")
+nnoremap <C-y> q:
+autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR> | nmap <buffer> q :<C-u>close<CR>
 " shoot chars deleted by x to blackhole register
 nnoremap x "_x
 " yank by 'dd'
