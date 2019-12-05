@@ -1,0 +1,40 @@
+set main-view   = date id author:commit-title:graph=yes,refs=yes
+set blame-view  = date:default author:email-user id:yes,color line-number:yes,interval=1 text
+set pager-view  = line-number:yes,interval=1 text
+set stage-view  = line-number:yes,interval=1 text
+set log-view    = line-number:yes,interval=1 text
+set blob-view   = line-number:yes,interval=1 text
+set diff-view   = line-number:yes,interval=1 text:yes,commit-title-overflow=no
+
+# set vertical-split = yes
+set vertical-split = auto
+
+set line-graphics = utf-8
+# set tab-size = 4
+set tab-size = 2
+# set ignore-space = all
+set ignore-space = at-eol
+set ignore-case = true
+set split-view-height = 80%
+set diff-options = -m --first-parent
+set mouse = true
+set editor-line-number = yes
+set refresh-mode = auto
+#set refresh-mode = after-command
+#set refresh-mode = periodic
+#set refresh-interval = 1
+set diff-highlight = true
+
+# Bind Settings
+bind generic <C-f> move-page-down
+bind generic <C-b> move-page-up
+bind generic g move-first-line
+bind main    G  none
+bind main    G  move-last-line
+bind generic G  move-last-line
+
+# `-` でステージ・アンステージをスイッチ
+bind status u none
+bind status - status-update
+bind stage u none
+bind stage - status-update
