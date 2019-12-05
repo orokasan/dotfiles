@@ -136,7 +136,7 @@ let g:lightline = {
         \ 'denitebuf': 'LLDeniteBuffer',
     \ },
     \ 'component_expand': {
-        \ 'buffers': 'LLmybufferline',
+        \ 'buffers': 'lightline#bufferline#buffers',
         \ 'denitesource' : 'LLDeniteSource',
         \ 'linter_checking': 'lightline#ale#checking',
         \ 'linter_warnings': 'lightline#ale#warnings',
@@ -160,11 +160,11 @@ endif
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 function! LLmybufferline() abort
-    if &filetype ==# 'denite' || &filetype ==# 'denite-filter'
-        return LLDeniteBuffer()
-    else
+    # if &filetype ==# 'denite' || &filetype ==# 'denite-filter'
+    #     return LLDeniteBuffer()
+    # else
         return lightline#bufferline#buffers()
-    endif
+    # endif
 endfunction
 let g:component_function_visible_condition = {
         \ 'readonly': 1,
@@ -326,7 +326,7 @@ endfunction
 " 重いのでキャッシュする
 autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgitcache()
 function! s:llgitcache()
-    if !exists('*gitbranch#name') | return | endif
+    if !exists('*gitbranch#name') | return '' | endif
     let l:git = gitbranch#name()
     if &filetype !~# s:ignore_filetype && len(l:git)
         let s:llgitbranch =  winwidth(0) > 100  ? ' '. l:git :''
@@ -762,4 +762,6 @@ repo = 'ryanoasis/vim-devicons'
 # [[plugins]]
 # repo = 'prabirshrestha/async.vim'
 
+[[plugins]]
+repo = 'iberianpig/tig-explorer.vim'
 # vim:set foldmethod=marker:
