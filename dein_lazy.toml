@@ -884,13 +884,11 @@ let g:eskk_toggle_status = 0
 function! s:eskk_inserttoggle() abort
     if s:eskk_status || g:eskk_toggle_status
         " eskkがオンの時に呼ぶとただオフにする
-        echo 'eskk status off'
         let s:eskk_status = 0
         let g:eskk_toggle_status = 0
         call s:eskk_restore_highlight_linenr()
     else
         " eskkがオフの時に呼ぶと常にeskk onでインサートモードに入る状態になる
-        echo 'eskk status on'
         let g:eskk_toggle_status = 1
         call s:eskk_highlight_linenr()
     endif
