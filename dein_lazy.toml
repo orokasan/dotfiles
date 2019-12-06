@@ -19,12 +19,8 @@ nnoremap <silent> [denite]f :<C-u>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
 
-nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
-    \ -start-filter
-    \  file/rec file:new<CR>
-
 "現在開いているファイルのディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
     \ -start-filter
     \  file file:new<CR>
 
@@ -38,7 +34,7 @@ nnoremap <silent> [denite]t :<C-u>Denite
 nnoremap <silent> [denite]T :<C-u>Denite
     \ -start-filter
     \ -path=$HOME
-    \ file/rec::~/ file:new<CR>
+    \ file/rec:: file:new<CR>
 
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
@@ -96,10 +92,12 @@ nnoremap <silent> [denite]j :<C-u>Denite jump <CR>
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
     \ -buffer-name=search
+    \ -refresh
     \ -resume<CR>
 
 nnoremap <silent> [denite]R :<C-u>Denite
     \ -buffer-name=default
+    \ -refresh
     \ -resume<CR>
 
 "open ale message
@@ -118,14 +116,12 @@ nnoremap <silent> [denite]o :<C-u>Denite
     \ markdown<CR>
 
 nnoremap <silent> [denite]d :<C-u>Denite
-    \ -buffer-name=normal
     \ dirmark<CR>
 
 "bookmark by "add"action
 nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
-    \ -buffer-name=normal
     \ dirmark/add<CR>
-autocmd vimrc FileType denite hi link CursorLine ColorColumn
+" autocmd vimrc FileType denite hi link CursorLine ColorColumn
 
 " move next candidate
 nnoremap <silent> [denite]. :<C-u>Denite
@@ -133,14 +129,14 @@ nnoremap <silent> [denite]. :<C-u>Denite
     \ -resume
     \ -cursor-pos=+1
     \ -immediately
-    \ ale<CR>
+    \ <CR>
 
 nnoremap <silent> [denite], :<C-u>Denite
     \ -resume
     \ -buffer-name=stay
     \ -cursor-pos=-1
     \ -immediately
-    \ ale<CR>
+    \ <CR>
 
 ''' #}}}
 hook_source = ''' " {{{
@@ -211,7 +207,6 @@ call denite#custom#option('search', {
 
 call denite#custom#option('stay',{
     \ 'split': 'floating',
-    \ 'resume': v:true,
     \ 'wincol': &columns/2-2,
     \ 'winwidth': &columns*3/4-5,
     \ 'winheight': 10,
@@ -258,44 +253,67 @@ call denite#custom#source('file', 'matchers', ['matcher/fruzzy'])
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
-" Change ignore_globs
-" call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-"     \ [ '.git/', '.ropeproject/', '__pycache__/',
-"     \ 'venv/', 'images/','img/', 'fonts/',
-"     \ '*~', '*.o', '*.exe', '*.bak',
-"     \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
-"     \ '.hg/', '.git/', '.bzr/', '.svn/',
-"     \ 'tags', 'tags-*'])
+"Change ignore_globs
+call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
+    \ [ '.git/', '.ropeproject/', '__pycache__/',
+    \ 'venv/', 'images/','img/', 'fonts/',
+    \ '*~', '*.o', '*.exe', '*.bak',
+    \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
+    \ '.hg/', '.git/', '.bzr/', '.svn/',
+    \ 'tags', 'tags-*'])
 
+" 現在いるDeniteDirでgrep
 function! s:candidate_grep(context) abort
     let path = a:context['targets'][0]['action__path']
-    let dir = denite#util#path2directory(path)
+    let dir = denite#util#substitute_path_separator(path)
+    if isdirectory(dir)
+        let sdir = fnamemodify(dir, ':p:h:h')
+    else
+        let sdir = fnamemodify(dir, ':p:h')
+    endif
     let sources_queue = a:context['sources_queue'] + [[
-          \ {'name': 'grep', 'args': [path, '', '!']},
+          \ {'name': 'grep', 'args': [sdir, '', '!']},
           \ ]]
     return {'is_interactive': v:false, 'sources_queue': sources_queue}
 endfunction
 
 function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
-    let dir = denite#util#path2directory(path)
-    let sdir = '\"' . dir . '\"'
+    let dir = denite#util#substitute_path_separator(path)
+    if isdirectory(dir)
+        let sdir = fnamemodify(dir, ':p:h:h')
+    else
+        let sdir = fnamemodify(dir, ':p:h')
+    endif
+    let fdir = '\"' . sdir. '\"'
     execute('Denite file/rec:' . sdir)
 endfunction
 
+function! s:denite_directory_rec(context)
+    let path = a:context['targets'][0]['action__path']
+    let dir = denite#util#substitute_path_separator(path)
+    " if isdirectory(dir)
+    "     let sdir = fnamemodify(dir, ':p:h:h')
+    " else
+        let sdir = fnamemodify(dir, ':p:h')
+    " endif
+    let fdir = '\"' . sdir . '\"'
+    execute('Denite directory_rec:' . sdir)
+endfunction
+
 call denite#custom#action(
-    \ 'buffer,directory,file,openable', 'grep',
+    \ 'buffer,directory,file,openable,dirmark', 'directory/rec',
+    \ function('s:denite_directory_rec')
+    \ )
+
+call denite#custom#action(
+    \ 'buffer,directory,file,openable,dirmark', 'grep',
     \ function('s:candidate_grep')
     \ )
 call denite#custom#action(
-    \ 'buffer,directory,file,openable,dirmark', 'file/rec',
+    \ 'buffer,directory,file,openable,dirmark,dirmark', 'file/rec',
     \ function('s:denite_rec')
     \ )
-
-" action jump
-" function! s:denite_jump()
-"     let line = a:context['targets'][0]['action__line']
-"     let col = a:context['targets'][0]['action__col']
 
 "Defxで開く
 function! s:defx_open(context)
@@ -364,6 +382,12 @@ nnoremap <silent><buffer><expr> r
     \ denite#do_map('toggle_matchers:regexp')
 nnoremap <silent><buffer><expr> <C-r>
     \ denite#do_map('do_action','file/rec')
+nnoremap <silent><buffer><expr> <C-e>
+    \ denite#do_map('do_action','defx')
+nnoremap <silent><buffer><expr> <C-d>
+    \ denite#do_map('do_action','directory_recd')
+nnoremap <silent><buffer><expr> <C-g>
+    \ denite#do_map('do_action','grep')
 nnoremap <silent><buffer><expr> <C-s>
     \ denite#do_map('change_sorters', 'sorter/rank,sorter/word')
 ''' # }}}
@@ -1115,7 +1139,8 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 '''
 
 [[plugins]]
-repo =  'dense-analysis/ale'
+#repo =  'dense-analysis/ale'
+repo =  'orokasan/ale'
 on_event = 'InsertLeave'
 hook_source =''' " {{{
 "https://efcl.info/2015/09/10/introduce-textlint/
@@ -1136,6 +1161,7 @@ let g:ale_linters = {
 let g:ale_echo_msg_format = '%code: %%s [%linter%]'
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 0
+let g:ale_textlint_options = '.textlintrc'
 let g:ale_sign_column_always = 1
 let g:ale_lint_delay = 5000
 let g:ale_lint_on_enter = 0
