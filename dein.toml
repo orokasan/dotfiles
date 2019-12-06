@@ -160,7 +160,7 @@ endif
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 function! LLmybufferline() abort
-    # if &filetype ==# 'denite' || &filetype ==# 'denite-filter'
+    # if &filetype is# 'denite' || &filetype is# 'denite-filter'
     #     return LLDeniteBuffer()
     # else
         return lightline#bufferline#buffers()
@@ -173,7 +173,6 @@ let g:component_function_visible_condition = {
         \ 'path': 1,
         \ 'mode': 1,
         \ 'charcount': 1,
-        \ 'eskk': 1,
         \ 'git': 1,
         \ 'lineinfo': 1
         \ }
@@ -181,7 +180,7 @@ let g:component_function_visible_condition = {
 let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
 let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 
-if !exists('g:disable_IM_Control') && g:disable_IM_Control == 1
+if !exists('g:disable_IM_Control') && g:disable_IM_Control is 1
     let g:lightline.component += {
         \'IMEstatus':'%{IMStatus("-JP-")}'
         \}
@@ -209,17 +208,17 @@ nmap <Leader>9 <Plug>lightline#bufferline#go(9)
 nmap <Leader>0 <Plug>lightline#bufferline#go(10)
 
 function! LLMode()
-    return &filetype ==# 'unite' ? 'Unite' :
-        \ &filetype ==# 'help' ? 'Help' :
-        \ &filetype ==# 'denite' ? 'Denite' :
-        \ &filetype ==# 'defx' ? 'Defx' :
-        \ &filetype ==# 'gundo' ? 'Gundo' :
-        \ &filetype ==# 'tweetvim' ? 'Tweetvim' :
+    return &filetype is# 'unite' ? 'Unite' :
+        \ &filetype is# 'help' ? 'Help' :
+        \ &filetype is# 'denite' ? 'Denite' :
+        \ &filetype is# 'defx' ? 'Defx' :
+        \ &filetype is# 'gundo' ? 'Gundo' :
+        \ &filetype is# 'tweetvim' ? 'Tweetvim' :
         \ lightline#mode()
 endfunction
 
 function! LLMyFilepath()
-    if &filetype ==# 'denite'
+    if &filetype is# 'denite'
         return LLDeniteSource()
     elseif exists('*anzu#search_status') && strlen(anzu#search_status())
         return s:llanzu()
@@ -243,18 +242,21 @@ endfunction
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
 
 function! LLInactiveFilename()
-    if &filetype ==# 'denite'
+    if &filetype is# 'denite'
         return LLDeniteSource()
     endif
     return &filetype !~# s:ignore_filetype ? expand('%:t') : LLMode()
 endfunction
 
 function! LLeskk() abort
-        if !exists('*LLmyeskk')
-            return '[  ]'
-        else
-            return &filetype !~# s:ignore_filetype && exists('*LLmyeskk') ? LLmyeskk() : ''
-        endif
+    if &filetype =~# s:ignore_filetype
+        return ''
+    endif
+    if !exists('*LLmyeskk')
+        return '[aA]'
+    else
+        return LLmyeskk()
+    endif
 endfunction
 
 function! LLlineinfo() abort
@@ -318,18 +320,19 @@ function! LLtabnr() abort
     return tabpagenr('$') > 1 ? tabpagenr().':'.tabpagenr('$').'«' : '«'
 endfunction
 
-let s:llgitbranch = ''
 function! LLgit() abort
     return s:llgitbranch
 endfunction
 
 " 重いのでキャッシュする
-autocmd vimrc BufNew,BufEnter,FileWritePre,BufWrite * call <SID>llgitcache()
+autocmd vimrc VimEnter,BufNew,BufEnter,CmdlineLeave,FileWritePre,BufWrite * call <SID>llgitcache()
 function! s:llgitcache()
-    if !exists('*gitbranch#name') | return '' | endif
-    let l:git = gitbranch#name()
-    if &filetype !~# s:ignore_filetype && len(l:git)
-        let s:llgitbranch =  winwidth(0) > 100  ? ' '. l:git :''
+    let s:llgitbranch = ''
+    if &filetype =~# s:ignore_filetype || !exists('*gitbranch#name')
+        return
+    endif
+    if len(gitbranch#name())
+        let s:llgitbranch =  winwidth(0) > 100  ? ' '. gitbranch#name() :''
     else
         let s:llgitbranch = ''
 "    return strlen(_) && winwidth(0) > 100  ? '⭠ '._ :
@@ -351,7 +354,7 @@ endfunction "}}}
 
 " Deniteステータス {{{
 function! LLDeniteBuffer()
-    if &filetype ==# 'denite'
+    if &filetype is# 'denite'
         let l:buffer = denite#get_status('buffer_name')
         return l:buffer
     else
