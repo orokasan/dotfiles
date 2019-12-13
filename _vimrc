@@ -36,29 +36,9 @@ let g:loaded_matchparen = 1
 " Memo
 if has('win64')
     let g:python3_host_prog ='python.exe'
-elseif has('mac')
-    let g:python3_host_prog = '/usr/local/bin/python3'
 endif
 
 " Backup
-" making undo/swap dir automatically
-autocmd vimrc VimEnter * call <SID>makeconfigdir()
-"{{{
-let s:initdir = {
-    \ 'undo': expand('~/vimfiles/undo/'),
-    \ 'swap': expand('~/vimfiles/swap/')
-    \ }
-function! s:makeconfigdir() abort
-    for key in keys(s:initdir)
-        let l:a = s:initdir[key]
-        if !isdirectory(l:a)
-            " call mkdir(s:initdir[key])
-            let l:b = iconv(l:a, &encoding, &termencoding)
-            call mkdir(l:b, 'p')
-        endif
-    endfor
-endfunction
-"}}}
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
 set directory=~/vimfiles/swap
@@ -70,7 +50,7 @@ set nobackup                " no more backup file
 "}}}
 
 " Visual  {{{
-set shortmess+=aAcsT
+set shortmess+=aAcTS
 set showtabline=2   " always show tabline
 set number          " show line number
 set signcolumn=yes  " show signcolumn
@@ -86,10 +66,11 @@ set modelines=5
 set termguicolors   " ターミナルでも True Color を使えるようにする。
 set lazyredraw
 set visualbell      " please stop noisy beep
-set fillchars+=vert:\ 
 set t_vb=
 set noerrorbells
+set fillchars+=vert:\ ,fold:\ 
 set hidden          " be able to open files when editing other files
+set noruler
 " cancel highlight search
 nmap<silent> <Esc><Esc> :nohlsearch<CR>
 nmap<silent> <C-c><C-c> :nohlsearch<CR>
@@ -110,6 +91,11 @@ set background=dark
 set virtualedit=block     "move cursor to one more char than end of line
 set scrolloff=5
 set display=lastline
+set wrap
+" Scroll
+set scroll=10
+set sidescrolloff=5
+set sidescroll=1
 " add japanese matchpairs
 set showmatch       " highlight matched pairs
 set matchtime=1     " highlighting long
@@ -133,7 +119,6 @@ set incsearch
 "set gdefault
 set wrapscan
 set hlsearch
-
 "completion
 set complete=.,w,b,u
 " viminfo
@@ -148,10 +133,11 @@ set winheight=1
 set winwidth=1
 " Set maximam maximam command line window.
 set cmdwinheight=5
+autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
+autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
+autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
 " No equal window size.
 set noequalalways
-"ctags設定
-set tags=vim.tags
 " nicely folding
 "{{{
     function! s:is_view_available() abort
@@ -181,24 +167,25 @@ set tags=vim.tags
       autocmd MyAutoCmd BufReadPost * call s:loadview()
     augroup END
 set viewoptions-=options
-"ディレクトリが保存時無い場合に自動的に作成
-"https://vim-jp.org/vim-users-jp/2011/02/20/Hack-202.html
-augroup vimrc-auto-mkdir  " {{{
-  autocmd!
-  autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
-  function! s:auto_mkdir(dir, force)  " {{{
-    if !isdirectory(a:dir) && (a:force ||
-    \    input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
-      call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-    endif
-  endfunction  " }}}
-augroup END  " }}}
-"}}}
+""ディレクトリが保存時無い場合に自動的に作成
+""https://vim-jp.org/vim-users-jp/2011/02/20/Hack-202.html
+"augroup vimrc-auto-mkdir  " {{{
+"  autocmd!
+"  autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+"  function! s:auto_mkdir(dir, force)  " {{{
+"    if !isdirectory(a:dir) && (a:force ||
+"    \    input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
+"      call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+"    endif
+"  endfunction  " }}}
+"augroup END  " }}}
+""}}}
 "transparent completions menu
 if has('nvim')
     set pumblend=15
     hi! PmenuSel blend=0
 endif
+set imdisable
 "日本語入力固定モード
 "IM-control.vimが必要
 "https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
@@ -207,7 +194,7 @@ let g:disable_IM_Control = 1
 if !exists('g:disable_IM_Control')
     inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
 endif
-"}}}
+""}}}
 
 "Key mapping {{{
 
@@ -334,6 +321,7 @@ nnoremap <C-q> :bd<CR>
 inoremap <expr><F2> strftime("%Y%m%d")
 cnoremap <expr><F2> strftime("%Y%m%d")
 nnoremap <C-y> q:
+
 autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR> | nmap <buffer> q :<C-u>close<CR>
 " shoot chars deleted by x to blackhole register
 nnoremap x "_x
@@ -392,7 +380,6 @@ function! s:smart_foldcloser() "{{{
 endfunction
 "}}}
 " edit fold column
-set fillchars=fold:\ 
 autocmd vimrc ColorScheme * hi! link Folded NonText
 " add fold marker
 nnoremap  z[     :<C-u>call <SID>put_foldmarker(0)<CR>
@@ -476,64 +463,64 @@ nnoremap <silent><Leader>l :bnext!<CR>
 " don't let close window when closing buffer
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
 " Display an error message. {{{
-function! s:Warn(msg)
-  echohl ErrorMsg
-  echomsg a:msg
-  echohl NONE
-endfunction "}}}
-function! s:Bclose(bang, buffer) "{{{
-  if empty(a:buffer)
-    let btarget = bufnr('%')
-  elseif a:buffer =~# '^\d\+$'
-    let btarget = bufnr(str2nr(a:buffer))
-  else
-    let btarget = bufnr(a:buffer)
-  endif
-  if btarget < 0
-    call s:Warn('No matching buffer for '.a:buffer)
-    return
-  endif
-  if empty(a:bang) && getbufvar(btarget, '&modified')
-    call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
-    return
-  endif
-  " Numbers of windows that view target buffer which we will delete.
-  let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
-  if !g:bclose_multiple && len(wnums) > 1
-    call s:Warn('Buffer is in multiple windows (use ":let bclose_multiple=1")')
-    return
-  endif
-  let wcurrent = winnr()
-  for w in wnums
-    execute w.'wincmd w'
-    let prevbuf = bufnr('#')
-    if prevbuf > 0 && buflisted(prevbuf) && prevbuf != btarget
-      buffer #
-    else
-      bprevious
-    endif
-    if btarget == bufnr('%')
-      " Numbers of listed buffers which are not the target to be deleted.
-      let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
-      " Listed, not target, and not displayed.
-      let bhidden = filter(copy(blisted), 'bufwinnr(v:val) < 0')
-      " Take the first buffer, if any (could be more intelligent).
-      let bjump = (bhidden + blisted + [-1])[0]
-      if bjump > 0
-        execute 'buffer '.bjump
-      else
-        execute 'enew'.a:bang
-      endif
-    endif
-  endfor
-  execute 'bdelete'.a:bang.' '.btarget
-  execute wcurrent.'wincmd w'
-endfunction
-let g:bclose_multiple = 1
-command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
+ function! s:Warn(msg)
+   echohl ErrorMsg
+   echomsg a:msg
+   echohl NONE
+ endfunction "}}}
+ function! s:Bclose(bang, buffer) "{{{
+   if empty(a:buffer)
+     let btarget = bufnr('%')
+   elseif a:buffer =~# '^\d\+$'
+     let btarget = bufnr(str2nr(a:buffer))
+   else
+     let btarget = bufnr(a:buffer)
+   endif
+   if btarget < 0
+     call s:Warn('No matching buffer for '.a:buffer)
+     return
+   endif
+   if empty(a:bang) && getbufvar(btarget, '&modified')
+     call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
+     return
+   endif
+   " Numbers of windows that view target buffer which we will delete.
+   let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
+   if !g:bclose_multiple && len(wnums) > 1
+     call s:Warn('Buffer is in multiple windows (use ":let bclose_multiple=1")')
+     return
+   endif
+   let wcurrent = winnr()
+   for w in wnums
+     execute w.'wincmd w'
+     let prevbuf = bufnr('#')
+     if prevbuf > 0 && buflisted(prevbuf) && prevbuf != btarget
+       buffer #
+     else
+       bprevious
+     endif
+     if btarget == bufnr('%')
+       " Numbers of listed buffers which are not the target to be deleted.
+       let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
+       " Listed, not target, and not displayed.
+       let bhidden = filter(copy(blisted), 'bufwinnr(v:val) < 0')
+       " Take the first buffer, if any (could be more intelligent).
+       let bjump = (bhidden + blisted + [-1])[0]
+       if bjump > 0
+         execute 'buffer '.bjump
+       else
+         execute 'enew'.a:bang
+       endif
+     endif
+   endfor
+   execute 'bdelete'.a:bang.' '.btarget
+   execute wcurrent.'wincmd w'
+ endfunction
+ let g:bclose_multiple = 1
+ command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
 "}}}
-nnoremap Q :<C-u>Bclose<CR>
-xnoremap Q :<C-u>Bclose<CR>
+ nnoremap Q :<C-u>Bclose<CR>
+ xnoremap Q :<C-u>Bclose<CR>
 " pandoc
 " pandoc-crossref
 " put config file to ~/.pandoc-crossref/config.yaml
@@ -558,10 +545,13 @@ if has('GUI')
     ""Nm秒後にカーソル点滅開始
     set guicursor=n:blinkwait2000
     let no_buffers_menu = 1
+    set lines=60 "ウィンドウの縦幅
+    set columns=120 " ウィンドウの横幅
+    winpos 2 10 " ウィンドウの起動時の位置
     if has('mac')
         set guifont=Cica:h14
     else
-"https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
+    "https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
         let s:fontsize = '12'
         let s:font = 'Ricty_Diminished_with-icons'
         let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
@@ -569,9 +559,6 @@ if has('GUI')
         let &guifontwide = s:myguifont
         set renderoptions=type:directx,renmode:5,geom:1
     endif
-    set lines=60 "ウィンドウの縦幅
-    set columns=120 " ウィンドウの横幅
-    winpos 2 10 " ウィンドウの起動時の位置
 endif
 "}}}
 
@@ -599,7 +586,7 @@ endif
 
 " Neovim {{{
 if has('nvim')
-    set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+    " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
     "float windowで補完するための設定
     set clipboard+=unnamed
     set completeopt-=preview
@@ -608,10 +595,10 @@ if has('nvim')
 endif
 
 "}}}
+
 ""dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
-
 if &runtimepath !~# '/dein.vim'
       if !isdirectory(s:dein_repo_dir)
         echo 'install dein.vim ...'
@@ -718,6 +705,7 @@ set runtimepath+=~/.cache/dein/repos/github.com/orokasan/denite-ale/
 "https://support.apple.com/ja-jp/guide/mac-help/mh27474/mac
 " }}}
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
+
 au vimrc BufRead .textlintrc set ft=json
 
     " " Go example
@@ -751,4 +739,68 @@ au vimrc BufRead .textlintrc set ft=json
 "        \ 'whitelist': ['vim', 'eruby', 'markdown', 'yaml'],
 "        \ })
 "  augroup END
+let g:ale_textlint_change_directory = 1
+let g:hoge = ''
+
+set title
+
+let g:lightline={}
+" let g:lightline.active = {
+"     \ 'left': [ [ 'mode', 'paste' ],
+"     \           [ 'readonly', 'filename', 'modified' ] ],
+"     \ 'right': [ [ 'lineinfo' ],
+"     \            [ 'percent' ],
+"     \            ['filestatus', 'denite']] }
+
+let g:lightline.inactive = {
+    \ 'left': [ [ 'filename' ] ],
+    \ 'right': [ [ 'lineinfo' ],
+    \            [ 'percent' ] , ['denite'] ]}
+let g:lightline.tabline = {
+    \ 'left': [ [ 'tabs' ] ],
+    \ 'right': [ [ 'close' ] ] }
+let g:lightline.component_function = {}
+let g:lightline.component_function['filename'] = 'LLfilename'
+let g:lightline.component_function['filestatus'] = 'LLfilestatus'
+let g:lightline.component_function['denite'] = 'LLDenite'
+function! LLfilename() abort
+    if &filetype isnot# 'denite'
+        return expand('%:t')
+    else
+        return ''
+    endif
+endfunction
+
+function! LLfilestatus() abort
+    if &filetype isnot# 'denite'
+        let fenc = &fenc!=#""?&fenc:&enc
+        let ft = &ft!=#""?&ft:"no ft"
+        return &ff . ' | ' . ft . ' | ' . fenc
+    else
+        return ''
+    endif
+endfunction
+ " Deniteステータス {{{
+
+ function! LLDenite() abort
+     if &filetype isnot# 'denite'
+         return ''
+     else
+         return s:denite_statusline()
+     endif
+ endfunction
+
+ function! s:denite_statusline() abort
+    let p =denite#get_status('path')
+    let p = substitute(p, '\(\[\|\]\)', '', 'g')
+    let p = fnamemodify(p,':~')
+    if strlen(p) > 40
+        let p = '.../' . fnamemodify(p,':h:h:t'). '/'
+            \ . fnamemodify(p,':h:t'). '/'. fnamemodify(p, ':t')
+    endif
+    let path =  '[' . p . ']'
+    let buf = 'denite:' . denite#get_status('buffer_name')
+    let source = denite#get_status('sources')
+    return  buf . ' ' . source . ' ' . path
+ endfunction
 " vim:set foldmethod=marker:

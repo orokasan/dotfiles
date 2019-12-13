@@ -3,6 +3,9 @@ export LANG=ja_JP.UTF-8
 export PATH="$HOME/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+[[ -d ~/.rbenv  ]] && \
+  export PATH=${HOME}/.rbenv/bin:${PATH} && \
+  eval "$(rbenv init -)"
 autoload -Uz compinit
 compinit
 setopt share_history
@@ -43,7 +46,6 @@ alias caddy='ruby /opt/caddy/caddy/caddy.rb'
 alias tm='terminal'     # tm ./ で現在いるディレクトリでターミナルを複製できます
 alias reload='source ~/.zshrc' # .zshrc編集中は多用してます
 alias ssh='TERM=xterm ssh'
-alias ctags='/usr/local/Cellar/ctags/5.8_1/bin/ctags'
 
 # cd
 alias ..2='cd ../..'
@@ -253,7 +255,7 @@ fvim() {
 }
 
 fh() {
-  eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')
+  eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]*\*? *//' | sed 's/\\/\\\\/g')
 }
 # fkill - kill processes - list only the ones you can kill. Modified the earlier script.
 fkill() {

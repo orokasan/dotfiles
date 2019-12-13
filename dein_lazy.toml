@@ -1,5 +1,6 @@
 [[plugins]]
-repo =  'Shougo/denite.nvim'
+# repo =  'Shougo/denite.nvim'
+repo =  'orokasan/denite.nvim'
 on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
 on_source = 'defx.nvim'
 hook_add = ''' "{{{
@@ -28,13 +29,13 @@ nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
 nnoremap <silent> [denite]t :<C-u>Denite
     \ -start-filter
     \ -path=$HOME
-    \ file file:new<CR>
+    \ file/rec file:new<CR>
 
 "ホームディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]T :<C-u>Denite
     \ -start-filter
     \ -path=$HOME
-    \ file/rec:: file:new<CR>
+    \ file file:new<CR>
 
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
@@ -77,7 +78,7 @@ nnoremap <silent> [denite]h :<C-u>Denite
 "最近使用したファイル-neomru
 nnoremap <silent> [denite]n :<C-u>Denite
     \ -buffer-name=normal
-    \ file_mru<CR>
+    \ file/old<CR>
 
 "mark一覧
 nnoremap <silent> [denite]m :<C-u>Denite
@@ -140,43 +141,8 @@ nnoremap <silent> [denite], :<C-u>Denite
 
 ''' #}}}
 hook_source = ''' " {{{
-" if has('nvim')
-"     call denite#custom#option('_', {
-"         \ 'split': 'floating',
-"         \ 'filter_split_direction': '',
-"         \ 'wincol': &columns/10,
-"         \ 'winwidth': &columns*5/6
-"         \ } )
-"     call denite#custom#option('stay',{
-"         \ 'wincol': &columns/2-2,
-"         \ 'winwidth': &columns*3/4-5,
-"         \ 'winheight': 10,
-"         \ 'winrow' : &lines - 12
-"         \ })
-"    " call denite#custom#option('_', {
-"     "     \ 'split': 'horizontal',
-"     "     \ 'statusline' : v:false,
-"     "     \ 'filter_split_direction' : ''
-"     "     \ })
-" else
-     " call denite#custom#option('_', {
-     " \ 'statusline': v:false,
-     " \ 'direction': 'dynamicbottom'
-     " } )
-" endif
-
-    " call denite#custom#option('stay',{
-    "     \ 'split': 'floating',
-    "     \ 'wincol': &columns/2-2,
-    "     \ 'winwidth': &columns*3/4-5,
-    "     \ 'winheight': 10,
-    "     \ 'winrow' : &lines - 12
-    "     \ })
-   " call denite#custom#option('_', {
-    "     \ 'split': 'horizontal',
-    "     \ 'statusline' : v:false,
-    "     \ 'filter_split_direction' : ''
-    "     \ })
+" autocmd vimrc WinEnter denite-filter setlocal winblend=100
+" autocmd vimrc WinLeave denite-filter setlocal winblend=0
 call denite#custom#option('_', {
     \ 'winheight': 15,
     \ 'short_source_names': v:true,
@@ -185,10 +151,10 @@ call denite#custom#option('_', {
     \ 'prompt': '#',
     \ 'highlight_matched_char' : 'Title',
     \ 'max_dynamic_update_candidates' : '50000',
-    \ 'filter_split_direction' : '',
+    \ 'filter_split_direction' : 'floating',
     \ 'vertical_preview': v:true,
-    \ 'statusline': v:false,
-    \ 'direction': 'dynamicbottom',
+    \ 'statusline': v:true,
+    \ 'direction': 'botright',
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
         \   'h' : 5, 'l' : 6, ';' : 7,
@@ -196,6 +162,7 @@ call denite#custom#option('_', {
         \ }
     \ })
 
+    " \ '-highlight-filter-background':
 "buffer-normal
 call denite#custom#option('normal', {
     \ 'winheight': 10
@@ -205,15 +172,13 @@ call denite#custom#option('search', {
     \ 'winheight': 10
     \ })
 
-call denite#custom#option('stay',{
-    \ 'split': 'floating',
-    \ 'wincol': &columns/2-2,
-    \ 'winwidth': &columns*3/4-5,
-    \ 'winheight': 10,
-    \ 'winrow' : &lines - 12
-    \ })
-"call denite#custom#map('insert', '<C-f>',
-"    \ 'ToggleSorter("sorter/reverse")', 'noremap expr nowait')
+" call denite#custom#option('stay',{
+"     \ 'split': 'floating',
+"     \ 'wincol': &columns/2-2,
+"     \ 'winwidth': &columns*3/4-5,
+"     \ 'winheight': 10,
+"     \ 'winrow' : &lines - 12
+"     \ })
 
 ""need rg for grep/file-rec
 
@@ -247,10 +212,12 @@ let s:menus.string.command_candidates = [
 
 call denite#custom#var('menu', 'menus', s:menus)
 
-call denite#custom#source('file/rec', 'matchers', ['matcher/fruzzy'])
-call denite#custom#source('file', 'matchers', ['matcher/fruzzy'])
+call denite#custom#kind('file', 'default_action', 'drop')
+" call denite#custom#source('file', 'matchers', ['matcher/fruzzy'])
+" call denite#custom#source('file/rec', 'matchers', ['matcher/fruzzy'])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
+" call denite#custom#source('_', 'sorters', ['sorter/reverse'])
 call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
 "Change ignore_globs
@@ -352,9 +319,8 @@ endfunction
 
 [plugins.ftplugin]
 denite = ''' "{{{
-setlocal signcolumn=yes
 if has('nvim')
-    setlocal winblend=20
+    setlocal winblend=0
 endif
 " nnoremap <silent><buffer><expr> j
 " \ line('.') == line('$') ? 'gg' : 'j'
@@ -392,6 +358,7 @@ nnoremap <silent><buffer><expr> <C-s>
     \ denite#do_map('change_sorters', 'sorter/rank,sorter/word')
 ''' # }}}
 denite-filter = ''' " {{{
+setlocal winblend=100
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
 inoremap <silent><buffer> <C-j>  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
@@ -681,7 +648,10 @@ inoremap <silent><expr> <C-n>
     \ deoplete#manual_complete()
 ''' # }}}
 hook_post_source = ''' " {{{
-
+		 " call deoplete#custom#option('profile', v:true)
+		 " call deoplete#enable_logging('DEBUG', '/Users/ork/deoplete.log')
+         " let g:eskk#log_cmdline_level = 2
+         " let g:eskk#log_cmdline_level = 2
 " inoremap <silent><expr><C-g>
 "     \ deoplete#undo_completion()
 inoremap <silent><expr><C-h>
@@ -703,13 +673,14 @@ endfunction
 "call deoplete#custom#source('_', 'matchers',
 "      \ ['matcher_fuzzy', 'matcher_length'])
 call deoplete#custom#source('_', 'matchers', ['matcher_fuzzy'])
-call deoplete#custom#source('buffer', 'mark', 'b')
-call deoplete#custom#source('eskk', 'mark' , 'eskk')
+call deoplete#custom#source('eskk', 'mark' , 'e')
 "matcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('vim', 'rank' , 250)
 call deoplete#custom#source('file', 'rank', 1000)
-call deoplete#custom#source('neosnippet', 'rank', 100)
+call deoplete#custom#source('neosnippet', 'rank', 1000)
+call deoplete#custom#source('buffer', 'rank', 300)
+call deoplete#custom#source('look', 'rank', 100)
 call deoplete#custom#source('vim', 'min_pattern_length', 2)
 "
 " Using custom variables to configure values
@@ -719,7 +690,6 @@ call deoplete#custom#source('vim', 'min_pattern_length', 2)
 " - mark_below = Mark shown for words N lines below.
 " - mark_changes = Mark shown for words in the changelist.
 "call deoplete#custom#option('ignore_sources',{'_':['around']})
-"
 call deoplete#custom#var('around', {
 \   'range_above': 20,
 \   'range_below': 20,
@@ -731,10 +701,10 @@ call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite']
     \ })
 call deoplete#custom#option({
-    \ 'auto_complete_delay': 20,
+    \ 'refresh_always': v:true,
     \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'mirror'
+    \ 'prev_completion_mode': 'filter'
     \ })
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
@@ -818,14 +788,6 @@ on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
 [[plugins]]
-repo = 'mattn/googlesuggest-complete-vim'
-on_event = 'InsertEnter'
-depends = ['webapi-vim']
-hook_add = '''
-"set completefunc=googlesuggest#Complete
-'''
-
-[[plugins]]
 repo =  'Shougo/neosnippet'
 depends = ['neosnippet-snippets']
 on_event = 'InsertCharPre'
@@ -839,32 +801,35 @@ smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
-on_map = {icrt = '<Plug>(eskk:toggle'}
+on_map = {icrtn = '<Plug>(eskk:'}
 hook_add = ''' " {{{
-let g:eskk#debug = 0
+"let g:eskk#marker_henkan = '' "''
+let g:eskk#marker_okuri = '*'
+" let g:eskk#marker_henkan_select = '' " ''
 let g:eskk#rom_input_style = 'msime'
 let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
 let g:eskk#tab_select_completion = 1
-let g:eskk#start_completion_length = 3
+let g:eskk#start_completion_length = 2
 let g:eskk_revert_henkan_style = 'okuri'
 let g:eskk#dictionary = {
-\    'path': "~/GoogleDrive/rc/.skk-jisyo",
-\    'sorted': 0,
-\    'encoding': 'utf-8',
-\}
-
+    \    'path': "~/GoogleDrive/rc/.skk-jisyo",
+    \    'sorted': 1,
+    \    'encoding': 'utf-8'
+    \}
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#dictionary_save_count = 5
 let g:eskk#cursor_color = {
-\   'ascii': '#b4be82',
-\   'hira': '#e28878',
-\   'kata': '#84a0c6',
-\   'abbrev': '#4169e1',
-\   'zenei': '#ffd700',
-\}
+    \   'ascii': '#b4be82',
+    \   'hira': '#e28878',
+    \   'kata': '#84a0c6',
+    \   'abbrev': '#4169e1',
+    \   'zenei': '#ffd700',
+    \}
+
 imap <C-j> <Plug>(eskk:toggle)
 cmap <C-j> <Plug>(eskk:toggle)
+
 ''' # }}}
 hook_source = ''' " {{{
 autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre()
@@ -933,15 +898,15 @@ endfunction
 
 " lightline用の関数
 function! LLmyeskk() abort
-    if !exists('*eskk#enable') | return '[aA]' | endif
+    if !exists('*eskk#enable') | return 'aA' | endif
     if eskk#is_enabled()
-        return printf(get(a:000, 0, '[%s]'),
+        return printf(get(a:000, 0, '%s'),
             \ get(g:eskk#statusline_mode_strings,
             \ eskk#get_current_instance().mode, '??'))
     elseif mode() !=# 'i'
-        return g:eskk_toggle_status || s:eskk_status ? printf('[あ]') : printf('[aA]')
+        return g:eskk_toggle_status || s:eskk_status ? 'あ' : 'aA'
     else
-        return printf('[aA]')
+        return 'aA'
     endif
 
 endfunction
@@ -954,7 +919,7 @@ autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_linenr()
 
 function! s:eskk_enable_post()
     " lでeskkを終了
-    EskkMap -type=disable l
+     EskkMap -type=disable l
     " ハイライトを有効化
     call s:eskk_highlight_linenr()
 endfunction
@@ -1447,14 +1412,6 @@ hook_add = '''
 vmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 '''
-[[plugins]]
-repo = 'soramugi/auto-ctags.vim'
-on_cmd = ['Ctags']
-hook_add = '''
-let g:auto_ctags_tags_name = 'tags'
-let g:auto_ctags_tags_args = ['--tag-relative=yes', '--recurse=yes', '--sort=yes']
-let g:auto_ctags_filetype_mode = 1
-'''
 
 [[plugins]]
 repo =  'tyru/open-browser.vim'
@@ -1549,13 +1506,13 @@ let g:deoplete#sources#jedi#statement_length = 30
 let g:deoplete#sources#jedi#show_docstring = 1
 '''
 
-[[plugins]]
-repo = 'raghur/fruzzy'
-on_source = ['denite.nvim']
-hook_source = '''
-let g:fruzzy#usenative = 1
-let g:fruzzy#sortonempty = 0
-'''
-hook_post_update = 'call fruzzy#install()'
+# [[plugins]]
+# repo = 'raghur/fruzzy'
+# on_source = ['denite.nvim']
+# hook_source = '''
+# let g:fruzzy#usenative = 1
+# let g:fruzzy#sortonempty = 1
+# '''
+# hook_post_update = 'call fruzzy#install()'
 
 # vim:set foldmethod=marker:
