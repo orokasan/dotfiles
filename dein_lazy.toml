@@ -141,8 +141,6 @@ nnoremap <silent> [denite], :<C-u>Denite
 
 ''' #}}}
 hook_source = ''' " {{{
-" autocmd vimrc WinEnter denite-filter setlocal winblend=100
-" autocmd vimrc WinLeave denite-filter setlocal winblend=0
 call denite#custom#option('_', {
     \ 'winheight': 15,
     \ 'short_source_names': v:true,
@@ -322,6 +320,7 @@ denite = ''' "{{{
 if has('nvim')
     setlocal winblend=0
 endif
+setlocal signcolumn=yes
 " nnoremap <silent><buffer><expr> j
 " \ line('.') == line('$') ? 'gg' : 'j'
 " nnoremap <silent><buffer><expr> k
@@ -1203,118 +1202,6 @@ let g:choosewin_keymap = s:keymap
 let g:choosewin_label = 'HJKLADFG'
 let g:choosewin_blink_on_land = 0
 ''' # }}}
-
-#[[plugins]]
-#repo =  'basyura/TweetVim'
-#on_cmd = ['TweetVimHomeTimeline', 'TweetVimSay']
-#depends = ['twibill.vim', 'webapi-vim']
-#hook_add = ''' " {{{
-#nnoremap <silent> <Leader>ts  :<C-u>TweetVimSay<CR>
-#nnoremap <silent> <Leader>tt  :TweetVimHomeTimeline<CR>
-#nnoremap <silent> <Leader>tm :TweetVimMentions<CR>
-#nnoremap <silent><Leader>tu :<C-u>Denite -buffer-name=normal unite:tweetvim<CR>
-#''' # }}}
-#hook_source = ''' " {{{
-#autocmd vimrc FileType tweetvim setlocal nonumber
-#if !executable('convert') || has('nvim')
-#    autocmd vimrc FileType tweetvim setlocal signcolumn=no
-#endif
-#
-#let g:tweetvim_tweet_per_page = 60
-#let g:tweetvim_config_dir = expand('~/vimfiles/.tweetvim')
-#let g:tweetvim_open_buffer_cmd = 'botright 15vsplit'
-#let g:tweetvim_display_time = 1
-#let g:tweetvim_display_username = 1
-#let g:tweetvim_display_separator = 0
-#let g:tweetvim_tweet_limit = 560
-#let g:tweetvim_display_icon = 1
-# if !has('nvim')
-#    let g:tweetvim_async_post = 1
-#endif
-#
-#function! s:tw_open_existing() abort
-#
-#endfunction let bnr = bufnr('[tweetvim]')                                                  
-#  if bnr == -1
-#    echoerr 'call TweetVim!:'
-#    return
-#  endif
-#  let wids = win_findbuf(bnr)
-#    call win_gotoid(wids[0])
-#endfunction
-#
-#" highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
-#" highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-#" 自動更新間隔（秒）
-#"https://gist.github.com/rhysd/4201877
-#let s:tweetvim_update_interval_seconds = 60
-#let s:tweetvim_timestamp = reltime()[0]
-#function! s:tweetvim_autoupdate()
-#    let current = reltime()[0]
-#    if current - s:tweetvim_timestamp > s:tweetvim_update_interval_seconds
-#        call feedkeys("\<Plug>(tweetvim_action_reload)")
-#        let s:tweetvim_timestamp = current
-#    endif
-#    call feedkeys(mode() ==# 'i' ? "\<C-g>\<ESC>" : "g\<ESC>", 'n')
-#endfunction
-#
-#function! s:tweetvim_setup_autoupdate()
-#    augroup vimrc-tweetvim-autoupdate
-#        autocmd!
-#        autocmd CursorHold * call <SID>tweetvim_autoupdate()
-#    augroup END
-#endfunction
-#
-#" 自動更新開始と終了用コマンド
-#" command! -nargs=0 TweetVimAutoUpdate call <SID>tweetvim_setup_autoupdate()
-#" command! -nargs=0 TweetVimStopAutoUpdate autocmd! vimrc-tweetvim-autoupdate
-#
-#" autocmd vimrc ColorScheme * highlight tweetvim_screen_name term = bold ctermfg=33 guifg=#4078f2
-#" autocmd vimrc ColorScheme * highlight tweetvim_at_screen_name term = bold ctermfg=33 guifg=#4078f2
-#''' # }}}
-#[plugins.ftplugin]
-#tweetvim_say = ''' " {{{
-#" マッピング
-#" 挿入・通常モードでsayバッファを閉じる
-#nnoremap <buffer><silent><C-g>    :<C-u>q!<CR>
-#inoremap <buffer><silent><C-g>    <C-o>:<C-u>q!<CR><Esc>
-#''' # }}}
-#
-#[plugins.ftplugin]
-#tweetvim = ''' " {{{
-#"各種アクション
-#nnoremap <buffer>S          :<C-u>TweetVimSay<CR>
-#nnoremap <buffer>m          :<C-u>TweetVimMentions<CR>
-#nnoremap <buffer>dd :Denite -buffer-name=normal -direction='dynamicbottom' unite:tweetvim<CR>
-#" nnoremap <buffer>j          }j
-#" nnoremap <buffer>k          k{j
-#nnoremap <buffer>th         :TweetVimHomeTimeline<CR>
-#nnoremap <buffer>r          :redraw<CR>
-#nmap     <buffer>c          <Plug>(tweetvim_action_in_reply_to)
-#nmap     <buffer><Leader>F  <Plug>(tweetvim_action_remove_favorite)
-#nmap     <buffer><Leader>d  <Plug>(tweetvim_action_remove_status)
-#nmap     <buffer>o          <Plug>(tweetvim_action_open_links)
-#nmap     <silent><buffer>q  :bd<CR>
-#nmap     <buffer><Tab>      <Plug>(tweetvim_action_reload)
-#"ページの先頭に戻ったときにリロード
-#nmap     <buffer><silent>gg gg<Plug>(tweetvim_action_reload)
-#"ページ移動をff/bb から f/b に
-#nmap     <buffer>f          <Plug>(tweetvim_action_page_next)
-#nmap     <buffer>b          <Plug>(tweetvim_action_page_previous)
-#nnoremap <silent> <buffer>n <C-d>
-#nnoremap <silent> <buffer>p <C-u>
-#"不要なマップを除去
-#nunmap   <buffer>ff
-#nunmap   <buffer>bb
-#" tweetvim バッファに移動したときに自動リロード
-#"autocmd BufEnter * call <SID>tweetvim_reload()
-#" filetype が tweetvim ならツイートをリロード
-#"function! s:tweetvim_reload()
-#"    if &filetype ==# 'tweetvim'
-#"        call feedkeys("\<Plug>(tweetvim_action_reload)")
-#"    endif
-#"endfunction
-#''' # }}}
 
 [[plugins]]
 repo = 'previm/previm'
