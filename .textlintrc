@@ -34,7 +34,7 @@
             },
         "no-doubled-joshi": {
                     // 助詞のtoken同士の距離が2以下ならエラー
-                    "min_interval" : 3,
+                    "min_interval" : 2,
                     // 例外を許可するかどうか
                     "strict": false,
                     // 助詞のうち「も」「や」は複数回の出現を許す

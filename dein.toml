@@ -342,7 +342,7 @@ function! LLgit() abort
         return ''
     else
        "return s:threshold(1) ? ' '. s:llgitbranch :
-       return s:threshold(1) ? ' '. g:gina#component#repo#preset():
+       return s:threshold(1) ? ' '. g:gina#component#repo#branch():
        \ s:threshold(2) ? '' :''
     endif
 endfunction

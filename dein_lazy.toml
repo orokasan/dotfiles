@@ -104,6 +104,7 @@ nnoremap <silent> [denite]R :<C-u>Denite
 "open ale message
 nnoremap <silent> [denite]a :<C-u>Denite
     \ -buffer-name=stay
+    \ -resume
     \ ale<CR>
 
 "コマンド結果をdeniteに出力
@@ -1124,6 +1125,7 @@ hook_source =''' " {{{
 "vint: pip install --pre vim-vint
 "preset-ja-technical-writing
 "npm install textlint-rule-preset-ja-technical-writing@beta
+let g:ale_echo_delay = 400
 let g:ale_disable_lsp = 1
 let g:ale_use_global_executables=1
 let g:ale_set_balloons =0
