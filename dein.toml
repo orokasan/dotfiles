@@ -341,7 +341,8 @@ function! LLgit() abort
     if &filetype =~# s:ignore_filetype || !exists('*gitbranch#name')
         return ''
     else
-       return s:threshold(1) ? ' '. s:llgitbranch :
+       "return s:threshold(1) ? ' '. s:llgitbranch :
+       return s:threshold(1) ? ' '. g:gina#component#repo#preset():
        \ s:threshold(2) ? '' :''
     endif
 endfunction
@@ -351,7 +352,6 @@ autocmd vimrc VimEnter,BufNew,BufEnter,CmdlineLeave,FileWritePre,BufWrite * call
 function! s:llgitcache() abort
     let s:llgitbranch = len(gitbranch#name()) ? gitbranch#name() : ''
 endfunction
-
 
  " 検索ステータスを表示 (vim-anzuを利用) {{{
  autocmd vimrc InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status')
