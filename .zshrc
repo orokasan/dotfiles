@@ -3,6 +3,7 @@ export LANG=ja_JP.UTF-8
 export PATH="$HOME/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+export TEXINPUTS='.//;'
 [[ -d ~/.rbenv  ]] && \
   export PATH=${HOME}/.rbenv/bin:${PATH} && \
   eval "$(rbenv init -)"
@@ -12,7 +13,6 @@ setopt share_history
 HISTFILE=$HOME/.zsh-history
 HISTSIZE=10000
 SAVEHIST=10000
-
 # COLOR {{{
 # color at completion
 autoload colors
@@ -34,7 +34,6 @@ setopt pushd_ignore_dups
 setopt auto_pushd
 # pushdから重複を削除
 setopt pushd_ignore_dups
-
 # ALIAS {{{
 # general
 alias ls='ls -G'

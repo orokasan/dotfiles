@@ -64,7 +64,7 @@ set list            " show invisible character
 set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors   " ターミナルでも True Color を使えるようにする。
-set lazyredraw
+" set lazyredraw
 set visualbell      " please stop noisy beep
 set t_vb=
 set noerrorbells
@@ -166,6 +166,7 @@ set noequalalways
       autocmd MyAutoCmd BufReadPost * call s:loadview()
     augroup END
 set viewoptions-=options
+set viewoptions-=curdir
 ""ディレクトリが保存時無い場合に自動的に作成
 ""https://vim-jp.org/vim-users-jp/2011/02/20/Hack-202.html
 "augroup vimrc-auto-mkdir  " {{{
@@ -412,12 +413,7 @@ inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 "
 " move between windows
-inoremap <C-w>h <ESC><C-w>h
-inoremap <C-w>j <ESC><C-w>j
-inoremap <C-w>k <ESC><C-w>k
-inoremap <C-w>l <ESC><C-w>l
 nnoremap <C-w><C-w> <ESC><C-w>p
-inoremap <C-w><C-w> <ESC><C-w>p
 nnoremap <C-w><C-u> <ESC><C-w><C-w>
 "
 " change window size
@@ -594,7 +590,6 @@ if has('nvim')
 endif
 
 "}}}
-
 ""dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -738,54 +733,5 @@ au vimrc BufRead .textlintrc set ft=json
 "        \ 'whitelist': ['vim', 'eruby', 'markdown', 'yaml'],
 "        \ })
 "  augroup END
-let g:ale_textlint_change_directory = 1
-let g:hoge = ''
 
-set title
-
-" FUNCTIONS SORTED ON TOTAL TIME
-" count  total (s)   self (s)  function
-"  3000   0.073077             parenmatch#update()
-"  3000   0.068080             <SNR>17_update_search_status()
-"  3000   0.020527             <SNR>3_llvarCharCount()
-"  3000   0.013051             lightline#update_once()
-"  3000   0.004814             anzu#clear_search_status()
-"     2   0.004617             lightline#link()
-"     4   0.004330   0.000122  LLgit()
-"     4   0.004186   0.000035  gina#component#repo#branch()
-"     4   0.004152   0.000288  gina#core#get()
-"     4   0.003540   0.000177  <SNR>84_get_from_bufname()
-"     4   0.003363   0.000128  <SNR>84_get_from_path()
-"     4   0.003235   0.002909  <SNR>75_new()
-"     1   0.001479   0.000029  lightline#tabline()
-"     1   0.001450   0.000320  <SNR>72_line()
-"     2   0.001098   0.000247  <SNR>72_expand()
-"     5   0.000821   0.000076  <SNR>72_convert()
-"     1   0.000745   0.000052  <SNR>72_evaluate_expand()
-"     1   0.000679   0.000061  lightline#bufferline#buffers()
-"     3   0.000480   0.000042  <SNR>20_get_buffer_names()
-"     2   0.000438   0.000105  <SNR>20_get_buffer_name()
-
-" FUNCTIONS SORTED ON SELF TIME
-" count  total (s)   self (s)  function
-"  3000              0.073077  parenmatch#update()
-"  3000              0.068080  <SNR>17_update_search_status()
-"  3000              0.020527  <SNR>3_llvarCharCount()
-"  3000              0.013051  lightline#update_once()
-"  3000              0.004814  anzu#clear_search_status()
-"     2              0.004617  lightline#link()
-"     4   0.003235   0.002909  <SNR>75_new()
-"     1   0.001450   0.000320  <SNR>72_line()
-"     4   0.004152   0.000288  gina#core#get()
-"     2   0.000289   0.000278  WebDevIconsGetFileTypeSymbol()
-"     2   0.001098   0.000247  <SNR>72_expand()
-"     4   0.003540   0.000177  <SNR>84_get_from_bufname()
-"     4              0.000148  <SNR>84_set_cached_instance()
-"     4              0.000133  <SNR>78_separator()
-"     4   0.003363   0.000128  <SNR>84_get_from_path()
-"     4   0.004330   0.000122  LLgit()
-"     4   0.000119   0.000106  gina#core#buffer#parse()
-"     2   0.000438   0.000105  <SNR>20_get_buffer_name()
-"     4   0.000131   0.000102  LLMode()
-"     4   0.000228   0.000094  <SNR>78_remove_last_separator()
 " vim:set foldmethod=marker:
