@@ -18,6 +18,7 @@
     "textlint-rule-max-appearence-count-of-words": "^1.0.1",
     "textlint-rule-preset-ja-technical-writing": "^4.0.0-beta.0",
     "textlint-rule-prh": "^5.2.1",
+    "vim-language-server": "^1.4.1",
     "vscode-css-languageserver-bin": "^1.4.0"
   },
   "devDependencies": {},

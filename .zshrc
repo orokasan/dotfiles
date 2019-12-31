@@ -2,6 +2,7 @@ export LANG=ja_JP.UTF-8
 
 export PATH="$HOME/bin:$PATH"
 export GOPATH=$HOME/go
+export GO111MODULE=on
 export PATH=$PATH:$GOPATH/bin
 export TEXINPUTS='.//;'
 [[ -d ~/.rbenv  ]] && \

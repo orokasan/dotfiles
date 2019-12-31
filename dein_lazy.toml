@@ -766,7 +766,6 @@ call deoplete#custom#source('_', 'converters', [
 call deoplete#enable()
 ''' # }}}
 
-
 [[plugins]]
 repo = 'Shougo/neocomplete.vim'
 on_if = ''' !has('nvim') '''
@@ -834,8 +833,11 @@ call neocomplete#initialize()
 
 [[plugins]]
 repo =  'Shougo/neco-vim'
-on_source = ['deoplete','neocomplete']
-on_ft = 'vim' [[plugins]]
+# on_source = ['deoplete','neocomplete']
+on_source = ['neocomplete']
+on_ft = 'vim'
+
+[[plugins]]
 repo =  'Shougo/neosnippet'
 depends = ['neosnippet-snippets']
 on_event = 'InsertEnter'
@@ -1551,13 +1553,13 @@ hook_add = '''
 # repo = 'lighttiger2505/deoplete-vim-lsp'
 # on_event = 'InsertEnter'
 
-[[plugins]]
-repo = 'deoplete-plugins/deoplete-jedi'
-on_event = 'InsertEnter'
-hook_add = '''
-let g:deoplete#sources#jedi#statement_length = 30
-let g:deoplete#sources#jedi#show_docstring = 1
-'''
+# [[plugins]]
+# repo = 'deoplete-plugins/deoplete-jedi'
+# on_event = 'InsertEnter'
+# hook_add = '''
+# let g:deoplete#sources#jedi#statement_length = 30
+# let g:deoplete#sources#jedi#show_docstring = 1
+# '''
 
 # [[plugins]]
 # repo = 'raghur/fruzzy'
@@ -1673,9 +1675,9 @@ hook_add = '''
   xmap A  <Plug>(niceblock-A)
 '''
 
-[[plugins]]
-on_event = 'InsertEnter'
-repo = 'lighttiger2505/deoplete-vim-lsp'
+# [[plugins]]
+# on_event = 'InsertEnter'
+# repo = 'lighttiger2505/deoplete-vim-lsp'
 
 [[plugins]]
 on_ft = 'go'

@@ -37,7 +37,6 @@ let g:loaded_matchparen = 1
 if has('win64')
     let g:python3_host_prog ='python.exe'
 endif
-
 " Backup
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
