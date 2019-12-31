@@ -26,81 +26,6 @@ repo =  'roxma/vim-hug-neovim-rpc'
 on_if = '!has("nvim")'
 
 [[plugins]]
-on_if = '!has("kaoriya")'
-repo = 'vim-jp/vimdoc-ja'
-
-[[plugins]]
-on_if = '!has("kaoriya")'
-repo = 'deton/jasentence.vim'
-hook_add = '''
-let g:jasentence_endpat = '[、。，．？！]\+'
-'''
-
-[[plugins]]
-repo =  'deton/jasegment.vim'
-#TODO:qitta
-hook_add = ''' "{{{
-let g:jasegment#model='knbc_bunsetu'
-let g:jasegment#highlight = 0
-omap <silent><buffer> aW <Plug>JaSegmentTextObjA
-omap <silent><buffer> iW <Plug>JaSegmentTextObjI
-xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
-xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
-'''# }}} 
-
-#[[plugins]]
-#repo =  'ksh <buffer>enoy/vim-signature' {{{
-#hook_add = ' <buffer>''
-#let g:SignatureMap = {
-#    \ 'Leader'             :  "M",
-#    \ 'PlaceNextMark'      :  "M,",
-#    \ 'ToggleMarkAtLine'   :  "M.",
-#    \ 'PurgeMarksAtLine'   :  "M-",
-#    \ 'DeleteMark'         :  "dM",
-#    \ 'PurgeMarks'         :  "M<Space>",
-#    \ 'PurgeMarkers'       :  "M<BS>",
-#    \ 'GotoNextLineAlpha'  :  "']",
-#    \ 'GotoPrevLineAlpha'  :  "'[",
-#    \ 'GotoNextSpotAlpha'  :  "`]",
-#    \ 'GotoPrevSpotAlpha'  :  "`[",
-#    \ 'GotoNextLineByPos'  :  "]'",
-#    \ 'GotoPrevLineByPos'  :  "['",
-#    \ 'GotoNextSpotByPos'  :  "]`",
-#    \ 'GotoPrevSpotByPos'  :  "[`",
-#    \ 'GotoNextMarker'     :  "]-",
-#    \ 'GotoPrevMarker'     :  "[-",
-#    \ 'GotoNextMarkerAny'  :  "]=",
-#    \ 'GotoPrevMarkerAny'  :  "[=",
-#    \ 'ListBufferMarks'    :  "M/",
-#    \ 'ListBufferMarkers'  :  "M?"
-#\ }
-#
-#''' }}}
-
-# [[plugins]]
-# repo =  'Shougo/neomru.vim'
-# hook_add =''' " {{{
-# "denite-neomruでginaを無視
-# let g:neomru#do_validate = 1
-# "let g:neomru#file_mru_ignore_pattern = 
-# "      \'\~$\|\.\%(o\|exe\|dll\|bak\|zwc\|pyc\|sw[po]\)$'.
-# "      \'\|\%(^\|/\)\.\%(hg\|git\|bzr\|svn\)\%($\|/\)'.
-# "      \'\|^\%(\\\\\|/mnt/\|/media/\|/temp/\|/tmp/\|\%(/private\)\=/var/folders/\)'.
-# "      \'\|\%(^\%(gina\)://\)'.
-# "      \'\|\%(^\%(term\)://\)'
-# let g:neomru#file_mru_ignore_pattern = 'term://'
-# let g:neomru#time_format = '%m/%d %H:%M'
-# let g:neomru#file_mru_limit = 100
-# let g:neomru#file_mru_path= '~/.cache/neomru/file'
-# ''' # }}}
-
-[[plugins]]
-repo =  'mattn/webapi-vim'
-
-[[plugins]]
-repo = 'cespare/vim-toml'
-
-[[plugins]]
 repo =  'itchyny/lightline.vim'
 depends = ['lightline-bufferline']
 hook_add = ''' " {{{
@@ -238,7 +163,12 @@ function! LLMyFilepath()
     elseif exists('*anzu#search_status') && strwidth(anzu#search_status())
         return s:llanzu()
     else
-        let icon = WebDevIconsGetFileTypeSymbol()
+        if exists('g:loaded_webdevicons')
+            let icon = WebDevIconsGetFileTypeSymbol()
+        else
+            let icon = ''
+        endif
+
         let l:filepath = expand('%:~')
         let l:filename = expand('%:t')
         if s:threshold(0)
@@ -392,7 +322,7 @@ endfunction
  endfunction
 
  function! s:denite_statusline() abort
-         return s:deniteinput() .  s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
+         return s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
  endfunction
 
  function! s:deniteinput() abort
@@ -423,6 +353,127 @@ endfunction
 ''' # }}}
 
 [[plugins]]
+repo =  'maximbaz/lightline-ale'
+depends = ['lightline.vim']
+hook_add = ''' " {{{
+if has('mac')
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = ''
+    let g:lightline#ale#indicator_errors = ''
+    let g:lightline#ale#indicator_ok = ""
+else
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = "\uf48f"
+    let g:lightline#ale#indicator_errors = "\uf484"
+    let g:lightline#ale#indicator_ok = "\uf43a"
+endif
+
+''' # }}}
+
+[[plugins]]
+on_if = '!has("kaoriya")'
+repo = 'vim-jp/vimdoc-ja'
+
+[[plugins]]
+repo = 'fuenor/JpFormat.vim'
+
+[[plugins]]
+on_if = '!has("kaoriya")'
+repo = 'deton/jasentence.vim'
+hook_add = '''
+let g:jasentence_endpat = '[、。，．？！]\+'
+'''
+
+[[plugins]]
+repo = 'tyru/skkdict.vim'
+
+[[plugins]]
+repo = 'kana/vim-textobj-user'
+
+[[plugins]]
+depends = ['vim-textobj-user']
+repo = 'kana/vim-textobj-entire'
+
+[[plugins]]
+depends = ['vim-textobj-user']
+repo = 'saaguero/vim-textobj-pastedtext'
+
+[[plugins]]
+depends = ['vim-textobj-user']
+repo = 'rhysd/vim-textobj-anyblock'
+
+[[plugins]]
+depends = ['vim-quickrun']
+repo = 'lambdalisue/vim-quickrun-neovim-job'
+
+[[plugins]]
+repo =  'deton/jasegment.vim'
+#TODO:qitta
+hook_add = ''' "{{{
+let g:jasegment#model='knbc_bunsetu'
+let g:jasegment#highlight = 0
+omap <silent><buffer> aW <Plug>JaSegmentTextObjA
+omap <silent><buffer> iW <Plug>JaSegmentTextObjI
+xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
+xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
+'''# }}} 
+
+#[[plugins]]
+#repo =  'ksh <buffer>enoy/vim-signature' {{{
+#hook_add = ' <buffer>''
+#let g:SignatureMap = {
+#    \ 'Leader'             :  "M",
+#    \ 'PlaceNextMark'      :  "M,",
+#    \ 'ToggleMarkAtLine'   :  "M.",
+#    \ 'PurgeMarksAtLine'   :  "M-",
+#    \ 'DeleteMark'         :  "dM",
+#    \ 'PurgeMarks'         :  "M<Space>",
+#    \ 'PurgeMarkers'       :  "M<BS>",
+#    \ 'GotoNextLineAlpha'  :  "']",
+#    \ 'GotoPrevLineAlpha'  :  "'[",
+#    \ 'GotoNextSpotAlpha'  :  "`]",
+#    \ 'GotoPrevSpotAlpha'  :  "`[",
+#    \ 'GotoNextLineByPos'  :  "]'",
+#    \ 'GotoPrevLineByPos'  :  "['",
+#    \ 'GotoNextSpotByPos'  :  "]`",
+#    \ 'GotoPrevSpotByPos'  :  "[`",
+#    \ 'GotoNextMarker'     :  "]-",
+#    \ 'GotoPrevMarker'     :  "[-",
+#    \ 'GotoNextMarkerAny'  :  "]=",
+#    \ 'GotoPrevMarkerAny'  :  "[=",
+#    \ 'ListBufferMarks'    :  "M/",
+#    \ 'ListBufferMarkers'  :  "M?"
+#\ }
+#
+#''' }}}
+
+# [[plugins]]
+# repo =  'Shougo/neomru.vim'
+# hook_add =''' " {{{
+# "denite-neomruでginaを無視
+# let g:neomru#do_validate = 1
+# "let g:neomru#file_mru_ignore_pattern = 
+# "      \'\~$\|\.\%(o\|exe\|dll\|bak\|zwc\|pyc\|sw[po]\)$'.
+# "      \'\|\%(^\|/\)\.\%(hg\|git\|bzr\|svn\)\%($\|/\)'.
+# "      \'\|^\%(\\\\\|/mnt/\|/media/\|/temp/\|/tmp/\|\%(/private\)\=/var/folders/\)'.
+# "      \'\|\%(^\%(gina\)://\)'.
+# "      \'\|\%(^\%(term\)://\)'
+# let g:neomru#file_mru_ignore_pattern = 'term://'
+# let g:neomru#time_format = '%m/%d %H:%M'
+# let g:neomru#file_mru_limit = 100
+# let g:neomru#file_mru_path= '~/.cache/neomru/file'
+# ''' # }}}
+
+[[plugins]]
+repo =  'mattn/webapi-vim'
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+
+# [[plugins]]
+# repo = 'vim-airline/vim-airline'
+
+[[plugins]]
 repo =  'mengelbrecht/lightline-bufferline'
 depends = ['lightline.vim']
 
@@ -431,7 +482,22 @@ repo =  'itchyny/vim-gitbranch'
 depends = ['lightline.vim']
 
 [[plugins]]
+repo = 'orokasan/vim-quack-lightline'
+
+[[plugins]]
 repo = 'Shougo/context_filetype.vim'
+
+# [[plugins]]
+# repo =  'w0ng/vim-hybrid'
+
+[[plugins]]
+repo =  'morhetz/gruvbox'
+hook_add = ''' " {{{
+let g:gruvbox_contrast_dark = 'medium'
+let g:gruvbox_italicize_comments = 0
+let g:gruvbox_invert_selection = 0
+let g:gruvbox_guisp_fallback = 'bg'
+''' # }}}
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
@@ -444,23 +510,19 @@ autocmd vimrc ColorScheme iceberg highligh Search gui=underline
 " colorscheme iceberg
 '''
 
-# [[plugins]]
-# repo =  'w0ng/vim-hybrid'
-
-# [[plugins]]
-# repo ='ayu-theme/ayu-vim'
-
-# [[plugins]]
-# repo = 'yarisgutierrez/ayu-lightline'
-# depends = ['lightline.vim']
-
 [[plugins]]
-repo =  'morhetz/gruvbox'
-hook_add = ''' " {{{
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_italicize_comments = 0
-let g:gruvbox_invert_selection = 0
-let g:gruvbox_guisp_fallback = 'bg'
+repo = 'lifepillar/vim-solarized8'
+hook_add =''' " {{{
+let g:solarized_old_cursor_style = 1
+let g:solarized_italics = 0
+let g:solarized_statusline = 'flat'
+autocmd vimrc ColorScheme solarized8_flat highlight! VertSplit guifg=#05252C guibg=#05252C
+autocmd vimrc ColorScheme solarized8_flat highlight! link EndOfBuffer Comment
+autocmd vimrc ColorScheme solarized8_flat highlight! NormalFloat guibg=#05252C
+autocmd vimrc ColorScheme solarized8_flat highlight clear Underlined
+autocmd vimrc ColorScheme solarized8_flat highlight! Underlined gui=underline,bold
+autocmd vimrc ColorScheme solarized8_flat highlight! link Vimfunction Type
+colorscheme solarized8_flat
 ''' # }}}
 
 [[plugins]]
@@ -495,27 +557,6 @@ let g:is#do_default_mapping = 0
 ''' # }}}
 
 [[plugins]]
-repo = 'orokasan/clever-f.vim'
-merge = '0'
-hook_add = ''' " {{{
-let g:clever_f_mark_cursor = 0
-let g:clever_f_mark_char_color = "Underlined"
-let g:clever_f_hide_cursor_on_cmdline = 0
-let g:clever_f_smart_case = 1
-let g:clever_f_across_no_line = 1
-let g:clever_f_chars_match_any_signs = ':;'
-let g:clever_f_use_migemo = 1
-let g:clever_f_sings_match_any_signs =
-    \ '\[!"#$%&''()=~|\-^\\@`[\]{};:+*<>,.?_/、。「」（）『』！？]'
-''' # }}}
-
-[[plugins]]
-repo = 'haya14busa/incsearch.vim'
-hook_add = '''
-let g:incsearch#auto_nohlsearch = 1
-'''
-
-[[plugins]]
 repo = 'osyo-manga/vim-anzu'
 hook_add = ''' " {{{
 "nnoremap <silent><expr> <Plug>(anzu-n-zzzv) anzu#mode#mapexpr("n", "", "zzzv")
@@ -534,11 +575,6 @@ repo = 'moznion/hateblo.vim'
 depends = 'webapi-vim'
 
 [[plugins]]
-#repo =  'iyuuya/denite-ale'
-repo =  'orokasan/denite-ale'
-on_source = ['denite.nvim']
-
-[[plugins]]
 repo =  'kana/vim-operator-user'
 
 [[plugins]]
@@ -548,12 +584,20 @@ repo = 'deoplete-plugins/deoplete-zsh'
 repo =  'Shougo/neosnippet-snippets'
 
 [[plugins]]
+repo = 'Shougo/unite-outline'
+
+[[plugins]]
+repo = 'N0nki/denite-markdown'
+
+[[plugins]]
+#repo =  'iyuuya/denite-ale'
+repo =  'orokasan/denite-ale'
+
+[[plugins]]
 repo = 'orokasan/denite-anzu'
-merge = '0'
 
 [[plugins]]
 repo =  'kmnk/denite-dirmark'
-on_source = ['denite.nvim','defx.nvim']
 
 # [[plugins]]
 # repo = 'junegunn/fzf.vim'
@@ -562,68 +606,7 @@ on_source = ['denite.nvim','defx.nvim']
 # '''
 
 [[plugins]]
-repo = 'fuenor/JpFormat.vim'
-
-#[[plugins]]
-#repo = 'SidOfc/mkdx' {{{
-#on_ft = ['markdown','md']
-#hook_source = '''
-#" :h mkdx-settings
-#let g:mkdx#settings = {
-#      \ 'image_extension_pattern': 'a\?png\|jpe\?g\|gif',
-#      \ 'restore_visual':          1,
-#      \ 'enter':                   { 'enable': 1, 'malformed': 1, 'o': 1,
-#      \                              'shifto': 1, 'shift': 0 },
-#      \ 'map':                     { 'prefix': '<leader>', 'enable': 1 },
-#      \ 'tokens':                  { 'enter': ['-', '*', '>'],
-#      \                              'bold': '**', 'italic': '*', 'strike': '',
-#      \                              'list': '-', 'fence': '',
-#      \                              'header': '#' },
-#      \ 'checkbox':                { 'toggles': [' ', '-', 'x'],
-#      \                              'update_tree': 2,
-#      \                              'initial_state': ' ' },
-#      \ 'toc':                     { 'text': "Table of Contents", 'list_token': '-',
-#      \                              'update_on_write': 1,
-#      \                              'position': 0,
-#      \                              'details': {
-#      \                                 'enable': 0,
-#      \                                 'summary': 'Click to expand {{toc.text}}',
-#      \                                 'nesting_level': -1,
-#      \                                 'child_count': 5,
-#      \                                 'child_summary': 'show {{count}} items'
-#      \                              }
-#      \                            },
-#      \ 'table':                   { 'divider': '|',
-#      \                              'header_divider': '-',
-#      \                              'align': {
-#      \                                 'left':    [],
-#      \                                 'center':  [],
-#      \                                 'right':   [],
-#      \                                 'default': 'center'
-#      \                              }
-#      \                            },
-#      \ 'links':                   { 'external': {
-#      \                                 'enable': 1, 'timeout': 3, 'host': '', 'relative': 1
-#      \                              },
-#      \                              'fragment': {
-#      \                                 'jumplist': 1,
-#      \                                 'complete': 1
-#      \                              }
-#      \                            },
-#      \ 'highlight':               { 'enable': 1 },
-#      \ 'auto_update':             { 'enable': 0 },
-#      \ 'fold': { 'enable': 1 }
-#    \ }
-#''' }}}
-
-# [[plugins]]
-# repo = 'nixprime/cpsm'
-
-[[plugins]]
 repo = 'tpope/vim-commentary'
-
-# [[plugins]]
-# repo = 'tpope/vim-fugitive'
 
 [[plugins]]
 repo = 't9md/vim-textmanip'
@@ -638,95 +621,15 @@ xmap <C-l> <Plug>(textmanip-move-right)
 ''' # }}}
 
 [[plugins]]
-repo = 'Shougo/unite-outline'
-
-[[plugins]]
-repo = 'lifepillar/vim-solarized8'
-hook_add =''' " {{{
-let g:solarized_old_cursor_style = 1
-let g:solarized_italics = 0
-let g:solarized_statusline = 'flat'
-autocmd vimrc ColorScheme solarized8_flat highlight! VertSplit guifg=#05252C guibg=#05252C
-autocmd vimrc ColorScheme solarized8_flat highlight! link EndOfBuffer Comment
-autocmd vimrc ColorScheme solarized8_flat highlight! NormalFloat guibg=#05252C
-autocmd vimrc ColorScheme solarized8_flat highlight clear Underlined
-autocmd vimrc ColorScheme solarized8_flat highlight! Underlined gui=underline,bold
-autocmd vimrc ColorScheme solarized8_flat highlight! link Vimfunction Type
-colorscheme solarized8_flat
-''' # }}}
-
-# [[plugins]]
-# repo = 'mhartington/oceanic-next'
-
-[[plugins]]
-repo = 'orokasan/vim-quack-lightline'
-
-[[plugins]]
 repo = 'itchyny/vim-parenmatch'
 hook_add = '''
 let g:parenmatch_highlight = 0
 hi! link ParenMatch MatchParen
 '''
 
-[[plugins]]
-repo =  'maximbaz/lightline-ale'
-depends = ['lightline.vim']
-hook_add = ''' " {{{
-if has('mac')
-    let g:lightline#ale#indicator_checking = "\uf110"
-    let g:lightline#ale#indicator_warnings = ''
-    let g:lightline#ale#indicator_errors = ''
-    let g:lightline#ale#indicator_ok = ""
-else
-    let g:lightline#ale#indicator_checking = "\uf110"
-    let g:lightline#ale#indicator_warnings = "\uf48f"
-    let g:lightline#ale#indicator_errors = "\uf484"
-    let g:lightline#ale#indicator_ok = "\uf43a"
-endif
-
-''' # }}}
-
-[[plugins]]
-repo = 'easymotion/vim-easymotion'
-hook_add = ''' " {{{
-let g:EasyMotion_do_mapping = 0
-nmap m <Plug>(easymotion-s2)
-nmap M <Plug>(easymotion-overwin-f2)
-imap <C-z> <ESC><Plug>(easymotion-s2)
-xmap m <Plug>(easymotion-s2)
-omap m <Plug>(easymotion-s2)
-map gj <Plug>(easymotion-sol-j)
-map gk <Plug>(easymotion-sol-k)
-
-" Jump to first match with enter & space
-let g:EasyMotion_use_upper = 1
-let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
-let g:EasyMotion_smartcase = 1
-let g:EasyMotion_space_jump_first = 1
-let g:EasyMotion_use_migemo = 1
-let g:EasyMotion_prompt = '{n}>>> '
-let g:EasyMotion_verbose = 0
-hi link EasyMotionTarget Type
-hi link EasyMotionShade  Comment
-hi link EasyMotionTarget2First MatchParen
-hi link EasyMotionTarget2Second MatchParen
-hi link EasyMotionMoveHL Search
-hi link EasyMotionIncSearch Search
-''' # }}}
-
-[[plugins]]
-repo = 'haya14busa/vim-asterisk'
-depends = 'is.vim'
-hook_add = ''' "{{{
-"let g:asterisk#keeppos = 1
-map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatus<CR>
-map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatus<CR>
-map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatus<CR>
-map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatus<CR>
-''' # }}}
-
 # [[plugins]]
 # repo = 'mhinz/vim-startify'
+# on_if = '!has("nvim")'
 # hook_add = ''' " {{{
 # let g:startify_files_number = 5
 # let g:startify_list_order = [
@@ -756,76 +659,166 @@ map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatu
 #           \ ''
 #           \]
 # let g:startify_custom_header = g:ascii
-# autocmd User Startified for key in ['b','s','t','v'] |
-#           \ execute 'nunmap <buffer>' key | endfor
+# " autocmd User Startified for key in ['b','s','t','v'] |
+# "           \ execute 'nunmap <buffer>' key | endfor
 # ''' # }}}
 
-[[plugins]]
-on_if ='has("nvim")'
-repo = 'ncm2/float-preview.nvim'
-#TODO:qitta
-hook_add = '''
-let g:float_preview#docked = 0
-let g:float_preview#max_height = 5
-'''
-
-[[plugins]]
-repo = 'N0nki/denite-markdown'
-
-[[plugins]]
-repo = 'ryanoasis/vim-devicons'
+#[[plugins]]
+#on_if ='has("nvim")'
+#repo = 'ncm2/float-preview.nvim'
+#hook_add = '''
+#let g:float_preview#docked = 0
+#let g:float_preview#max_height = 5
+#'''
 
 # [[plugins]]
 # repo = 'neovim/nvim-lsp'
-#
+# merged = '0' "{{{
+# hook_add = '''
+# lua << EOF
+# local nvim_lsp = require'nvim_lsp'
+# local configs = require'nvim_lsp/skeleton'
+# if not nvim_lsp.pyls_ms then
+#   configs.pyls_ms = {
+#     default_config = {
+#       init_options = {
+#         filetypes = { "python" };
+#         analysisUpdates = true,
+#         asyncStartup = true,
+#         displayOptions = {},
+#         interpreter = {
+#           properties = {
+#             InterpreterPath = "/usr/local/bin/python3",
+#             Version = "3.7.5"
+#           }
+#         };
+#       };
+#       log_level = 2,
+#       settings = {
+#         python = {
+#           analysis = {
+#             disabled = {},
+#             errors = {},
+#             info = {}
+#           }
+#         }
+#       };
+#     };
+#   }
+# end
+# require'nvim_lsp'.pyls.setup{}
+# require'nvim_lsp'.texlab.setup{}
+# EOF
+
+# "lsp.txtそのまま
+# nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+# nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+# nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+# nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+# nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+# nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+# ''' # }}}
+
 # [[plugins]]
 # repo = 'Shougo/deoplete-lsp'
+# merged = '0'
 # hook_add = '''
-#     " " Python example
-#      call lsp#add_filetype_config({
-#            \ 'filetype': 'python',
-#            \ 'name': 'pyls',
-#            \ 'cmd': 'pyls'
-#            \ })
+# " call lsp#add_server_config('python', { 'execute_path': 'pyls', 'args': [] }, {})
 # '''
 
-# [[plugins]]
-# repo = 'prabirshrestha/vim-lsp'
-# hook_add = '''
-# if executable('pyls')
-#     " pip install python-language-server
-#     au User lsp_setup call lsp#register_server({
-#         \ 'name': 'pyls',
-#         \ 'cmd': {server_info->['pyls']},
-#         \ 'whitelist': ['python'],
-#         \ })
-# endif
-# '''
-
-# [[plugins]]
-# repo = 'prabirshrestha/async.vim'
+[[plugins]]
+repo = 'prabirshrestha/vim-lsp'
+hook_add = ''' " {{{
+if executable('pyls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ })
+endif
+if executable('texlab')
+   au User lsp_setup call lsp#register_server({
+      \ 'name': 'texlab',
+      \ 'cmd': {server_info->['texlab']},
+      \ 'whitelist': ['tex', 'bib', 'sty'],
+      \ })
+endif
+if executable('gopls')
+  augroup LspGo
+    au!
+    autocmd User lsp_setup call lsp#register_server({
+        \ 'name': 'go-lang',
+        \ 'cmd': {server_info->['gopls']},
+        \ 'whitelist': ['go'],
+        \ 'workspace_config': {'gopls': {
+        \     'staticcheck': v:true,
+        \     'completeUnimported': v:true,
+        \     'caseSensitiveCompletion': v:true,
+        \     'usePlaceholders': v:true,
+        \     'completionDocumentation': v:true,
+        \     'watchFileChanges': v:true,
+        \     'hoverKind': 'SingleLine',
+        \   }},
+        \ })
+    autocmd FileType go setlocal omnifunc=lsp#complete
+    " autocmd BufWrite *.go call execute('LspDocumentFormat', 'silent') | call execute('write', 'silent')
+    autocmd FileType go nmap <buffer> gd <plug>(lsp-definition)
+    autocmd FileType go nmap <buffer> ,n <plug>(lsp-next-error)
+    autocmd FileType go nmap <buffer> ,p <plug>(lsp-previous-error)
+  augroup END
+endif
+" let g:lsp_auto_enable = 0
+" let g:lsp_insert_text_enabled = 1
+let g:lsp_diagnostics_enabled = 0
+let g:lsp_virtual_text_prefix = "> "
+let g:lsp_virtual_text_prefix = " ‣ "
+if has('mac')
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = ''
+    let g:lightline#ale#indicator_errors = ''
+    let g:lightline#ale#indicator_ok = ""
+else
+    let g:lightline#ale#indicator_checking = "\uf110"
+    let g:lightline#ale#indicator_warnings = "\uf48f"
+    let g:lightline#ale#indicator_errors = "\uf484"
+    let g:lightline#ale#indicator_ok = "\uf43a"
+endif
+''' # }}}
 
 [[plugins]]
-repo = 'tyru/skkdict.vim'
+repo = 'prabirshrestha/async.vim'
 
-[[plugins]]
-depends = ['vim-textobj-user']
-repo = 'kana/vim-textobj-entire'
-
-[[plugins]]
-depends = ['vim-textobj-user']
-repo = 'saaguero/vim-textobj-pastedtext'
-
-[[plugins]]
-depends = ['vim-textobj-user']
-repo = 'rhysd/vim-textobj-anyblock'
-
-[[plugins]]
-repo = 'kana/vim-textobj-user'
-
-[[plugins]]
-repo = 'lambdalisue/vim-quickrun-neovim-job'
 # [[plugins]]
 # repo = 'himanoa/denite-git-grep'
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip'
+# hook_add = '''
+# imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+# smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+# imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# '''
+
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip-integ'
+
+# [[plugins]]
+# repo = 'microsoft/vscode-python'
+# merged = '0'
+
+[[plugins]]
+repo = 'thomasfaingnaert/vim-lsp-snippets'
+
+[[plugins]]
+repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+
+# [[plugins]]
+# repo = 'prabirshrestha/asyncomplete-lsp.vim'
+
+# [[plugins]]
+# repo = 'voldikss/vim-floaterm'
+# hook_add = '''
+# '''
 
 # vim:set foldmethod=marker:

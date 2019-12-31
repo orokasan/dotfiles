@@ -61,7 +61,7 @@ set noshowmode      " don't let show current mode on commandline
 set cursorline      " highlight cursorline
 " autocmd vimrc ColorScheme *  hi clear CursorLine
 set list            " show invisible character
-set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:%
+set listchars=tab:\ \ ,trail:-,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors   " ターミナルでも True Color を使えるようにする。
 " set lazyredraw
@@ -85,6 +85,16 @@ set pumheight=15 " default
 set ambiwidth=double
 set background=dark
 
+"}}}
+
+"Quickfix {{{
+nnoremap <Leader>f :<C-u>cope<CR>
+
+autocmd vimrc FileType qf call s:my_qf_setting()
+function! s:my_qf_setting() abort
+    nnoremap <CR> :<C-u>.cc<CR>
+    nnoremap q :<C-u>ccl<CR>
+endfunction
 "}}}
 
 " Editing {{{
@@ -124,7 +134,7 @@ set complete=.,w,b,u
 if has('nvim')
   set shada=!,:10,'300,<50,s10,h,@10
 else
-  set viminfo=!,'300,<50,s10,h
+  set viminfo=!,'300,<50,s10,h,n~/.viminfo
 endif
 
 " Set minimal height for current window.
@@ -290,7 +300,6 @@ if has('mac')
     inoremap ∆  <C-\><C-N><C-w>j
     inoremap ˚ <C-\><C-N><C-w>k
     inoremap Ò  <C-\><C-N><C-w>l
-    inoremap <C-w><C-w>  <C-\><C-N><C-w>p
 
 else
     tnoremap <A-h> <C-\><C-N><C-w>h
@@ -381,6 +390,7 @@ endfunction
 "}}}
 " edit fold column
 autocmd vimrc ColorScheme * hi! link Folded NonText
+autocmd vimrc ColorScheme * hi! Folded guifg=bold
 " add fold marker
 nnoremap  z[     :<C-u>call <SID>put_foldmarker(0)<CR>
 nnoremap  z]     :<C-u>call <SID>put_foldmarker(1)<CR>
@@ -584,12 +594,14 @@ if has('nvim')
     " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
     "float windowで補完するための設定
     set clipboard+=unnamed
+    " set completeopt+=menuone
     set completeopt-=preview
     "set completeopt+=popuphidden
     set wildoptions=pum
 endif
 
 "}}}
+
 ""dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -698,6 +710,9 @@ set runtimepath+=~/.cache/dein/repos/github.com/orokasan/denite-ale/
 " input apostrophe -> <A-]>
 "https://support.apple.com/ja-jp/guide/mac-help/mh27474/mac
 " }}}
+hi!  link SpecialKey Comment
+hi!  link NonText Comment
+
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 
 au vimrc BufRead .textlintrc set ft=json
