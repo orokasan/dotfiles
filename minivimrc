@@ -129,55 +129,36 @@ call deoplete#custom#source('_', 'converters', [
 call deoplete#enable()
 
 lua << EOF
-local nvim_lsp = require'nvim_lsp'
-local configs = require'nvim_lsp/skeleton'
-if not nvim_lsp.pyls_ms then
-  configs.pyls_ms = {
-    default_config = {
-      init_options = {
-        filetypes = { "python" };
-        analysisUpdates = true,
-        asyncStartup = true,
-        displayOptions = {},
-        interpreter = {
-          properties = {
-            InterpreterPath = "/usr/local/bin/python3",
-            Version = "3.7.5"
-          }
-        };
-      };
-      log_level = 2,
-      settings = {
-        python = {
-          analysis = {
-            disabled = {},
-            errors = {},
-            info = {}
-          }
-        }
-      };
+vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
+vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
+    if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then
+      local util = vim.lsp.util
+      if not result then return end
+      local uri = result.uri
+      local bufnr = vim.uri_to_bufnr(uri)
+      if not bufnr then
+        err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
+        return
+      end
+      util.buf_clear_diagnostics(bufnr)
+      util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
+      util.buf_diagnostics_underline(bufnr, result.diagnostics)
+      util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
+    end
+  end
+require'nvim_lsp'.gopls.setup{
+    init_options = {
+      usePlaceholders=true;
+      linkTarget="pkg.go.dev";
+      completionDocumentation=true;
+      completeUnimported=true;
+      deepCompletion=true;
+      fuzzyMatching=true;
     };
   }
-end
-if not nvim_lsp.gopls then
-  configs.gopls = {
-    default_config = {
-      root_dir = root_pattern("go"),
-      log_level = 1,
-      settings = {
-          go = {
-            completeUnimported = true,
-            staticcheck = true,
-            caseSensitiveCompletion = true,
-            usePlaceholders = true,
-          },
-       };
-    };
-  }
-end
 require'nvim_lsp'.pyls.setup{}
 require'nvim_lsp'.texlab.setup{}
-require'nvim_lsp'.gopls.setup{}
+require'nvim_lsp'.vimls.setup{}
 EOF
 
 
