@@ -835,12 +835,16 @@ call neocomplete#initialize()
 [[plugins]]
 repo =  'Shougo/neco-vim'
 on_source = ['deoplete','neocomplete']
-on_ft = 'vim' [[plugins]]
+on_ft = 'vim'
+
+[[plugins]]
 repo =  'Shougo/neosnippet'
-depends = ['neosnippet-snippets']
 on_event = 'InsertEnter'
 on_ft = 'snippet'
 hook_source = ''' " {{{
+let g:neosnippet#disable_runtime_snippets = {
+\   '_' : 1,
+\ }
 if has('conceal')
     set conceallevel=2 concealcursor=niv
 endif
@@ -1511,6 +1515,11 @@ let g:quickrun_config['tex'] = {
 ''' # }}}
 
 [[plugins]]
+depends = ['vim-quickrun']
+on_source = ['vim-quickrun']
+repo = 'lambdalisue/vim-quickrun-neovim-job'
+
+[[plugins]]
 repo = 'mbbill/undotree'
 #TODO:qitta
 on_cmd = ['UndotreeToggle']
@@ -1518,6 +1527,19 @@ hook_add = '''
 nnoremap U :<C-u>UndotreeToggle<CR>
 let g:undotree_SetFocusWhenToggle = 1
 '''
+
+[[plugins]]
+repo = 't9md/vim-textmanip'
+on_map = { x = '<Plug>(textmanip'}
+hook_add = ''' " {{{
+xmap <C-j> <Plug>(textmanip-move-down)
+xmap <C-k> <Plug>(textmanip-move-up)
+xmap <C-h> <Plug>(textmanip-move-left)
+xmap <C-l> <Plug>(textmanip-move-right)
+" toggle insert/replace with <F10>
+" nmap <F10> <Plug>(textmanip-toggle-mode)
+" xmap <F10> <Plug>(textmanip-toggle-mode)
+''' # }}}
 
 [[plugins]]
 repo = 'majutsushi/tagbar'
@@ -1547,17 +1569,14 @@ hook_add = '''
   let g:vtm_default_mapping = 0
 '''
 
-# [[plugins]]
-# repo = 'lighttiger2505/deoplete-vim-lsp'
-# on_event = 'InsertEnter'
 
-[[plugins]]
-repo = 'deoplete-plugins/deoplete-jedi'
-on_event = 'InsertEnter'
-hook_add = '''
-let g:deoplete#sources#jedi#statement_length = 30
-let g:deoplete#sources#jedi#show_docstring = 1
-'''
+# [[plugins]]
+# repo = 'deoplete-plugins/deoplete-jedi'
+# on_event = 'InsertEnter'
+# hook_add = '''
+# let g:deoplete#sources#jedi#statement_length = 30
+# let g:deoplete#sources#jedi#show_docstring = 1
+# '''
 
 # [[plugins]]
 # repo = 'raghur/fruzzy'
@@ -1674,7 +1693,7 @@ hook_add = '''
 '''
 
 [[plugins]]
-on_event = 'InsertEnter'
+on_source = ['deoplete.nvim']
 repo = 'lighttiger2505/deoplete-vim-lsp'
 
 [[plugins]]

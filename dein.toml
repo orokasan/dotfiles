@@ -1,21 +1,11 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
-[[plugins]]
-repo = 'Shougo/vimproc.vim'
-on_if = '!has("nvim")'
-hook_post_update = '''
-  if has('win32')
-    let cmd = 'tools\\update-dll-mingw'
-  elseif has('win32unix') " for Cygwin
-    let cmd = 'make -f make_cygwin.mak'
-  elseif executable('gmake')
-    let cmd = 'gmake'
-  else
-    let cmd = 'make'
-  endif
-  let g:dein#plugin.build = cmd
-'''
+# [[plugins]]
+# repo = 'sheerun/vim-polyglot'
+# hook_add = '''
+# let g:polyglot_disabled = ['markdown', 'tsx', 'typescript', 'csv']
+# '''
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
@@ -403,10 +393,6 @@ depends = ['vim-textobj-user']
 repo = 'rhysd/vim-textobj-anyblock'
 
 [[plugins]]
-depends = ['vim-quickrun']
-repo = 'lambdalisue/vim-quickrun-neovim-job'
-
-[[plugins]]
 repo =  'deton/jasegment.vim'
 #TODO:qitta
 hook_add = ''' "{{{
@@ -580,8 +566,8 @@ repo =  'kana/vim-operator-user'
 [[plugins]]
 repo = 'deoplete-plugins/deoplete-zsh'
 
-[[plugins]]
-repo =  'Shougo/neosnippet-snippets'
+# [[plugins]]
+# repo =  'Shougo/neosnippet-snippets'
 
 [[plugins]]
 repo = 'Shougo/unite-outline'
@@ -607,18 +593,6 @@ repo =  'kmnk/denite-dirmark'
 
 [[plugins]]
 repo = 'tpope/vim-commentary'
-
-[[plugins]]
-repo = 't9md/vim-textmanip'
-hook_add = ''' " {{{
-xmap <C-j> <Plug>(textmanip-move-down)
-xmap <C-k> <Plug>(textmanip-move-up)
-xmap <C-h> <Plug>(textmanip-move-left)
-xmap <C-l> <Plug>(textmanip-move-right)
-" toggle insert/replace with <F10>
-" nmap <F10> <Plug>(textmanip-toggle-mode)
-" xmap <F10> <Plug>(textmanip-toggle-mode)
-''' # }}}
 
 [[plugins]]
 repo = 'itchyny/vim-parenmatch'
@@ -729,6 +703,15 @@ hi! link ParenMatch MatchParen
 [[plugins]]
 repo = 'prabirshrestha/vim-lsp'
 hook_add = ''' " {{{
+let g:deoplete#enable_at_startup = 1
+" if executable('vim-language-server')
+"     " pip install python-language-server
+"     au User lsp_setup call lsp#register_server({
+"         \ 'name': 'vimls',
+"         \ 'cmd': {server_info->['vim-language-server', '--stdio']},
+"         \ 'whitelist': ['vim'],
+"         \ })
+" endif
 if executable('pyls')
     " pip install python-language-server
     au User lsp_setup call lsp#register_server({
@@ -755,22 +738,25 @@ if executable('gopls')
         \     'staticcheck': v:true,
         \     'completeUnimported': v:true,
         \     'caseSensitiveCompletion': v:true,
+        \     'hoverKind': 'SingleLine',
         \     'usePlaceholders': v:true,
         \     'completionDocumentation': v:true,
         \     'watchFileChanges': v:true,
-        \     'hoverKind': 'SingleLine',
         \   }},
         \ })
     autocmd FileType go setlocal omnifunc=lsp#complete
     " autocmd BufWrite *.go call execute('LspDocumentFormat', 'silent') | call execute('write', 'silent')
-    autocmd FileType go nmap <buffer> gd <plug>(lsp-definition)
+    autocmd FileType go nmap <buffer> <C-]> <plug>(lsp-definition)
+    autocmd FileType go nmap <buffer> gd <plug>(lsp-declaration)
+    autocmd FileType go nmap <buffer> K <plug>(lsp-hover)
+    autocmd FileType go nmap <buffer> <C-k> <plug>(lsp-signature_help)
     autocmd FileType go nmap <buffer> ,n <plug>(lsp-next-error)
     autocmd FileType go nmap <buffer> ,p <plug>(lsp-previous-error)
   augroup END
 endif
-" let g:lsp_auto_enable = 0
+let g:lsp_auto_enable = 1
 " let g:lsp_insert_text_enabled = 1
-let g:lsp_diagnostics_enabled = 0
+let g:lsp_diagnostics_enabled = 1
 let g:lsp_virtual_text_prefix = "> "
 let g:lsp_virtual_text_prefix = " ‣ "
 if has('mac')
@@ -821,4 +807,19 @@ repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 # hook_add = '''
 # '''
 
+# [[plugins]]
+# repo = 'Shougo/vimproc.vim'
+# on_if = '!has("nvim")'
+# hook_post_update = '''
+#   if has('win32')
+#     let cmd = 'tools\\update-dll-mingw'
+#   elseif has('win32unix') " for Cygwin
+#     let cmd = 'make -f make_cygwin.mak'
+#   elseif executable('gmake')
+#     let cmd = 'gmake'
+#   else
+#     let cmd = 'make'
+#   endif
+#   let g:dein#plugin.build = cmd
+# '''
 # vim:set foldmethod=marker:
