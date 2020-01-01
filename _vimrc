@@ -747,5 +747,4 @@ au vimrc BufRead .textlintrc set ft=json
 "        \ 'whitelist': ['vim', 'eruby', 'markdown', 'yaml'],
 "        \ })
 "  augroup END
-
 " vim:set foldmethod=marker:

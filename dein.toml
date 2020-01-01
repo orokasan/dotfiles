@@ -674,26 +674,34 @@ hi! link ParenMatch MatchParen
 [[plugins]]
 repo = 'neovim/nvim-lsp'
 hook_add = ''' "{{{
-
 lua << EOF
-vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
-vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
-    if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then
-      local util = vim.lsp.util
-      if not result then return end
-      local uri = result.uri
-      local bufnr = vim.uri_to_bufnr(uri)
-      if not bufnr then
-        err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
-        return
-      end
-      util.buf_clear_diagnostics(bufnr)
-      util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
-      util.buf_diagnostics_underline(bufnr, result.diagnostics)
-      util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
-    end
-  end
+-- vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
+-- vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
+--     if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then
+--       local util = vim.lsp.util
+--       if not result then return end
+--       local uri = result.uri
+--       local bufnr = vim.uri_to_bufnr(uri)
+--       if not bufnr then
+--         err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
+--         return
+--       end
+--       util.buf_clear_diagnostics(bufnr)
+--       util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
+--       util.buf_diagnostics_underline(bufnr, result.diagnostics)
+--       util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
+--     end
+--   end
 require'nvim_lsp'.gopls.setup{
+    capabilities = {
+      textDocument = {
+        completion = {
+          completionItem = {
+            snippetSupport = true
+          }
+        }
+      }
+    },
     init_options = {
       usePlaceholders=true;
       linkTarget="pkg.go.dev";
@@ -703,6 +711,7 @@ require'nvim_lsp'.gopls.setup{
       fuzzyMatching=true;
     };
   }
+
 require'nvim_lsp'.pyls.setup{}
 require'nvim_lsp'.texlab.setup{}
 require'nvim_lsp'.vimls.setup{}
@@ -801,23 +810,23 @@ smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab
 [[plugins]]
 depends = 'vim-vsnip'
 repo = 'hrsh7th/vim-vsnip-integ'
-hook_add = '''
-lua require'nvim_lsp'.gopls.setup{
-      \   capabilities = {
-      \     textDocument = {
-      \       completion = {
-      \         completionItem = {
-      \           snippetSupport = true
-      \         }
-      \       }
-      \     }
-      \   },
-      \   init_options = {
-      \     usePlaceholders = true,
-      \     completeUnimported = true
-      \   }
-      \ }
-'''
+# hook_add = '''
+# lua require'nvim_lsp'.gopls.setup{
+#       \   capabilities = {
+#       \     textDocument = {
+#       \       completion = {
+#       \         completionItem = {
+#       \           snippetSupport = true
+#       \         }
+#       \       }
+#       \     }
+#       \   },
+#       \   init_options = {
+#       \     usePlaceholders = true,
+#       \     completeUnimported = true
+#       \   }
+#       \ }
+# '''
 
 [[plugins]]
 repo = 'microsoft/vscode-python'
