@@ -602,8 +602,7 @@ endif
 "}}}
 
 ""dein.vim {{{
-let s:dein_dir = expand('~/.cache/dein/dev')
-let s:dein_rep_dir = expand('~/.cache/dein')
+let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = expand('~/.cache/dein/repos/github.com/Shougo/dein.vim')
 if &runtimepath !~# '/dein.vim'
       if !isdirectory(s:dein_repo_dir)
@@ -618,7 +617,7 @@ let s:lazy_toml = '~/dotfiles/dein_lazy.toml'
 let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_rep_dir, s:myvimrc)
+    call dein#begin(s:dein_dir, s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
