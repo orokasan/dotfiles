@@ -811,29 +811,27 @@ autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 [[plugins]]
 repo = 'prabirshrestha/async.vim'
 
-# [[plugins]]
-# repo = 'himanoa/denite-git-grep'
-# [[plugins]]
-# repo = 'hrsh7th/vim-vsnip'
-# hook_add = '''
-# imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-# smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-# imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# '''
-
-# [[plugins]]
-# repo = 'hrsh7th/vim-vsnip-integ'
-
-# [[plugins]]
-# repo = 'microsoft/vscode-python'
-# merged = '0'
+[[plugins]]
+repo = 'hrsh7th/vim-vsnip'
+hook_add = '''
+imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+'''
 
 [[plugins]]
-repo = 'thomasfaingnaert/vim-lsp-snippets'
+repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
-repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+repo = 'microsoft/vscode-python'
+merged = '0'
+
+# [[plugins]]
+# repo = 'thomasfaingnaert/vim-lsp-snippets'
+
+# [[plugins]]
+# repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
 # [[plugins]]
 # on_if = '!has("nvim")'
