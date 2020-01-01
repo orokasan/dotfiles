@@ -9,11 +9,11 @@ repo = 'Shougo/dein.vim'
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
-on_if = '!has("nvim")'
+on_if = ''' !has('nvim') '''
 
 [[plugins]]
 repo =  'roxma/vim-hug-neovim-rpc'
-on_if = '!has("nvim")'
+on_if = ''' !has('nvim') '''
 
 [[plugins]]
 repo =  'itchyny/lightline.vim'
@@ -697,7 +697,6 @@ hi! link ParenMatch MatchParen
 # repo = 'Shougo/deoplete-lsp'
 # merged = '0'
 # hook_add = '''
-# " call lsp#add_server_config('python', { 'execute_path': 'pyls', 'args': [] }, {})
 # '''
 
 [[plugins]]
@@ -712,6 +711,16 @@ let g:deoplete#enable_at_startup = 1
 "         \ 'whitelist': ['vim'],
 "         \ })
 " endif
+let s:pyls_config = {'pyls': {'plugins': {
+    \   'pycodestyle': {'enabled': v:true},
+    \   'pydocstyle': {'enabled': v:false},
+    \   'pylint': {'enabled': v:false},
+    \   'flake8': {'enabled': v:true},
+    \   'jedi_definition': {
+    \     'follow_imports': v:true,
+    \     'follow_builtin_imports': v:true,
+    \   },
+    \ }}}
 if executable('pyls')
     " pip install python-language-server
     au User lsp_setup call lsp#register_server({
@@ -719,6 +728,7 @@ if executable('pyls')
         \ 'cmd': {server_info->['pyls']},
         \ 'whitelist': ['python'],
         \ })
+    autocmd vimrc BufWrite *.py call execute('LspDocumentFormatSync', 'silent')
 endif
 if executable('texlab')
    au User lsp_setup call lsp#register_server({
@@ -735,41 +745,67 @@ if executable('gopls')
         \ 'cmd': {server_info->['gopls']},
         \ 'whitelist': ['go'],
         \ 'workspace_config': {'gopls': {
-        \     'staticcheck': v:true,
+        \     'watchFileChanges': v:true,
         \     'completeUnimported': v:true,
         \     'caseSensitiveCompletion': v:true,
-        \     'hoverKind': 'SingleLine',
+        \     'hoverKind': 'SynopsisDocumentation',
         \     'usePlaceholders': v:true,
+        \     'deepCompletion': v:true,
         \     'completionDocumentation': v:true,
-        \     'watchFileChanges': v:true,
         \   }},
         \ })
-    autocmd FileType go setlocal omnifunc=lsp#complete
-    " autocmd BufWrite *.go call execute('LspDocumentFormat', 'silent') | call execute('write', 'silent')
-    autocmd FileType go nmap <buffer> <C-]> <plug>(lsp-definition)
-    autocmd FileType go nmap <buffer> gd <plug>(lsp-declaration)
-    autocmd FileType go nmap <buffer> K <plug>(lsp-hover)
-    autocmd FileType go nmap <buffer> <C-k> <plug>(lsp-signature_help)
-    autocmd FileType go nmap <buffer> ,n <plug>(lsp-next-error)
-    autocmd FileType go nmap <buffer> ,p <plug>(lsp-previous-error)
   augroup END
 endif
-let g:lsp_auto_enable = 1
-" let g:lsp_insert_text_enabled = 1
-let g:lsp_diagnostics_enabled = 1
-let g:lsp_virtual_text_prefix = "> "
-let g:lsp_virtual_text_prefix = " ‣ "
-if has('mac')
-    let g:lightline#ale#indicator_checking = "\uf110"
-    let g:lightline#ale#indicator_warnings = ''
-    let g:lightline#ale#indicator_errors = ''
-    let g:lightline#ale#indicator_ok = ""
-else
-    let g:lightline#ale#indicator_checking = "\uf110"
-    let g:lightline#ale#indicator_warnings = "\uf48f"
-    let g:lightline#ale#indicator_errors = "\uf484"
-    let g:lightline#ale#indicator_ok = "\uf43a"
-endif
+
+function! s:lsp_local_setting()
+    setlocal omnifunc=lsp#complete
+    nmap <buffer> <C-]> <plug>(lsp-definition)
+    nmap <buffer> gd <plug>(lsp-declaration)
+    nmap <buffer> K <plug>(lsp-hover)
+    nmap <buffer> <C-k> <plug>(lsp-signature_help)
+    nmap <buffer> ,n <plug>(lsp-next-error)
+    nmap <buffer> ,p <plug>(lsp-previous-error)
+    nmap <buffer> sa <plug>(lsp-document-diagnostics)
+endfunction
+
+autocmd vimrc FileType python call s:lsp_local_setting()
+autocmd vimrc FileType go call s:lsp_local_setting()
+
+function! s:lsp_setup()
+    let g:lsp_auto_enable = 1
+    " let g:lsp_insert_text_enabled = 1
+    let g:lsp_virtual_text_enabled = 0
+    let g:lsp_diagnostics_enabled = 1
+    let g:lsp_highlights_enabled = 0
+    let g:lsp_diagnostics_echo_cursor = 1
+
+    let g:lsp_semantic_enabled = 0
+    let g:lsp_signs_enabled = 1
+    let g:lsp_signs_error = {'text': '', 'icon': ''}
+    let g:lsp_signs_warning = {'text': '', 'icon': ''}
+    let g:lsp_signs_information = {'text': '!'}
+    let g:lsp_signs_hint = {'text': '?'}
+endfunction
+
+augroup vimrc_lsp_icons
+  au!
+  autocmd User lsp_setup call s:lsp_setup()
+augroup END
+
+autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
+	augroup lsp_float_colours
+	    autocmd!
+	    if !has('nvim')
+		autocmd User lsp_float_opened
+		    \ call win_execute(lsp#ui#vim#output#getpreviewwinid(),
+		    \		       'setlocal wincolor=PopupWindow')
+	    else
+		autocmd User lsp_float_opened
+		    \ call nvim_win_set_option(
+		    \   lsp#ui#vim#output#getpreviewwinid(),
+		    \   'winhighlight', 'Normal:PopupWindow')
+	    endif
+	augroup end
 ''' # }}}
 
 [[plugins]]
@@ -800,7 +836,13 @@ repo = 'thomasfaingnaert/vim-lsp-snippets'
 repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
 # [[plugins]]
+# on_if = '!has("nvim")'
+# repo = 'prabirshrestha/asyncomplete.vim'
+
+# [[plugins]]
+# on_if = '!has("nvim")'
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'
+
 
 # [[plugins]]
 # repo = 'voldikss/vim-floaterm'

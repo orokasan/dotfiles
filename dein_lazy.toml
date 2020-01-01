@@ -204,7 +204,7 @@ call denite#custom#option('search', {
 call denite#custom#option('stay',{
     \ 'split': 'floating',
     \ 'wincol': &columns/2-2,
-    \ 'winwidth': &columns*3/4-5,
+    \ 'winwidth': &columns-5,
     \ 'winheight': 10,
     \ 'winrow' : &lines - 12
     \ })
@@ -699,31 +699,24 @@ inoremap <silent><expr> <C-n>
     \ pumvisible() ? "\<C-n>" :
     \ deoplete#manual_complete()
 ''' # }}}
-hook_post_source = ''' " {{{
-		 " call deoplete#custom#option('profile', v:true)
-		 " call deoplete#enable_logging('DEBUG', '/Users/ork/deoplete.log')
-         " let g:eskk#log_cmdline_level = 2
-         " let g:eskk#log_cmdline_level = 2
+hook_source = ''' " {{{
 inoremap <silent><expr><C-h>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><BS>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><C-l> 
     \ deoplete#complete_common_string()
-" inoremap <expr><silent> <C-f>
-"     \ pumvisible() ? deoplete#close_popup() : "<Right>"
 inoremap <expr><silent> <C-g>
     \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
+"
 "" <CR>: close popup and save indent.
-
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort
   return pumvisible() ? deoplete#close_popup() : "\<CR>"
 endfunction
 
-"call deoplete#custom#source('_', 'matchers',
-"      \ ['matcher_fuzzy', 'matcher_length'])
-call deoplete#custom#source('_', 'matchers', ['matcher_fuzzy'])
+call deoplete#custom#source('_', 'matchers',
+      \ ['matcher_fuzzy', 'matcher_length'])
 "eskkにmatcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('eskk', 'mark' , '▼')
@@ -732,18 +725,18 @@ call deoplete#custom#source('file', 'rank', 1000)
 call deoplete#custom#source('neosnippet', 'rank', 250)
 call deoplete#custom#source('buffer', 'rank', 200)
 call deoplete#custom#source('look', 'rank', 50)
-call deoplete#custom#source('vim', 'min_pattern_length', 2)
+call deoplete#custom#source('omni', 'mark' , '*')
 call deoplete#custom#source('omni', 'functions' , {
     \ 'python': '',
     \ })
 
 call deoplete#custom#var('around', {
-\   'range_above': 20,
-\   'range_below': 20,
-\   'mark_above': '[↑]',
-\   'mark_below': '[↓]',
-\   'mark_changes': '[*]',
-\})
+    \   'range_above': 20,
+    \   'range_below': 20,
+    \   'mark_above': '[↑]',
+    \   'mark_below': '[↓]',
+    \   'mark_changes': '[*]',
+    \})
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite']
     \ })
@@ -751,7 +744,11 @@ call deoplete#custom#option({
     \ 'refresh_always': v:false,
     \ 'skip_multibyte': v:true,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'filter'
+    \ 'prev_completion_mode': 'filter',
+    \ 'ignore_sources': {
+    \    'python': ['member'],
+    \    'go': ['member'],
+    \    }
     \ })
 
 call deoplete#custom#source('_', 'converters', [
@@ -766,71 +763,70 @@ call deoplete#custom#source('_', 'converters', [
 call deoplete#enable()
 ''' # }}}
 
+# [[plugins]]
+# repo = 'Shougo/neocomplete.vim'
+# on_if = ''' !has('nvim') '''
+# on_event = 'InsertEnter'
+# hook_source = ''' " {{{
+# let g:neocomplete#enable_smart_case = 1
+# "let g:neocomplete#enable_auto_select = 1
 
-[[plugins]]
-repo = 'Shougo/neocomplete.vim'
-on_if = ''' !has('nvim') '''
-on_event = 'InsertEnter'
-hook_source = ''' " {{{
-let g:neocomplete#enable_smart_case = 1
-"let g:neocomplete#enable_auto_select = 1
+# "vimprocを有効化すると初回の補完がちょっと遅くなる
+# let g:neocomplete#use_vimproc = 1
+# let g:neocomplete#min_keyword_length = 2
+# " Define keyword.
+# " Plugin key-madeinppings.
+# inoremap <expr><C-g>     neocomplete#undo_completion()
+# inoremap <expr><C-l>     neocomplete#complete_common_string()
+# " Recommended key-mappings.
+# " <CR>: close popup and save indent.
+# inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+# function! s:my_cr_function()
+#   return pumvisible() ? "\<C-y>" : "\<CR>"
+# endfunction
+# inoremap <silent><expr> <C-n>
+#     \ pumvisible() ? "\<C-n>" :
+#     \ neocomplete#start_manual_complete()
+# " <TAB>: completion.
+# inoremap <silent><expr> <TAB>
+#     \ pumvisible() ? "\<C-n>" :
+#     \ neosnippet#expandable_or_jumpable() ?
+#     \    "\<Plug>(neosnippet_expand_or_jump)" :
+#     \ <SID>check_back_space() ? "\<TAB>" :
+#     \ neocomplete#start_manual_complete()
+# function! s:check_back_space() abort "{{{
+#   let col = col('.') - 1
+#   return !col || getline('.')[col - 1]  =~ '\s'
+# endfunction"}}}
+# " <C-h>, <BS>: close popup and delete backword char.
+# inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+# inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+# let g:neocomplete#sources#buffer#cache_limit_size = 500000
+# let g:neocomplete#auto_complete_delay = 1
+# let g:neocomplete#skip_auto_completion_time = '0.2'
+# let g:neocomplete#enable_multibyte_completion = 1
 
-"vimprocを有効化すると初回の補完がちょっと遅くなる
-let g:neocomplete#use_vimproc = 1
-let g:neocomplete#min_keyword_length = 2
-" Define keyword.
-" Plugin key-madeinppings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return pumvisible() ? "\<C-y>" : "\<CR>"
-endfunction
-inoremap <silent><expr> <C-n>
-    \ pumvisible() ? "\<C-n>" :
-    \ neocomplete#start_manual_complete()
-" <TAB>: completion.
-inoremap <silent><expr> <TAB>
-    \ pumvisible() ? "\<C-n>" :
-    \ neosnippet#expandable_or_jumpable() ?
-    \    "\<Plug>(neosnippet_expand_or_jump)" :
-    \ <SID>check_back_space() ? "\<TAB>" :
-    \ neocomplete#start_manual_complete()
-function! s:check_back_space() abort "{{{
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
-endfunction"}}}
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-let g:neocomplete#sources#buffer#cache_limit_size = 500000
-let g:neocomplete#auto_complete_delay = 1
-let g:neocomplete#skip_auto_completion_time = '0.2'
-let g:neocomplete#enable_multibyte_completion = 1
+# if !exists('g:neocomplete#keyword_patterns')
+#   let g:neocomplete#keyword_patterns = {}
+# endif
 
-if !exists('g:neocomplete#keyword_patterns')
-  let g:neocomplete#keyword_patterns = {}
-endif
-
-"let g:neocomplete#keyword_patterns['default'] = '\k\+'
-let g:neocomplete#max_list=300
-"call neocomplete#custom#source('_', 'matchers', ['matcher_head','matcher_length'])
-" Change default converter.
-"call neocomplete#custom#source('_', 'converters',
-"\ ['converter_remove_overlap', 'converter_remove_last_paren',
-"    \  'converter_abbr'])
-call neocomplete#custom#source('eskk', 'rank', 500) 
-call neocomplete#custom#source('vim', 'rank' , 250)
-call neocomplete#custom#source('buffer', 'mark', 'b')
-call neocomplete#custom#source('eskk', 'mark' , '▽')
-call neocomplete#custom#source('eskk', 'max_menu_width', 80)
-let g:neocomplete#ignore_source_files = [
-    \'member', 'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim'
-    \]
-call neocomplete#initialize()
-''' # }}}
+# "let g:neocomplete#keyword_patterns['default'] = '\k\+'
+# let g:neocomplete#max_list=300
+# "call neocomplete#custom#source('_', 'matchers', ['matcher_head','matcher_length'])
+# " Change default converter.
+# "call neocomplete#custom#source('_', 'converters',
+# "\ ['converter_remove_overlap', 'converter_remove_last_paren',
+# "    \  'converter_abbr'])
+# call neocomplete#custom#source('eskk', 'rank', 500) 
+# call neocomplete#custom#source('vim', 'rank' , 250)
+# call neocomplete#custom#source('buffer', 'mark', 'b')
+# call neocomplete#custom#source('eskk', 'mark' , '▽')
+# call neocomplete#custom#source('eskk', 'max_menu_width', 80)
+# let g:neocomplete#ignore_source_files = [
+#     \'member', 'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim'
+#     \]
+# call neocomplete#initialize()
+# ''' # }}}
 
 [[plugins]]
 repo =  'Shougo/neco-vim'
@@ -1206,7 +1202,8 @@ let g:ale_linters = {
     \ 'markdown': ['textlint'],
     \ 'pandoc' : ['textlint'],
     \ 'vim':['vint'],
-    \ 'python': ['flake8'],
+    \ 'python': [''],
+    \ 'go': [''],
     \ 'text':['textlint']
     \ }
 let g:ale_echo_msg_format = '%code: %%s [%linter%]'

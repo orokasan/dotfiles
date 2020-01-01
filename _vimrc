@@ -7,7 +7,7 @@ else
     scriptencoding utf-8
 endif
 set fileencoding=utf-8
-set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
+" set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 augroup vimrc
@@ -33,7 +33,6 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 "Python,vimproc
-" Memo
 if has('win64')
     let g:python3_host_prog ='python.exe'
 endif
@@ -41,9 +40,11 @@ endif
 " Backup
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
-set directory=~/vimfiles/swap
+if !has('nvim')
+    set directory=~/vimfiles/swap
+    set undodir=~/vimfiles/undo " put together undo files
+endif
 set undofile
-set undodir=~/vimfiles/undo " put together undo files
 set autoread                " reload editing file if the file changed externally
 set nobackup                " no more backup file
 "set backupdir=~/vimfiles/backup
@@ -92,8 +93,8 @@ nnoremap <Leader>f :<C-u>cope<CR>
 
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
-    nnoremap <CR> :<C-u>.cc<CR>
-    nnoremap q :<C-u>ccl<CR>
+    nnoremap <buffer> <CR> :<C-u>.cc<CR>
+    nnoremap <buffer> q :<C-u>quit<CR>
 endfunction
 "}}}
 
@@ -600,6 +601,7 @@ if has('nvim')
     set completeopt-=preview
     "set completeopt+=popuphidden
     set wildoptions=pum
+    set winblend=20
 endif
 
 "}}}
