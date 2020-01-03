@@ -7,7 +7,7 @@ else
     scriptencoding utf-8
 endif
 set fileencoding=utf-8
-set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
+" set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 augroup vimrc
@@ -33,16 +33,17 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 "Python,vimproc
-" Memo
 if has('win64')
     let g:python3_host_prog ='python.exe'
 endif
 " Backup
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
-set directory=~/vimfiles/swap
+if !has('nvim')
+    set directory=~/vimfiles/swap
+    set undodir=~/vimfiles/undo " put together undo files
+endif
 set undofile
-set undodir=~/vimfiles/undo " put together undo files
 set autoread                " reload editing file if the file changed externally
 set nobackup                " no more backup file
 "set backupdir=~/vimfiles/backup
@@ -91,8 +92,8 @@ nnoremap <Leader>f :<C-u>cope<CR>
 
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
-    nnoremap <CR> :<C-u>.cc<CR>
-    nnoremap q :<C-u>ccl<CR>
+    nnoremap <buffer> <CR> :<C-u>.cc<CR>
+    nnoremap <buffer> q :<C-u>quit<CR>
 endfunction
 "}}}
 
@@ -388,8 +389,10 @@ function! s:smart_foldcloser() "{{{
 endfunction
 "}}}
 " edit fold column
-autocmd vimrc ColorScheme * hi! link Folded NonText
-autocmd vimrc ColorScheme * hi! Folded guifg=bold
+if has('GUI') || has('nvim')
+    autocmd vimrc ColorScheme * hi link Folded NonText
+    autocmd vimrc ColorScheme * hi Folded guifg=bold
+endif
 " add fold marker
 nnoremap  z[     :<C-u>call <SID>put_foldmarker(0)<CR>
 nnoremap  z]     :<C-u>call <SID>put_foldmarker(1)<CR>
@@ -413,7 +416,7 @@ nnoremap <leader>wv :vsp<CR>:bprev<CR>
 nnoremap <leader>wc :close<CR>
 nnoremap <leader>wn :vne<CR>
 nnoremap <leader>wo :only<CR>
-"
+
 " emacs like mapping on insert mode
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
@@ -597,6 +600,7 @@ if has('nvim')
     set completeopt-=preview
     "set completeopt+=popuphidden
     set wildoptions=pum
+    set winblend=20
 endif
 
 "}}}
@@ -699,8 +703,6 @@ execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
-" my plugins
-set runtimepath+=~/.cache/dein/repos/github.com/orokasan/denite-ale/
 "}}}
 
 " Memo {{{
@@ -715,9 +717,9 @@ hi!  link SpecialKey Comment
 hi!  link NonText Comment
 
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
-
 au vimrc BufRead .textlintrc set ft=json
 
+<<<<<<< HEAD
     " " Go example
     " call lsp#add_filetype_config({
     "       \ 'filetype': 'go',
@@ -800,4 +802,6 @@ nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+=======
+>>>>>>> master
 " vim:set foldmethod=marker:

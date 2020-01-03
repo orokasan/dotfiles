@@ -1,29 +1,19 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
-[[plugins]]
-repo = 'Shougo/vimproc.vim'
-on_if = '!has("nvim")'
-hook_post_update = '''
-  if has('win32')
-    let cmd = 'tools\\update-dll-mingw'
-  elseif has('win32unix') " for Cygwin
-    let cmd = 'make -f make_cygwin.mak'
-  elseif executable('gmake')
-    let cmd = 'gmake'
-  else
-    let cmd = 'make'
-  endif
-  let g:dein#plugin.build = cmd
-'''
+# [[plugins]]
+# repo = 'sheerun/vim-polyglot'
+# hook_add = '''
+# let g:polyglot_disabled = ['markdown', 'tsx', 'typescript', 'csv']
+# '''
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
-on_if = '!has("nvim")'
+on_if = ''' !has('nvim') '''
 
 [[plugins]]
 repo =  'roxma/vim-hug-neovim-rpc'
-on_if = '!has("nvim")'
+on_if = ''' !has('nvim') '''
 
 [[plugins]]
 repo =  'itchyny/lightline.vim'
@@ -403,10 +393,6 @@ depends = ['vim-textobj-user']
 repo = 'rhysd/vim-textobj-anyblock'
 
 [[plugins]]
-depends = ['vim-quickrun']
-repo = 'lambdalisue/vim-quickrun-neovim-job'
-
-[[plugins]]
 repo =  'deton/jasegment.vim'
 #TODO:qitta
 hook_add = ''' "{{{
@@ -609,18 +595,6 @@ repo =  'kmnk/denite-dirmark'
 repo = 'tpope/vim-commentary'
 
 [[plugins]]
-repo = 't9md/vim-textmanip'
-hook_add = ''' " {{{
-xmap <C-j> <Plug>(textmanip-move-down)
-xmap <C-k> <Plug>(textmanip-move-up)
-xmap <C-h> <Plug>(textmanip-move-left)
-xmap <C-l> <Plug>(textmanip-move-right)
-" toggle insert/replace with <F10>
-" nmap <F10> <Plug>(textmanip-toggle-mode)
-" xmap <F10> <Plug>(textmanip-toggle-mode)
-''' # }}}
-
-[[plugins]]
 repo = 'itchyny/vim-parenmatch'
 hook_add = '''
 let g:parenmatch_highlight = 0
@@ -745,6 +719,7 @@ imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab
 smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 '''
 
+<<<<<<< HEAD
 [[plugins]]
 depends = 'vim-vsnip'
 repo = 'hrsh7th/vim-vsnip-integ'
@@ -764,24 +739,71 @@ repo = 'hrsh7th/vim-vsnip-integ'
 #       \     completeUnimported = true
 #       \   }
 #       \ }
+=======
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip'
+# hook_add = '''
+# imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+# smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+# imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+>>>>>>> master
 # '''
 
 [[plugins]]
 repo = 'microsoft/vscode-python'
 merged = '0'
 
+<<<<<<< HEAD
 # [[plugins]]
 # repo = 'thomasfaingnaert/vim-lsp-snippets'
 
 # [[plugins]]
 # repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+=======
+[[plugins]]
+repo = 'microsoft/vscode-python'
+merged = '0'
+
+[[plugins]]
+repo = 'microsoft/vscode-go'
+merged = '0'
+[[plugins]]
+repo = 'thomasfaingnaert/vim-lsp-snippets'
+
+[[plugins]]
+repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+>>>>>>> master
 
 # [[plugins]]
+# on_if = '!has("nvim")'
+# repo = 'prabirshrestha/asyncomplete.vim'
+
+# [[plugins]]
+# on_if = '!has("nvim")'
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'
+
 
 # [[plugins]]
 # repo = 'voldikss/vim-floaterm'
 # hook_add = '''
 # '''
 
+# [[plugins]]
+# repo = 'Shougo/vimproc.vim'
+# on_if = '!has("nvim")'
+# hook_post_update = '''
+#   if has('win32')
+#     let cmd = 'tools\\update-dll-mingw'
+#   elseif has('win32unix') " for Cygwin
+#     let cmd = 'make -f make_cygwin.mak'
+#   elseif executable('gmake')
+#     let cmd = 'gmake'
+#   else
+#     let cmd = 'make'
+#   endif
+#   let g:dein#plugin.build = cmd
+# '''
 # vim:set foldmethod=marker:
