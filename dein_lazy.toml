@@ -282,9 +282,9 @@ function! s:candidate_grep(context) abort
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
     if isdirectory(dir)
-        let sdir = fnamemodify(dir, ':p:h:h')
-    else
         let sdir = fnamemodify(dir, ':p:h')
+    else
+        let sdir = fnamemodify(dir, ':p')
     endif
     let sources_queue = a:context['sources_queue'] + [[
           \ {'name': 'grep', 'args': [sdir, '', '!']},
@@ -296,9 +296,9 @@ function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
     if isdirectory(dir)
-        let sdir = fnamemodify(dir, ':p:h:h')
-    else
         let sdir = fnamemodify(dir, ':p:h')
+    else
+        let sdir = fnamemodify(dir, ':p')
     endif
     let fdir = '\"' . sdir. '\"'
     execute('Denite file/rec:' . sdir)
@@ -738,8 +738,10 @@ call deoplete#custom#var('around', {
     \   'mark_changes': '[*]',
     \})
 call deoplete#custom#option('sources', {
-    \ 'denite-filter': ['denite']
+    \ 'denite-filter': ['denite'],
     \ })
+    " \ 'python': ['lsp'],
+    " \ 'go': ['lsp','vsnip'],
 call deoplete#custom#option({
     \ 'refresh_always': v:false,
     \ 'skip_multibyte': v:true,
@@ -833,22 +835,22 @@ repo =  'Shougo/neco-vim'
 on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
-# [[plugins]]
-# repo =  'Shougo/neosnippet'
-# on_event = 'InsertEnter'
-# on_ft = 'snippet'
-# hook_source = ''' " {{{
-# let g:neosnippet#disable_runtime_snippets = {
-# \   '_' : 1,
-# \ }
-# if has('conceal')
-#     set conceallevel=2 concealcursor=niv
-# endif
-# imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-# smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-# imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-# \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-# ''' # }}}
+[[plugins]]
+repo =  'Shougo/neosnippet'
+on_event = 'InsertEnter'
+on_ft = 'snippet'
+hook_source = ''' " {{{
+" let g:neosnippet#disable_runtime_snippets = {
+" \   '_' : 1,
+" \ }
+if has('conceal')
+    set conceallevel=2 concealcursor=niv
+endif
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+''' # }}}
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
@@ -1019,19 +1021,19 @@ endfunction
 autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 ''' # }}}
 
-[[plugins]]
-repo =  'cohama/lexima.vim'
-on_if = 'has("nvim")'
-on_event = 'InsertEnter'
-hook_add = '''
-"let g:lexima_no_default_rules = 1
-"call lexima#set_default_rules()
-let g:lexima_enable_basic_rules = 0
-let g:lexima_enable_space_rules = 0
-let g:lexima_nvim_accept_pum_with_enter = 0
-let g:lexima_ctrlh_as_backspace = 1
-let g:lexima_map_escape = ''
-'''
+# [[plugins]]
+# repo =  'cohama/lexima.vim'
+# on_if = 'has("nvim")'
+# on_event = 'InsertEnter'
+# hook_add = '''
+# "let g:lexima_no_default_rules = 1
+# "call lexima#set_default_rules()
+# let g:lexima_enable_basic_rules = 0
+# let g:lexima_enable_space_rules = 0
+# let g:lexima_nvim_accept_pum_with_enter = 0
+# let g:lexima_ctrlh_as_backspace = 1
+# let g:lexima_map_escape = ''
+# '''
 
 hook_post_source = ''' " {{{
 let s:lexima_default_rules = [

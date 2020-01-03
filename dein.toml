@@ -566,8 +566,8 @@ repo =  'kana/vim-operator-user'
 [[plugins]]
 repo = 'deoplete-plugins/deoplete-zsh'
 
-# [[plugins]]
-# repo =  'Shougo/neosnippet-snippets'
+[[plugins]]
+repo =  'Shougo/neosnippet-snippets'
 
 [[plugins]]
 repo = 'Shougo/unite-outline'
@@ -768,8 +768,11 @@ function! s:lsp_local_setting()
     nmap <buffer> sa <plug>(lsp-document-diagnostics)
 endfunction
 
-autocmd vimrc FileType python call s:lsp_local_setting()
-autocmd vimrc FileType go call s:lsp_local_setting()
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:lsp_local_setting()
+augroup END
 
 function! s:lsp_setup()
     let g:lsp_auto_enable = 1
@@ -781,8 +784,8 @@ function! s:lsp_setup()
 
     let g:lsp_semantic_enabled = 0
     let g:lsp_signs_enabled = 1
-    let g:lsp_signs_error = {'text': '', 'icon': ''}
-    let g:lsp_signs_warning = {'text': '', 'icon': ''}
+    let g:lsp_signs_error = {'text': ''}
+    let g:lsp_signs_warning = {'text': ''}
     let g:lsp_signs_information = {'text': '!'}
     let g:lsp_signs_hint = {'text': '?'}
 endfunction
@@ -811,27 +814,32 @@ autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 [[plugins]]
 repo = 'prabirshrestha/async.vim'
 
-[[plugins]]
-repo = 'hrsh7th/vim-vsnip'
-hook_add = '''
-imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-'''
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip'
+# hook_add = '''
+# imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+# smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+# imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# '''
 
-[[plugins]]
-repo = 'hrsh7th/vim-vsnip-integ'
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
 repo = 'microsoft/vscode-python'
 merged = '0'
 
-# [[plugins]]
-# repo = 'thomasfaingnaert/vim-lsp-snippets'
+[[plugins]]
+repo = 'microsoft/vscode-go'
+merged = '0'
+[[plugins]]
+repo = 'thomasfaingnaert/vim-lsp-snippets'
 
-# [[plugins]]
-# repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+[[plugins]]
+repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
 # [[plugins]]
 # on_if = '!has("nvim")'
