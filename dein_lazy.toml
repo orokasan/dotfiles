@@ -739,9 +739,9 @@ call deoplete#custom#var('around', {
     \})
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
+    \ 'python': ['lsp'],
+    \ 'go': ['lsp','vsnip'],
     \ })
-    " \ 'python': ['lsp'],
-    " \ 'go': ['lsp','vsnip'],
 call deoplete#custom#option({
     \ 'refresh_always': v:false,
     \ 'skip_multibyte': v:true,
