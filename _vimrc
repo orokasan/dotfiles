@@ -624,7 +624,6 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir, s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    call dein#local('~/.cache/dein/repos/github.com/Shougo/deoplete-lsp/')
     call dein#end()
     call dein#save_state()
 
@@ -719,57 +718,23 @@ hi!  link NonText Comment
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 au vimrc BufRead .textlintrc set ft=json
 
-<<<<<<< HEAD
-    " " Go example
-    " call lsp#add_filetype_config({
-    "       \ 'filetype': 'go',
-    "       \ 'name': 'gopls',
-    "       \ 'cmd': 'gopls'
-    "       \ })
-    " " Python example
-    " call lsp#add_filetype_config({
-    "       \ 'filetype': 'python',
-    "       \ 'name': 'pyls',
-    "       \ 'cmd': 'pyls'
-    "       \ })
-    " " Rust example
-    " call lsp#add_filetype_config({
-    "       \ 'filetype': 'rust',
-    "       \ 'name': 'rls',
-    "       \ 'cmd': 'rls',
-    "       \ 'capabilities': {
-    "       \   'clippy_preference': 'on',
-    "       \   'all_targets': v:false,
-    "       \   'build_on_save': v:true,
-    "       \   'wait_to_build': 0
-    "       \ }})
-"  augroup LspEFM
-"    au!
-"    autocmd User lsp_setup call lsp#register_server({
-"        \ 'name': 'efm-langserver',
-"        \ 'cmd': {server_info->['efm-langserver', '-c=/Users/ork/.config/efm-langserver/config.yaml']},
-"        \ 'whitelist': ['vim', 'eruby', 'markdown', 'yaml'],
-"        \ })
-"  augroup END
-
 lua << EOF
-vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
-vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
-    if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then
-      local util = vim.lsp.util
-      if not result then return end
-      local uri = result.uri
-      local bufnr = vim.uri_to_bufnr(uri)
-      if not bufnr then
-        err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
-        return
-      end
-      util.buf_clear_diagnostics(bufnr)
-      util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
-      util.buf_diagnostics_underline(bufnr, result.diagnostics)
-      util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
-    end
-  end
+-- vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
+-- vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
+--     if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then
+--       local util = vim.lsp.util
+--       local uri = result.uri
+--       local bufnr = vim.uri_to_bufnr(uri)
+--       if not bufnr then
+--         err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
+--         return
+--       end
+--       util.buf_clear_diagnostics(bufnr)
+--       util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
+--       util.buf_diagnostics_underline(bufnr, result.diagnostics)
+--       util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
+--     end
+--   end
 require'nvim_lsp'.gopls.setup{
     capabilities = {
       textDocument = {
@@ -802,6 +767,4 @@ nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-=======
->>>>>>> master
 " vim:set foldmethod=marker:

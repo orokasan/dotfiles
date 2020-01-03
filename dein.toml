@@ -711,35 +711,9 @@ hi! link ParenMatch MatchParen
 # repo = 'himanoa/denite-git-grep'
 
 [[plugins]]
-repo = 'hrsh7th/vim-vsnip'
-hook_add = '''
-imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-'''
+repo = 'Shougo/deoplete-lsp'
 
-<<<<<<< HEAD
-[[plugins]]
-depends = 'vim-vsnip'
-repo = 'hrsh7th/vim-vsnip-integ'
-# hook_add = '''
-# lua require'nvim_lsp'.gopls.setup{
-#       \   capabilities = {
-#       \     textDocument = {
-#       \       completion = {
-#       \         completionItem = {
-#       \           snippetSupport = true
-#       \         }
-#       \       }
-#       \     }
-#       \   },
-#       \   init_options = {
-#       \     usePlaceholders = true,
-#       \     completeUnimported = true
-#       \   }
-#       \ }
-=======
+
 # [[plugins]]
 # repo = 'hrsh7th/vim-vsnip'
 # hook_add = '''
@@ -747,35 +721,35 @@ repo = 'hrsh7th/vim-vsnip-integ'
 # smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
 # imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 # smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
->>>>>>> master
 # '''
+
+[[plugins]]
+repo = 'hrsh7th/vim-vsnip'
+hook_add = '''
+imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+'''
+
+[[plugins]]
+repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
 repo = 'microsoft/vscode-python'
 merged = '0'
 
-<<<<<<< HEAD
 # [[plugins]]
 # repo = 'thomasfaingnaert/vim-lsp-snippets'
 
 # [[plugins]]
 # repo = 'thomasfaingnaert/vim-lsp-neosnippet'
-=======
-[[plugins]]
-repo = 'microsoft/vscode-python'
-merged = '0'
 
 [[plugins]]
 repo = 'microsoft/vscode-go'
 merged = '0'
-[[plugins]]
-repo = 'thomasfaingnaert/vim-lsp-snippets'
-
-[[plugins]]
-repo = 'thomasfaingnaert/vim-lsp-neosnippet'
->>>>>>> master
 
 # [[plugins]]
 # on_if = '!has("nvim")'

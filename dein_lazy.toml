@@ -739,9 +739,8 @@ call deoplete#custom#var('around', {
     \})
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
+    \ 'go': ['around'],
     \ })
-    " \ 'python': ['lsp'],
-    " \ 'go': ['lsp','vsnip'],
 call deoplete#custom#option({
     \ 'refresh_always': v:false,
     \ 'skip_multibyte': v:true,
@@ -765,77 +764,6 @@ call deoplete#custom#source('_', 'converters', [
 call deoplete#enable()
 ''' # }}}
 
-<<<<<<< HEAD
-[[plugins]]
-repo = 'Shougo/neocomplete.vim'
-on_if = ''' !has('nvim') '''
-on_event = 'InsertEnter'
-hook_source = ''' " {{{
-let g:neocomplete#enable_smart_case = 1
-"let g:neocomplete#enable_auto_select = 1
-
-"vimprocを有効化すると初回の補完がちょっと遅くなる
-let g:neocomplete#use_vimproc = 1
-let g:neocomplete#min_keyword_length = 2
-" Define keyword.
-" Plugin key-madeinppings.
-inoremap <expr><C-g>     neocomplete#undo_completion()
-inoremap <expr><C-l>     neocomplete#complete_common_string()
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return pumvisible() ? "\<C-y>" : "\<CR>"
-endfunction
-inoremap <silent><expr> <C-n>
-    \ pumvisible() ? "\<C-n>" :
-    \ neocomplete#start_manual_complete()
-" <TAB>: completion.
-inoremap <silent><expr> <TAB>
-    \ pumvisible() ? "\<C-n>" :
-    \ neosnippet#expandable_or_jumpable() ?
-    \    "\<Plug>(neosnippet_expand_or_jump)" :
-    \ <SID>check_back_space() ? "\<TAB>" :
-    \ neocomplete#start_manual_complete()
-function! s:check_back_space() abort "{{{
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
-endfunction"}}}
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-let g:neocomplete#sources#buffer#cache_limit_size = 500000
-let g:neocomplete#auto_complete_delay = 1
-let g:neocomplete#skip_auto_completion_time = '0.2'
-let g:neocomplete#enable_multibyte_completion = 1
-
-if !exists('g:neocomplete#keyword_patterns')
-  let g:neocomplete#keyword_patterns = {}
-endif
-
-"let g:neocomplete#keyword_patterns['default'] = '\k\+'
-let g:neocomplete#max_list=300
-"call neocomplete#custom#source('_', 'matchers', ['matcher_head','matcher_length'])
-" Change default converter.
-"call neocomplete#custom#source('_', 'converters',
-"\ ['converter_remove_overlap', 'converter_remove_last_paren',
-"    \  'converter_abbr'])
-call neocomplete#custom#source('eskk', 'rank', 500) 
-call neocomplete#custom#source('vim', 'rank' , 250)
-call neocomplete#custom#source('buffer', 'mark', 'b')
-call neocomplete#custom#source('eskk', 'mark' , '▽')
-call neocomplete#custom#source('eskk', 'max_menu_width', 80)
-let g:neocomplete#ignore_source_files = [
-    \'member', 'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim'
-    \]
-call neocomplete#initialize()
-''' # }}}
-
-[[plugins]]
-repo =  'Shougo/neco-vim'
-# on_source = ['deoplete','neocomplete']
-on_source = ['neocomplete']
-=======
 # [[plugins]]
 # repo = 'Shougo/neocomplete.vim'
 # on_if = ''' !has('nvim') '''
@@ -904,25 +832,24 @@ on_source = ['neocomplete']
 [[plugins]]
 repo =  'Shougo/neco-vim'
 on_source = ['deoplete','neocomplete']
->>>>>>> master
 on_ft = 'vim'
 
-[[plugins]]
-repo =  'Shougo/neosnippet'
-on_event = 'InsertEnter'
-on_ft = 'snippet'
-hook_source = ''' " {{{
-" let g:neosnippet#disable_runtime_snippets = {
-" \   '_' : 1,
-" \ }
-if has('conceal')
-    set conceallevel=2 concealcursor=niv
-endif
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-''' # }}}
+# [[plugins]]
+# repo =  'Shougo/neosnippet'
+# on_event = 'InsertEnter'
+# on_ft = 'snippet'
+# hook_source = ''' " {{{
+# " let g:neosnippet#disable_runtime_snippets = {
+# " \   '_' : 1,
+# " \ }
+# if has('conceal')
+#     set conceallevel=2 concealcursor=niv
+# endif
+# imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+# smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+# imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+# \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+# ''' # }}}
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
@@ -1257,53 +1184,53 @@ hook_source ='''
 let g:indent_guides_exclude_filetypes = ['help', 'defx']
 '''
 
-[[plugins]]
-#repo =  'dense-analysis/ale'
-repo =  'orokasan/ale'
-on_event = 'InsertLeave'
-hook_source =''' " {{{
-"https://efcl.info/2015/09/10/introduce-textlint/
-"https://koirand.github.io/blog/2018/textlint/
-"vint: pip install --pre vim-vint
-"preset-ja-technical-writing
-"npm install textlint-rule-preset-ja-technical-writing@beta
-let g:ale_echo_delay = 400
-let g:ale_textlint_change_directory = 1
-let g:ale_disable_lsp = 1
-let g:ale_use_global_executables=1
-let g:ale_set_balloons =0
-let g:ale_linters = {
-    \ 'markdown': ['textlint'],
-    \ 'pandoc' : ['textlint'],
-    \ 'vim':['vint'],
-    \ 'python': [''],
-    \ 'go': [''],
-    \ 'text':['textlint']
-    \ }
-let g:ale_echo_msg_format = '%code: %%s [%linter%]'
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
-let g:ale_textlint_options = '.textlintrc'
-let g:ale_sign_column_always = 1
-let g:ale_lint_delay = 5000
-let g:ale_lint_on_enter = 0
-let g:ale_lint_on_text_changed = 0
-let g:ale_lint_on_filetype_changed = 0
-let g:ale_open_list = 0
-let g:ale_keep_list_window_open = 0
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-if has('mac')
-    let g:ale_sign_error = ''
-    let g:ale_sign_warning = ''
-    let g:ale_statusline_format = ['%d', '%d', '']
-else
-    let g:ale_sign_error = ''
-    let g:ale_sign_warning = ''
-    let g:ale_statusline_format = ['%d', '%d', '']
-endif
-''' # }}}
+#[[plugins]]
+##repo =  'dense-analysis/ale'
+#repo =  'orokasan/ale'
+#on_event = 'InsertLeave'
+#hook_source =''' " {{{
+#"https://efcl.info/2015/09/10/introduce-textlint/
+#"https://koirand.github.io/blog/2018/textlint/
+#"vint: pip install --pre vim-vint
+#"preset-ja-technical-writing
+#"npm install textlint-rule-preset-ja-technical-writing@beta
+#let g:ale_echo_delay = 400
+#let g:ale_textlint_change_directory = 1
+#let g:ale_disable_lsp = 1
+#let g:ale_use_global_executables=1
+#let g:ale_set_balloons =0
+#let g:ale_linters = {
+#    \ 'markdown': ['textlint'],
+#    \ 'pandoc' : ['textlint'],
+#    \ 'vim':['vint'],
+#    \ 'python': [''],
+#    \ 'go': [''],
+#    \ 'text':['textlint']
+#    \ }
+#let g:ale_echo_msg_format = '%code: %%s [%linter%]'
+#let g:ale_set_loclist = 0
+#let g:ale_set_quickfix = 1
+#let g:ale_textlint_options = '.textlintrc'
+#let g:ale_sign_column_always = 1
+#let g:ale_lint_delay = 5000
+#let g:ale_lint_on_enter = 0
+#let g:ale_lint_on_text_changed = 0
+#let g:ale_lint_on_filetype_changed = 0
+#let g:ale_open_list = 0
+#let g:ale_keep_list_window_open = 0
+#let g:ale_echo_msg_error_str = 'E'
+#let g:ale_echo_msg_warning_str = 'W'
+#let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+#if has('mac')
+#    let g:ale_sign_error = ''
+#    let g:ale_sign_warning = ''
+#    let g:ale_statusline_format = ['%d', '%d', '']
+#else
+#    let g:ale_sign_error = ''
+#    let g:ale_sign_warning = ''
+#    let g:ale_statusline_format = ['%d', '%d', '']
+#endif
+#''' # }}}
 
 [[plugins]]
 repo =  't9md/vim-choosewin'
@@ -1644,13 +1571,6 @@ hook_add = '''
 # [[plugins]]
 # repo = 'deoplete-plugins/deoplete-jedi'
 # on_event = 'InsertEnter'
-<<<<<<< HEAD
-
-# [[plugins]]
-# repo = 'deoplete-plugins/deoplete-jedi'
-# on_event = 'InsertEnter'
-=======
->>>>>>> master
 # hook_add = '''
 # let g:deoplete#sources#jedi#statement_length = 30
 # let g:deoplete#sources#jedi#show_docstring = 1
@@ -1770,15 +1690,9 @@ hook_add = '''
   xmap A  <Plug>(niceblock-A)
 '''
 
-<<<<<<< HEAD
 # [[plugins]]
 # on_event = 'InsertEnter'
 # repo = 'lighttiger2505/deoplete-vim-lsp'
-=======
-[[plugins]]
-on_source = ['deoplete.nvim']
-repo = 'lighttiger2505/deoplete-vim-lsp'
->>>>>>> master
 
 [[plugins]]
 on_ft = 'go'
