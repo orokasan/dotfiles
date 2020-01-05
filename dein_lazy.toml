@@ -27,7 +27,6 @@ if finddir('.git', '.;') != ''
 else
     let path = expand('%:p:h')
 return path
-
 endfunction
 
 nnoremap <silent> [denite]S :<C-u>DeniteBufferDir
@@ -210,8 +209,6 @@ call denite#custom#option('stay',{
     \ })
 
 ""need rg for grep/file-rec
-call denite#custom#source('file/old',
-\ 'converters', ['converter/relative_abbr'])
 call denite#custom#var('file/rec', 'command',
     \ ['rg', '--files', '--no-messages','--hidden',
     \ '--glob', '!.git/*','-g','!*/.git/*','--glob','!*.tmp','-g','!AppData/*'])
@@ -256,7 +253,7 @@ let s:menus.string.command_candidates = [
 
 call denite#custom#var('menu', 'menus', s:menus)
 
-call denite#custom#kind('file', 'default_action', 'drop')
+" call denite#custom#kind('file', 'default_action', 'drop')
 " call denite#custom#source('file', 'matchers', ['matcher/fruzzy'])
 " call denite#custom#source('file/rec', 'matchers', ['matcher/fruzzy'])
 " Define alias
@@ -740,7 +737,7 @@ call deoplete#custom#var('around', {
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
     \ 'python': ['lsp'],
-    \ 'go': ['lsp','vsnip'],
+    \ 'go': ['lsp','vsnip','buffer'],
     \ })
 call deoplete#custom#option({
     \ 'refresh_always': v:false,
@@ -748,8 +745,6 @@ call deoplete#custom#option({
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'filter',
     \ 'ignore_sources': {
-    \    'python': ['member'],
-    \    'go': ['member'],
     \    }
     \ })
 
@@ -759,9 +754,9 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_truncate_abbr',
     \ 'converter_truncate_menu',
     \ 'converter_truncate_kind',
-    \ 'converter_auto_paren',
     \ 'converter_auto_delimiter'
     \ ])
+
 call deoplete#enable()
 ''' # }}}
 
@@ -1021,19 +1016,19 @@ endfunction
 autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 ''' # }}}
 
-# [[plugins]]
-# repo =  'cohama/lexima.vim'
-# on_if = 'has("nvim")'
-# on_event = 'InsertEnter'
-# hook_add = '''
-# "let g:lexima_no_default_rules = 1
-# "call lexima#set_default_rules()
-# let g:lexima_enable_basic_rules = 0
-# let g:lexima_enable_space_rules = 0
-# let g:lexima_nvim_accept_pum_with_enter = 0
-# let g:lexima_ctrlh_as_backspace = 1
-# let g:lexima_map_escape = ''
-# '''
+[[plugins]]
+repo =  'cohama/lexima.vim'
+on_if = 'has("nvim")'
+on_event = 'InsertEnter'
+hook_add = '''
+"let g:lexima_no_default_rules = 1
+"call lexima#set_default_rules()
+let g:lexima_enable_basic_rules = 0
+let g:lexima_enable_space_rules = 0
+let g:lexima_nvim_accept_pum_with_enter = 0
+let g:lexima_ctrlh_as_backspace = 1
+let g:lexima_map_escape = ''
+'''
 
 hook_post_source = ''' " {{{
 let s:lexima_default_rules = [
@@ -1384,12 +1379,14 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 
 [[plugins]]
 repo = 'haya14busa/incsearch-migemo.vim'
+depends = 'incsearch.vim'
 #TODO:qitta
 on_map = { nx = '<Plug>(incsearch-migemo-' }
 hook_add = ''' " {{{
 map g/ <Plug>(incsearch-migemo-/)
 map g? <Plug>(incsearch-migemo-?)
 ''' # }}}
+
 
 #[[plugins]]
 #repo ='plasticboy/vim-markdown' {{{
@@ -1699,5 +1696,17 @@ repo = 'lighttiger2505/deoplete-vim-lsp'
 on_ft = 'go'
 repo = 'mattn/vim-goimports'
 
+[[plugins]]
+repo = 'fatih/vim-go'
+on_ft = ['go']
+hook_add = '''
+let g:go_highlight_functions = 1
+let g:go_highlight_function_parameters = 1
+let g:go_highlight_types = 1
+" let g:go_highlight_fields = 1
+" let g:go_highlight_build_constraints = 1
+let g:go_highlight_generate_tags = 1
+let g:go_highlight_variable_declarations = 1
+'''
 
 # vim:set foldmethod=marker:

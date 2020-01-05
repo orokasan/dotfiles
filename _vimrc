@@ -348,7 +348,7 @@ inoremap <silent><C-[> <ESC>
 inoremap <silent><C-c> <ESC>
 " open vimrc quickly
 nnoremap <silent> <leader>v :e ~/dotfiles/?vimrc<CR>
-nnoremap <silent> <Leader>sv :<C-u>source $MYVIMRC<CR>
+nnoremap <silent> <Leader>sv :<C-u>source $MYVIMRC<CR>:echom 'Reloaded vimrc.'<CR>
 " source opening vim script
 nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
 if !exists('*s:source_script')  "{{{
@@ -717,5 +717,8 @@ hi!  link NonText Comment
 
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 au vimrc BufRead .textlintrc set ft=json
+
+" unbuflisted unnamed buffer
+au vimrc BufNew '' setlocal nobuflisted
 
 " vim:set foldmethod=marker:

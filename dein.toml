@@ -262,6 +262,7 @@ function! LLtabnr() abort
     return tabpagenr('$') > 1 ? tabpagenr().':'.tabpagenr('$').'«' : '«'
 endfunction
 
+call get(s:, 'llgitbranch', '')
 function! LLgit() abort
     if &filetype =~# s:ignore_filetype
         return ''
@@ -272,7 +273,8 @@ function! LLgit() abort
 endfunction
 
 "重いのでキャッシュする
-autocmd vimrc VimEnter,BufNew,BufEnter,CmdlineLeave,FileWritePre,BufWrite * call <SID>llgitcache()
+autocmd vimrc BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
+autocmd vimrc SourcePost $MYVIMRC call <SID>llgitcache()
 function! s:llgitcache() abort
     let s:llgitbranch = ''
     if !exists('*gitbranch#name')
@@ -296,23 +298,20 @@ endfunction
 
  " Deniteステータス {{{
  function! LLDeniteFilter()
-     if &filetype isnot# 'denite'
-         return ''
-     else
-         return s:denite_statusline()
-     endif
+     return s:denite_statusline()
  endfunction
 
  function! LLDeniteBuffer() abort
-     if &filetype isnot# 'denite'
-         return ''
-     else
-         return s:denite_statusline()
-     endif
+     return s:denite_statusline()
  endfunction
 
  function! s:denite_statusline() abort
-         return s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
+     if &filetype isnot# 'denite'
+         return ''
+     else
+         let str = s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
+         return winwidth(0) * 2/3 > strwidth(str) ? str : s:denitesource()
+    endif
  endfunction
 
  function! s:deniteinput() abort
@@ -758,7 +757,7 @@ if executable('gopls')
 endif
 
 function! s:lsp_local_setting()
-    setlocal omnifunc=lsp#complete
+    " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
     nmap <buffer> gd <plug>(lsp-declaration)
     nmap <buffer> K <plug>(lsp-hover)
@@ -870,4 +869,9 @@ repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 #   endif
 #   let g:dein#plugin.build = cmd
 # '''
+
+
+[[plugins]]
+repo = 'haya14busa/incsearch.vim'
+
 # vim:set foldmethod=marker:
