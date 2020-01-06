@@ -51,7 +51,7 @@ set nobackup                " no more backup file
 "}}}
 
 " Visual  {{{
-set shortmess+=aAcTS
+set shortmess+=aAcTtS
 set showtabline=2   " always show tabline
 set number          " show line number
 set signcolumn=yes  " show signcolumn
@@ -64,7 +64,7 @@ set cursorline      " highlight cursorline
 set list            " show invisible character
 set listchars=tab:\ \ ,trail:-,extends:»,precedes:«,nbsp:%
 set modelines=5
-set termguicolors   " ターミナルでも True Color を使えるようにする。
+set termguicolors
 " set lazyredraw
 set visualbell      " please stop noisy beep
 set t_vb=
@@ -93,8 +93,21 @@ nnoremap <Leader>f :<C-u>cope<CR>
 
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
-    nnoremap <buffer> <CR> :<C-u>.cc<CR>
+    " nnoremap <buffer> <CR> :<C-u>.cc<CR>
     nnoremap <buffer> q :<C-u>quit<CR>
+    " nnoremap <silent><expr><buffer> <CR> <SID>is_loc() ? execute('.ll') : execute('.cc')
+    nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
+endfunction
+
+function s:is_loc()
+let wi = getwininfo(win_getid())[0]
+if wi.loclist
+    return execute('.ll')
+elseif wi.quickfix
+    return execute('.cc')
+else
+    echom 'here is not quickfix and location list.'
+endif
 endfunction
 "}}}
 

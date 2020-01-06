@@ -50,14 +50,13 @@ let g:lightline = {
         \ 'tab': 'LLtabnr',
         \ 'git':'LLgit',
         \ 'denitebuffer' : 'LLDeniteBuffer',
-        \ 'denitefilter' : 'LLDeniteFilter'
+        \ 'denitefilter' : 'LLDeniteFilter',
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
-        \ 'denitesource' : 's:denitesource',
         \ 'linter_checking': 'lightline#ale#checking',
-        \ 'linter_warnings': 'lightline#ale#warnings',
-        \ 'linter_errors': 'lightline#ale#errors'
+        \ 'linter_warnings': 'LLLspWarning',
+        \ 'linter_errors': 'LLLspError',
     \ },
    \ 'component_type' : {
         \ 'buffers': 'tabsel',
@@ -136,6 +135,15 @@ function! s:threshold(n) abort
         \ a:n == 2 ? w > s/3 : w > s/4
 endfunction
 
+function! LLLspError() abort
+    let d = lsp#get_buffer_diagnostics_counts()
+    return d.error ? '' . d.error : ''
+endfunction
+
+function! LLLspWarning() abort
+    let d = lsp#get_buffer_diagnostics_counts()
+    return  d.warning ? '' . d.warning : ''
+endfunction
 
 function! LLMode()
     return &filetype is# 'unite' ? 'Unite' :
@@ -701,15 +709,6 @@ hi! link ParenMatch MatchParen
 [[plugins]]
 repo = 'prabirshrestha/vim-lsp'
 hook_add = ''' " {{{
-let g:deoplete#enable_at_startup = 1
-" if executable('vim-language-server')
-"     " pip install python-language-server
-"     au User lsp_setup call lsp#register_server({
-"         \ 'name': 'vimls',
-"         \ 'cmd': {server_info->['vim-language-server', '--stdio']},
-"         \ 'whitelist': ['vim'],
-"         \ })
-" endif
 let s:pyls_config = {'pyls': {'plugins': {
     \   'pycodestyle': {'enabled': v:true},
     \   'pydocstyle': {'enabled': v:false},
@@ -755,6 +754,15 @@ if executable('gopls')
         \ })
   augroup END
 endif
+let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
+augroup LspEFM
+  au!
+  autocmd User lsp_setup call lsp#register_server({
+      \ 'name': 'efm-langserver',
+      \ 'cmd': {server_info->['efm-langserver', s:efm_config_path]},
+      \ 'whitelist': ['eruby', 'markdown', 'yaml'],
+      \ })
+augroup END
 
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
@@ -813,19 +821,21 @@ autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 [[plugins]]
 repo = 'prabirshrestha/async.vim'
 
-# [[plugins]]
-# repo = 'hrsh7th/vim-vsnip'
-# hook_add = '''
-# imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-# smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-# imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-# '''
+[[plugins]]
+repo = 'hrsh7th/vim-vsnip'
+merged = '0'
+hook_add = '''
+imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+'''
 
-# [[plugins]]
-# repo = 'hrsh7th/vim-vsnip-integ'
+[[plugins]]
+merged = '0'
+repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
 repo = 'microsoft/vscode-python'
@@ -834,18 +844,23 @@ merged = '0'
 [[plugins]]
 repo = 'microsoft/vscode-go'
 merged = '0'
-[[plugins]]
-repo = 'thomasfaingnaert/vim-lsp-snippets'
-
-[[plugins]]
-repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
 # [[plugins]]
-# on_if = '!has("nvim")'
+# merged = '0'
+# repo = 'thomasfaingnaert/vim-lsp-snippets'
+
+# [[plugins]]
+# merged = '0'
+# repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+
+# [[plugins]]
+# # on_if = '!has("nvim")'
+# merged = '0'
 # repo = 'prabirshrestha/asyncomplete.vim'
 
 # [[plugins]]
-# on_if = '!has("nvim")'
+# # on_if = '!has("nvim")'
+# merged = '0'
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'
 
 
@@ -854,24 +869,20 @@ repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 # hook_add = '''
 # '''
 
-# [[plugins]]
-# repo = 'Shougo/vimproc.vim'
-# on_if = '!has("nvim")'
-# hook_post_update = '''
-#   if has('win32')
-#     let cmd = 'tools\\update-dll-mingw'
-#   elseif has('win32unix') " for Cygwin
-#     let cmd = 'make -f make_cygwin.mak'
-#   elseif executable('gmake')
-#     let cmd = 'gmake'
-#   else
-#     let cmd = 'make'
-#   endif
-#   let g:dein#plugin.build = cmd
-# '''
-
-
 [[plugins]]
-repo = 'haya14busa/incsearch.vim'
+## only for incsearch-migemo.vim
+repo = 'Shougo/vimproc.vim'
+hook_post_update = '''
+  if has('win32')
+    let cmd = 'tools\\update-dll-mingw'
+  elseif has('win32unix') " for Cygwin
+    let cmd = 'make -f make_cygwin.mak'
+  elseif executable('gmake')
+    let cmd = 'gmake'
+  else
+    let cmd = 'make'
+  endif
+  let g:dein#plugin.build = cmd
+'''
 
 # vim:set foldmethod=marker:

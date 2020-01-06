@@ -683,7 +683,6 @@ repo =  'Shougo/deoplete.nvim'
 on_if = ''' has('nvim') '''
 on_event = 'InsertEnter'
 hook_source = ''' " {{{
-let g:deoplete#enable_at_startup = 1
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
@@ -695,8 +694,6 @@ endfunction "}}}
 inoremap <silent><expr> <C-n>
     \ pumvisible() ? "\<C-n>" :
     \ deoplete#manual_complete()
-''' # }}}
-hook_source = ''' " {{{
 inoremap <silent><expr><C-h>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><BS>
@@ -705,12 +702,11 @@ inoremap <silent><expr><C-l>
     \ deoplete#complete_common_string()
 inoremap <expr><silent> <C-g>
     \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
-"
 "" <CR>: close popup and save indent.
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function() abort
+function! s:my_cr_function() abort "{{{
   return pumvisible() ? deoplete#close_popup() : "\<CR>"
-endfunction
+endfunction "}}}
 
 call deoplete#custom#source('_', 'matchers',
       \ ['matcher_fuzzy', 'matcher_length'])
@@ -736,8 +732,8 @@ call deoplete#custom#var('around', {
     \})
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
-    \ 'python': ['lsp'],
-    \ 'go': ['lsp','vsnip','buffer'],
+    \ 'python': ['lsp','vsnip', 'buffer'],
+    \ 'go': ['lsp','vsnip', 'buffer'],
     \ })
 call deoplete#custom#option({
     \ 'refresh_always': v:false,
@@ -835,9 +831,9 @@ repo =  'Shougo/neosnippet'
 on_event = 'InsertEnter'
 on_ft = 'snippet'
 hook_source = ''' " {{{
-" let g:neosnippet#disable_runtime_snippets = {
-" \   '_' : 1,
-" \ }
+let g:neosnippet#disable_runtime_snippets = {
+\   '_' : 1,
+\ }
 if has('conceal')
     set conceallevel=2 concealcursor=niv
 endif
@@ -1380,13 +1376,17 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 [[plugins]]
 repo = 'haya14busa/incsearch-migemo.vim'
 depends = 'incsearch.vim'
-#TODO:qitta
 on_map = { nx = '<Plug>(incsearch-migemo-' }
 hook_add = ''' " {{{
 map g/ <Plug>(incsearch-migemo-/)
 map g? <Plug>(incsearch-migemo-?)
 ''' # }}}
 
+[[plugins]]
+on_source = 'incsearch=migemo.vim'
+repo = 'haya14busa/incsearch.vim'
+hook_add = 'let g:incsearch#auto_nohlsearch = 1'
+# TODO vimproc依存をなくす
 
 #[[plugins]]
 #repo ='plasticboy/vim-markdown' {{{
@@ -1692,14 +1692,18 @@ hook_add = '''
 on_source = ['deoplete.nvim']
 repo = 'lighttiger2505/deoplete-vim-lsp'
 
-[[plugins]]
-on_ft = 'go'
-repo = 'mattn/vim-goimports'
+# [[plugins]]
+# on_ft = 'go'
+# repo = 'mattn/vim-goimports'
 
 [[plugins]]
 repo = 'fatih/vim-go'
 on_ft = ['go']
 hook_add = '''
+
+let g:go_snippet_engine = "neosnippet"
+let g:go_gopls_enabled = 0
+" highlight
 let g:go_highlight_functions = 1
 let g:go_highlight_function_parameters = 1
 let g:go_highlight_types = 1
