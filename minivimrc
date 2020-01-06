@@ -50,7 +50,6 @@ set nobackup                " no more backup file
 "}}}
 
 "}}}
-
 set runtimepath+=~/.cache/dein/repos/github.com/Shougo/deoplete.nvim/
 set runtimepath+=~/.cache/dein/repos/github.com/Shougo/deoplete-lsp/
 set runtimepath+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/

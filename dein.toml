@@ -50,14 +50,13 @@ let g:lightline = {
         \ 'tab': 'LLtabnr',
         \ 'git':'LLgit',
         \ 'denitebuffer' : 'LLDeniteBuffer',
-        \ 'denitefilter' : 'LLDeniteFilter'
+        \ 'denitefilter' : 'LLDeniteFilter',
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
-        \ 'denitesource' : 's:denitesource',
         \ 'linter_checking': 'lightline#ale#checking',
-        \ 'linter_warnings': 'lightline#ale#warnings',
-        \ 'linter_errors': 'lightline#ale#errors'
+        \ 'linter_warnings': 'LLLspWarning',
+        \ 'linter_errors': 'LLLspError',
     \ },
    \ 'component_type' : {
         \ 'buffers': 'tabsel',
@@ -136,6 +135,15 @@ function! s:threshold(n) abort
         \ a:n == 2 ? w > s/3 : w > s/4
 endfunction
 
+function! LLLspError() abort
+    let d = lsp#get_buffer_diagnostics_counts()
+    return d.error ? '' . d.error : ''
+endfunction
+
+function! LLLspWarning() abort
+    let d = lsp#get_buffer_diagnostics_counts()
+    return  d.warning ? '' . d.warning : ''
+endfunction
 
 function! LLMode()
     return &filetype is# 'unite' ? 'Unite' :
@@ -262,6 +270,7 @@ function! LLtabnr() abort
     return tabpagenr('$') > 1 ? tabpagenr().':'.tabpagenr('$').'«' : '«'
 endfunction
 
+call get(s:, 'llgitbranch', '')
 function! LLgit() abort
     if &filetype =~# s:ignore_filetype
         return ''
@@ -272,7 +281,8 @@ function! LLgit() abort
 endfunction
 
 "重いのでキャッシュする
-autocmd vimrc VimEnter,BufNew,BufEnter,CmdlineLeave,FileWritePre,BufWrite * call <SID>llgitcache()
+autocmd vimrc BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
+autocmd vimrc SourcePost $MYVIMRC call <SID>llgitcache()
 function! s:llgitcache() abort
     let s:llgitbranch = ''
     if !exists('*gitbranch#name')
@@ -296,23 +306,20 @@ endfunction
 
  " Deniteステータス {{{
  function! LLDeniteFilter()
-     if &filetype isnot# 'denite'
-         return ''
-     else
-         return s:denite_statusline()
-     endif
+     return s:denite_statusline()
  endfunction
 
  function! LLDeniteBuffer() abort
-     if &filetype isnot# 'denite'
-         return ''
-     else
-         return s:denite_statusline()
-     endif
+     return s:denite_statusline()
  endfunction
 
  function! s:denite_statusline() abort
-         return s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
+     if &filetype isnot# 'denite'
+         return ''
+     else
+         let str = s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
+         return winwidth(0) * 2/3 > strwidth(str) ? str : s:denitesource()
+    endif
  endfunction
 
  function! s:deniteinput() abort
@@ -740,7 +747,6 @@ smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-T
 repo = 'hrsh7th/vim-vsnip-integ'
 rev = '91f52035eabe6f27511deab75746c0322c207dfd'
 
-
 [[plugins]]
 repo = 'microsoft/vscode-python'
 merged = '0'
@@ -756,11 +762,17 @@ repo = 'microsoft/vscode-go'
 merged = '0'
 
 # [[plugins]]
-# on_if = '!has("nvim")'
+# merged = '0'
+# repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+
+# [[plugins]]
+# # on_if = '!has("nvim")'
+# merged = '0'
 # repo = 'prabirshrestha/asyncomplete.vim'
 
 # [[plugins]]
-# on_if = '!has("nvim")'
+# # on_if = '!has("nvim")'
+# merged = '0'
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'
 
 
@@ -769,19 +781,20 @@ merged = '0'
 # hook_add = '''
 # '''
 
-# [[plugins]]
-# repo = 'Shougo/vimproc.vim'
-# on_if = '!has("nvim")'
-# hook_post_update = '''
-#   if has('win32')
-#     let cmd = 'tools\\update-dll-mingw'
-#   elseif has('win32unix') " for Cygwin
-#     let cmd = 'make -f make_cygwin.mak'
-#   elseif executable('gmake')
-#     let cmd = 'gmake'
-#   else
-#     let cmd = 'make'
-#   endif
-#   let g:dein#plugin.build = cmd
-# '''
+[[plugins]]
+## only for incsearch-migemo.vim
+repo = 'Shougo/vimproc.vim'
+hook_post_update = '''
+  if has('win32')
+    let cmd = 'tools\\update-dll-mingw'
+  elseif has('win32unix') " for Cygwin
+    let cmd = 'make -f make_cygwin.mak'
+  elseif executable('gmake')
+    let cmd = 'gmake'
+  else
+    let cmd = 'make'
+  endif
+  let g:dein#plugin.build = cmd
+'''
+
 # vim:set foldmethod=marker:
