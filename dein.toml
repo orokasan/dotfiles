@@ -566,8 +566,8 @@ repo =  'kana/vim-operator-user'
 [[plugins]]
 repo = 'deoplete-plugins/deoplete-zsh'
 
-[[plugins]]
-repo =  'Shougo/neosnippet-snippets'
+# [[plugins]]
+# repo =  'Shougo/neosnippet-snippets'
 
 [[plugins]]
 repo = 'Shougo/unite-outline'
@@ -704,6 +704,8 @@ hi! link ParenMatch MatchParen
 # endif
 # ''' # }}}
 
+[[plugins]]
+repo = 'neovim/nvim-lsp'
 # [[plugins]]
 # repo = 'prabirshrestha/async.vim'
 
@@ -736,6 +738,8 @@ smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-T
 
 [[plugins]]
 repo = 'hrsh7th/vim-vsnip-integ'
+rev = '91f52035eabe6f27511deab75746c0322c207dfd'
+
 
 [[plugins]]
 repo = 'microsoft/vscode-python'
