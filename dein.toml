@@ -573,8 +573,8 @@ repo =  'kana/vim-operator-user'
 [[plugins]]
 repo = 'deoplete-plugins/deoplete-zsh'
 
-# [[plugins]]
-# repo =  'Shougo/neosnippet-snippets'
+[[plugins]]
+repo =  'Shougo/neosnippet-snippets'
 
 [[plugins]]
 repo = 'Shougo/unite-outline'
@@ -732,24 +732,26 @@ repo = 'Shougo/deoplete-lsp'
 # smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
 # '''
 
-[[plugins]]
-repo = 'hrsh7th/vim-vsnip'
-hook_add = '''
-imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-'''
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip'
+# hook_add = '''
+# imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+# smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+# imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# if has('conceal')
+#  set conceallevel=2 concealcursor=niv
+# '''
 
-[[plugins]]
-repo = 'hrsh7th/vim-vsnip-integ'
-rev = '91f52035eabe6f27511deab75746c0322c207dfd'
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip-integ'
+# rev = '91f52035eabe6f27511deab75746c0322c207dfd'
 
-[[plugins]]
-repo = 'microsoft/vscode-python'
-merged = '0'
+# [[plugins]]
+# repo = 'microsoft/vscode-python'
+# merged = '0'
 
 # [[plugins]]
 # repo = 'thomasfaingnaert/vim-lsp-snippets'
@@ -757,9 +759,9 @@ merged = '0'
 # [[plugins]]
 # repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
-[[plugins]]
-repo = 'microsoft/vscode-go'
-merged = '0'
+# [[plugins]]
+# repo = 'microsoft/vscode-go'
+# merged = '0'
 
 # [[plugins]]
 # merged = '0'
@@ -796,5 +798,9 @@ hook_post_update = '''
   endif
   let g:dein#plugin.build = cmd
 '''
+
+# [[plugins]]
+# repo = 'neoclide/coc.nvim'
+# build = './install.sh nightly'
 
 # vim:set foldmethod=marker:

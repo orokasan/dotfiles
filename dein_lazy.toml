@@ -211,7 +211,7 @@ call denite#custom#option('stay',{
 ""need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
     \ ['rg', '--files', '--no-messages','--hidden',
-    \ '--glob', '!.git/*','-g','!*/.git/*','--glob','!*.tmp','-g','!AppData/*'])
+    \ '--glob','!**/.git/*','--glob','!*.tmp','-g','!AppData/*'])
 
 call denite#custom#source('grep', 'args', ['', '', '!'])
 call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
@@ -825,22 +825,22 @@ repo =  'Shougo/neco-vim'
 on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
-# [[plugins]]
-# repo =  'Shougo/neosnippet'
-# on_event = 'InsertEnter'
-# on_ft = 'snippet'
-# hook_source = ''' " {{{
-# " let g:neosnippet#disable_runtime_snippets = {
-# " \   '_' : 1,
-# " \ }
-# if has('conceal')
-#     set conceallevel=2 concealcursor=niv
-# endif
-# imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-# smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-# imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-# \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-# ''' # }}}
+[[plugins]]
+repo =  'Shougo/neosnippet'
+on_event = 'InsertEnter'
+on_ft = 'snippet'
+hook_source = ''' " {{{
+" let g:neosnippet#disable_runtime_snippets = {
+" \   '_' : 1,
+" \ }
+if has('conceal')
+    set conceallevel=2 concealcursor=niv
+endif
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+''' # }}}
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
@@ -1588,13 +1588,12 @@ hook_add = '''
 # hook_source = '''
 # let g:vimtex_quickfix_open_on_warning = 1
 # let g:vimtex_view_method = 'skim'
-# let g:tex_flavor = 'latex'
 # let g:vimtex_matchparen_enabled = 0
-# let g:vimtex_compiler_latexmk = {
-#       \ 'options': [
-#       \    '-pdfdvi',
-#       \],
-#       \}
+# " let g:vimtex_compiler_latexmk = {
+# "       \ 'options': [
+# "       \    '-pdfdvi',
+# "       \],
+# "       \}
 
 # call deoplete#custom#var('omni', 'input_patterns', {
 #     \ 'tex': g:vimtex#re#deoplete
@@ -1695,21 +1694,21 @@ hook_add = '''
 # on_ft = 'go'
 # repo = 'mattn/vim-goimports'
 
-[[plugins]]
-repo = 'fatih/vim-go'
-on_ft = ['go']
-hook_add = '''
+# [[plugins]]
+# repo = 'fatih/vim-go'
+# on_ft = ['go']
+# hook_add = '''
 
-let g:go_snippet_engine = "neosnippet"
-let g:go_gopls_enabled = 0
-" highlight
-let g:go_highlight_functions = 1
-let g:go_highlight_function_parameters = 1
-let g:go_highlight_types = 1
-" let g:go_highlight_fields = 1
-" let g:go_highlight_build_constraints = 1
-let g:go_highlight_generate_tags = 1
-let g:go_highlight_variable_declarations = 1
-'''
+# let g:go_snippet_engine = "neosnippet"
+# let g:go_gopls_enabled = 0
+# " highlight
+# let g:go_highlight_functions = 1
+# let g:go_highlight_function_parameters = 1
+# let g:go_highlight_types = 1
+# " let g:go_highlight_fields = 1
+# " let g:go_highlight_build_constraints = 1
+# let g:go_highlight_generate_tags = 1
+# let g:go_highlight_variable_declarations = 1
+# '''
 
 # vim:set foldmethod=marker:

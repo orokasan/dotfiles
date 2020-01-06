@@ -732,22 +732,23 @@ au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 au vimrc BufRead .textlintrc set ft=json
 
 lua << EOF
--- vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
--- vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
---     if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then
---       local util = vim.lsp.util
---       local uri = result.uri
---       local bufnr = vim.uri_to_bufnr(uri)
---       if not bufnr then
---         err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
---         return
---       end
---       util.buf_clear_diagnostics(bufnr)
---       util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
---       util.buf_diagnostics_underline(bufnr, result.diagnostics)
---       util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
---     end
---   end
+vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
+vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
+    if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then
+      local util = vim.lsp.util
+      local uri = result.uri
+      local bufnr = vim.uri_to_bufnr(uri)
+      if not bufnr then
+        err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
+        return
+      end
+      util.buf_clear_diagnostics(bufnr)
+      util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
+      util.buf_diagnostics_underline(bufnr, result.diagnostics)
+      util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
+    end
+  end
+
 require'nvim_lsp'.gopls.setup{
     capabilities = {
       textDocument = {
@@ -768,16 +769,32 @@ require'nvim_lsp'.gopls.setup{
     };
   }
 
+require'nvim_lsp'.texlab.setup{
+    settings = {
+      latex = {
+        build = {
+          executable = "latex";
+          args = {"-pdfdvi", "-interaction=nonstopmode", "-synctex=1"};
+          onSave = false;
+            };
+        };
+    };
+}
+
 require'nvim_lsp'.pyls.setup{}
-require'nvim_lsp'.texlab.setup{}
 require'nvim_lsp'.vimls.setup{}
 EOF
 
 "lsp.txtそのまま
-nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+  setlocal omnifunc=v:lua.vim.lsp.omnifunc
+  nnoremap <silent> <c-]>      <cmd>lua vim.lsp.buf.definition()<CR>
+  nnoremap <silent> <c-k>      <cmd>lua vim.lsp.buf.signature_help()<CR>
+  nnoremap <silent> K          <cmd>lua vim.lsp.buf.hover()<CR>
+  nnoremap <silent> gd         <cmd>lua vim.lsp.buf.declaration()<CR>
+  nnoremap <silent> g0         <cmd>lua vim.lsp.buf.document_symbol()<CR>
+  nnoremap <silent> gD         <cmd>lua vim.lsp.buf.implementation()<CR>
+  nnoremap <silent> 1gD        <cmd>lua vim.lsp.buf.type_definition()<CR>
+  nnoremap <silent><Leader>rf  <cmd>lua vim.lsp.buf.references({ includeDeclaration = true })<CR>
+  nnoremap <silent><Leader>fmt <cmd>lua vim.lsp.buf.formatting()<CR>
+let g:tex_flavor = "latex"
 " vim:set foldmethod=marker:
