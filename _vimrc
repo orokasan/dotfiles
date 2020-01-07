@@ -630,16 +630,16 @@ if &runtimepath !~# '/dein.vim'
  execute 'set runtimepath+=' .fnamemodify(s:dein_repo_dir, ':p')
 endif
 
-let s:toml      = '~/dotfiles/plugins/dein.toml'
-let s:lazy_toml = '~/dotfiles/plugins/dein_lazy.toml'
-let s:lsp_toml = '~/dotfiles/plugins/dein_lsp.toml'
+let s:toml      = '~/dotfiles/vim/plugins/dein.toml'
+let s:lazy_toml = '~/dotfiles/vim/plugins/dein_lazy.toml'
+let s:lsp_toml = '~/dotfiles/vim/plugins/dein_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lsp_toml,      {'lazy': 0})
-    call dein#load_toml(s:lazy_toml, {'lazy': 1})
+    call dein#load_toml(s:lazy_toml, {'lazy': 1}, {'merged': 0})
     call dein#end()
     call dein#save_state()
 

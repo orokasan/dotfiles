@@ -219,4 +219,9 @@ let g:LanguageClient_serverCommands = {
 '''
 # rev= 'next',
 # build = 'bash install.sh'
+
+# [[plugins]]
+# on_source = ['deoplete.nvim']
+# depends = ['vim-lsp']
+# repo = 'lighttiger2505/deoplete-vim-lsp'
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'

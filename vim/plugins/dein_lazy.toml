@@ -1,143 +1,9 @@
 [[plugins]]
 # repo =  'Shougo/denite.nvim'
 repo =  'orokasan/denite.nvim'
-on_cmd = ['Denite','DeniteBufferDir','DeniteCursorWord','DeniteProjectDir']
-hook_add = ''' "{{{
-nmap s [denite]
-nnoremap [denite] <Nop>
-nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
-    \ -start-filter
-    \  source<CR>
-"現在開いているファイルのディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]s :<C-u>Denite
-    \ -start-filter
-    \ -path=`<SID>denite_gitdir()`
-    \  file/rec file:new<CR>
-function! s:denite_gitdir() abort
-if finddir('.git', '.;') != ''
-    let path = (empty(bufname('%')) || &buftype =~# '^\%(nofile\|acwrite\|quickfix\|terminal\)$') ? getcwd() : expand('%:p')
-    let dir = finddir('.git', path.';')
-    if empty(dir) | return '' | endif
-    let files = findfile('.git', path.';',-1)
-    if empty(files) | return fnamemodify(dir, ':p:h:h') | endif
-    let path = fnamemodify(files[-1], ':p:h')
-else
-    let path = expand('%:p:h')
-return path
-endfunction
-nnoremap <silent> [denite]S :<C-u>DeniteBufferDir
-    \ -start-filter
-    \  file/rec file:new<CR>
-nnoremap <silent> [denite]f :<C-u>DeniteProjectDir
-    \ -start-filter
-    \  file/rec file:new<CR>
-"現在開いているファイルのディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
-    \ -start-filter
-    \  file file:new<CR>
-"ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]t :<C-u>Denite
-    \ -start-filter
-    \ -path=$HOME
-    \ file/rec file:new<CR>
-"ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]T :<C-u>Denite
-    \ -start-filter
-    \ -path=$HOME
-    \ file file:new<CR>
-"バッファ一覧
-nnoremap <silent> [denite]b :<C-u>Denite
-      \ -buffer-name=stay
-      \ buffer<CR>
-nnoremap <silent> \ :<C-u>Denite
-    \ -winheight=5
-    \ -start-filter
-    \ -buffer-name=command
-    \ command command_history<CR>
-nnoremap <silent> [denite]/ :<C-u>Denite
-    \ -buffer-name=search
-    \ anzu<CR>
-"neoyank
-nnoremap <silent> [denite]y :<C-u>Denite
-    \ -buffer-name=search
-    \ neoyank register<CR>
-"コマンド履歴
-nnoremap <silent> [denite]c :<C-u>Denite
-    \ -buffer-name=command
-    \ -winheight=5
-    \ -start-filter
-    \ command_history<CR>
-"バッファディレクトリからgrep
-nnoremap <silent> [denite]g :<C-u>Denite
-    \ -start-filter
-    \ -path=`<SID>denite_gitdir()`
-    \ `finddir('.git', '.;') != '' ? 'grep/git:::!' : 'grep'`<CR>
-"メニュー
-nnoremap <silent> [denite]u :<C-u>Denite
-    \ -buffer_name=normal
-      \ -winheight=5
-    \ menu<CR>
-"ヘルプ
-nnoremap <silent> [denite]h :<C-u>Denite
-    \ -buffer-name=search
-    \ -start-filter
-    \ help<CR>
-" MRU
-nnoremap <silent> [denite]n :<C-u>Denite
-    \ -buffer-name=normal
-    \ file/old<CR>
-"mark一覧
-nnoremap <silent> [denite]m :<C-u>Denite
-    \ -buffer-name=normal
-    \ mark<CR>
-":change
-nnoremap <silent> [denite]k :<C-u>Denite change<CR>
-":jump
-nnoremap <silent> [denite]j :<C-u>Denite jump <CR>
-"resumeして開く
-nnoremap <silent> [denite]r :<C-u>Denite
-    \ -buffer-name=search
-    \ -refresh
-    \ -resume<CR>
-nnoremap <silent> [denite]R :<C-u>Denite
-    \ -buffer-name=default
-    \ -refresh
-    \ -resume<CR>
-"open ale message
-nnoremap <silent> [denite]a :<C-u>Denite
-    \ -buffer-name=stay
-    \ -resume
-    \ ale<CR>
-"コマンド結果をdeniteに出力
-nnoremap [denite]p :<C-u>Denite
-    \ -buffer-name=search
-    \ output:
-" markdown TOC
-nnoremap <silent> [denite]o :<C-u>Denite
-    \ -buffer-name=stay
-    \ markdown<CR>
-nnoremap <silent> [denite]d :<C-u>Denite
-    \ dirmark<CR>
-"bookmark by "add"action
-nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
-    \ dirmark/add<CR>
-" move next candidate
-nnoremap <silent> [denite]. :<C-u>Denite
-    \ -buffer-name=stay
-    \ -resume
-    \ -cursor-pos=+1
-    \ -immediately
-    \ <CR>
-nnoremap <silent> [denite], :<C-u>Denite
-    \ -resume
-    \ -buffer-name=stay
-    \ -cursor-pos=-1
-    \ -immediately
-    \ <CR>
-''' #}}}
-hook_source = ''' " {{{
-source ~/dotfiles/plugins/config/denite.rc.vim
-''' # }}}
+on_cmd = ['Denite']
+hook_add = 'source ~/dotfiles/vim/plugins/config/denite.mapping.rc.vim'
+hook_source = 'source ~/dotfiles/vim/plugins/config/denite.rc.vim'
 
 [plugins.ftplugin]
 denite = ''' "{{{
@@ -243,10 +109,9 @@ nmap <Leader>E <Plug>(defxprojectdir)
 
 nnoremap <silent> <Plug>(defx) :<C-u>Defx -resume<CR>
 nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
-nnoremap <silent> <Plug>(defxprojectdir) :<C-u>Defx -search=$HOME<CR>
+nnoremap <silent> <Plug>(defxprojectdir) :<C-u>Defx ~/<CR>
 ''' # }}}
 hook_source = ''' " {{{
-
 call defx#custom#option('_', {
     \ 'winwidth': 35,
     \ 'split': 'vertical',
@@ -256,13 +121,6 @@ call defx#custom#option('_', {
     \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
     \ 'ignored_files':  '.*,*.aux, ntuser*, desktop.ini , __pycache__'
     \ })
-"call defx#custom#column('filename', {
-"      \ 'directory_icon': '',
-"      \ 'opened_icon': '',
-"      \ 'root_icon': '',
-"      \ 'min_width': 45,
-"      \ 'max_width': 45,
-"      \ })
 
 function! s:get_defx_bufferdir(candidate) abort
     if line('.') == 1
@@ -350,64 +208,11 @@ nnoremap <silent><buffer><expr> cd
 nnoremap <silent><buffer><expr> <C-r>
 \ defx#do_action('call','Defx_to_denite_rec')
 ''' # }}}
+
 [[plugins]]
 repo = 'kristijanhusak/defx-icons'
 on_source = 'defx.nvim'
 hook_source = ''' " {{{
-"NerdFont List{{{
-"This list is useful for testing and choosing interesting symbols.
-"Also it's more consistent with current fonts than codepoints shown in README.
-"So, it may worth to add this to the wiki - I've opened issue just to ask is this appropriate. Probably it's better to put it on page with Nerd font loaded.
-"
-"IEC Power Symbols (23FB-23FE,2B58)
-"⏻⏼⏽⏾⭘
-"Font Awesome Extension (moved E000-E0A9 → E200-E2A9)
-"
-"
-"
-"
-"
-"Powerline Extra Symbols (E0A0-E0A3 E0B0-E0BF E0C0-E0C8 E0CC-E0CF E0D0-E0D2 E0D4)
-"
-"Devicons (moved E600-E6C5 → E700-E7C5)
-"
-"
-"
-"
-"
-"Font Awesome (F000-F2E0 with holes)
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"Octicons (2665,26A1, moved F000-F105 with holes → F400-F4A8, moved F27C → F67C)
-"♥⚡
-"
-"
-"
-"
-"
-"Pomicons (E000-E00A)
-"
-"Font Linux (moved F100-F115 with holes → F300-F313)
-"
-"Seti-UI + Custom (E5FA-E62B)
-"
-"
-"}}}
 let g:defx_icons_enable_syntax_highlight = 1
 let g:defx_icons_column_length = 2
 let g:defx_icons_directory_icon = ''
@@ -459,144 +264,7 @@ nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
 repo =  'Shougo/deoplete.nvim'
 on_if = ''' has('nvim') '''
 on_event = 'InsertEnter'
-hook_source = ''' " {{{
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ deoplete#manual_complete()
-function! s:check_back_space() abort "{{{
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction "}}}
-inoremap <silent><expr> <C-n>
-    \ pumvisible() ? "\<C-n>" :
-    \ deoplete#manual_complete()
-inoremap <silent><expr><C-h>
-    \ deoplete#smart_close_popup()."\<C-h>"
-inoremap <silent><expr><BS>
-    \ deoplete#smart_close_popup()."\<C-h>"
-inoremap <silent><expr><C-l> 
-    \ deoplete#complete_common_string()
-inoremap <expr><silent> <C-g>
-    \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
-"" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function() abort "{{{
-  return pumvisible() ? deoplete#close_popup() : "\<CR>"
-endfunction "}}}
-
-call deoplete#custom#source('_', 'matchers',
-      \ ['matcher_fuzzy', 'matcher_length'])
-"eskkにmatcherを指定してはいけない
-call deoplete#custom#source('eskk', 'matchers', [])
-call deoplete#custom#source('eskk', 'mark' , '▼')
-call deoplete#custom#source('vim', 'rank' , 200)
-call deoplete#custom#source('file', 'rank', 1000)
-call deoplete#custom#source('neosnippet', 'rank', 250)
-call deoplete#custom#source('buffer', 'rank', 200)
-call deoplete#custom#source('look', 'rank', 50)
-call deoplete#custom#source('omni', 'mark' , '*')
-call deoplete#custom#source('omni', 'functions' , {
-    \ 'python': '',
-    \ })
-
-call deoplete#custom#var('around', {
-    \   'range_above': 20,
-    \   'range_below': 20,
-    \   'mark_above': '[↑]',
-    \   'mark_below': '[↓]',
-    \   'mark_changes': '[*]',
-    \})
-call deoplete#custom#option('sources', {
-    \ 'denite-filter': ['denite'],
-    \ })
-    " \ 'python': ['lsp','vsnip', 'buffer'],
-    " \ 'go': ['lsp','vsnip', 'buffer'],
-call deoplete#custom#option({
-    \ 'refresh_always': v:false,
-    \ 'skip_multibyte': v:true,
-    \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'filter',
-    \ 'ignore_sources': {
-    \    }
-    \ })
-
-call deoplete#custom#source('_', 'converters', [
-    \ 'converter_remove_paren',
-    \ 'converter_remove_overlap',
-    \ 'converter_truncate_abbr',
-    \ 'converter_truncate_menu',
-    \ 'converter_truncate_kind',
-    \ 'converter_auto_delimiter'
-    \ ])
-
-call deoplete#enable()
-''' # }}}
-
-# [[plugins]]
-# repo = 'Shougo/neocomplete.vim'
-# on_if = ''' !has('nvim') '''
-# on_event = 'InsertEnter'
-# hook_source = ''' " {{{
-# let g:neocomplete#enable_smart_case = 1
-# "let g:neocomplete#enable_auto_select = 1
-
-# "vimprocを有効化すると初回の補完がちょっと遅くなる
-# let g:neocomplete#use_vimproc = 1
-# let g:neocomplete#min_keyword_length = 2
-# " Define keyword.
-# " Plugin key-madeinppings.
-# inoremap <expr><C-g>     neocomplete#undo_completion()
-# inoremap <expr><C-l>     neocomplete#complete_common_string()
-# " Recommended key-mappings.
-# " <CR>: close popup and save indent.
-# inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-# function! s:my_cr_function()
-#   return pumvisible() ? "\<C-y>" : "\<CR>"
-# endfunction
-# inoremap <silent><expr> <C-n>
-#     \ pumvisible() ? "\<C-n>" :
-#     \ neocomplete#start_manual_complete()
-# " <TAB>: completion.
-# inoremap <silent><expr> <TAB>
-#     \ pumvisible() ? "\<C-n>" :
-#     \ neosnippet#expandable_or_jumpable() ?
-#     \    "\<Plug>(neosnippet_expand_or_jump)" :
-#     \ <SID>check_back_space() ? "\<TAB>" :
-#     \ neocomplete#start_manual_complete()
-# function! s:check_back_space() abort "{{{
-#   let col = col('.') - 1
-#   return !col || getline('.')[col - 1]  =~ '\s'
-# endfunction"}}}
-# " <C-h>, <BS>: close popup and delete backword char.
-# inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-# inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-# let g:neocomplete#sources#buffer#cache_limit_size = 500000
-# let g:neocomplete#auto_complete_delay = 1
-# let g:neocomplete#skip_auto_completion_time = '0.2'
-# let g:neocomplete#enable_multibyte_completion = 1
-
-# if !exists('g:neocomplete#keyword_patterns')
-#   let g:neocomplete#keyword_patterns = {}
-# endif
-
-# "let g:neocomplete#keyword_patterns['default'] = '\k\+'
-# let g:neocomplete#max_list=300
-# "call neocomplete#custom#source('_', 'matchers', ['matcher_head','matcher_length'])
-# " Change default converter.
-# "call neocomplete#custom#source('_', 'converters',
-# "\ ['converter_remove_overlap', 'converter_remove_last_paren',
-# "    \  'converter_abbr'])
-# call neocomplete#custom#source('eskk', 'rank', 500) 
-# call neocomplete#custom#source('vim', 'rank' , 250)
-# call neocomplete#custom#source('buffer', 'mark', 'b')
-# call neocomplete#custom#source('eskk', 'mark' , '▽')
-# call neocomplete#custom#source('eskk', 'max_menu_width', 80)
-# let g:neocomplete#ignore_source_files = [
-#     \'member', 'tag.vim', 'dictionary.vim', 'include.vim', 'file_include.vim'
-#     \]
-# call neocomplete#initialize()
-# ''' # }}}
+hook_source = 'source ~/dotfiles/vim/plugins/config/deoplete.rc.vim'
 
 [[plugins]]
 repo =  'Shougo/neco-vim'
@@ -661,134 +329,7 @@ imap <C-j> <Plug>(eskk:toggle)
 cmap <C-j> <Plug>(eskk:toggle)
 
 ''' # }}}
-hook_source = ''' " {{{
-autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre()
-
-function! s:eskk_initial_pre() abort
-    let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
-    call t.add_map('z ', '　')
-    call t.add_map('~', '〜')
-    call t.add_map('zc', '©')
-    call t.add_map('zr', '®')
-    call t.add_map('z9', '（')
-    call t.add_map('z0', '）')
-    call t.add_map('z-', '-')
-      " "1." のように数字の後のドットはそのまま入力
-    for n in range(10)
-      call t.add_map(n . '.', n . '.')
-    endfor
-    call eskk#register_mode_table('hira', t)
-    " CursorLineNrを保存
-    let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
-endfunction
-" eskk_keep_stateがうまく動かないので自前で設定
-nnoremap <silent><C-j> :call <SID>eskk_norm_toggle()<CR>
-
-let s:eskk_status = 0
-let g:eskk_toggle_status = 0
-
-"TODO :qitta
-augroup myeskk
-autocmd!
-    autocmd InsertLeave * call <SID>eskk_save_status()
-    autocmd InsertEnter * call <SID>eskk_insert_status()
-augroup END
-
-" ノーマルモードでもeskkの状態を操作する
-function! s:eskk_norm_toggle() abort
-    if s:eskk_status || g:eskk_toggle_status
-        " eskkがオンの時に呼ぶとただオフにする
-        let s:eskk_status = 0
-        let g:eskk_toggle_status = 0
-        call s:eskk_restore_highlight_linenr()
-    else
-        " eskkがオフの時に呼ぶと常にeskk onでインサートモードに入る状態になる
-        let g:eskk_toggle_status = 1
-        call s:eskk_highlight_linenr()
-    endif
-endfunction
-
-function! s:eskk_save_status() abort
-    if g:eskk_toggle_status
-        call s:eskk_highlight_linenr()
-        return
-    endif
-    let s:eskk_status = eskk#is_enabled() ? 1 : 0
-endfunction
-
-function! s:eskk_insert_status() abort
-    if &filetype ==# 'denite-filter' | return | endif
-    if g:eskk_toggle_status || s:eskk_status
-        call eskk#enable()
-    endif
-endfunction
-
-" lightline用の関数
-function! LLmyeskk() abort
-    if !exists('*eskk#enable') | return 'aA' | endif
-    if eskk#is_enabled()
-        return printf(get(a:000, 0, '%s'),
-            \ get(g:eskk#statusline_mode_strings,
-            \ eskk#get_current_instance().mode, '??'))
-    elseif mode() !=# 'i'
-        return g:eskk_toggle_status || s:eskk_status ? 'あ' : 'aA'
-    else
-        return 'aA'
-    endif
-
-endfunction
-
-"IME/skkの状態に応じてsigncolumnの色を変える（WIP）
-
-autocmd vimrc User eskk-enable-post call s:eskk_enable_post()
-" InsertLeaveの前に発生するイベントであることに注意する
-autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_linenr()
-
-function! s:eskk_enable_post()
-    " lでeskkを終了
-    EskkMap -type=disable l
-    " ハイライトを有効化
-    call s:eskk_highlight_linenr()
-endfunction
-
-function! s:eskk_restore_highlight_linenr()
-    let l:hi = 'highlight! CursorLineNr ' . s:eskk_default_linenr_hi
-    if mode() is# 'i'
-        silent execute(l:hi)
-    else
-        " statusが1のときは戻さない
-        if g:eskk_toggle_status || s:eskk_status
-            return
-        else
-            silent execute(l:hi)
-        endif
-    endif
-endfunction
-
-"もともとのhighlightを保存
-function! s:gethighlight(hi) abort
-    redir => hl
-    silent execute 'highlight ' . a:hi
-    redir END
-
-    let hl = substitute(hl, '\w*\ze\s\{3}', '', 'g')
-    let hl = substitute(hl, 'xxx', '', '')
-    let hl = substitute(hl, '\n', '', '')
-    let hl = substitute(hl, 'links to .*', '', 'g')
-    " bgが無い場合適当な色を埋め込む
-    let hl = match(hl, 'guibg') == -1 ? 'guibg=#002b36 ' . hl : hl
-    return hl
-endfunction
-
-function! s:eskk_highlight_linenr() abort
-    " eskkがonの時のhighlightを指定
-    let s:eskk_hl = 'highlight CursorLineNr guibg=#b58900 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#073642 '
-    silent execute(s:eskk_hl)
-endfunction
-
-" ColorSchemeが変わった時に読み込み直す
-autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
-''' # }}}
+hook_source = 'source ~/dotfiles/vim/plugins/config/eskk.rc.vim'
 
 [[plugins]]
 repo =  'cohama/lexima.vim'
@@ -803,7 +344,6 @@ let g:lexima_nvim_accept_pum_with_enter = 0
 let g:lexima_ctrlh_as_backspace = 1
 let g:lexima_map_escape = ''
 '''
-
 hook_post_source = ''' " {{{
 let s:lexima_default_rules = [
 \ {'char': '(', 'input_after': ')'},
@@ -846,103 +386,6 @@ hook_add = '''
 nmap _ <Plug>(operator-replace)
 vmap _ <Plug>(operator-replace)
 '''
-
-# [[plugins]]
-# repo =  'lambdalisue/gina.vim'{{{
-# on_cmd = ['Gina'] 
-# hook_add = '''
-# nnoremap <Leader>aa :<C-u>Gina status --short<CR>
-# nnoremap <Leader>ac :<C-u>Gina commit<CR>
-# nnoremap <Leader>ap :<C-u>Gina push<CR>
-# '''
-# hook_post_source = '''
-# "{{{
-# call gina#custom#command#alias('branch', 'br')
-# call gina#custom#command#option('br', '-v', 'v')
-# call gina#custom#command#option(
-# \ '/\%(log\|reflog\)',
-# \ '--opener', 'vsplit'
-# \)
-
-# call gina#custom#command#option(
-# \ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-# \ '--opener' , '10split'
-# \)
-# call gina#custom#command#option(
-# \ 'log', '--group', 'log-viewer'
-# \)
-# call gina#custom#command#option(
-# \ 'status', '--group', 'status-viewer'
-# \)
-# call gina#custom#command#option(
-# \ 'reflog', '--group', 'reflog-viewer'
-# \)
-# call gina#custom#command#option(
-# \ 'commit', '-v|--verbose'
-# \)
-# call gina#custom#command#option(
-# \ '/\%(status\|commit\)',
-# \ '-u|--untracked-files'
-# \)
-# call gina#custom#command#option(
-# \ '/\%(status\|changes\)',
-# \ '--ignore-submodules'
-# \)
-
-# call gina#custom#action#alias(
-# \ 'branch', 'track',
-# \ 'checkout:track'
-# \)
-# call gina#custom#action#alias(
-# \ 'branch', 'merge',
-# \ 'commit:merge'
-# \)
-# call gina#custom#action#alias(
-# \ 'branch', 'rebase',
-# \ 'commit:rebase'
-# \)
-
-# call gina#custom#mapping#nmap(
-# \ 'branch', 'g<CR>',
-# \ '<Plug>(gina-commit-checkout-track)'
-# \)
-# call gina#custom#mapping#nmap(
-# \ 'status', '<C-^>',
-# \ ':<C-u>Gina commit<CR>',
-# \ {'noremap': 1, 'silent': 1}
-# \)
-# call gina#custom#mapping#nmap(
-# \ 'commit', '<C-^>',
-# \ ':<C-u>Gina status<CR>',
-# \ {'noremap': 1, 'silent': 1}
-# \)
-
-# "call gina#custom#execute(
-# "\ '/\%(status\|branch\|ls\|grep\|changes\|tag\)',
-# "\ 'setlocal winfixheight',
-# "\)
-# "}}}
-# '''
-
-# [[plugins]]
-# repo =  'sjl/gundo.vim'
-# on_cmd = 'GundoToggle'
-# hook_add = '''
-# nnoremap U :<C-u>GundoToggle<CR>
-# '''
-# hook_source = '''
-# "{{{
-# let g:gundo_help =1 
-# let g:gundo_prefer_python3 = 1
-# let g:gundo_auto_preview = 0
-# let g:gundo_width = 50
-# let g:gundo_right = 1
-# let g:gundo_preview_height = 20
-# let g:gundo_preview_bottom = 0
-# let g:gundo_playback_delay = 500
-# "}}}
-# '''
-# }}}
 
 [[plugins]]
 repo =  'nathanaelkane/vim-indent-guides'
@@ -1466,10 +909,6 @@ hook_add = '''
   xmap A  <Plug>(niceblock-A)
 '''
 
-# [[plugins]]
-# on_source = ['deoplete.nvim']
-# depends = ['vim-lsp']
-# repo = 'lighttiger2505/deoplete-vim-lsp'
 
 # [[plugins]]
 # on_ft = 'go'
