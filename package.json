@@ -3,26 +3,30 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {
-    "@elm-tooling/elm-language-server": "^1.4.5",
-    "bash-language-server": "^1.6.1",
-    "elm": "^0.19.1-3",
-    "elm-format": "^0.8.2",
-    "elm-test": "^0.19.1",
-    "neovim": "^4.5.0",
+  "dependencies": {},
+  "devDependencies": {
+    "@textlint-ja/textlint-rule-no-synonyms": "^1.0.2",
+    "bash-language-server": "^1.7.0",
+    "neovim": "^4.7.0",
     "prh": "^5.4.4",
-    "textlint": "^11.5.0",
+    "sudachi-synonyms-dictionary": "^4.1.0",
+    "textlint": "^11.6.0",
+    "textlint-filter-rule-whitelist": "^2.0.0",
+    "textlint-plugin-latex2e": "^0.3.0",
     "textlint-rule-apostrophe": "^1.0.0",
     "textlint-rule-common-misspellings": "^1.0.1",
-    "textlint-rule-ja-hiragana-fukushi": "^1.1.0",
+    "textlint-rule-ja-hiragana-fukushi": "^1.2.0",
+    "textlint-rule-ja-hiragana-hojodoushi": "^1.0.4",
+    "textlint-rule-ja-hiragana-keishikimeishi": "^1.0.2",
+    "textlint-rule-ja-no-abusage": "^2.0.1",
     "textlint-rule-max-appearence-count-of-words": "^1.0.1",
     "textlint-rule-preset-ja-technical-writing": "^4.0.0-beta.0",
-    "textlint-rule-prh": "^5.2.1",
-    "vscode-css-languageserver-bin": "^1.4.0"
+    "textlint-rule-prh": "^5.3.0",
+    "textlint-rule-spellcheck-tech-word": "^5.0.0"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "textlint": "textlint --rule no-todo '*.md'"
   },
   "author": "",
   "license": "ISC"
