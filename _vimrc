@@ -89,12 +89,13 @@ set background=dark
 "}}}
 
 "Quickfix {{{
-nnoremap <Leader>f :<C-u>cope<CR>
+nnoremap <Leader>f :<C-u>lopen<CR>
 
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
-    nnoremap <buffer> q :<C-u>quit<CR>
+    setlocal scrolloff=0
+    nnoremap <silent><buffer> q :<C-u>quit<CR>
     " nnoremap <silent><expr><buffer> <CR> <SID>is_loc() ? execute('.ll') : execute('.cc')
     nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
 endfunction
@@ -159,6 +160,8 @@ set cmdwinheight=5
 autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
 autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
 autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
+autocmd vimrc CmdwinEnter call feedkeys('G')
+
 " No equal window size.
 set noequalalways
 " nicely folding
@@ -632,14 +635,19 @@ endif
 
 let s:toml      = '~/dotfiles/vim/plugins/dein.toml'
 let s:lazy_toml = '~/dotfiles/vim/plugins/dein_lazy.toml'
-let s:lsp_toml = '~/dotfiles/vim/plugins/dein_lsp.toml'
+
+let s:lsp = 0
+let s:lsp_toml = s:lsp == 0 ? '~/dotfiles/vim/plugins/dein_vim_lsp.toml' :
+    \ s:lsp == 1 ? '~/dotfiles/vim/plugins/dein_lcnvim.toml' :
+    \ s:lsp == 2 ? '~/dotfiles/vim/plugins/dein_nvim_lsp.toml' : ''
+
 let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lsp_toml,      {'lazy': 0})
-    call dein#load_toml(s:lazy_toml, {'lazy': 1}, {'merged': 0})
+    call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
     call dein#save_state()
 

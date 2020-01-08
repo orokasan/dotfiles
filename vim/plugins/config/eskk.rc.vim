@@ -75,7 +75,6 @@ function! LLmyeskk() abort
 endfunction
 
 "IME/skkの状態に応じてsigncolumnの色を変える（WIP）
-
 autocmd vimrc User eskk-enable-post call s:eskk_enable_post()
 " InsertLeaveの前に発生するイベントであることに注意する
 autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_linenr()

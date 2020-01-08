@@ -1,56 +1,3 @@
-# [[plugins]]
-# repo = 'neovim/nvim-lsp'
-# merged = '0' "{{{
-# hook_add = '''
-# lua << EOF
-# local nvim_lsp = require'nvim_lsp'
-# local configs = require'nvim_lsp/skeleton'
-# if not nvim_lsp.pyls_ms then
-#   configs.pyls_ms = {
-#     default_config = {
-#       init_options = {
-#         filetypes = { "python" };
-#         analysisUpdates = true,
-#         asyncStartup = true,
-#         displayOptions = {},
-#         interpreter = {
-#           properties = {
-#             InterpreterPath = "/usr/local/bin/python3",
-#             Version = "3.7.5"
-#           }
-#         };
-#       };
-#       log_level = 2,
-#       settings = {
-#         python = {
-#           analysis = {
-#             disabled = {},
-#             errors = {},
-#             info = {}
-#           }
-#         }
-#       };
-#     };
-#   }
-# end
-# require'nvim_lsp'.pyls.setup{}
-# require'nvim_lsp'.texlab.setup{}
-# EOF
-
-# "lsp.txtそのまま
-# nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-# nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-# nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-# nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-# nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-# nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-# ''' # }}}
-
-# [[plugins]]
-# repo = 'Shougo/deoplete-lsp'
-# merged = '0'
-# hook_add = '''
-# '''
 
 # [[plugins]]
 # repo = 'prabirshrestha/vim-lsp'
@@ -201,22 +148,6 @@ repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 # merged = '0'
 # repo = 'prabirshrestha/asyncomplete.vim'
 
-# [[plugins]]
-# # on_if = '!has("nvim")'
-# merged = '0'
-
-[[plugins]]
-merged = '0'
-repo = 'autozimu/LanguageClient-neovim'
-hook_add = '''
-let g:LanguageClient_serverCommands = {
-    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-    \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
-    \ 'javascript.jsx': ['tcp://127.0.0.1:2089'],
-    \ 'python': ['/usr/local/bin/pyls'],
-    \ 'ruby': ['~/.rbenv/shims/solargraph', 'stdio'],
-    \ }
-'''
 # rev= 'next',
 # build = 'bash install.sh'
 

@@ -33,7 +33,6 @@ call deoplete#custom#source('file', 'rank', 1000)
 call deoplete#custom#source('neosnippet', 'rank', 250)
 call deoplete#custom#source('buffer', 'rank', 200)
 call deoplete#custom#source('look', 'rank', 50)
-call deoplete#custom#source('omni', 'mark' , '*')
 call deoplete#custom#source('omni', 'functions' , {
     \ 'python': '',
     \ })
@@ -54,11 +53,11 @@ call deoplete#custom#option({
     \ 'refresh_always': v:false,
     \ 'skip_multibyte': v:true,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'filter',
+    \ 'prev_completion_mode': '',
     \ 'ignore_sources': {
     \    }
     \ })
-
+set completeopt+=menuone
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
     \ 'converter_remove_overlap',

@@ -1,0 +1,19 @@
+[[plugins]]
+repo = 'autozimu/LanguageClient-neovim'
+branch = 'next'
+# install.shはreleaseからバイナリをダウンロードしてくる
+# そのバイナリでは動かなかったのでmake (cargo)からビルドした
+build = 'bash install.sh'
+hook_add = '''
+set hidden
+let g:LanguageClient_serverCommands = {
+    \ 'python': ['pyls'],
+    \ 'go': ['gopls'],
+    \ 'tex': ['texlab'],
+    \ }
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_hasSnippetSupport = 1
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+'''
