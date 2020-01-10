@@ -1,7 +1,13 @@
 autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre()
-
+" let g:eskk#log_cmdline_level = 4
+" let g:eskk#log_file_level = 4
 function! s:eskk_initial_pre() abort
     let t = eskk#table#new('rom_to_hira*', 'rom_to_hira')
+    call t.add_map('va', 'ゔぁ')
+    call t.add_map('vi', 'ゔぃ')
+    call t.add_map('vu', 'ゔ')
+    call t.add_map('ve', 'ゔぇ')
+    call t.add_map('vo', 'ゔぉ')
     call t.add_map('z ', '　')
     call t.add_map('~', '〜')
     call t.add_map('zc', '©')
@@ -14,15 +20,16 @@ function! s:eskk_initial_pre() abort
       call t.add_map(n . '.', n . '.')
     endfor
     call eskk#register_mode_table('hira', t)
-    " CursorLineNrを保存
+    " lでeskkを終了
+    EskkMap -type=disable l
+    " CursorLineNrを変数に保存
     let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 endfunction
 " eskk_keep_stateがうまく動かないので自前で設定
-nnoremap <silent><C-j> :call <SID>eskk_norm_toggle()<CR>
+nnoremap <silent><C-j> :call <SID>eskk_keep_enable_toggle()<CR>
 
+let g:eskk_keep_enable = 0
 let s:eskk_status = 0
-let g:eskk_toggle_status = 0
-
 "TODO :qitta
 augroup myeskk
 autocmd!
@@ -31,47 +38,45 @@ autocmd!
 augroup END
 
 " ノーマルモードでもeskkの状態を操作する
-function! s:eskk_norm_toggle() abort
-    if s:eskk_status || g:eskk_toggle_status
-        " eskkがオンの時に呼ぶとただオフにする
+function! s:eskk_keep_enable_toggle() abort
+    if s:eskk_status || g:eskk_keep_enable
         let s:eskk_status = 0
-        let g:eskk_toggle_status = 0
+        let g:eskk_keep_enable = 0
         call s:eskk_restore_highlight_linenr()
     else
         " eskkがオフの時に呼ぶと常にeskk onでインサートモードに入る状態になる
-        let g:eskk_toggle_status = 1
+        let g:eskk_keep_enable = 1
         call s:eskk_highlight_linenr()
     endif
 endfunction
 
 function! s:eskk_save_status() abort
-    if g:eskk_toggle_status
+    if g:eskk_keep_enable
         call s:eskk_highlight_linenr()
         return
     endif
-    let s:eskk_status = eskk#is_enabled() ? 1 : 0
+    " let s:eskk_status = eskk#is_enabled() ? 1 : 0
 endfunction
 
 function! s:eskk_insert_status() abort
     if &filetype ==# 'denite-filter' | return | endif
-    if g:eskk_toggle_status || s:eskk_status
+    " if g:eskk_keep_enable | s:eskk_status
+    if g:eskk_keep_enable
         call eskk#enable()
     endif
 endfunction
 
 " lightline用の関数
 function! LLmyeskk() abort
-    if !exists('*eskk#enable') | return 'aA' | endif
-    if eskk#is_enabled()
-        return printf(get(a:000, 0, '%s'),
+    let status = 'aA'
+    if exists('*eskk#enable') && eskk#is_enabled()
+        let status = printf(get(a:000, 0, '%s'),
             \ get(g:eskk#statusline_mode_strings,
             \ eskk#get_current_instance().mode, '??'))
     elseif mode() !=# 'i'
-        return g:eskk_toggle_status || s:eskk_status ? 'あ' : 'aA'
-    else
-        return 'aA'
+        let status = g:eskk_keep_enable || s:eskk_status ? 'あ' : 'aA'
     endif
-
+    return '[' . status . ']'
 endfunction
 
 "IME/skkの状態に応じてsigncolumnの色を変える（WIP）
@@ -80,8 +85,6 @@ autocmd vimrc User eskk-enable-post call s:eskk_enable_post()
 autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_linenr()
 
 function! s:eskk_enable_post()
-    " lでeskkを終了
-    EskkMap -type=disable l
     " ハイライトを有効化
     call s:eskk_highlight_linenr()
 endfunction
@@ -92,7 +95,7 @@ function! s:eskk_restore_highlight_linenr()
         silent execute(l:hi)
     else
         " statusが1のときは戻さない
-        if g:eskk_toggle_status || s:eskk_status
+        if g:eskk_keep_enable || s:eskk_status
             return
         else
             silent execute(l:hi)
@@ -105,10 +108,8 @@ function! s:gethighlight(hi) abort
     redir => hl
     silent execute 'highlight ' . a:hi
     redir END
-
     let hl = substitute(hl, '\w*\ze\s\{3}', '', 'g')
-    let hl = substitute(hl, 'xxx', '', '')
-    let hl = substitute(hl, '\n', '', '')
+    let hl = substitute(hl, '\(xxx\|\n\)', '', 'g')
     let hl = substitute(hl, 'links to .*', '', 'g')
     " bgが無い場合適当な色を埋め込む
     let hl = match(hl, 'guibg') == -1 ? 'guibg=#002b36 ' . hl : hl
@@ -117,7 +118,7 @@ endfunction
 
 function! s:eskk_highlight_linenr() abort
     " eskkがonの時のhighlightを指定
-    let s:eskk_hl = 'highlight CursorLineNr guibg=#b58900 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#073642 '
+    let s:eskk_hl = 'highlight CursorLineNr guibg=#cb4b16 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
     silent execute(s:eskk_hl)
 endfunction
 

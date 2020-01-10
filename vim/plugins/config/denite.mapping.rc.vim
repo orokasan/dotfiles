@@ -19,6 +19,7 @@ if finddir('.git', '.;') != ''
 else
     let path = expand('%:p:h')
 return path
+endif
 endfunction
 nnoremap <silent> [denite]S :<C-u>DeniteBufferDir
     \ -start-filter
@@ -30,20 +31,30 @@ nnoremap <silent> [denite]f :<C-u>DeniteProjectDir
 nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
     \ -start-filter
     \  file file:new<CR>
-"ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]t :<C-u>Denite
+
+"プロジェクトディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
     \ -start-filter
-    \ -path=$HOME
     \ file/rec file:new<CR>
-"ホームディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]T :<C-u>Denite
+"プロジェクトディレクトリ下のファイル一覧。
+nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
     \ -start-filter
-    \ -path=$HOME
     \ file file:new<CR>
+""ホームディレクトリ下のファイル一覧。
+"nnoremap <silent> [denite]t :<C-u>Denite
+"    \ -start-filter
+"    \ -path=$HOME
+"    \ file/rec file:new<CR>
+""ホームディレクトリ下のファイル一覧。
+"nnoremap <silent> [denite]T :<C-u>Denite
+"    \ -start-filter
+"    \ -path=$HOME
+"    \ file file:new<CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-      \ -buffer-name=stay
-      \ buffer<CR>
+    \ -buffer-name=float
+    \ -start-filter
+    \ buffer<CR>
 nnoremap <silent> \ :<C-u>Denite
     \ -winheight=5
     \ -start-filter
@@ -69,8 +80,8 @@ nnoremap <silent> [denite]g :<C-u>Denite
     \ `finddir('.git', '.;') != '' ? 'grep/git:::!' : 'grep'`<CR>
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
-    \ -buffer_name=normal
-      \ -winheight=5
+    \ -buffer_name=menu
+    \ -winheight=5
     \ menu<CR>
 "ヘルプ
 nnoremap <silent> [denite]h :<C-u>Denite
@@ -98,19 +109,20 @@ nnoremap <silent> [denite]R :<C-u>Denite
     \ -buffer-name=default
     \ -refresh
     \ -resume<CR>
-"open ale message
-nnoremap <silent> [denite]a :<C-u>Denite
-    \ -buffer-name=stay
-    \ -resume
-    \ ale<CR>
+""open ale message
+"nnoremap <silent> [denite]a :<C-u>Denite
+"    \ -buffer-name=float
+"    \ -resume
+"    \ ale<CR>
 "コマンド結果をdeniteに出力
 nnoremap [denite]p :<C-u>Denite
     \ -buffer-name=search
     \ output:
 " markdown TOC
-nnoremap <silent> [denite]o :<C-u>Denite
-    \ -buffer-name=stay
-    \ markdown<CR>
+" nnoremap <silent> [denite]o :<C-u>Denite
+"     \ -buffer-name=float
+"     \ -resume -auto-resume -refresh
+"     \ markdown<CR>
 nnoremap <silent> [denite]d :<C-u>Denite
     \ dirmark<CR>
 "bookmark by "add"action
@@ -118,14 +130,29 @@ nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
     \ dirmark/add<CR>
 " move next candidate
 nnoremap <silent> [denite]. :<C-u>Denite
-    \ -buffer-name=stay
+    \ -buffer-name=float
     \ -resume
     \ -cursor-pos=+1
     \ -immediately
     \ <CR>
 nnoremap <silent> [denite], :<C-u>Denite
     \ -resume
-    \ -buffer-name=stay
+    \ -buffer-name=float
     \ -cursor-pos=-1
     \ -immediately
     \ <CR>
+
+function! s:denite_lsp_diagnostics() abort
+let command = 'Denite -buffer-name=float -resume -auto-resume -refresh location_list'
+if !exists('*lsp#ui#vim#diagnostics#get_diagnostics_result')
+    silent! execute(command)
+else
+    let l:result = []
+    silent let l:result = lsp#ui#vim#diagnostics#get_diagnostics_result()
+    if !empty(l:result)
+    call setloclist(0, l:result)
+    endif
+    silent! execute(command)
+endif
+endfunction
+nnoremap <silent> sl :<C-u>call <SID>denite_lsp_diagnostics()<CR>

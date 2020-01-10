@@ -1,13 +1,12 @@
 call denite#custom#option('_', {
     \ 'winheight': 15,
     \ 'short_source_names': v:true,
-    \ 'highlight_mode_normal': 'Visual',
-    \ 'highlight_mode_insert': 'Visual',
-    \ 'prompt': '#',
-    \ 'highlight_matched_char' : 'Title',
-    \ 'max_dynamic_update_candidates' : '50000',
+    \ 'prompt': ' #',
+    \ 'highlight_matched_char': 'Title',
+    \ 'highlight_preview_line': 'Underlined',
+    \ 'max_dynamic_update_candidates': 50000,
     \ 'vertical_preview': v:false,
-    \ 'statusline': v:true,
+    \ 'statusline': v:false,
     \ 'direction': 'botright',
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
@@ -16,9 +15,9 @@ call denite#custom#option('_', {
         \ }
     \ })
 if has('nvim')
-    call denite#custom#option('_',{
-        \ 'filter_split_direction' : 'floating'
-        \ })
+call denite#custom#option('_',{
+    \ 'filter_split_direction' : 'floating'
+    \ })
 endif
 call denite#custom#option('normal', {
     \ 'winheight': 9
@@ -26,20 +25,20 @@ call denite#custom#option('normal', {
 call denite#custom#option('search', {
     \ 'winheight': 9
     \ })
-" call denite#custom#option('command', {
-"     \ 'winheight': 5,
-"     \ 'split': 'floating',
-"     \ 'wincol': &columns/2,
-"     \ 'winrow' : &lines/2
-"     \ })
-call denite#custom#option('stay',{
+call denite#custom#option('float',{
     \ 'split': 'floating',
-    \ 'wincol': &columns/2-2,
-    \ 'winwidth': &columns-5,
+    \ 'wincol': 0,
+    \ 'winwidth': &columns-2,
     \ 'winheight': 10,
     \ 'winrow' : &lines - 12
     \ })
-
+call denite#custom#option('menu',{
+    \ 'split': 'above_cursor',
+    \ 'wincol': &columns * 1/3,
+    \ 'winwidth': &columns/3,
+    \ 'winheight': 10,
+    \ 'winrow' : &lines *1/3,
+    \ })
 ""need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
     \ ['rg', '--files', '--no-messages','--hidden',
@@ -56,18 +55,6 @@ call denite#custom#var('grep', 'default_opts',
 " Add custom menus
 let s:menus = {
     \ }
-let s:vimtex_commands = ['VimtexClean', 'VimtexTocOpen', 'VimtexTocToggle',
-    \ 'VimtexCompileSS', 'VimtexRefreshFolds', 'VimtexReloadState', 'VimtexStop',
-    \ 'VimtexStatus', 'VimtexCompile', 'VimtexStopAll', 'VimtexErrors', 'VimtexLog',
-    \ 'VimtexCompileOutput', 'VimtexClean!', 'VimtexView', 'VimtexCountWords!',
-    \ 'VimtexReload', 'VimtexDocPackage', 'VimtexCountLetters', 'VimtexCountWords',
-    \ 'VimtexToggleMain', 'VimtexInfo', 'VimtexInfo!', 'VimtexCompileSelected',
-    \ 'VimtexStatus!', 'VimtexRSearch', 'VimtexImapsList', 'VimtexCountLetters!']
-let s:menus.tex = {'description': 'vimtex commands' }
-let s:menus.tex.command_candidates = []
-for v in range(len(s:vimtex_commands))
-    let s:menus.tex.command_candidates += [[s:vimtex_commands[v], s:vimtex_commands[v]]]
-endfor
 
 let s:dein_commands = ['DeinInstall', 'DeinRecache', 'DeinUpdate']
 let s:menus.dein = {'description': 'dein.vim commands' }
@@ -86,8 +73,7 @@ let s:menus.string.command_candidates = [
 call denite#custom#var('menu', 'menus', s:menus)
 
 " call denite#custom#kind('file', 'default_action', 'drop')
-" call denite#custom#source('file', 'matchers', ['matcher/fruzzy'])
-" call denite#custom#source('file/rec', 'matchers', ['matcher/fruzzy'])
+" call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy', 'matcher/ignore_globs'])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#alias('source', 'grep/git', 'grep')
@@ -104,6 +90,7 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ '*~', '*.o', '*.exe', '*.bak',
     \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
     \ '.hg/', '.git/*', '.bzr/', '.svn/',
+    \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
     \ 'tags', 'tags-*'])
 
 " 現在いるDeniteDirでgrep
@@ -136,11 +123,7 @@ endfunction
 function! s:denite_directory_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
-    " if isdirectory(dir)
-    "     let sdir = fnamemodify(dir, ':p:h:h')
-    " else
         let sdir = fnamemodify(dir, ':p:h')
-    " endif
     let fdir = '\"' . sdir . '\"'
     execute('Denite directory_rec:' . sdir)
 endfunction
@@ -149,13 +132,12 @@ call denite#custom#action(
     \ 'buffer,directory,file,openable,dirmark', 'directory/rec',
     \ function('s:denite_directory_rec')
     \ )
-
 call denite#custom#action(
     \ 'buffer,directory,file,openable,dirmark', 'grep',
     \ function('s:candidate_grep')
     \ )
 call denite#custom#action(
-    \ 'buffer,directory,file,openable,dirmark,dirmark', 'file/rec',
+    \ 'buffer,directory,file,openable,dirmark', 'file/rec',
     \ function('s:denite_rec')
     \ )
 

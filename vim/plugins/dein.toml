@@ -1,42 +1,18 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
-# [[plugins]]
-# repo = 'sheerun/vim-polyglot'
-# hook_add = '''
-# let g:polyglot_disabled = ['markdown', 'tsx', 'typescript', 'csv']
-# '''
-
 [[plugins]]
 repo =  'roxma/nvim-yarp'
-on_if = ''' !has('nvim') '''
+on_if = '!has("nvim")'
 
 [[plugins]]
 repo =  'roxma/vim-hug-neovim-rpc'
-on_if = ''' !has('nvim') '''
+on_if = '!has("nvim")'
 
 [[plugins]]
 repo =  'itchyny/lightline.vim'
 depends = ['lightline-bufferline']
 hook_add = 'source ~/dotfiles/vim/plugins/config/lightline.rc.vim'
-
-[[plugins]]
-repo =  'maximbaz/lightline-ale'
-depends = ['lightline.vim']
-hook_add = '''
-if has('mac')
-    let g:lightline#ale#indicator_checking = "\uf110"
-    let g:lightline#ale#indicator_warnings = ''
-    let g:lightline#ale#indicator_errors = ''
-    let g:lightline#ale#indicator_ok = ""
-else
-    let g:lightline#ale#indicator_checking = "\uf110"
-    let g:lightline#ale#indicator_warnings = "\uf48f"
-    let g:lightline#ale#indicator_errors = "\uf484"
-    let g:lightline#ale#indicator_ok = "\uf43a"
-endif
-
-''' # }}}
 
 [[plugins]]
 on_if = '!has("kaoriya")'
@@ -82,60 +58,11 @@ xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
 xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
 '''# }}} 
 
-#[[plugins]]
-#repo =  'ksh <buffer>enoy/vim-signature' {{{
-#hook_add = ' <buffer>''
-#let g:SignatureMap = {
-#    \ 'Leader'             :  "M",
-#    \ 'PlaceNextMark'      :  "M,",
-#    \ 'ToggleMarkAtLine'   :  "M.",
-#    \ 'PurgeMarksAtLine'   :  "M-",
-#    \ 'DeleteMark'         :  "dM",
-#    \ 'PurgeMarks'         :  "M<Space>",
-#    \ 'PurgeMarkers'       :  "M<BS>",
-#    \ 'GotoNextLineAlpha'  :  "']",
-#    \ 'GotoPrevLineAlpha'  :  "'[",
-#    \ 'GotoNextSpotAlpha'  :  "`]",
-#    \ 'GotoPrevSpotAlpha'  :  "`[",
-#    \ 'GotoNextLineByPos'  :  "]'",
-#    \ 'GotoPrevLineByPos'  :  "['",
-#    \ 'GotoNextSpotByPos'  :  "]`",
-#    \ 'GotoPrevSpotByPos'  :  "[`",
-#    \ 'GotoNextMarker'     :  "]-",
-#    \ 'GotoPrevMarker'     :  "[-",
-#    \ 'GotoNextMarkerAny'  :  "]=",
-#    \ 'GotoPrevMarkerAny'  :  "[=",
-#    \ 'ListBufferMarks'    :  "M/",
-#    \ 'ListBufferMarkers'  :  "M?"
-#\ }
-#
-#''' }}}
-
-# [[plugins]]
-# repo =  'Shougo/neomru.vim'
-# hook_add =''' " {{{
-# "denite-neomruでginaを無視
-# let g:neomru#do_validate = 1
-# "let g:neomru#file_mru_ignore_pattern = 
-# "      \'\~$\|\.\%(o\|exe\|dll\|bak\|zwc\|pyc\|sw[po]\)$'.
-# "      \'\|\%(^\|/\)\.\%(hg\|git\|bzr\|svn\)\%($\|/\)'.
-# "      \'\|^\%(\\\\\|/mnt/\|/media/\|/temp/\|/tmp/\|\%(/private\)\=/var/folders/\)'.
-# "      \'\|\%(^\%(gina\)://\)'.
-# "      \'\|\%(^\%(term\)://\)'
-# let g:neomru#file_mru_ignore_pattern = 'term://'
-# let g:neomru#time_format = '%m/%d %H:%M'
-# let g:neomru#file_mru_limit = 100
-# let g:neomru#file_mru_path= '~/.cache/neomru/file'
-# ''' # }}}
-
 [[plugins]]
 repo =  'mattn/webapi-vim'
 
 [[plugins]]
 repo = 'cespare/vim-toml'
-
-# [[plugins]]
-# repo = 'vim-airline/vim-airline'
 
 [[plugins]]
 repo =  'mengelbrecht/lightline-bufferline'
@@ -150,18 +77,6 @@ repo = 'orokasan/vim-quack-lightline'
 
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
-
-# [[plugins]]
-# repo =  'w0ng/vim-hybrid'
-
-[[plugins]]
-repo =  'morhetz/gruvbox'
-hook_add = ''' " {{{
-let g:gruvbox_contrast_dark = 'medium'
-let g:gruvbox_italicize_comments = 0
-let g:gruvbox_invert_selection = 0
-let g:gruvbox_guisp_fallback = 'bg'
-''' # }}}
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
@@ -201,8 +116,6 @@ vnoremap gs :<C-u>%s///g<Left><Left><Left>
 
 [[plugins]]
 repo = 'Shougo/neco-syntax'
-hook_add = '''
-'''
 
 [[plugins]]
 repo = 'hrsh7th/vim-neco-calc'
@@ -235,10 +148,6 @@ let g:airline#extensions#anzu#enabled = 0
 ''' # }}}
 
 [[plugins]]
-repo = 'moznion/hateblo.vim'
-depends = 'webapi-vim'
-
-[[plugins]]
 repo =  'kana/vim-operator-user'
 
 [[plugins]]
@@ -248,14 +157,15 @@ repo = 'deoplete-plugins/deoplete-zsh'
 repo =  'Shougo/neosnippet-snippets'
 
 [[plugins]]
-repo = 'Shougo/unite-outline'
-
-[[plugins]]
 repo = 'N0nki/denite-markdown'
 
 [[plugins]]
-#repo =  'iyuuya/denite-ale'
-repo =  'orokasan/denite-ale'
+# repo = 'chemzqm/unite-location'
+merged = '0'
+repo = 'orokasan/unite-location'
+
+[[plugins]]
+repo = 'itchyny/vim-quickrun-lightline-hooks'
 
 [[plugins]]
 repo = 'orokasan/denite-anzu'
@@ -264,13 +174,7 @@ repo = 'orokasan/denite-anzu'
 repo =  'kmnk/denite-dirmark'
 
 [[plugins]]
-repo = 'junegunn/fzf.vim'
-hook_add = '''
-set runtimepath+=/usr/local/opt/fzf/
-'''
-
-[[plugins]]
-repo = 'tpope/vim-commentary'
+repo = 'hrsh7th/vim-unmatchparen'
 
 [[plugins]]
 repo = 'itchyny/vim-parenmatch'
@@ -278,55 +182,6 @@ hook_add = '''
 let g:parenmatch_highlight = 0
 hi! link ParenMatch MatchParen
 '''
-
-# [[plugins]]
-# repo = 'mhinz/vim-startify'
-# on_if = '!has("nvim")'
-# hook_add = ''' " {{{
-# let g:startify_files_number = 5
-# let g:startify_list_order = [
-#         \ ['♻  Most Recently Used Files :'],
-#         \ 'files',
-#         \ ['♲  MRU in current directory :'],
-#         \ 'dir',
-#         \ ['⚑  Sessions :'],
-#         \ 'sessions',
-#         \ ['☺  Bookmark :'],
-#         \ 'bookmarks',
-#         \ ['Commands :'],
-#         \ 'commands'
-#         \ ]
-# let g:startify_bookmarks = ["~/dotfiles/_vimrc", "~/dotfiles/dein.toml", "~/dotfiles/dein_lazy.toml"]
-# let g:startify_commands = [
-#     \ {'di': ['DeinInstall', 'DeinInstall']},
-#     \ {'du': ['DeinUpdate', 'DeinUpdate']},
-#     \ {'dr': ['DeinRecache', 'DeinRecache']}
-#     \ ]
-
-#     let g:ascii = [
-#           \ '        __',
-#           \ '.--.--.|__|.--------.',
-#           \ '|  |  ||  ||        |',
-#           \ ' \___/ |__||__|__|__|',
-#           \ ''
-#           \]
-# let g:startify_custom_header = g:ascii
-# " autocmd User Startified for key in ['b','s','t','v'] |
-# "           \ execute 'nunmap <buffer>' key | endfor
-# ''' # }}}
-
-#[[plugins]]
-#on_if ='has("nvim")'
-#repo = 'ncm2/float-preview.nvim'
-#hook_add = '''
-#let g:float_preview#docked = 0
-#let g:float_preview#max_height = 5
-#'''
-
-# [[plugins]]
-# repo = 'voldikss/vim-floaterm'
-# hook_add = '''
-# '''
 
 [[plugins]]
 ## only for incsearch-migemo.vim

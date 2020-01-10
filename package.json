@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "vim-language-server": "^1.4.1"
+  },
   "devDependencies": {
     "@textlint-ja/textlint-rule-no-synonyms": "^1.0.2",
     "bash-language-server": "^1.7.0",

@@ -4,7 +4,7 @@ let g:lightline = {
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount'],
-            \ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'percent', 'denitebuffer',  'IMEstatus']
+            \ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'quickrun', 'percent', 'denitebuffer',  'IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
@@ -30,6 +30,7 @@ let g:lightline = {
         \ 'git':'LLgit',
         \ 'denitebuffer' : 'LLDeniteBuffer',
         \ 'denitefilter' : 'LLDeniteFilter',
+        \ 'quickrun': 'LL_quickrun_running',
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
@@ -46,14 +47,18 @@ let g:lightline = {
     \ }
 \ }
 
+autocmd vimrc User lsp_diagnostic_done call lightline#update()
+
 let g:lightline.colorscheme = 'quack'
 " if has('nvim')
 "     let g:lightline.subseparator= { 'left': '', 'right': '' }
 "     let g:lightline.separator= { 'left': '', 'right': '' }
 " endif
-if has('nvim')
+if !has('nvim')
     let g:lightline.subseparator= { 'left': '', 'right': '' }
     let g:lightline.separator= { 'left': '', 'right': '' }
+    let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
+    let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 endif
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
@@ -74,9 +79,6 @@ let g:component_function_visible_condition = {
         \ 'git': 1,
         \ 'lineinfo': 1
         \ }
-
-let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
-let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 
 " if !exists('g:disable_IM_Control') && g:disable_IM_Control is 1
 "     let g:lightline.component += {
@@ -124,11 +126,21 @@ function! LLLspWarning() abort
     return  d.warning ? '' . d.warning : ''
 endfunction
 
+function! LL_quickrun_running()
+    if !exists('*quickrun#is_running')
+        return ''
+    elseif quickrun#is_running()
+        return "QuickRunning..."
+    else
+        return ""
+    endif
+endfunction
+
 function! LLMode()
     return &filetype is# 'unite' ? 'Unite' :
         \ &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'defx' ? 'Defx' :
-        \ &filetype is# 'denite' ? '' :
+        \ &filetype is# 'denite' ? LLDeniteMode() :
         \ &filetype is# 'gundo' ? 'Gundo' :
         \ &filetype is# 'tweetvim' ? 'Tweetvim' :
         \ lightline#mode()
@@ -165,9 +177,6 @@ endfunction
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
 
 function! LLInactiveFilename()
-    " if &filetype is# 'denite'
-    "     return s:denitesource() . '  ' . s:denitebuf()
-    " endif
     return &filetype !~# s:ignore_filetype ? expand('%:t')
 	\ : &filetype is# 'denite' ? '': LLMode()
 endfunction
@@ -176,7 +185,7 @@ function! LLeskk() abort
     if &filetype =~# s:ignore_filetype || !s:threshold(1)
         return ''
     elseif !exists('*LLmyeskk')
-        return 'aA'
+        return '[aA]'
     else
         return LLmyeskk()
     endif
@@ -201,8 +210,9 @@ endfunction
 
 function! LLCharcount()
     if &filetype !~# s:ignore_filetype
-        return s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
+        let abbr = s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
             \ s:threshold(2) ? '' . s:llcharcount : ''
+        return abbr
     else
         return ''
     endif
@@ -271,57 +281,65 @@ function! s:llgitcache() abort
     endif
 endfunction
 
- " 検索ステータスを表示 (vim-anzuを利用) {{{
- autocmd vimrc InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status')
-     \| call anzu#clear_search_status() | endif
+" 検索ステータスを表示 (vim-anzuを利用) {{{
+autocmd vimrc InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status')
+    \| call anzu#clear_search_status() | endif
 
- autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
- autocmd vimrc User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
+autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
+autocmd vimrc User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
 
- function! s:llanzu()
-     let s:anzu = anzu#search_status()
-     return strwidth(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
- endfunction "}}}
+function! s:llanzu()
+    let s:anzu = anzu#search_status()
+    return strwidth(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
+endfunction "}}}
 
- " Deniteステータス {{{
- function! LLDeniteFilter()
-     return s:denite_statusline()
- endfunction
+" Deniteステータス {{{
+function! LLDeniteFilter()
+    return s:denite_statusline()
+endfunction
 
- function! LLDeniteBuffer() abort
-     return s:denite_statusline()
- endfunction
+function! LLDeniteBuffer() abort
+    return s:denite_statusline()
+endfunction
 
- function! s:denite_statusline() abort
-     if &filetype isnot# 'denite'
-         return ''
-     else
-         let str = s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
-         return winwidth(0) * 2/3 > strwidth(str) ? str : s:denitesource()
+function! LLDeniteMode() abort
+    if len(denite#get_status('input')) > 0
+        return ''
+    else
+        return '# Denite'
     endif
- endfunction
+endfunction
 
- function! s:deniteinput() abort
-     return denite#get_status('input')
- endfunction
+function! s:denite_statusline() abort
+    if &filetype isnot# 'denite'
+        return ''
+    else
+        let str = s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
+        return winwidth(0) * 2/3 > strwidth(str) ? str : s:denitesource()
+   endif
+endfunction
 
- function! s:denitebuf()
-     return 'denite:' . denite#get_status('buffer_name')
- endfunction
+function! s:deniteinput() abort
+    return denite#get_status('input')
+endfunction
 
- function! s:denitesource()
-     let l:sources = denite#get_status('sources')
-     return substitute(l:sources, " file:\['new'\\].*", '','g')
- endfunction
+function! s:denitebuf()
+    return 'denite:' . denite#get_status('buffer_name')
+endfunction
 
- function! s:denitepath() abort
-     let l:path =denite#get_status('path')
-     let l:path = substitute(l:path, '\(\[\|\]\)', '', 'g')
-     let l:path = fnamemodify(l:path,':~')
-     if strwidth(l:path) > 40
-         let path = '.../' . fnamemodify(path,':h:h:t'). '/'
-             \ . fnamemodify(path,':h:t'). '/'. fnamemodify(path, ':t')
-     endif
+function! s:denitesource()
+    let l:sources = denite#get_status('sources')
+    return substitute(l:sources, " file:\['new'\\].*", '','g')
+endfunction
 
-     return '[' . l:path . ']'
- endfunction
+function! s:denitepath() abort
+    let l:path =denite#get_status('path')
+    let l:path = substitute(l:path, '\(\[\|\]\)', '', 'g')
+    let l:path = fnamemodify(l:path,':~')
+    if strwidth(l:path) > 40
+        let path = '.../' . fnamemodify(path,':h:h:t'). '/'
+            \ . fnamemodify(path,':h:t'). '/'. fnamemodify(path, ':t')
+    endif
+
+    return '[' . l:path . ']'
+endfunction

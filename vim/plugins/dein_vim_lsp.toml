@@ -1,5 +1,7 @@
 [[plugins]]
-repo = 'prabirshrestha/vim-lsp'
+repo = 'orokasan/vim-lsp'
+# lazy = 1'
+# on_ft = ['markdown', 'tex', 'python', 'go']
 hook_add = '''
 let s:pyls_config = {'pyls': {'plugins': {
     \   'pycodestyle': {'enabled': v:true},
@@ -13,70 +15,18 @@ let s:pyls_config = {'pyls': {'plugins': {
     \ }
     \ }
     \}
-
-if executable('pyls')
-    " pip install python-language-server
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
-        \ })
-    autocmd vimrc BufWrite *.py call execute('LspDocumentFormatSync', 'silent')
-endif
-if executable('texlab')
-   au User lsp_setup call lsp#register_server({
-      \ 'name': 'texlab',
-      \ 'cmd': {server_info->['texlab']},
-      \ 'whitelist': ['tex', 'bib', 'sty'],
-      \ })
-endif
-if executable('gopls')
-  augroup LspGo
-    au!
-    autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'go-lang',
-        \ 'cmd': {server_info->['gopls']},
-        \ 'whitelist': ['go'],
-        \ 'workspace_config': {'gopls': {
-        \     'watchFileChanges': v:true,
-        \     'completeUnimported': v:true,
-        \     'caseSensitiveCompletion': v:true,
-        \     'hoverKind': 'SynopsisDocumentation',
-        \     'usePlaceholders': v:true,
-        \     'deepCompletion': v:true,
-        \     'completionDocumentation': v:true,
-        \   }},
-        \ })
-  augroup END
-endif
-let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
-let s:efm_log_path = '-log=' .. expand('~/')
-augroup LspEFM
-  au!
-  autocmd User lsp_setup call lsp#register_server({
-      \ 'name': 'efm-langserver',
-      \ 'cmd': {server_info->['efm-langserver', s:efm_config_path]},
-      \ 'whitelist': ['tex','eruby', 'markdown', 'yaml'],
-      \ })
-augroup END
-
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
     nmap <buffer> gd <plug>(lsp-declaration)
+    if &ft !=# 'vim'
     nmap <buffer> K <plug>(lsp-hover)
-    nmap <buffer> <C-k> <plug>(lsp-signature_help)
+    endif
+    nmap <buffer> <C-x> <plug>(lsp-signature_help)
     nmap <buffer> ,n <plug>(lsp-next-error)
     nmap <buffer> ,p <plug>(lsp-previous-error)
     nmap <buffer> sa <plug>(lsp-document-diagnostics)
 endfunction
-
-augroup lsp_install
-    au!
-    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-    autocmd User lsp_buffer_enabled call s:lsp_local_setting()
-augroup END
-
 function! s:lsp_setup()
     let g:lsp_auto_enable = 1
     " let g:lsp_insert_text_enabled = 1
@@ -92,9 +42,59 @@ function! s:lsp_setup()
     let g:lsp_signs_hint = {'text': '?'}
 endfunction
 
-augroup vimrc_lsp_icons
-  au!
-  autocmd User lsp_setup call s:lsp_setup()
+let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
+let s:efm_log_path = '-log=' .. expand('~/')
+augroup VimLsp
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:lsp_local_setting()
+    autocmd User lsp_setup call s:lsp_setup()
+    if executable('pyls')
+        " pip install python-language-server
+        au User lsp_setup call lsp#register_server({
+            \ 'name': 'pyls',
+            \ 'cmd': {server_info->['pyls']},
+            \ 'whitelist': ['python'],
+            \ 'workspace_config': {}
+            \ })
+        " autocmd vimrc BufWrite *.py call execute('LspDocumentFormatSync', 'silent')
+    endif
+    if executable('vim-language-server')
+        au User lsp_setup call lsp#register_server({
+            \ 'name': 'vimls',
+            \ 'cmd': {server_info->['npx','vim-language-server','--stdio']},
+            \ 'whitelist': ['vim'],
+            \ 'initialization_options': { 'vimruntime': $VIMRUNTIME, 'runtimepath': &rtp },
+            \ })
+    endif
+    if executable('texlab')
+       au User lsp_setup call lsp#register_server({
+          \ 'name': 'texlab',
+          \ 'cmd': {server_info->['texlab']},
+          \ 'whitelist': ['tex', 'bib', 'sty'],
+          \ })
+    endif
+    if executable('gopls')
+        autocmd User lsp_setup call lsp#register_server({
+            \ 'name': 'go-lang',
+            \ 'cmd': {server_info->['gopls']},
+            \ 'whitelist': ['go'],
+            \ 'workspace_config': {'gopls': {
+            \     'watchFileChanges': v:true,
+            \     'completeUnimported': v:true,
+            \     'caseSensitiveCompletion': v:true,
+            \     'hoverKind': 'SynopsisDocumentation',
+            \     'usePlaceholders': v:true,
+            \     'deepCompletion': v:true,
+            \     'completionDocumentation': v:true,
+            \   }},
+            \ })
+    endif
+    autocmd User lsp_setup call lsp#register_server({
+      \ 'name': 'efm-langserver',
+      \ 'cmd': {server_info->['efm-langserver', s:efm_config_path]},
+      \ 'whitelist': ['tex','eruby', 'markdown', 'yaml'],
+      \ })
 augroup END
 
 autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
@@ -111,6 +111,7 @@ autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 		    \   'winhighlight', 'Normal:PopupWindow')
 	    endif
 	augroup end
+
 ''' # }}}
 
 [[plugins]]
@@ -139,12 +140,14 @@ repo = 'prabirshrestha/async.vim'
 # merged = '0'
 
 [[plugins]]
-merged = '0'
-repo = 'thomasfaingnaert/vim-lsp-snippets'
+lazy = 1'
+on_source = ['deoplete.nvim']
+repo = 'hrsh7th/vim-lsp-snippets'
 
 [[plugins]]
-merged = '0'
-repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+lazy = 1'
+on_source = ['deoplete.nvim']
+repo = 'hrsh7th/vim-lsp-neosnippet'
 
 # [[plugins]]
 # # on_if = '!has("nvim")'
@@ -160,5 +163,12 @@ lazy = '1'
 on_source = ['deoplete.nvim']
 depends = ['vim-lsp']
 repo = 'lighttiger2505/deoplete-vim-lsp'
+hook_source ='''
+call deoplete#custom#option('sources', {
+    \ 'python': ['lsp','neosnippet', 'buffer'],
+    \ 'go': ['lsp','neosnippet', 'buffer'],
+    \ 'tex' :['lsp','neosnippet', 'buffer'],
+    \ })
+'''
 
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'

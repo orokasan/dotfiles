@@ -90,17 +90,21 @@ set background=dark
 
 "Quickfix {{{
 nnoremap <Leader>f :<C-u>lopen<CR>
-
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
-    setlocal scrolloff=0
     nnoremap <silent><buffer> q :<C-u>quit<CR>
-    " nnoremap <silent><expr><buffer> <CR> <SID>is_loc() ? execute('.ll') : execute('.cc')
-    nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
+    " nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
+    " noremap <silent><buffer><expr> j <SID>jk(v:count1)
+    " noremap <silent><buffer><expr> k <SID>jk(-v:count1)
+    noremap <buffer> p  <CR>zz<C-w>p
+    nnoremap <silent> <buffer> dd :call <SID>del_entry()<CR>
+    nnoremap <silent> <buffer> x :call <SID>del_entry()<CR>
+    vnoremap <silent> <buffer> d :call <SID>del_entry()<CR>
+    vnoremap <silent> <buffer> x :call <SID>del_entry()<CR>
+    nnoremap <silent> <buffer> u :<C-u>call <SID>undo_entry()<CR>
 endfunction
-
-function s:is_loc()
+function! s:is_loc()
 let wi = getwininfo(win_getid())[0]
 if wi.loclist
     return execute('.ll')
@@ -109,6 +113,42 @@ elseif wi.quickfix
 else
     echom 'here is not quickfix and location list.'
 endif
+endfunction
+
+function! s:jk(motion)
+  let max = line('$')
+  let list = getloclist(0)
+  if empty(list) || len(list) != max
+    let list = getqflist()
+  endif
+  let cur = line('.') - 1
+  let pos = g:V.modulo(cur + a:motion, max)
+  let m = 0 < a:motion ? 1 : -1
+  while cur != pos && list[pos].bufnr == 0
+    let pos = g:V.modulo(pos + m, max)
+  endwhile
+  return (pos + 1) . 'G'
+endfunction
+
+if exists('*s:undo_entry')
+  finish
+endif
+
+function! s:undo_entry()
+  let history = get(w:, 'qf_history', [])
+  if !empty(history)
+    call setqflist(remove(history, -1), 'r')
+  endif
+endfunction
+
+function! s:del_entry() range
+  let qf = getqflist()
+  let history = get(w:, 'qf_history', [])
+  call add(history, copy(qf))
+  let w:qf_history = history
+  unlet! qf[a:firstline - 1 : a:lastline - 1]
+  call setqflist(qf, 'r')
+  execute a:firstline
 endfunction
 "}}}
 
@@ -123,7 +163,7 @@ set sidescroll=1
 " add japanese matchpairs
 set showmatch       " highlight matched pairs
 set matchtime=1     " highlighting long
-set matchpairs+=（:）,「:」,『:』,【:】,［:］,＜:＞
+set matchpairs+=<:>,`:`,（:）,「:」,『:』,【:】,［:］,＜:＞
 
 set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
@@ -152,6 +192,11 @@ else
   set viminfo=!,'300,<50,s10,h,n~/.viminfo
 endif
 
+" set unnamed register to clipboard.
+" NOTE: not working well with CTRL-V in neovim.
+" workaround in Neovim section.
+set clipboard+=unnamed
+
 " Set minimal height for current window.
 set winheight=1
 set winwidth=1
@@ -161,7 +206,7 @@ autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
 autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
 autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
 autocmd vimrc CmdwinEnter call feedkeys('G')
-
+autocmd vimrc CmdwinEnter setlocal scrolloff=0
 " No equal window size.
 set noequalalways
 " nicely folding
@@ -267,9 +312,12 @@ xnoremap y ygv<ESC>
 nnoremap vv V
 nnoremap V v$
 
-nnoremap <Tab> %
-vnoremap <Tab> %
-xnoremap <Tab> %
+nmap <silent> <TAB>  <Plug>(MatchitNormalForward)
+nmap <silent> g<TAB> <Plug>(MatchitNormalBackward)
+xmap <silent> <TAB>  <Plug>(MatchitVisualForward)
+xmap <silent> g<TAB> <Plug>(MatchitVisualBackward)
+omap <silent> <TAB>  <Plug>(MatchitOperationForward)
+omap <silent> g<TAB> <Plug>(MatchitOperationBackward)
 nnoremap <C-p> <C-i>
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
@@ -565,7 +613,6 @@ endif
 if has('GUI')
     let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
     set guioptions+=M
-    set clipboard+=unnamed
     ""Nm秒後にカーソル点滅開始
     set guicursor=n:blinkwait2000
     let no_buffers_menu = 1
@@ -611,11 +658,13 @@ endif
 " Neovim {{{
 if has('nvim')
     " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
-    "float windowで補完するための設定
-    set clipboard+=unnamed
-    " set completeopt+=menuone
+    " fix CTRL-V yank issue
+    set clipboard=
+    nnoremap y "*y
+    xnoremap y "*y
+    set completeopt+=menuone
     set completeopt-=preview
-    "set completeopt+=popuphidden
+    " show complettion popup in commandline.
     set wildoptions=pum
     set winblend=20
 endif
@@ -646,7 +695,7 @@ let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
     call dein#save_state()
@@ -741,7 +790,5 @@ hi!  link NonText Comment
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 au vimrc BufRead .textlintrc set ft=json
 
-" unbuflisted unnamed buffer
-au vimrc BufNew '' setlocal nobuflisted
-
+	  let g:fakeclip_provide_clipboard_key_mappings = 1
 " vim:set foldmethod=marker:

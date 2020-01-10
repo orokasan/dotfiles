@@ -4,18 +4,19 @@ repo =  'orokasan/denite.nvim'
 on_cmd = ['Denite']
 hook_add = 'source ~/dotfiles/vim/plugins/config/denite.mapping.rc.vim'
 hook_source = 'source ~/dotfiles/vim/plugins/config/denite.rc.vim'
-
 [plugins.ftplugin]
 denite = '''
+let g:my_denite_filter_winblend_config = 1
+let g:my_denite_filter_winblend_config = b:denite.buffer_name !~# '\v(float|menu)' ? 1 : 0
 if has('nvim')
-    setlocal winblend=0
+    setlocal winblend=10
 endif
 setlocal signcolumn=yes
 nnoremap <silent><buffer><expr> j
 \ line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k
 \ line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <TAB>
+nnoremap <silent><buffer><expr> a
     \ denite#do_map('choose_action')
 nnoremap <silent><buffer><expr> <CR>
     \ denite#do_map('do_action')
@@ -29,8 +30,13 @@ nnoremap <silent><buffer><expr> d
     \ denite#do_map('do_action', 'delete')
 nnoremap <silent><buffer><expr> l
     \ denite#do_map('do_action')
+if g:my_denite_filter_winblend_config
 nnoremap <silent><buffer><expr> p
     \ denite#do_map('do_action', 'preview')
+else
+nnoremap <silent><buffer><expr> p
+    \ denite#do_map('do_action', 'highlight')
+endif
 nnoremap <silent><buffer><expr> q
     \ denite#do_map('quit')
 nnoremap <silent><buffer><expr> i
@@ -38,24 +44,23 @@ nnoremap <silent><buffer><expr> i
 nnoremap <silent><buffer><expr> t
     \ denite#do_map('toggle_select').'j'
 nnoremap <silent><buffer><expr> r
-    \ denite#do_map('toggle_matchers:regexp')
+    \ denite#do_map('toggle_matchers', 'matcher/regexp,matcher/fuzzy')
 nnoremap <silent><buffer><expr> <C-r>
     \ denite#do_map('do_action','file/rec')
 nnoremap <silent><buffer><expr> <C-e>
     \ denite#do_map('do_action','defx')
 nnoremap <silent><buffer><expr> <C-d>
-    \ denite#do_map('do_action','directory_rec')
+    \ denite#do_map('do_action','directory/rec')
 nnoremap <silent><buffer><expr> <C-g>
     \ denite#do_map('do_action','grep')
 nnoremap <silent><buffer><expr> <C-s>
     \ denite#do_map('change_sorters', 'sorter/rank,sorter/word')
 '''
 denite-filter = '''
-setlocal winblend=100
-imap <silent><buffer><expr> <CR>
-    \ denite#get_status('buffer_name') is# 'command'
-    \ ? "\<ESC>\<CR>"
-    \ : "<Plug>(denite_filter_update)"
+if g:my_denite_filter_winblend_config ==# 1
+    setlocal winblend=100
+endif
+inoremap <silent><buffer> <CR> <ESC><C-w>p
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
 inoremap <silent><buffer> <C-j>  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
@@ -70,36 +75,6 @@ nmap <silent><buffer> q <Plug>(denite_filter_quit)q
 '''
 
 [[plugins]]
-repo =  'Shougo/neoyank.vim'
-on_event = 'TextYankPost'
-on_source = ['denite.nvim']
-
-[[plugins]]
-repo =  'Shougo/unite.vim'
-on_cmd = ['Unite']
-
-[[plugins]]
-repo = 'glidenote/memolist.vim'
-on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
-hook_add = '''
-nnoremap <Leader>mn  :MemoNew<CR>
-nnoremap <silent><Leader>ml  :<C-u>Denite 
-    \ -buffer-name=normal
-    \ file/rec:~/GoogleDrive/memo<CR>
-nnoremap <silent><Leader>mg  :<C-u>Denite 
-    \ -buffer-name=normal
-    \ grep:~/GoogleDrive/memo::<CR>
-" use denite (default 0)
-let g:memolist_denite = 1
-let g:memolist_path = "~/GoogleDrive/memo"
-let g:memolist_template_dir_path = "~/GoogleDrive/memo/template"
-let g:memolist_memo_suffix = "markdown"
-let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
-" categories prompt (default 0)
-let g:memolist_prompt_categories = 1
-'''
-
-[[plugins]]
 repo =  'Shougo/defx.nvim'
 on_cmd = 'Defx'
 hook_add = '''
@@ -111,6 +86,10 @@ nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`ex
 nnoremap <silent> <Plug>(defxprojectdir) :<C-u>Defx ~/<CR>
 '''
 hook_source = '''
+let s:defx_ignore_files =
+    \ '.*,ntuser*,desktop.ini,__pycache__,' .
+    \ '*.aux,*.dvi,*.bbl,*.out,*.fdb_latexmk,*.bst,*.blg,*.toc'
+
 call defx#custom#option('_', {
     \ 'winwidth': 35,
     \ 'split': 'vertical',
@@ -118,7 +97,7 @@ call defx#custom#option('_', {
     \ 'columns':'mark:indent:icons:filename',
     \ 'sort': 'TIME',
     \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
-    \ 'ignored_files':  '.*,*.aux, ntuser*, desktop.ini , __pycache__'
+    \ 'ignored_files': s:defx_ignore_files
     \ })
 function! s:get_defx_bufferdir(candidate) abort
     if line('.') == 1
@@ -246,27 +225,10 @@ let g:defx_icons_extensions = {
     \'doc' : { 'icon':'', 'color': s:colors.blue},
     \'xlsx' : { 'icon':'', 'color': s:colors.green},
     \'pptx' : { 'icon':'', 'color': s:colors.orange},
-    \'ppt' : { 'icon':'', 'color': s:colors.orange}
+    \'ppt' : { 'icon':'', 'color': s:colors.orange},
+    \'tex' : { 'icon':'', 'color': s:colors.orange},
     \}
 '''
-
-[[plugins]]
-repo = 'Shougo/deol.nvim'
-on_cmd = ['Deol']
-hook_add = '''
-nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
-'''
-
-[[plugins]]
-repo =  'Shougo/deoplete.nvim'
-on_if = 'has("nvim")'
-on_event = 'InsertEnter'
-hook_source = 'source ~/dotfiles/vim/plugins/config/deoplete.rc.vim'
-
-[[plugins]]
-repo =  'Shougo/neco-vim'
-on_source = ['deoplete','neocomplete']
-on_ft = 'vim'
 
 [[plugins]]
 repo =  'Shougo/neosnippet'
@@ -287,17 +249,39 @@ imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 '''
 
 [[plugins]]
-repo =  'tyru/eskk.vim'
+repo =  'Shougo/deoplete.nvim'
+on_if = 'has("nvim")'
+on_event = 'InsertEnter'
+hook_source = 'source ~/dotfiles/vim/plugins/config/deoplete.rc.vim'
+
+[[plugins]]
+repo =  'Shougo/neocomplete.vim'
+on_if = '!has("nvim")'
+on_event = 'InsertEnter'
+
+[[plugins]]
+repo = 'Shougo/deol.nvim'
+on_cmd = ['Deol']
+hook_add = '''
+nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
+'''
+
+[[plugins]]
+repo =  'Shougo/neco-vim'
+on_source = ['deoplete','neocomplete']
+on_ft = 'vim'
+
+[[plugins]]
+# repo =  'tyru/eskk.vim'
+repo =  'orokasan/eskk.vim'
 on_map = {icrtn = '<Plug>(eskk:'}
 hook_add = '''
-
 "let g:eskk#marker_henkan = '' "''
 let g:eskk#marker_okuri = '*'
-" let g:eskk#marker_henkan_select = '' " ''
-let g:eskk#rom_input_style = 'skk'
+let g:eskk#rom_input_style = 'msime'
 let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
-let g:eskk#tab_select_completion = 1
+" let g:eskk#tab_select_completion = 1
 let g:eskk#start_completion_length = 2
 let g:eskk#revert_henkan_style = 'okuri'
 " backspaceで確定
@@ -350,6 +334,26 @@ let s:lexima_default_rules = [
 \ {'char': '[', 'input_after': ']'},
 \ {'char': '[', 'at': '\\\%#'},
 \ {'char': ']', 'at': '\%#]', 'leave': 1},
+\ {'char': '<BS>', 'at': '[\%#]', 'delete': 1},
+\ {'char': '"', 'input_after': '"'},
+\ {'char': '"', 'at': '\%#"', 'leave': 1},
+\ {'char': '"', 'at': '\\\%#'},
+\ {'char': '"', 'at': '^\s*\%#', 'filetype': 'vim'},
+\ {'char': '"', 'at': '\%#\s*$', 'filetype': 'vim'},
+\ {'char': '<BS>', 'at': '"\%#"', 'delete': 1},
+\ {'char': "'", 'input_after': "'"},
+\ {'char': "'", 'at': '\w\%#''\@!'},
+\ {'char': "'", 'at': '\\\%#'},
+\ {'char': "'", 'at': '\\\%#', 'leave': 1, 'filetype': ['vim', 'sh', 'csh', 'ruby', 'tcsh', 'zsh']},
+\ {'char': "'", 'filetype': ['haskell', 'lisp', 'clojure', 'ocaml', 'reason', 'scala', 'rust']},
+\ {'char': '<BS>', 'at': "'\\%#'", 'delete': 1},
+\ {'char': '`', 'input_after': '`'},
+\ {'char': '`', 'at': '\%#`', 'leave': 1},
+\ {'char': '<BS>', 'at': '`\%#`', 'delete': 1},
+\ {'char': '`', 'filetype': ['ocaml', 'reason']},
+\ {'char': '`', 'at': '``\%#', 'input_after': '```'},
+\ {'char': '`', 'at': '\%#```', 'leave': 3},
+\ {'char': '<BS>', 'at': '```\%#```', 'input': '<BS><BS><BS>', 'delete': 3},
 \ ]
 for rule in s:lexima_default_rules
   call lexima#add_rule(rule)
@@ -388,53 +392,31 @@ hook_source ='''
 let g:indent_guides_exclude_filetypes = ['help', 'defx']
 '''
 
-#[[plugins]]
-##repo =  'dense-analysis/ale'
-#repo =  'orokasan/ale'
-#on_event = 'InsertLeave'
-#hook_source ='''
-#"https://efcl.info/2015/09/10/introduce-textlint/
-#"https://koirand.github.io/blog/2018/textlint/
-#"vint: pip install --pre vim-vint
-#"preset-ja-technical-writing
-#"npm install textlint-rule-preset-ja-technical-writing@beta
-#let g:ale_echo_delay = 400
-#let g:ale_textlint_change_directory = 1
-#let g:ale_disable_lsp = 1
-#let g:ale_use_global_executables=1
-#let g:ale_set_balloons =0
-#let g:ale_linters = {
-#    \ 'markdown': ['textlint'],
-#    \ 'pandoc' : ['textlint'],
-#    \ 'vim':['vint'],
-#    \ 'python': [''],
-#    \ 'go': [''],
-#    \ 'text':['textlint']
-#    \ }
-#let g:ale_echo_msg_format = '%code: %%s [%linter%]'
-#let g:ale_set_loclist = 0
-#let g:ale_set_quickfix = 1
-#let g:ale_textlint_options = '.textlintrc'
-#let g:ale_sign_column_always = 1
-#let g:ale_lint_delay = 5000
-#let g:ale_lint_on_enter = 0
-#let g:ale_lint_on_text_changed = 0
-#let g:ale_lint_on_filetype_changed = 0
-#let g:ale_open_list = 0
-#let g:ale_keep_list_window_open = 0
-#let g:ale_echo_msg_error_str = 'E'
-#let g:ale_echo_msg_warning_str = 'W'
-#let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-#if has('mac')
-#    let g:ale_sign_error = ''
-#    let g:ale_sign_warning = ''
-#    let g:ale_statusline_format = ['%d', '%d', '']
-#else
-#    let g:ale_sign_error = ''
-#    let g:ale_sign_warning = ''
-#    let g:ale_statusline_format = ['%d', '%d', '']
-#endif
-#'''
+[[plugins]]
+repo =  'Shougo/neoyank.vim'
+on_event = 'TextYankPost'
+on_source = ['denite.nvim']
+
+[[plugins]]
+repo = 'glidenote/memolist.vim'
+on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
+hook_add = '''
+nnoremap <Leader>mn  :MemoNew<CR>
+nnoremap <silent><Leader>ml  :<C-u>Denite 
+    \ -buffer-name=normal
+    \ file/rec:~/GoogleDrive/memo<CR>
+nnoremap <silent><Leader>mg  :<C-u>Denite 
+    \ -buffer-name=normal
+    \ grep:~/GoogleDrive/memo::<CR>
+" use denite (default 0)
+let g:memolist_denite = 1
+let g:memolist_path = "~/GoogleDrive/memo"
+let g:memolist_template_dir_path = "~/GoogleDrive/memo/template"
+let g:memolist_memo_suffix = "markdown"
+let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
+" categories prompt (default 0)
+let g:memolist_prompt_categories = 1
+'''
 
 [[plugins]]
 repo =  't9md/vim-choosewin'
@@ -597,22 +579,6 @@ repo = 'haya14busa/incsearch.vim'
 hook_add = 'let g:incsearch#auto_nohlsearch = 1'
 # TODO vimproc依存をなくす
 
-#[[plugins]]
-#repo ='plasticboy/vim-markdown'
-#on_ft = ['markdown','md']
-#hook_add = '''
-#let g:vim_markdown_no_default_key_mappings = 1
-#let g:vim_markdown_new_list_item_indent = 4
-#let g:vim_markdown_foldint_level = 0
-#'''
-
-#[[plugins]]
-#repo = 'davidhalter/jedi-vim'
-#on_ft = ['python']
-#hook_add = '''
-#let g:jedi#auto_vim_configuration = 0
-#'''
-
 [[plugins]]
 repo = 'orokasan/clever-f.vim'
 on_map = { nx = '<Plug>(clever-f' }
@@ -774,24 +740,6 @@ hook_add = '''
   let g:vtm_default_mapping = 0
 '''
 
-
-# [[plugins]]
-# repo = 'deoplete-plugins/deoplete-jedi'
-# on_event = 'InsertEnter'
-# hook_add = '''
-# let g:deoplete#sources#jedi#statement_length = 30
-# let g:deoplete#sources#jedi#show_docstring = 1
-# '''
-
-# [[plugins]]
-# repo = 'raghur/fruzzy'
-# on_source = ['denite.nvim']
-# hook_source = '''
-# let g:fruzzy#usenative = 1
-# let g:fruzzy#sortonempty = 1
-# '''
-# hook_post_update = 'call fruzzy#install()'
-
 # [[plugins]]
 # repo = 'lervag/vimtex'
 # on_ft = ['tex']
@@ -890,12 +838,27 @@ call gina#custom#mapping#nmap(
 
 [[plugins]]
 repo = 'kana/vim-niceblock'
-on_map = {x = '<Plug>'}
+on_map = {x = '<Plug>(niceblock-'}
 hook_add = '''
   xmap I  <Plug>(niceblock-I)
   xmap A  <Plug>(niceblock-A)
 '''
 
+[[plugins]]
+on_map = {nxo = '<Plug>Commentary'}
+repo = 'tpope/vim-commentary'
+hook_add = '''
+if !hasmapto('<Plug>Commentary') || maparg('gc','n') ==# ''
+  xmap gc  <Plug>Commentary
+  nmap gc  <Plug>Commentary
+  omap gc  <Plug>Commentary
+  nmap gcc <Plug>CommentaryLine
+  if maparg('c','n') ==# '' && !exists('v:operator')
+    nmap cgc <Plug>ChangeCommentary
+  endif
+  nmap gcu <Plug>Commentary<Plug>Commentary
+endif
+'''
 
 # [[plugins]]
 # on_ft = 'go'

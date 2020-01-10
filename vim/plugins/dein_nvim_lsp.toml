@@ -5,6 +5,7 @@ hook_add = '''
 " so set rtp manually.
 set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
 lua << EOF
+
 vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
     if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then

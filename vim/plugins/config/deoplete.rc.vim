@@ -22,12 +22,13 @@ inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort "{{{
   return pumvisible() ? deoplete#close_popup() : "\<CR>"
 endfunction "}}}
-
+" call deoplete#custom#source('_', 'max_info_width',150)
 call deoplete#custom#source('_', 'matchers',
       \ ['matcher_fuzzy', 'matcher_length'])
 "eskkにmatcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('eskk', 'mark' , '▼')
+call deoplete#custom#source('file', 'force_completion_length' , '3')
 call deoplete#custom#source('vim', 'rank' , 200)
 call deoplete#custom#source('file', 'rank', 1000)
 call deoplete#custom#source('neosnippet', 'rank', 250)
@@ -47,17 +48,18 @@ call deoplete#custom#var('around', {
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
     \ })
-    " \ 'python': ['lsp','vsnip', 'buffer'],
-    " \ 'go': ['lsp','vsnip', 'buffer'],
+
 call deoplete#custom#option({
-    \ 'refresh_always': v:false,
+    \ 'refresh_always': v:true,
+    \ 'auto_refresh_delay': 100,
     \ 'skip_multibyte': v:true,
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': '',
     \ 'ignore_sources': {
+    \ 'vim': ['lsp'],
+    \ 'python': ['member']
     \    }
     \ })
-set completeopt+=menuone
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
     \ 'converter_remove_overlap',
