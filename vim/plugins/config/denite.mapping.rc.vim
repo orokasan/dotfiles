@@ -66,6 +66,7 @@ nnoremap <silent> [denite]/ :<C-u>Denite
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
     \ -buffer-name=search
+    \ -split=above_cursor
     \ neoyank register<CR>
 "コマンド履歴
 nnoremap <silent> [denite]c :<C-u>Denite
@@ -119,10 +120,9 @@ nnoremap [denite]p :<C-u>Denite
     \ -buffer-name=search
     \ output:
 " markdown TOC
-" nnoremap <silent> [denite]o :<C-u>Denite
-"     \ -buffer-name=float
-"     \ -resume -auto-resume -refresh
-"     \ markdown<CR>
+nnoremap <silent> [denite]o :<C-u>Denite
+    \ -buffer-name=float
+    \ markdown<CR>
 nnoremap <silent> [denite]d :<C-u>Denite
     \ dirmark<CR>
 "bookmark by "add"action
@@ -143,7 +143,8 @@ nnoremap <silent> [denite], :<C-u>Denite
     \ <CR>
 
 function! s:denite_lsp_diagnostics() abort
-let command = 'Denite -buffer-name=float -resume -auto-resume -refresh location_list'
+" let command = 'Denite -buffer-name=float location_list'
+let command = 'Denite -buffer-name=float -resume -refresh location_list'
 if !exists('*lsp#ui#vim#diagnostics#get_diagnostics_result')
     silent! execute(command)
 else

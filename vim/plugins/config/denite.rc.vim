@@ -83,7 +83,6 @@ call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
 
 "Change ignore_globs
-
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ [ '.git/', '.ropeproject/', '__pycache__/',
     \ 'venv/', 'images/','img/', 'fonts/',
@@ -160,17 +159,3 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
-
-"sorter定義
-function! ToggleSorter(sorter) abort
-   let sorters = split(b:denite_context.sorters, ',')
-   let idx = index(sorters, a:sorter)
-   if idx < 0
-       call add(sorters, a:sorter)
-   else
-       call remove(sorters, idx)
-   endif
-   let b:denite_new_context = {}
-   let b:denite_new_context.sorters = join(sorters, ',')
-   return '<denite:nop>'
-endfunction

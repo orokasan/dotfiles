@@ -65,16 +65,16 @@ set list            " show invisible character
 set listchars=tab:\ \ ,trail:-,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
-" set lazyredraw
-set visualbell      " please stop noisy beep
-set t_vb=
-set noerrorbells
+set t_Co=256
+let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
+let $TERM = 'xterm256-color'
+set synmaxcol=512
+set lazyredraw
+set belloff=all
 set fillchars+=vert:\ ,fold:\ 
 set hidden          " be able to open files when editing other files
+set splitright
 set noruler
-" cancel highlight search
-nmap<silent> <Esc><Esc> :nohlsearch<CR>
-nmap<silent> <C-c><C-c> :nohlsearch<CR>
 " Display candidates by list.
 set wildmenu
 set wildmode=longest:full,full
@@ -85,7 +85,7 @@ set ttyfast
 set pumheight=15 " default
 set ambiwidth=double
 set background=dark
-
+set diffopt=filler,iwhite,algorithm:histogram,indent-heuristic
 "}}}
 
 "Quickfix {{{
@@ -269,15 +269,12 @@ endif
 ""}}}
 
 "Key mapping {{{
-
 let mapleader = "\<Space>"
 " improved insert
 " in neovim, 'cc' overwrite unnamed register.
 "nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
 nnoremap <CR> o<ESC>
 nnoremap \ O<ESC>
-" select all
-nnoremap <C-g><C-g> ggVG
 " moving visible lines by j/k
 nnoremap <silent>j gj
 nnoremap <silent>k gk
@@ -286,18 +283,14 @@ nnoremap <S-l> $
 nnoremap <S-h> ^
 vnoremap <S-l> $
 vnoremap <S-h> ^
-nnoremap 0 ^
-xnoremap 0 ^
-nnoremap ^ 0
-xnoremap ^ 0
-nnoremap 4 $
-xnoremap 4 $
+nnoremap G Gzz
 " Create a blank line above/below current line
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
 " Convenience key for getting to command mode
-
-nnoremap ; :
+nmap ; :
+vmap ; :
+xmap ; :
 " Enter normal mode
 inoremap jk <esc>
 " change mark keymapping
@@ -311,6 +304,10 @@ xnoremap y ygv<ESC>
 " 'v' behave more compatible with 'y'
 nnoremap vv V
 nnoremap V v$
+"
+" cancel highlight search
+nmap<silent> <Esc><Esc> :nohlsearch<CR>
+nmap<silent> <C-c><C-c> :nohlsearch<CR>
 
 nmap <silent> <TAB>  <Plug>(MatchitNormalForward)
 nmap <silent> g<TAB> <Plug>(MatchitNormalBackward)
@@ -321,34 +318,11 @@ omap <silent> g<TAB> <Plug>(MatchitOperationBackward)
 nnoremap <C-p> <C-i>
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
-nnoremap J gJ
-nnoremap gJ J
-
-inoremap z] 」
-inoremap z} 』
-inoremap z) ）
 
 " colorcolumn
 nnoremap <expr><Leader>cl
     \ ":\<C-u>set colorcolumn=".(&cc == 0 ? v:count == 0 ? virtcol('.') : v:count : 0)."\<CR>"
-" 。、に移動(f<C-K>._ を打つのは少し長いので)。cf<C-J>等の使い方も可。{{{
-"function! s:MapFT(key, char)
-"    for cmd in ['f', 'F', 't', 'T']
-"        execute 'noremap <silent> ' . cmd . a:key . ' ' . cmd . a:char
-"    endfor
-"endfunction
-"call <SID>MapFT('<C-J>', '。')
-"call <SID>MapFT('<C-U>', '、')
-"" 前/次の「。、」の後に改行を挿入する
-"nnoremap <silent> f<C-H> f。a<CR><Esc>
-"nnoremap <silent> f<C-L> f、a<CR><Esc>
-"nnoremap <silent> F<C-H> F。a<CR><Esc>
-"nnoremap <silent> F<C-L> F、a<CR><Esc>
-"nnoremap <silent> f<C-M> :call search('[、。]')<CR>a<CR><Esc>
-"nnoremap <silent> F<C-M> :call search('[、。]', 'b')<CR>a<CR><Esc>
-"}}}
 "terminal
-
 " if using iTerm2, map option key to Meta
 " Preference -> Profile -> Keys
 tnoremap <C-[> <C-\><C-n>
@@ -667,6 +641,8 @@ if has('nvim')
     " show complettion popup in commandline.
     set wildoptions=pum
     set winblend=20
+    " remove end of buffer ~~~~~~~~~
+    set fillchars+=eob:\ 
 endif
 
 "}}}
@@ -712,7 +688,6 @@ syntax enable
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-
 "}}}
 
 " etc... {{{
@@ -789,6 +764,4 @@ hi!  link NonText Comment
 
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 au vimrc BufRead .textlintrc set ft=json
-
-	  let g:fakeclip_provide_clipboard_key_mappings = 1
 " vim:set foldmethod=marker:

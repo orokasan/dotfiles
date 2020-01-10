@@ -5,7 +5,6 @@ branch = 'next'
 # そのバイナリでは動かなかったのでmake (cargo)からビルドした
 build = 'bash install.sh'
 hook_add = '''
-set hidden
 let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
 let s:efm_rc = ['efm-langserver', s:efm_config_path]
 

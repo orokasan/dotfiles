@@ -2,10 +2,12 @@ inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
       \ deoplete#manual_complete()
+
 function! s:check_back_space() abort "{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
+
 inoremap <silent><expr> <C-n>
     \ pumvisible() ? "\<C-n>" :
     \ deoplete#manual_complete()
@@ -15,8 +17,8 @@ inoremap <silent><expr><BS>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><C-l> 
     \ deoplete#complete_common_string()
-inoremap <expr><silent> <C-g>
-    \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
+inoremap <expr><silent> <C-g> deoplete#undo_completion()
+    " \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
 "" <CR>: close popup and save indent.
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort "{{{

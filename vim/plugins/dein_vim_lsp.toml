@@ -3,6 +3,7 @@ repo = 'orokasan/vim-lsp'
 # lazy = 1'
 # on_ft = ['markdown', 'tex', 'python', 'go']
 hook_add = '''
+let g:lsp_auto_enable = 0
 let s:pyls_config = {'pyls': {'plugins': {
     \   'pycodestyle': {'enabled': v:true},
     \   'pydocstyle': {'enabled': v:false},
@@ -15,6 +16,7 @@ let s:pyls_config = {'pyls': {'plugins': {
     \ }
     \ }
     \}
+autocmd BufAdd * call lsp#enable()
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
@@ -26,6 +28,7 @@ function! s:lsp_local_setting()
     nmap <buffer> ,n <plug>(lsp-next-error)
     nmap <buffer> ,p <plug>(lsp-previous-error)
     nmap <buffer> sa <plug>(lsp-document-diagnostics)
+    call lsp#enable()
 endfunction
 function! s:lsp_setup()
     let g:lsp_auto_enable = 1
@@ -111,14 +114,21 @@ autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 		    \   'winhighlight', 'Normal:PopupWindow')
 	    endif
 	augroup end
-
 ''' # }}}
 
 [[plugins]]
 repo = 'prabirshrestha/async.vim'
 
+[[plugins]]
+on_if = '!has("nvim")'
+depends = ['asyncomplete.vim', 'vim-lsp']
+repo = 'prabirshrestha/asyncomplete-lsp.vim'
+
 # [[plugins]]
 # repo = 'hrsh7th/vim-vsnip'
+# lazy = '1'
+# on_source = ['deoplete.nvim']
+# depends = ['vim-lsp']
 # hook_add = '''
 # imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
 # smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
@@ -129,6 +139,9 @@ repo = 'prabirshrestha/async.vim'
 # '''
 
 # [[plugins]]
+# lazy = '1'
+# on_source = ['deoplete.nvim']
+# depends = ['vim-lsp']
 # repo = 'hrsh7th/vim-vsnip-integ'
 
 # [[plugins]]
@@ -152,11 +165,6 @@ repo = 'hrsh7th/vim-lsp-neosnippet'
 # [[plugins]]
 # # on_if = '!has("nvim")'
 # merged = '0'
-# repo = 'prabirshrestha/asyncomplete.vim'
-
-# [[plugins]]
-# # on_if = '!has("nvim")'
-# merged = '0'
 
 [[plugins]]
 lazy = '1'
@@ -167,7 +175,7 @@ hook_source ='''
 call deoplete#custom#option('sources', {
     \ 'python': ['lsp','neosnippet', 'buffer'],
     \ 'go': ['lsp','neosnippet', 'buffer'],
-    \ 'tex' :['lsp','neosnippet', 'buffer'],
+    \ 'tex' :['lsp','eskk','neosnippet', 'buffer'],
     \ })
 '''
 

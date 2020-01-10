@@ -20,13 +20,13 @@ nnoremap <silent><buffer><expr> a
     \ denite#do_map('choose_action')
 nnoremap <silent><buffer><expr> <CR>
     \ denite#do_map('do_action')
-nnoremap <silent><buffer><expr> s
+nnoremap <silent><buffer><expr><nowait> s
     \ denite#do_map('do_action', 'splitswitch')
 nnoremap <silent><buffer><expr> v
     \ denite#do_map('do_action', 'vsplitswitch')
 nnoremap <silent><buffer><expr> h
     \ denite#do_map('move_up_path')
-nnoremap <silent><buffer><expr> d
+nnoremap <silent><buffer><expr><nowait> d
     \ denite#do_map('do_action', 'delete')
 nnoremap <silent><buffer><expr> l
     \ denite#do_map('do_action')
@@ -63,8 +63,8 @@ endif
 inoremap <silent><buffer> <CR> <ESC><C-w>p
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
-inoremap <silent><buffer> <C-j>  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
-inoremap <silent><buffer> <C-k>  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
+inoremap <silent><buffer> <C-j>  <ESC><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
+inoremap <silent><buffer> <C-k>  <ESC><C-w>p:call cursor(line('.')-1,0)<CR><C-w>pA
 inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
 inoremap <silent><buffer><expr> <Tab> denite#do_map('choose_action')
 imap <silent><buffer> <C-c> <Plug>(denite_filter_update)
@@ -255,9 +255,11 @@ on_event = 'InsertEnter'
 hook_source = 'source ~/dotfiles/vim/plugins/config/deoplete.rc.vim'
 
 [[plugins]]
-repo =  'Shougo/neocomplete.vim'
+# on_if = '!has("nvim")'
 on_if = '!has("nvim")'
+depends = ['async.vim']
 on_event = 'InsertEnter'
+repo = 'prabirshrestha/asyncomplete.vim'
 
 [[plugins]]
 repo = 'Shougo/deol.nvim'
@@ -281,7 +283,7 @@ let g:eskk#marker_okuri = '*'
 let g:eskk#rom_input_style = 'msime'
 let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
-" let g:eskk#tab_select_completion = 1
+let g:eskk#tab_select_completion = 1
 let g:eskk#start_completion_length = 2
 let g:eskk#revert_henkan_style = 'okuri'
 " backspaceで確定
@@ -295,6 +297,7 @@ let g:eskk#set_undo_point = {
     \ 'sticky' : 0,
     \ 'kakutei' : 0
     \ }
+
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#dictionary_save_count = 5
 let g:eskk#cursor_color = {
@@ -323,6 +326,7 @@ let g:lexima_ctrlh_as_backspace = 1
 let g:lexima_map_escape = ''
 '''
 hook_post_source = '''
+
 let s:lexima_default_rules = [
 \ {'char': '(', 'input_after': ')'},
 \ {'char': '(', 'at': '\\\%#'},
@@ -340,21 +344,18 @@ let s:lexima_default_rules = [
 \ {'char': '"', 'at': '\\\%#'},
 \ {'char': '"', 'at': '^\s*\%#', 'filetype': 'vim'},
 \ {'char': '"', 'at': '\%#\s*$', 'filetype': 'vim'},
-\ {'char': '<BS>', 'at': '"\%#"', 'delete': 1},
 \ {'char': "'", 'input_after': "'"},
 \ {'char': "'", 'at': '\w\%#''\@!'},
 \ {'char': "'", 'at': '\\\%#'},
 \ {'char': "'", 'at': '\\\%#', 'leave': 1, 'filetype': ['vim', 'sh', 'csh', 'ruby', 'tcsh', 'zsh']},
 \ {'char': "'", 'filetype': ['haskell', 'lisp', 'clojure', 'ocaml', 'reason', 'scala', 'rust']},
-\ {'char': '<BS>', 'at': "'\\%#'", 'delete': 1},
 \ {'char': '`', 'input_after': '`'},
 \ {'char': '`', 'at': '\%#`', 'leave': 1},
-\ {'char': '<BS>', 'at': '`\%#`', 'delete': 1},
 \ {'char': '`', 'filetype': ['ocaml', 'reason']},
 \ {'char': '`', 'at': '``\%#', 'input_after': '```'},
 \ {'char': '`', 'at': '\%#```', 'leave': 3},
-\ {'char': '<BS>', 'at': '```\%#```', 'input': '<BS><BS><BS>', 'delete': 3},
 \ ]
+
 for rule in s:lexima_default_rules
   call lexima#add_rule(rule)
 endfor
@@ -371,6 +372,9 @@ let s:lexima_my_rules = [
 for rule in s:lexima_my_rules
   call lexima#add_rule(rule)
 endfor
+inoremap z] 」
+inoremap z} 』
+inoremap z) ）
 '''
 
 [[plugins]]
@@ -396,6 +400,9 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 repo =  'Shougo/neoyank.vim'
 on_event = 'TextYankPost'
 on_source = ['denite.nvim']
+hook_add = '''
+let g:neoyank#save_registers = ['*']
+'''
 
 [[plugins]]
 repo = 'glidenote/memolist.vim'
@@ -479,8 +486,13 @@ hook_add = '''
 map <silent>'a <Plug>(operator-surround-append)
 map <silent>'d <Plug>(operator-surround-delete)
 map <silent>'r <Plug>(operator-surround-replace)
+" if you use vim-textobj-anyblock
+nmap <silent>'dd <Plug>(operator-surround-delete)<Plug>(textobj-anyblock-a)
+nmap <silent>'rr <Plug>(operator-surround-replace)<Plug>(textobj-anyblock-a)
 '''
 hook_source = '''
+let g:operator#surround#recognizes_both_ends_as_surround = v:false
+let g:operator#surround#uses_input_if_no_block = v:false
 "2バイト括弧を追加
 let g:operator#surround#blocks = {}
 let g:operator#surround#blocks['-'] = [
@@ -613,10 +625,10 @@ on_map = { nx = '<Plug>(asterisk'}
 depends = 'is.vim'
 hook_add = '''
 "let g:asterisk#keeppos = 1
-map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatus<CR>
-map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatus<CR>
-map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatus<CR>
-map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1):<C-u>AnzuUpdateSearchStatus<CR>
+map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
+map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
+map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
+map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
 '''
 
 [[plugins]]
@@ -681,14 +693,10 @@ let g:quickrun_config['tex'] = {
             \   'outputter' : 'error',
             \   'outputter/error/error' : 'quickfix',
             \   'cmdopt': '',
+            \   'src': finddir('main.tex','%',';'),
             \   'exec': ['%c %o %s']
             \ }
 '''
-
-[[plugins]]
-depends = ['vim-quickrun']
-on_source = ['vim-quickrun']
-repo = 'lambdalisue/vim-quickrun-neovim-job'
 
 [[plugins]]
 repo = 'mbbill/undotree'
@@ -842,6 +850,18 @@ on_map = {x = '<Plug>(niceblock-'}
 hook_add = '''
   xmap I  <Plug>(niceblock-I)
   xmap A  <Plug>(niceblock-A)
+'''
+
+[[plugins]]
+repo = 'liuchengxu/vista.vim'
+on_cmd = ['Vista']
+hook_add ='''
+let g:vista_icon_indent = ["▸ ", ""]
+let g:vista_echo_cursor = 1
+let g:vista_cursor_delay = 200
+let g:vista_echo_cursor_strategy = 'floating_win'
+let g:vista_finder_alternative_executives = ['vim_lsp']
+let g:vista#renderer#enable_icon = 0
 '''
 
 [[plugins]]

@@ -32,19 +32,31 @@ let g:jasentence_endpat = '[、。，．？！]\+'
 repo = 'tyru/skkdict.vim'
 
 [[plugins]]
+depends = ['vim-textobj-user']
 repo = 'kana/vim-textobj-user'
 
 [[plugins]]
 depends = ['vim-textobj-user']
+# ae, ie
 repo = 'kana/vim-textobj-entire'
 
 [[plugins]]
 depends = ['vim-textobj-user']
+# gb
 repo = 'saaguero/vim-textobj-pastedtext'
 
 [[plugins]]
+# ab, ib
 depends = ['vim-textobj-user']
 repo = 'rhysd/vim-textobj-anyblock'
+hook_add = '''
+let g:textobj#anyblock#blocks = ['(', '{', '[', '"', "'", '<' , 'f`']
+'''
+
+[[plugins]]
+# al, il
+depends = ['vim-textobj-user']
+repo = 'kana/vim-textobj-line'
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
@@ -110,8 +122,8 @@ hook_add ='''
 let g:traces_num_range_preview = 1
 nnoremap S :<C-u>%s/
 vnoremap S :%s/
-nnoremap gs :%s///g<Left><Left><Left>
-vnoremap gs :<C-u>%s///g<Left><Left><Left>
+nnoremap gs :%s///g<Left><Left>
+vnoremap gs :<C-u>%s///g<Left><Left>
 '''
 
 [[plugins]]
@@ -174,7 +186,8 @@ repo = 'orokasan/denite-anzu'
 repo =  'kmnk/denite-dirmark'
 
 [[plugins]]
-repo = 'hrsh7th/vim-unmatchparen'
+depends = ['vim-quickrun']
+repo = 'lambdalisue/vim-quickrun-neovim-job'
 
 [[plugins]]
 repo = 'itchyny/vim-parenmatch'
@@ -199,14 +212,4 @@ hook_post_update = '''
   let g:dein#plugin.build = cmd
 '''
 
-[[plugins]]
-repo = 'liuchengxu/vista.vim'
-hook_add ='''
-let g:vista_icon_indent = ["▸ ", ""]
-let g:vista_echo_cursor = 1
-let g:vista_cursor_delay = 200
-let g:vista_echo_cursor_strategy = 'floating_win'
-let g:vista_finder_alternative_executives = ['vim_lsp']
-let g:vista#renderer#enable_icon = 0
-'''
 # vim:set foldmethod=marker:
