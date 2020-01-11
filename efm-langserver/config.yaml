@@ -1,0 +1,45 @@
+languages:
+  eruby:
+    lint-command: 'erb -x -T - | ruby -c'
+    lint-stdin: true
+    lint-offset: 1
+    format-command: 'htmlbeautifier'
+
+  vim:
+    lint-command: 'vint -'
+    lint-stdin: true
+    lint-formats:
+      - '%f:%l:%c: %m'
+
+  markdown:
+    lint-command: 'npx textlint -f unix --stdin'
+    # textlintがmarkdownを考慮しないので
+    # がんばって設定したけど動かなかったが
+    # lint-command: 'npx textlint -f unix --stdin --stdin-filename foo.md | sed -e "s/markdown/text/g"'
+    # lint-stdin:false で解決
+    lint-stdin: false
+    lint-formats:
+        - '%f:%l:%c: %m'
+
+  tex:
+    lint-command: 'npx textlint -f unix --stdin'
+    lint-stdin: true
+    lint-formats:
+      - '%f:%l:%c: %m'
+
+  # tex:
+  #   lint-command: 'chktex -v0 -q'
+  #   lint-stdin: true
+  #   lint-formats:
+  #       - '%f:%l:%c:%n:%m'
+
+  yaml:
+    lint-command: 'yamllint -f parsable -'
+    lint-stdin: true
+    lint-formats:
+      - '%f:%l:%c: %m'
+
+  javascript:
+    lint-command: 'eslint -f unix --stdin'
+    lint-ignore-exit-code: true
+    lint-stdin: true

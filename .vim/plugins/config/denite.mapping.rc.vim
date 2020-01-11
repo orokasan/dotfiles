@@ -144,7 +144,7 @@ nnoremap <silent> [denite], :<C-u>Denite
 
 function! s:denite_lsp_diagnostics() abort
 " let command = 'Denite -buffer-name=float location_list'
-let command = 'Denite -buffer-name=float -resume -refresh location_list'
+let command = 'Denite -buffer-name=float -auto-resume -refresh location_list'
 if !exists('*lsp#ui#vim#diagnostics#get_diagnostics_result')
     silent! execute(command)
 else

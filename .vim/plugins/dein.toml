@@ -12,7 +12,7 @@ on_if = '!has("nvim")'
 [[plugins]]
 repo =  'itchyny/lightline.vim'
 depends = ['lightline-bufferline']
-hook_add = 'source ~/dotfiles/vim/plugins/config/lightline.rc.vim'
+hook_add = 'source ~/dotfiles/.vim/plugins/config/lightline.rc.vim'
 
 [[plugins]]
 on_if = '!has("kaoriya")'
@@ -171,10 +171,10 @@ repo =  'Shougo/neosnippet-snippets'
 [[plugins]]
 repo = 'N0nki/denite-markdown'
 
-[[plugins]]
-# repo = 'chemzqm/unite-location'
-merged = '0'
-repo = 'orokasan/unite-location'
+# [[plugins]]
+# # repo = 'chemzqm/unite-location'
+# merged = '0'
+# repo = 'orokasan/unite-location'
 
 [[plugins]]
 repo = 'itchyny/vim-quickrun-lightline-hooks'
@@ -212,4 +212,36 @@ hook_post_update = '''
   let g:dein#plugin.build = cmd
 '''
 
+[[plugins]]
+repo = 'thinca/vim-ambicmd'
+
+[[plugins]]
+repo = 'chemzqm/denite-extra'
+
+# [[plugins]]
+# repo = 'delphinus/vim-auto-cursorline'
+# hook_add = '''
+# autocmd FileType denite :let b:auto_cursorline_disabled = 1
+# '''
+
+[[plugins]]
+repo = 'glacambre/firenvim'
+hook_post_update = 'call firenvim#install(0)'
+hook_add = '''
+if exists('g:started_by_firenvim')
+  set showtabline=0
+  colorscheme zellner
+  call lightline#disable()
+augroup Firenvim
+    au BufEnter github.com_*.txt set filetype=markdown
+  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
+  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
+  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
+augroup END
+endif
+let g:firenvim_font = 'Cica'
+function! Set_Font(font) abort
+  execute 'set guifont=' . a:font . ':h10'
+endfunction
+'''
 # vim:set foldmethod=marker:

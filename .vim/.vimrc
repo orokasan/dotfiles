@@ -66,8 +66,6 @@ set listchars=tab:\ \ ,trail:-,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
 set t_Co=256
-let $NVIM_TUI_ENABLE_TRUE_COLOR = 1
-let $TERM = 'xterm256-color'
 set synmaxcol=512
 set lazyredraw
 set belloff=all
@@ -339,7 +337,6 @@ if has('mac')
     inoremap ∆  <C-\><C-N><C-w>j
     inoremap ˚ <C-\><C-N><C-w>k
     inoremap Ò  <C-\><C-N><C-w>l
-
 else
     tnoremap <A-h> <C-\><C-N><C-w>h
     tnoremap <A-j> <C-\><C-N><C-w>j
@@ -350,6 +347,8 @@ else
     inoremap <A-k> <C-\><C-N><C-w>k
     inoremap <A-l> <C-\><C-N><C-w>l
 endif
+" repeat :substitute with same flag
+noremap <silent> & :&&<CR>
 
 if has('nvim')
     autocmd vimrc TermOpen * set nonumber signcolumn=no | startinsert
@@ -634,13 +633,16 @@ if has('nvim')
     " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
     " fix CTRL-V yank issue
     set clipboard=
-    nnoremap y "*y
-    xnoremap y "*y
+    nnoremap gy "*y
+    xnoremap gy "*y
+    nnoremap gp "*p
+    xnoremap gp "*p
     set completeopt+=menuone
     set completeopt-=preview
     " show complettion popup in commandline.
     set wildoptions=pum
     set winblend=20
+    set termguicolors
     " remove end of buffer ~~~~~~~~~
     set fillchars+=eob:\ 
 endif
@@ -658,13 +660,13 @@ if &runtimepath !~# '/dein.vim'
  execute 'set runtimepath+=' .fnamemodify(s:dein_repo_dir, ':p')
 endif
 
-let s:toml      = '~/dotfiles/vim/plugins/dein.toml'
-let s:lazy_toml = '~/dotfiles/vim/plugins/dein_lazy.toml'
+let s:toml      = '~/dotfiles/.vim/plugins/dein.toml'
+let s:lazy_toml = '~/dotfiles/.vim/plugins/dein_lazy.toml'
 
 let s:lsp = 0
-let s:lsp_toml = s:lsp == 0 ? '~/dotfiles/vim/plugins/dein_vim_lsp.toml' :
-    \ s:lsp == 1 ? '~/dotfiles/vim/plugins/dein_lcnvim.toml' :
-    \ s:lsp == 2 ? '~/dotfiles/vim/plugins/dein_nvim_lsp.toml' : ''
+let s:lsp_toml = s:lsp == 0 ? '~/dotfiles/.vim/plugins/dein_vim_lsp.toml' :
+    \ s:lsp == 1 ? '~/dotfiles/.vim/plugins/dein_lcnvim.toml' :
+    \ s:lsp == 2 ? '~/dotfiles/.vim/plugins/dein_nvim_lsp.toml' : ''
 
 let s:myvimrc = expand('$MYVIMRC')
 

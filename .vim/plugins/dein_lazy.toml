@@ -2,8 +2,8 @@
 # repo =  'Shougo/denite.nvim'
 repo =  'orokasan/denite.nvim'
 on_cmd = ['Denite']
-hook_add = 'source ~/dotfiles/vim/plugins/config/denite.mapping.rc.vim'
-hook_source = 'source ~/dotfiles/vim/plugins/config/denite.rc.vim'
+hook_add = 'source ~/dotfiles/.vim/plugins/config/denite.mapping.rc.vim'
+hook_source = 'source ~/dotfiles/.vim/plugins/config/denite.rc.vim'
 [plugins.ftplugin]
 denite = '''
 let g:my_denite_filter_winblend_config = 1
@@ -126,6 +126,7 @@ setlocal signcolumn=no
 " Define mappings
 nnoremap <silent><buffer><expr> <CR>
 \ defx#do_action('drop')
+nnoremap <silent><buffer> <C-e> <C-w>p
 nnoremap <silent><buffer><expr> c
 \ defx#async_action('copy')
 nnoremap <silent><buffer><expr> m
@@ -252,7 +253,7 @@ imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 repo =  'Shougo/deoplete.nvim'
 on_if = 'has("nvim")'
 on_event = 'InsertEnter'
-hook_source = 'source ~/dotfiles/vim/plugins/config/deoplete.rc.vim'
+hook_source = 'source ~/dotfiles/.vim/plugins/config/deoplete.rc.vim'
 
 [[plugins]]
 # on_if = '!has("nvim")'
@@ -274,8 +275,8 @@ on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
 [[plugins]]
-# repo =  'tyru/eskk.vim'
-repo =  'orokasan/eskk.vim'
+repo =  'tyru/eskk.vim'
+# repo =  'orokasan/eskk.vim'
 on_map = {icrtn = '<Plug>(eskk:'}
 hook_add = '''
 "let g:eskk#marker_henkan = '' "''
@@ -310,7 +311,7 @@ let g:eskk#cursor_color = {
 imap <C-j> <Plug>(eskk:toggle)
 cmap <C-j> <Plug>(eskk:toggle)
 '''
-hook_source = 'source ~/dotfiles/vim/plugins/config/eskk.rc.vim'
+hook_source = 'source ~/dotfiles/.vim/plugins/config/eskk.rc.vim'
 
 [[plugins]]
 repo =  'cohama/lexima.vim'
@@ -693,7 +694,6 @@ let g:quickrun_config['tex'] = {
             \   'outputter' : 'error',
             \   'outputter/error/error' : 'quickfix',
             \   'cmdopt': '',
-            \   'src': finddir('main.tex','%',';'),
             \   'exec': ['%c %o %s']
             \ }
 '''

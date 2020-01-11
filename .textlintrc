@@ -2,8 +2,7 @@
   "filters": {
       "whitelist": {
           "allow": [
-              "/%\\s.*/g",
-              "/%\/"
+              "/%\\s.*/g"
           ]
       }
     },
@@ -67,6 +66,6 @@
         "ja-no-abusage": true
         }
     },
-  plugins: ["latex2e"],
-  cache : true
+  plugins: ["latex2e"]
 }
+ // cache : true
