@@ -200,8 +200,7 @@ set cmdwinheight=5
 autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
 autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
 autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
-autocmd vimrc CmdwinEnter call feedkeys('G')
-autocmd vimrc CmdwinEnter setlocal scrolloff=0
+autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 " No equal window size.
 set noequalalways
 " nicely folding
