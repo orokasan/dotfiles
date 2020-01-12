@@ -441,7 +441,7 @@ endfunction
 "}}}
 
 " :close by 'q'
-nnoremap q :close<CR>
+nnoremap <silent> q :close<CR>
 " escape 'q'
 nnoremap gq q
 
@@ -488,7 +488,7 @@ function! s:toggle_window_zoom() abort
     endif
 endfunction  "}}}
 " close help by q
-autocmd vimrc FileType help nnoremap <buffer> q :close<CR>
+autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
 " moving around between buffers
 nnoremap <silent><Leader>h :bprev!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
@@ -563,8 +563,8 @@ nnoremap <silent><Leader>l :bnext!<CR>
  let g:bclose_multiple = 1
  command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
 "}}}
- nnoremap Q :<C-u>Bclose<CR>
- xnoremap Q :<C-u>Bclose<CR>
+ nnoremap <silent> Q :<C-u>Bclose<CR>
+ xnoremap <silent> Q :<C-u>Bclose<CR>
 " pandoc
 " pandoc-crossref
 " put config file to ~/.pandoc-crossref/config.yaml
