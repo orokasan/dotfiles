@@ -47,6 +47,7 @@ set autoread                " reload editing file if the file changed externally
 set nobackup                " no more backup file
 "set backupdir=~/vimfiles/backup
 "}}}
+
 " Visual  {{{
 set shortmess+=aAcTtS
 set showtabline=2   " always show tabline
@@ -80,7 +81,7 @@ set ttyfast
 set pumheight=15 " default
 set ambiwidth=double
 set background=dark
-set diffopt=filler,iwhite,algorithm:histogram,indent-heuristic
+set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,vertical
 "}}}
 
 "Quickfix {{{
@@ -299,7 +300,7 @@ xnoremap y ygv<ESC>
 " 'v' behave more compatible with 'y'
 nnoremap vv V
 nnoremap V v$
-"
+
 " cancel highlight search
 nmap<silent> <Esc><Esc> :nohlsearch<CR>
 nmap<silent> <C-c><C-c> :nohlsearch<CR>
@@ -371,17 +372,12 @@ autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR> | nmap <buffer> q :<C-u>close
 nnoremap x "_x
 " yank by 'dd'
 nnoremap dd "+dd
-" check spell
-"nnoremap <Leader>. :<C-u>setl spell! spell?<CR>
-" don't show searching mes
-nnoremap <silent> n n
-nnoremap <silent> N N
 " for IME status saving
 inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
 inoremap <silent><C-c> <ESC>
 " open vimrc quickly
-nnoremap <silent> <leader>v :e $HOME/.vimrc<CR>
+nnoremap <silent> <leader>v :e $MYVIMRC<CR>
 nnoremap <silent> <Leader>sv :<C-u>source $MYVIMRC<CR>:echom 'Reloaded vimrc.'<CR>
 " source opening vim script
 nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
@@ -445,6 +441,11 @@ function! s:put_foldmarker(foldclose_p) "{{{
 endfunction
 "}}}
 
+" :close by 'q'
+nnoremap q :close<CR>
+" escape 'q'
+nnoremap gq q
+
 " spliting windows
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -460,8 +461,10 @@ inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 "
 " move between windows
-nnoremap <C-w><C-w> <ESC><C-w>p
-nnoremap <C-w><C-u> <ESC><C-w><C-w>
+nnoremap <C-w>w <C-w>p
+nnoremap <C-w><C-w> <C-w>p
+nnoremap <C-w>u <C-w><C-w>
+nnoremap <C-w><C-u> <C-w><C-w>
 "
 " change window size
 nnoremap <S-Left>  <C-w><
@@ -486,7 +489,7 @@ function! s:toggle_window_zoom() abort
     endif
 endfunction  "}}}
 " close help by q
-autocmd vimrc FileType help nnoremap <buffer> q <C-w>c
+autocmd vimrc FileType help nnoremap <buffer> q :close<CR>
 " moving around between buffers
 nnoremap <silent><Leader>h :bprev!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
