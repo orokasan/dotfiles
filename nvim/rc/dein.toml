@@ -65,6 +65,11 @@ let g:textobj#anyblock#blocks = ['(', '{', '[', '"', "'", '<' , 'f`']
 '''
 
 [[plugins]]
+# ay, iy
+depends = ['vim-textobj-user']
+repo = 'kana/vim-textobj-syntax'
+
+[[plugins]]
 # al, il
 depends = ['vim-textobj-user']
 repo = 'kana/vim-textobj-line'
@@ -253,6 +258,16 @@ endfunction
 
 [[plugins]]
 repo = 'chemzqm/denite-extra'
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+hook_add = '''
+let g:gitgutter_sign_added = '++'
+let g:gitgutter_sign_modified = '~~'
+let g:gitgutter_sign_removed = '--'
+let g:gitgutter_sign_removed_first_line = '__'
+let g:gitgutter_sign_modified_removed = '~-'
+'''
 
 [[plugins]]
 repo = 'glacambre/firenvim'
