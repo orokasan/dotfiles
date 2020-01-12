@@ -859,6 +859,11 @@ call gina#custom#mapping#nmap(
     \ ':<C-u>Gina status<CR>',
     \ {'noremap': 1, 'silent': 1}
     \)
+call gina#custom#mapping#nmap(
+    \ 'commit', 'I',
+    \ 'ggI',
+    \ {'noremap': 1, 'silent': 1}
+    \)
 call gina#custom#action#alias(
       \ '/\%(blame\|log\|reflog\)',
       \ 'preview',

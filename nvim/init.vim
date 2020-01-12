@@ -140,7 +140,7 @@ set noequalalways
 autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
 autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
 autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
-autocmd vimrc CmdwinEnter * setlocal scrolloff=0
+autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 " open .docx as .zip
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 " .textlintrc is json

@@ -103,18 +103,11 @@ nnoremap <silent> [denite]k :<C-u>Denite change<CR>
 nnoremap <silent> [denite]j :<C-u>Denite jump <CR>
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
+    \ -resume<CR>
+nnoremap <silent> [denite]R :<C-u>Denite
     \ -buffer-name=search
     \ -refresh
     \ -resume<CR>
-nnoremap <silent> [denite]R :<C-u>Denite
-    \ -buffer-name=default
-    \ -refresh
-    \ -resume<CR>
-""open ale message
-"nnoremap <silent> [denite]a :<C-u>Denite
-"    \ -buffer-name=float
-"    \ -resume
-"    \ ale<CR>
 "コマンド結果をdeniteに出力
 nnoremap [denite]p :<C-u>Denite
     \ -buffer-name=search
