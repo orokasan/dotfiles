@@ -458,7 +458,6 @@ xnoremap <silent> Q :<C-u>Bclose<CR>
  endfunction "}}}
 "}}}
 " autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
-
 " spliting windows
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -505,6 +504,23 @@ else
   " Vim 用
   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
 endif
+
+function! s:undo_entry()
+  let history = get(w:, 'qf_history', [])
+  if !empty(history)
+    call setqflist(remove(history, -1), 'r')
+  endif
+endfunction
+
+function! s:del_entry() range
+  let qf = getqflist()
+  let history = get(w:, 'qf_history', [])
+  call add(history, copy(qf))
+  let w:qf_history = history
+  unlet! qf[a:firstline - 1 : a:lastline - 1]
+  call setqflist(qf, 'r')
+  execute a:firstline
+endfunction
 "}}}
 
 "Quickfix {{{
