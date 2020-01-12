@@ -23,9 +23,6 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 unsetopt list_types
 setopt auto_cd
 setopt pushd_ignore_dups
-#PROMPT
-autoload -U promptinit; promptinit
-prompt pure
 
 # cdした際のディレクトリをディレクトリスタックへ自動追加
 setopt auto_pushd
@@ -181,27 +178,20 @@ zstyle ':completion::complete:*' use-cache true
 # zle -N history-beginning-search-forward-end history-search-end
 # bindkey "^p" history-beginning-search-backward-end
 # bindkey "^b" history-beginning-search-forward-end
+
 # cdr タブでリストを表示
 autoload -Uz add-zsh-hook
 autoload -Uz chpwd_recent_dirs cdr
 add-zsh-hook chpwd chpwd_recent_dirs
-# cdrコマンドで履歴にないディレクトリにも移動可能に
-zstyle ":chpwd:*" recent-dirs-default true
-autoload -Uz zmv
-alias zmv='noglob zmv -W'
-function mkcd() {
-  if [[ -d $1 ]]; then
-    echo "$1 already exists!"
-    cd $1
-  else
-    mkdir -p $1 && cd $1
-  fi
-}
+
 #zplug
 bindkey -e
 
 source ~/.zplug/init.zsh
-# zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-completions"
+zplug "zsh-users/zsh-autosuggestions"
+zplug "mafredri/zsh-async", from:github
+zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
 
 if ! zplug check --verbose; then
     printf 'Install? [y/N]: '

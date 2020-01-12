@@ -85,7 +85,6 @@ set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,verti
 "}}}
 
 "Quickfix {{{
-nnoremap <Leader>f :<C-u>lopen<CR>
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
@@ -301,6 +300,7 @@ xnoremap y ygv<ESC>
 nnoremap vv V
 nnoremap V v$
 
+nnoremap <Leader>f :<C-u>lopen<CR>
 " cancel highlight search
 nmap<silent> <Esc><Esc> :nohlsearch<CR>
 nmap<silent> <C-c><C-c> :nohlsearch<CR>

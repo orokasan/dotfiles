@@ -118,12 +118,23 @@ hook_add =''' " {{{
 let g:solarized_old_cursor_style = 1
 let g:solarized_italics = 0
 let g:solarized_statusline = 'flat'
-autocmd vimrc ColorScheme solarized8_flat highlight! VertSplit guifg=#05252C guibg=#05252C
-autocmd vimrc ColorScheme solarized8_flat highlight! link EndOfBuffer Comment
-autocmd vimrc ColorScheme solarized8_flat highlight! NormalFloat guibg=#05252C
-autocmd vimrc ColorScheme solarized8_flat highlight clear Underlined
-autocmd vimrc ColorScheme solarized8_flat highlight! Underlined gui=underline,bold
-autocmd vimrc ColorScheme solarized8_flat highlight! link Vimfunction Type
+augroup Solarized8
+au!
+au ColorScheme solarized8_flat hi! DiffChange
+    \ cterm=bold ctermbg=5 gui=bold guifg=#b58900 guibg=#073642 guisp=#b58900
+au ColorScheme solarized8_flat hi! DiffText
+    \ cterm=bold ctermbg=9 gui=bold guifg=#268bd2 guibg=#073642 guisp=#268bd2
+au ColorScheme solarized8_flat hi! DiffAdd
+    \ cterm=bold ctermbg=4 gui=bold guifg=#859900 guibg=#073642 guisp=#859900
+au ColorScheme solarized8_flat hi! VertSplit guifg=#05252C guibg=#05252C
+au ColorScheme solarized8_flat hi! link EndOfBuffer Comment
+au ColorScheme solarized8_flat hi! NormalFloat guibg=#05252C
+au ColorScheme solarized8_flat hi clear Underlined
+au ColorScheme solarized8_flat hi! Underlined gui=underline,bold
+au ColorScheme solarized8_flat hi! link Vimfunction Type
+au ColorScheme solarized8_flat hi! link diffSubname Comment
+au ColorScheme solarized8_flat hi! link diffIndexLine Comment
+augroup END
 colorscheme solarized8_flat
 ''' # }}}
 
@@ -174,7 +185,7 @@ let g:airline#extensions#anzu#enabled = 0
 repo =  'kana/vim-operator-user'
 
 [[plugins]]
-repo = 'deoplete-rc/deoplete-zsh'
+repo = 'deoplete-plugins/deoplete-zsh'
 
 [[plugins]]
 repo =  'Shougo/neosnippet-snippets'
