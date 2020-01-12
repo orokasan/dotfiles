@@ -84,6 +84,429 @@ set background=dark
 set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,vertical
 "}}}
 
+" Editing {{{
+set virtualedit=block     "move cursor to one more char than end of line
+set scrolloff=5
+set display=lastline
+set wrap
+" Scroll
+set sidescrolloff=5
+set sidescroll=1
+" add japanese matchpairs
+set showmatch       " highlight matched pairs
+set matchtime=1     " highlighting long
+set matchpairs+=<:>,`:`,（:）,「:」,『:』,【:】,［:］,＜:＞
+
+set nojoinspaces
+set textwidth=0             " don't let insert auto indentation
+set tabstop=4               " number of spaces inserted by <TAB>
+set expandtab
+set softtabstop=4
+let g:vim_indent_cont = 4
+set autoindent
+set shiftwidth=4            " number of spaces inserted when auto indentation by vim
+set formatoptions+=mMjo
+
+" Searching
+set ignorecase
+set smartcase
+set incsearch
+"default global option on :substitute
+"set gdefault
+set wrapscan
+set hlsearch
+"completion
+set complete=.,w,b,u
+" viminfo
+if has('nvim')
+  set shada=!,:10,'300,<50,s10,h,@10
+else
+  set viminfo=!,'300,<50,s10,h,n~/.vim/.viminfo
+endif
+
+" set unnamed register to clipboard.
+" NOTE: not working well with CTRL-V in neovim.
+" workaround in neovim section.
+set clipboard+=unnamed
+
+" Set minimal height for current window.
+set winheight=1
+set winwidth=1
+" Set maximam maximam command line window.
+set cmdwinheight=8
+" No equal window size.
+set noequalalways
+" for cmdwin
+autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
+autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
+autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
+autocmd vimrc CmdwinEnter * setlocal scrolloff=0
+" open .docx as .zip
+au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
+" .textlintrc is json
+au vimrc BufRead .textlintrc set ft=json
+" nicely folding
+"{{{
+    function! s:is_view_available() abort
+      if !&buflisted || &buftype !=# ''
+        return 0
+      elseif !filewritable(expand('%:p'))
+        return 0
+      endif
+      return 1
+    endfunction
+
+    function! s:mkview() abort
+       if s:is_view_available()
+        silent! mkview
+      endif
+    endfunction
+
+    function! s:loadview() abort
+      if s:is_view_available()
+        silent! loadview
+      endif
+    endfunction
+
+    augroup MyAutoCmd
+      autocmd!
+      autocmd MyAutoCmd BufWinLeave * call s:mkview()
+      autocmd MyAutoCmd BufReadPost * call s:loadview()
+    augroup END
+set viewoptions-=options
+set viewoptions-=curdir
+""ディレクトリが保存時無い場合に自動的に作成
+""https://vim-jp.org/vim-users-jp/2011/02/20/Hack-202.html
+"augroup vimrc-auto-mkdir  " {{{
+"  autocmd!
+"  autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
+"  function! s:auto_mkdir(dir, force)  " {{{
+"    if !isdirectory(a:dir) && (a:force ||
+"    \    input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
+"      call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+"    endif
+"  endfunction  " }}}
+"augroup END  " }}}
+""}}}
+set imdisable
+"日本語入力固定モード
+"IM-control.vimが必要
+"https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
+"eskk.vimと干渉するため停止している
+let g:disable_IM_Control = 1
+if !exists('g:disable_IM_Control')
+    inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
+endif
+""}}}
+
+"Key map - moving {{{
+let mapleader = "\<Space>"
+" improved insert
+" in neovim, 'cc' overwrite unnamed register.
+"nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
+nnoremap <CR> o<ESC>
+nnoremap \ O<ESC>
+" moving visible lines by j/k
+nnoremap <silent>j gj
+nnoremap <silent>k gk
+" moving tip/end of a line
+nnoremap <S-l> $
+nnoremap <S-h> ^
+vnoremap <S-l> $
+vnoremap <S-h> ^
+nnoremap G Gzz
+" moving around between buffers
+nnoremap <silent><Leader>h :bprev!<CR>
+nnoremap <silent><Leader>l :bnext!<CR>
+" matchit mapping
+nmap <silent> <TAB>  <Plug>(MatchitNormalForward)
+nmap <silent> g<TAB> <Plug>(MatchitNormalBackward)
+xmap <silent> <TAB>  <Plug>(MatchitVisualForward)
+xmap <silent> g<TAB> <Plug>(MatchitVisualBackward)
+omap <silent> <TAB>  <Plug>(MatchitOperationForward)
+omap <silent> g<TAB> <Plug>(MatchitOperationBackward)
+" native <TAB> is useful
+nnoremap <C-p> <C-i>
+vnoremap <C-p> <C-i>
+xnoremap <C-p> <C-i>
+"}}}
+
+"Key map - shortcuts {{{
+" Convenience key for getting to command mode
+nmap ; :
+vmap ; :
+xmap ; :
+" Enter normal mode
+inoremap jk <esc>
+" change mark keymapping
+nnoremap ` m
+nnoremap ! `
+" cancel highlight search
+nmap<silent> <Esc><Esc> :nohlsearch<CR>
+nmap<silent> <C-c><C-c> :nohlsearch<CR>
+" make temp file
+command! OpenTempfile :edit `=tempname()`
+" open location list
+nnoremap <Leader>f :<C-u>lopen<CR>
+" open cmdwin
+nnoremap <C-y> q:
+autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR>
+" open vimrc quickly
+nnoremap <silent> <leader>v :e $MYVIMRC<CR>
+nnoremap <silent> <Leader>sv :<C-u>source $MYVIMRC<CR>
+" source opening vim script
+nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
+if !exists('*s:source_script')  "{{{
+  function s:source_script(path) abort
+    let path = expand(a:path)
+    if !filereadable(path) || getbufvar(a:path, '&filetype') !=# 'vim'
+      return
+    endif
+    execute 'source' fnameescape(path)
+    echo printf(
+          \ '"%s" has sourced (%s)',
+          \ simplify(fnamemodify(path, ':~:.')),
+          \ strftime('%c'),
+          \)
+  endfunction
+endif  "}}}
+"}}}
+" pandoc/pandoc-crossref:put config file to ~/.pandoc-crossref/config.yaml
+function! s:pandoc_md_to_docx() "{{{
+" http://lierdakil.github.io/pandoc-crossref/
+let t = expand('~/dotfiles/pandoc/reference.docx')
+let s = "!pandoc -s --filter pandoc-crossref -f  markdown+ignore_line_breaks -t docx --reference-doc=" . t . " '%:p' -o '%:p:r.docx'"
+execute s
+endfunction "}}}
+if has('mac')
+    nnoremap <Leader>md <C-u>:call <SID>pandoc_md_to_docx()<CR>
+else
+    nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
+endif
+"}}}
+
+"Key map - editting {{{
+" emacs like mapping on insert mode
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
+inoremap <C-h> <BS>
+inoremap <C-a> <HOME>
+inoremap <C-e> <END>
+" yank to end of line
+nnoremap Y y$
+xnoremap Y y$gv<ESC>
+xnoremap y ygv<ESC>
+" 'v' behave more compatible with 'y'
+nnoremap vv V
+nnoremap V v$
+" shoot chars deleted by x to blackhole register
+nnoremap x "_x
+" yank by 'dd'
+nnoremap dd "*dd
+" Create a blank line above/below current line
+nnoremap <leader>j o<ESC>k
+nnoremap <leader>k O<ESC>j
+" repeat :substitute with same flag
+noremap <silent> & :&&<CR>
+" << keeps visual mode
+vnoremap < <gv
+vnoremap > >gv
+" insert date
+inoremap <expr><F2> strftime("%Y%m%d")
+cnoremap <expr><F2> strftime("%Y%m%d")
+" for IME status saving
+inoremap <silent><ESC> <ESC>
+inoremap <silent><C-[> <ESC>
+inoremap <silent><C-c> <ESC>
+"}}}
+
+"Key map - terminal {{{
+"terminal
+" if using iTerm2, map option key to Meta
+" Preference -> Profile -> Keys
+tnoremap <C-[> <C-\><C-n>
+tnoremap <Esc> <C-\><C-n>
+if has('mac')
+    " can't map A- on Mac
+    " ref. https://qiita.com/delphinus/items/aea16e82de2145d2a6b7
+    tnoremap ˙ <C-\><C-N><C-w>h
+    tnoremap ∆  <C-\><C-N><C-w>j
+    tnoremap ˚ <C-\><C-N><C-w>k
+    tnoremap Ò  <C-\><C-N><C-w>l
+    tnoremap <C-w><C-w>  <C-\><C-N><C-w>w
+    inoremap ˙ <C-\><C-N><C-w>h
+    inoremap ∆  <C-\><C-N><C-w>j
+    inoremap ˚ <C-\><C-N><C-w>k
+    inoremap Ò  <C-\><C-N><C-w>l
+else
+    tnoremap <A-h> <C-\><C-N><C-w>h
+    tnoremap <A-j> <C-\><C-N><C-w>j
+    tnoremap <A-k> <C-\><C-N><C-w>k
+    tnoremap <A-l> <C-\><C-N><C-w>l
+    inoremap <A-h> <C-\><C-N><C-w>h
+    inoremap <A-j> <C-\><C-N><C-w>j
+    inoremap <A-k> <C-\><C-N><C-w>k
+    inoremap <A-l> <C-\><C-N><C-w>l
+endif
+"}}}
+
+"Key map - folding {{{
+" open folding
+nnoremap <silent><C-l> zo
+" smart folding closer
+nnoremap <silent><C-h> :silent! call <SID>smart_foldcloser()<CR>
+function! s:smart_foldcloser() "{{{
+    if foldlevel('.') == 0
+    norm! zM
+    return
+    endif
+
+    let foldc_lnum = foldclosed('.')
+    norm! zc
+    if foldc_lnum == -1
+    return
+    endif
+
+    if foldclosed('.') != foldc_lnum
+    return
+    endif
+    norm! zM
+endfunction
+"}}}
+" add fold marker
+nnoremap  z[     :<C-u>call <SID>put_foldmarker(0)<CR>
+nnoremap  z]     :<C-u>call <SID>put_foldmarker(1)<CR>
+function! s:put_foldmarker(foldclose_p) "{{{
+    let crrstr = getline('.')
+    let padding = crrstr ==# '' ? '' : crrstr =~# '\s$' ? '' : ' '
+    let [cms_start, cms_end] = ['', '']
+    let outside_a_comment_p = synIDattr(synID(line('.'), col('$')-1, 1), 'name') !~? 'comment'
+    if outside_a_comment_p
+        let cms_start = matchstr(&commentstring,'\V\s\*\zs\.\+\ze%s')
+        let cms_end = matchstr(&commentstring,'\V%s\zs\.\+')
+    endif
+    let fmr = split(&foldmarker, ',')[a:foldclose_p]. (v:count ? v:count : '')
+    exe 'norm! A'. padding. cms_start. fmr. cms_end
+endfunction
+"}}}
+" }}}
+
+"Key map - window {{{
+" :close by 'q'
+nnoremap <silent> q :close<CR>
+" escape 'q'
+nnoremap gq q
+" don't close window when closing buffer
+nnoremap <silent> Q :<C-u>Bclose<CR>
+xnoremap <silent> Q :<C-u>Bclose<CR>
+ function! s:Bclose(bang, buffer) "{{{
+"https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
+   if empty(a:buffer)
+     let btarget = bufnr('%')
+   elseif a:buffer =~# '^\d\+$'
+     let btarget = bufnr(str2nr(a:buffer))
+   else
+     let btarget = bufnr(a:buffer)
+   endif
+   if btarget < 0
+     call s:Warn('No matching buffer for '.a:buffer)
+     return
+   endif
+   if empty(a:bang) && getbufvar(btarget, '&modified')
+     call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
+     return
+   endif
+   " Numbers of windows that view target buffer which we will delete.
+   let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
+   if !g:bclose_multiple && len(wnums) > 1
+     call s:Warn('Buffer is in multiple windows (use ":let bclose_multiple=1")')
+     return
+   endif
+   let wcurrent = winnr()
+   for w in wnums
+     execute w.'wincmd w'
+     let prevbuf = bufnr('#')
+     if prevbuf > 0 && buflisted(prevbuf) && prevbuf != btarget
+       buffer #
+     else
+       bprevious
+     endif
+     if btarget == bufnr('%')
+       " Numbers of listed buffers which are not the target to be deleted.
+       let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
+       " Listed, not target, and not displayed.
+       let bhidden = filter(copy(blisted), 'bufwinnr(v:val) < 0')
+       " Take the first buffer, if any (could be more intelligent).
+       let bjump = (bhidden + blisted + [-1])[0]
+       if bjump > 0
+         execute 'buffer '.bjump
+       else
+         execute 'enew'.a:bang
+       endif
+     endif
+   endfor
+   execute 'bdelete'.a:bang.' '.btarget
+   execute wcurrent.'wincmd w'
+ endfunction
+ let g:bclose_multiple = 1
+ command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
+" Display an error message. {{{
+ function! s:Warn(msg)
+   echohl ErrorMsg
+   echomsg a:msg
+   echohl NONE
+ endfunction "}}}
+"}}}
+" autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
+
+" spliting windows
+nnoremap <leader>ws :sp<CR>:bprev<CR>
+nnoremap <leader>wv :vsp<CR>:bprev<CR>
+nnoremap <leader>wc :close<CR>
+nnoremap <leader>wn :vne<CR>
+nnoremap <leader>wo :only<CR>
+" move between windows
+nnoremap <C-w>w <C-w>p
+nnoremap <C-w><C-w> <C-w>p
+nnoremap <C-w>u <C-w><C-w>
+nnoremap <C-w><C-u> <C-w><C-w>
+" change window size
+nnoremap <S-Left>  <C-w><
+nnoremap <S-Right> <C-w>>
+nnoremap <S-Up>    <C-w>-
+nnoremap <S-Down>  <C-w>+
+" maximize buffer window size temporally
+nmap <C-w>z <Plug>(my-zoom-window)
+nmap <C-w><C-z> <Plug>(my-zoom-window)
+"{{{
+nnoremap <silent> <Plug>(my-zoom-window)
+      \ :<C-u>call <SID>toggle_window_zoom()<CR>
+function! s:toggle_window_zoom() abort
+    if exists('t:zoom_winrestcmd')
+        execute t:zoom_winrestcmd
+        unlet t:zoom_winrestcmd
+    else
+        let t:zoom_winrestcmd = winrestcmd()
+        resize
+        vertical resize
+    endif
+endfunction  "}}}
+"}}}
+
+" Terminal {{{
+if has('nvim')
+    autocmd vimrc TermOpen * setlocal nonumber signcolumn=no | startinsert
+endif
+
+if has('nvim')
+  " neovim 用
+  autocmd vimrc TermEnter * startinsert
+else
+  " Vim 用
+  autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
+endif
+"}}}
+
 "Quickfix {{{
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
@@ -145,442 +568,6 @@ function! s:del_entry() range
   call setqflist(qf, 'r')
   execute a:firstline
 endfunction
-"}}}
-
-" Editing {{{
-set virtualedit=block     "move cursor to one more char than end of line
-set scrolloff=5
-set display=lastline
-set wrap
-" Scroll
-set sidescrolloff=5
-set sidescroll=1
-" add japanese matchpairs
-set showmatch       " highlight matched pairs
-set matchtime=1     " highlighting long
-set matchpairs+=<:>,`:`,（:）,「:」,『:』,【:】,［:］,＜:＞
-
-set nojoinspaces
-set textwidth=0             " don't let insert auto indentation
-set tabstop=4               " number of spaces inserted by <TAB>
-set expandtab
-set softtabstop=4
-let g:vim_indent_cont = 4
-set autoindent
-set shiftwidth=4            " number of spaces inserted when auto indentation by vim
-set formatoptions+=mMjo
-
-" Searching
-set ignorecase
-set smartcase
-set incsearch
-"default global option on :substitute
-"set gdefault
-set wrapscan
-set hlsearch
-"completion
-set complete=.,w,b,u
-" viminfo
-if has('nvim')
-  set shada=!,:10,'300,<50,s10,h,@10
-else
-  set viminfo=!,'300,<50,s10,h,n~/.vim/.viminfo
-endif
-
-" set unnamed register to clipboard.
-" NOTE: not working well with CTRL-V in neovim.
-" workaround in neovim section.
-set clipboard+=unnamed
-
-" Set minimal height for current window.
-set winheight=1
-set winwidth=1
-" Set maximam maximam command line window.
-set cmdwinheight=8
-autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
-autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
-autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
-autocmd vimrc CmdwinEnter * setlocal scrolloff=0
-" No equal window size.
-set noequalalways
-" nicely folding
-"{{{
-    function! s:is_view_available() abort
-      if !&buflisted || &buftype !=# ''
-        return 0
-      elseif !filewritable(expand('%:p'))
-        return 0
-      endif
-      return 1
-    endfunction
-
-    function! s:mkview() abort
-       if s:is_view_available()
-        silent! mkview
-      endif
-    endfunction
-
-    function! s:loadview() abort
-      if s:is_view_available()
-        silent! loadview
-      endif
-    endfunction
-
-    augroup MyAutoCmd
-      autocmd!
-      autocmd MyAutoCmd BufWinLeave * call s:mkview()
-      autocmd MyAutoCmd BufReadPost * call s:loadview()
-    augroup END
-set viewoptions-=options
-set viewoptions-=curdir
-""ディレクトリが保存時無い場合に自動的に作成
-""https://vim-jp.org/vim-users-jp/2011/02/20/Hack-202.html
-"augroup vimrc-auto-mkdir  " {{{
-"  autocmd!
-"  autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
-"  function! s:auto_mkdir(dir, force)  " {{{
-"    if !isdirectory(a:dir) && (a:force ||
-"    \    input(printf('"%s" does not exist. Create? [y/N]', a:dir)) =~? '^y\%[es]$')
-"      call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
-"    endif
-"  endfunction  " }}}
-"augroup END  " }}}
-""}}}
-"transparent completions menu
-if has('nvim')
-    set pumblend=15
-    hi! PmenuSel blend=0
-endif
-set imdisable
-"日本語入力固定モード
-"IM-control.vimが必要
-"https://sites.google.com/site/fudist/Home/vim-nihongo-ban/vim-japanese/ime-control
-"eskk.vimと干渉するため停止している
-let g:disable_IM_Control = 1
-if !exists('g:disable_IM_Control')
-    inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
-endif
-""}}}
-
-"Key mapping {{{
-let mapleader = "\<Space>"
-" improved insert
-" in neovim, 'cc' overwrite unnamed register.
-"nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
-nnoremap <CR> o<ESC>
-nnoremap \ O<ESC>
-" moving visible lines by j/k
-nnoremap <silent>j gj
-nnoremap <silent>k gk
-" moving tip/end of a line
-nnoremap <S-l> $
-nnoremap <S-h> ^
-vnoremap <S-l> $
-vnoremap <S-h> ^
-nnoremap G Gzz
-" Create a blank line above/below current line
-nnoremap <leader>j o<ESC>k
-nnoremap <leader>k O<ESC>j
-" Convenience key for getting to command mode
-nmap ; :
-vmap ; :
-xmap ; :
-" Enter normal mode
-inoremap jk <esc>
-" change mark keymapping
-nnoremap ` m
-nnoremap ! `
-" yank to end of line
-nnoremap Y y$
-xnoremap Y y$gv<ESC>
-xnoremap y ygv<ESC>
-
-vnoremap < <gv
-vnoremap > >gv
-" 'v' behave more compatible with 'y'
-nnoremap vv V
-nnoremap V v$
-
-nnoremap <Leader>f :<C-u>lopen<CR>
-" cancel highlight search
-nmap<silent> <Esc><Esc> :nohlsearch<CR>
-nmap<silent> <C-c><C-c> :nohlsearch<CR>
-
-nmap <silent> <TAB>  <Plug>(MatchitNormalForward)
-nmap <silent> g<TAB> <Plug>(MatchitNormalBackward)
-xmap <silent> <TAB>  <Plug>(MatchitVisualForward)
-xmap <silent> g<TAB> <Plug>(MatchitVisualBackward)
-omap <silent> <TAB>  <Plug>(MatchitOperationForward)
-omap <silent> g<TAB> <Plug>(MatchitOperationBackward)
-nnoremap <C-p> <C-i>
-vnoremap <C-p> <C-i>
-xnoremap <C-p> <C-i>
-
-" colorcolumn
-nnoremap <expr><Leader>cl
-    \ ":\<C-u>set colorcolumn=".(&cc == 0 ? v:count == 0 ? virtcol('.') : v:count : 0)."\<CR>"
-"terminal
-" if using iTerm2, map option key to Meta
-" Preference -> Profile -> Keys
-tnoremap <C-[> <C-\><C-n>
-tnoremap <Esc> <C-\><C-n>
-if has('mac')
-    " can't map A- on Mac
-    " ref. https://qiita.com/delphinus/items/aea16e82de2145d2a6b7
-    tnoremap ˙ <C-\><C-N><C-w>h
-    tnoremap ∆  <C-\><C-N><C-w>j
-    tnoremap ˚ <C-\><C-N><C-w>k
-    tnoremap Ò  <C-\><C-N><C-w>l
-    tnoremap <C-w><C-w>  <C-\><C-N><C-w>w
-    inoremap ˙ <C-\><C-N><C-w>h
-    inoremap ∆  <C-\><C-N><C-w>j
-    inoremap ˚ <C-\><C-N><C-w>k
-    inoremap Ò  <C-\><C-N><C-w>l
-else
-    tnoremap <A-h> <C-\><C-N><C-w>h
-    tnoremap <A-j> <C-\><C-N><C-w>j
-    tnoremap <A-k> <C-\><C-N><C-w>k
-    tnoremap <A-l> <C-\><C-N><C-w>l
-    inoremap <A-h> <C-\><C-N><C-w>h
-    inoremap <A-j> <C-\><C-N><C-w>j
-    inoremap <A-k> <C-\><C-N><C-w>k
-    inoremap <A-l> <C-\><C-N><C-w>l
-endif
-" repeat :substitute with same flag
-noremap <silent> & :&&<CR>
-
-if has('nvim')
-    autocmd vimrc TermOpen * setlocal nonumber signcolumn=no | startinsert
-endif
-
-if has('nvim')
-  " neovim 用
-  autocmd vimrc TermEnter * startinsert
-else
-  " Vim 用
-  autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
-endif
-
-" close window
-nnoremap <C-q> :bd<CR>
-" insert date
-inoremap <expr><F2> strftime("%Y%m%d")
-cnoremap <expr><F2> strftime("%Y%m%d")
-nnoremap <C-y> q:
-
-autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR> | nmap <silent><buffer> q :<C-u>close<CR>
-" shoot chars deleted by x to blackhole register
-nnoremap x "_x
-" yank by 'dd'
-nnoremap dd "*dd
-" for IME status saving
-inoremap <silent><ESC> <ESC>
-inoremap <silent><C-[> <ESC>
-inoremap <silent><C-c> <ESC>
-" open vimrc quickly
-nnoremap <silent> <leader>v :e $MYVIMRC<CR>
-nnoremap <silent> <Leader>sv :<C-u>source $MYVIMRC<CR>:echom 'Reloaded vimrc.'<CR>
-" source opening vim script
-nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
-if !exists('*s:source_script')  "{{{
-  function s:source_script(path) abort
-    let path = expand(a:path)
-    if !filereadable(path) || getbufvar(a:path, '&filetype') !=# 'vim'
-      return
-    endif
-    execute 'source' fnameescape(path)
-    echo printf(
-          \ '"%s" has sourced (%s)',
-          \ simplify(fnamemodify(path, ':~:.')),
-          \ strftime('%c'),
-          \)
-  endfunction
-endif  "}}}
-" make temp file
-command! OpenTempfile :edit `=tempname()`
-" open folding
-nnoremap <silent><C-l> zo
-" smart folding closer
-nnoremap <silent><C-h> :silent! call <SID>smart_foldcloser()<CR>
-function! s:smart_foldcloser() "{{{
-    if foldlevel('.') == 0
-    norm! zM
-    return
-    endif
-
-    let foldc_lnum = foldclosed('.')
-    norm! zc
-    if foldc_lnum == -1
-    return
-    endif
-
-    if foldclosed('.') != foldc_lnum
-    return
-    endif
-    norm! zM
-endfunction
-"}}}
-" edit fold column
-if has('GUI') || has('nvim')
-    autocmd vimrc ColorScheme * hi link Folded NonText
-    autocmd vimrc ColorScheme * hi Folded guifg=bold
-endif
-" add fold marker
-nnoremap  z[     :<C-u>call <SID>put_foldmarker(0)<CR>
-nnoremap  z]     :<C-u>call <SID>put_foldmarker(1)<CR>
-function! s:put_foldmarker(foldclose_p) "{{{
-    let crrstr = getline('.')
-    let padding = crrstr ==# '' ? '' : crrstr =~# '\s$' ? '' : ' '
-    let [cms_start, cms_end] = ['', '']
-    let outside_a_comment_p = synIDattr(synID(line('.'), col('$')-1, 1), 'name') !~? 'comment'
-    if outside_a_comment_p
-        let cms_start = matchstr(&commentstring,'\V\s\*\zs\.\+\ze%s')
-        let cms_end = matchstr(&commentstring,'\V%s\zs\.\+')
-    endif
-    let fmr = split(&foldmarker, ',')[a:foldclose_p]. (v:count ? v:count : '')
-    exe 'norm! A'. padding. cms_start. fmr. cms_end
-endfunction
-"}}}
-
-" :close by 'q'
-nnoremap <silent> q :close<CR>
-" escape 'q'
-nnoremap gq q
-
-" spliting windows
-nnoremap <leader>ws :sp<CR>:bprev<CR>
-nnoremap <leader>wv :vsp<CR>:bprev<CR>
-nnoremap <leader>wc :close<CR>
-nnoremap <leader>wn :vne<CR>
-nnoremap <leader>wo :only<CR>
-
-" emacs like mapping on insert mode
-inoremap <C-f> <Right>
-inoremap <C-b> <Left>
-inoremap <C-h> <BS>
-inoremap <C-a> <HOME>
-inoremap <C-e> <END>
-"
-" move between windows
-nnoremap <C-w>w <C-w>p
-nnoremap <C-w><C-w> <C-w>p
-nnoremap <C-w>u <C-w><C-w>
-nnoremap <C-w><C-u> <C-w><C-w>
-"
-" change window size
-nnoremap <S-Left>  <C-w><
-nnoremap <S-Right> <C-w>>
-nnoremap <S-Up>    <C-w>-
-nnoremap <S-Down>  <C-w>+
-
-" maximize buffer window size temporally
-nmap <C-w>z <Plug>(my-zoom-window)
-nmap <C-w><C-z> <Plug>(my-zoom-window)
-"{{{
-nnoremap <silent> <Plug>(my-zoom-window)
-      \ :<C-u>call <SID>toggle_window_zoom()<CR>
-function! s:toggle_window_zoom() abort
-    if exists('t:zoom_winrestcmd')
-        execute t:zoom_winrestcmd
-        unlet t:zoom_winrestcmd
-    else
-        let t:zoom_winrestcmd = winrestcmd()
-        resize
-        vertical resize
-    endif
-endfunction  "}}}
-" close help by q
-autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
-" moving around between buffers
-nnoremap <silent><Leader>h :bprev!<CR>
-nnoremap <silent><Leader>l :bnext!<CR>
-
-" <s>commandline mapping<s>
-" !! USE <CTRL-f> !!
-" cnoremap <C-a> <Home>
-" cnoremap <C-b> <Left>
-" cnoremap <C-d> <Del>
-" cnoremap <C-e> <End>
-" cnoremap <C-f> <Right>
-" cnoremap <C-n> <Down>
-" cnoremap <C-p> <Up>
-" cnoremap <M-b> <S-Left>
-" cnoremap <M-f> <S-Right>
-" don't let close window when closing buffer
-"https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
-" Display an error message. {{{
- function! s:Warn(msg)
-   echohl ErrorMsg
-   echomsg a:msg
-   echohl NONE
- endfunction "}}}
- function! s:Bclose(bang, buffer) "{{{
-   if empty(a:buffer)
-     let btarget = bufnr('%')
-   elseif a:buffer =~# '^\d\+$'
-     let btarget = bufnr(str2nr(a:buffer))
-   else
-     let btarget = bufnr(a:buffer)
-   endif
-   if btarget < 0
-     call s:Warn('No matching buffer for '.a:buffer)
-     return
-   endif
-   if empty(a:bang) && getbufvar(btarget, '&modified')
-     call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
-     return
-   endif
-   " Numbers of windows that view target buffer which we will delete.
-   let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
-   if !g:bclose_multiple && len(wnums) > 1
-     call s:Warn('Buffer is in multiple windows (use ":let bclose_multiple=1")')
-     return
-   endif
-   let wcurrent = winnr()
-   for w in wnums
-     execute w.'wincmd w'
-     let prevbuf = bufnr('#')
-     if prevbuf > 0 && buflisted(prevbuf) && prevbuf != btarget
-       buffer #
-     else
-       bprevious
-     endif
-     if btarget == bufnr('%')
-       " Numbers of listed buffers which are not the target to be deleted.
-       let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
-       " Listed, not target, and not displayed.
-       let bhidden = filter(copy(blisted), 'bufwinnr(v:val) < 0')
-       " Take the first buffer, if any (could be more intelligent).
-       let bjump = (bhidden + blisted + [-1])[0]
-       if bjump > 0
-         execute 'buffer '.bjump
-       else
-         execute 'enew'.a:bang
-       endif
-     endif
-   endfor
-   execute 'bdelete'.a:bang.' '.btarget
-   execute wcurrent.'wincmd w'
- endfunction
- let g:bclose_multiple = 1
- command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
-"}}}
- nnoremap <silent> Q :<C-u>Bclose<CR>
- xnoremap <silent> Q :<C-u>Bclose<CR>
-" pandoc
-" pandoc-crossref
-" put config file to ~/.pandoc-crossref/config.yaml
-" http://lierdakil.github.io/pandoc-crossref/
-    function! s:pandoc_md_to_docx()
-        let t = expand('~/dotfiles/pandoc/reference.docx')
-        let s = "!pandoc -s --filter pandoc-crossref -f  markdown+ignore_line_breaks -t docx --reference-doc=" . t . " '%:p' -o '%:p:r.docx'"
-        execute s
-    endfunction
-if has('mac')
-    nnoremap <Leader>md <C-u>:call <SID>pandoc_md_to_docx()<CR>
-else
-    nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
-endif
 "}}}
 
 " +GUI {{{
@@ -650,8 +637,9 @@ if has('nvim')
     set termguicolors
     " remove end of buffer ~~~~~~~~~
     set fillchars+=eob:\ 
+    "transparent completions menu
+    set pumblend=15
 endif
-
 "}}}
 
 ""dein.vim {{{
@@ -697,7 +685,21 @@ command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
 
-" etc... {{{
+" highlight {{{
+" for foldcolumn
+hi!  link SpecialKey Comment
+hi!  link NonText Comment
+if has('nvim')
+    hi! PmenuSel blend=0
+endif
+" edit fold column
+if has('GUI') || has('nvim')
+    autocmd vimrc ColorScheme * hi link Folded NonText
+    autocmd vimrc ColorScheme * hi Folded guifg=bold
+endif
+"}}}
+
+" misc {{{
 "選択範囲の行をカウント {{{
 function! g:LineCharVCount() range
     let l:result = 0
@@ -756,19 +758,6 @@ execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
+
 "}}}
-
-" Memo {{{
-"今夜使いたいkey mapping
-"*t) =>前方の)の手前まで削除して*
-"vim正規表現
-"https://qiita.com/kawaz/items/d0708a4ab08e572f38f3
-" input apostrophe -> <A-]>
-"https://support.apple.com/ja-jp/guide/mac-help/mh27474/mac
-" }}}
-hi!  link SpecialKey Comment
-hi!  link NonText Comment
-
-au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
-au vimrc BufRead .textlintrc set ft=json
 " vim:set foldmethod=marker:
