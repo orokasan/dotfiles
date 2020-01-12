@@ -262,11 +262,21 @@ repo = 'chemzqm/denite-extra'
 [[plugins]]
 repo = 'airblade/vim-gitgutter'
 hook_add = '''
-let g:gitgutter_sign_added = '++'
-let g:gitgutter_sign_modified = '~~'
-let g:gitgutter_sign_removed = '--'
-let g:gitgutter_sign_removed_first_line = '__'
+let g:gitgutter_sign_added = '+ '
+let g:gitgutter_sign_modified = '~ '
+let g:gitgutter_sign_removed = '- '
+let g:gitgutter_sign_removed_first_line = '_ '
 let g:gitgutter_sign_modified_removed = '~-'
+let g:gitgutter_map_keys = 0
+nmap <Leader>ap <Plug>(GitGutterPreviewHunk)
+nmap <Leader>aa <Plug>(GitGutterStageHunk)
+nmap <Leader>au <Plug>(GitGutterUndoHunk)
+nmap [c <Plug>(GitGutterPrevHunk)
+nmap ]c <Plug>(GitGutterNextHunk)
+omap ic <Plug>(GitGutterTextObjectInnerPending)
+omap ac <Plug>(GitGutterTextObjectOuterPending)
+xmap ic <Plug>(GitGutterTextObjectInnerVisual)
+xmap ac <Plug>(GitGutterTextObjectOuterVisual)
 '''
 
 [[plugins]]
