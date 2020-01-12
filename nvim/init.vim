@@ -189,7 +189,7 @@ endif
 
 " set unnamed register to clipboard.
 " NOTE: not working well with CTRL-V in neovim.
-" workaround in Neovim section.
+" workaround in neovim section.
 set clipboard+=unnamed
 
 " Set minimal height for current window.
@@ -295,6 +295,8 @@ nnoremap Y y$
 xnoremap Y y$gv<ESC>
 xnoremap y ygv<ESC>
 
+vnoremap < <gv
+vnoremap > >gv
 " 'v' behave more compatible with 'y'
 nnoremap vv V
 nnoremap V v$
@@ -348,16 +350,16 @@ endif
 noremap <silent> & :&&<CR>
 
 if has('nvim')
-    autocmd vimrc TermOpen * set nonumber signcolumn=no | startinsert
+    autocmd vimrc TermOpen * setlocal nonumber signcolumn=no | startinsert
 endif
 
- " if has('nvim')
- "   " Neovim 用
- "   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | startinsert | endif
- " else
- "   " Vim 用
- "   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
- " endif
+if has('nvim')
+  " neovim 用
+  autocmd vimrc TermEnter * startinsert
+else
+  " Vim 用
+  autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
+endif
 
 " close window
 nnoremap <C-q> :bd<CR>
@@ -370,7 +372,7 @@ autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR> | nmap <silent><buffer> q :<C
 " shoot chars deleted by x to blackhole register
 nnoremap x "_x
 " yank by 'dd'
-nnoremap dd "+dd
+nnoremap dd "*dd
 " for IME status saving
 inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
@@ -632,10 +634,14 @@ if has('nvim')
     " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
     " fix CTRL-V yank issue
     set clipboard=
-    nnoremap gy "*y
-    xnoremap gy "*y
+    nnoremap y "*y
+    xnoremap y "*ygv<ESC>
+    nnoremap Y "*y$
+    xnoremap Y "*y$gv<ESC>
     nnoremap gp "*p
     xnoremap gp "*p
+    nnoremap gP "*P
+    xnoremap gP "*P
     set completeopt+=menuone
     set completeopt-=preview
     " show complettion popup in commandline.
