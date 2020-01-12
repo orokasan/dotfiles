@@ -40,16 +40,13 @@ endif
 " Backup
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
-if !has('nvim')
-    set directory=~/vimfiles/swap
-    set undodir=~/vimfiles/undo " put together undo files
-endif
 set undofile
+set directory=~/.vim/swap
+set undodir=~/.vim/undo " put together undo files
 set autoread                " reload editing file if the file changed externally
 set nobackup                " no more backup file
 "set backupdir=~/vimfiles/backup
 "}}}
-
 " Visual  {{{
 set shortmess+=aAcTtS
 set showtabline=2   " always show tabline
@@ -187,7 +184,7 @@ set complete=.,w,b,u
 if has('nvim')
   set shada=!,:10,'300,<50,s10,h,@10
 else
-  set viminfo=!,'300,<50,s10,h,n~/.viminfo
+  set viminfo=!,'300,<50,s10,h,n~/.vim/.viminfo
 endif
 
 " set unnamed register to clipboard.
@@ -384,7 +381,7 @@ inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
 inoremap <silent><C-c> <ESC>
 " open vimrc quickly
-nnoremap <silent> <leader>v :e ~/dotfiles/?vimrc<CR>
+nnoremap <silent> <leader>v :e $HOME/.vimrc<CR>
 nnoremap <silent> <Leader>sv :<C-u>source $MYVIMRC<CR>:echom 'Reloaded vimrc.'<CR>
 " source opening vim script
 nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
@@ -660,13 +657,13 @@ if &runtimepath !~# '/dein.vim'
  execute 'set runtimepath+=' .fnamemodify(s:dein_repo_dir, ':p')
 endif
 
-let s:toml      = '~/dotfiles/.vim/plugins/dein.toml'
-let s:lazy_toml = '~/dotfiles/.vim/plugins/dein_lazy.toml'
+let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
+let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 
 let s:lsp = 0
-let s:lsp_toml = s:lsp == 0 ? '~/dotfiles/.vim/plugins/dein_vim_lsp.toml' :
-    \ s:lsp == 1 ? '~/dotfiles/.vim/plugins/dein_lcnvim.toml' :
-    \ s:lsp == 2 ? '~/dotfiles/.vim/plugins/dein_nvim_lsp.toml' : ''
+let s:lsp_toml = s:lsp == 0 ? '~/dotfiles/nvim/rc/dein_vim_lsp.toml' :
+    \ s:lsp == 1 ? '~/dotfiles/nvim/rc/dein_lcnvim.toml' :
+    \ s:lsp == 2 ? '~/dotfiles/nvim/rc/dein_nvim_lsp.toml' : ''
 
 let s:myvimrc = expand('$MYVIMRC')
 

@@ -66,12 +66,11 @@ do
   ln -snfv ${DOTPATH}/${f} ${HOME}/${f}
 done
 
+ln -snfv ${DOTPATH}/nvim ${HOME}/.vim
+ln -snfv ${DOTPATH}/nvim ${XDG_CONFIG_HOME}/nvim
+ln -snfv ${DOTPATH}/nvim/init.vim ${HOME}/.vimrc
 ln -snfv ${DOTPATH}/efm-langserver ${HOME}/.config/efm-langserver
-ln -snfv ${DOTPATH}/.vim ${HOME}/.vim/
-if [ ! -d ${XDG_CONFIG_HOME}/nvim/ ]; then
-	mkdir "${XDG_CONFIG_HOME}/nvim"
-fi
-ln -snfv ${DOTPATH}/.vim/.vimrc ${XDG_CONFIG_HOME}/nvim/init.vim
+ln -snfv ${DOTPATH}/package.json ${HOME}/package.json
 echo $(tput setaf 2)Deploy dotfiles complete!. ✔︎$(tput sgr0)
 #
 # 引数によって場合分け

@@ -1,6 +1,7 @@
 export LANG=ja_JP.UTF-8
 
 export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export TEXINPUTS='.//;'
@@ -97,9 +98,9 @@ alias -g GI='| grep -ri'
 alias so='source'
 alias c='cdr'
 alias h='fc -lt '%F %T' 1'
-alias cp='cp -i'
-alias rm='rm -i'
-alias mkdir='mkdir -p'
+alias cp='cp -iv'
+alias rm='rm -iv'
+alias mkdir='mkdir -pv'
 alias ..='c ../'
 alias back='pushd'
 alias diff='diff -U1'
@@ -200,7 +201,7 @@ function mkcd() {
 bindkey -e
 
 source ~/.zplug/init.zsh
-zplug "zsh-users/zsh-autosuggestions"
+# zplug "zsh-users/zsh-autosuggestions"
 
 if ! zplug check --verbose; then
     printf 'Install? [y/N]: '

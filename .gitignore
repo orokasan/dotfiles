@@ -1,0 +1,7 @@
+.viminfo
+.DS_Store
+minivimrc*
+nvim/rplugin/
+nvim/view/
+nvim/undo/
+nvim/swap/

@@ -2,8 +2,8 @@
 # repo =  'Shougo/denite.nvim'
 repo =  'orokasan/denite.nvim'
 on_cmd = ['Denite']
-hook_add = 'source ~/dotfiles/.vim/plugins/config/denite.mapping.rc.vim'
-hook_source = 'source ~/dotfiles/.vim/plugins/config/denite.rc.vim'
+hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
+hook_source = 'source ~/dotfiles/nvim/rc/config/denite.rc.vim'
 [plugins.ftplugin]
 denite = '''
 let g:my_denite_filter_winblend_config = 1
@@ -43,6 +43,8 @@ nnoremap <silent><buffer><expr> i
     \ denite#do_map('open_filter_buffer')
 nnoremap <silent><buffer><expr> t
     \ denite#do_map('toggle_select').'j'
+nnoremap <silent><buffer><expr> A
+    \ denite#do_map('toggle_select_all').'j'
 nnoremap <silent><buffer><expr> r
     \ denite#do_map('toggle_matchers', 'matcher/regexp,matcher/fuzzy')
 nnoremap <silent><buffer><expr> <C-r>
@@ -253,7 +255,7 @@ imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 repo =  'Shougo/deoplete.nvim'
 on_if = 'has("nvim")'
 on_event = 'InsertEnter'
-hook_source = 'source ~/dotfiles/.vim/plugins/config/deoplete.rc.vim'
+hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 
 [[plugins]]
 # on_if = '!has("nvim")'
@@ -311,7 +313,7 @@ let g:eskk#cursor_color = {
 imap <C-j> <Plug>(eskk:toggle)
 cmap <C-j> <Plug>(eskk:toggle)
 '''
-hook_source = 'source ~/dotfiles/.vim/plugins/config/eskk.rc.vim'
+hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
 
 [[plugins]]
 repo =  'cohama/lexima.vim'
@@ -320,63 +322,64 @@ on_event = 'InsertEnter'
 hook_add = '''
 "let g:lexima_no_default_rules = 1
 "call lexima#set_default_rules()
-let g:lexima_enable_basic_rules = 0
+
+let g:lexima_no_default_rules = 0
+let g:lexima_enable_basic_rules = 1
 let g:lexima_enable_space_rules = 0
 let g:lexima_nvim_accept_pum_with_enter = 0
 let g:lexima_ctrlh_as_backspace = 1
 let g:lexima_map_escape = ''
 '''
-hook_post_source = '''
+# hook_post_source = '''
+# let s:lexima_default_rules = [
+# \ {'char': '(', 'input_after': ')'},
+# \ {'char': '(', 'at': '\\\%#'},
+# \ {'char': ')', 'at': '\%#)', 'leave': 1},
+# \ {'char': '<BS>', 'at': '(\%#)', 'delete': 1},
+# \ {'char': '{', 'input_after': '}'},
+# \ {'char': '}', 'at': '\%#}', 'leave': 1},
+# \ {'char': '<BS>', 'at': '{\%#}', 'delete': 1},
+# \ {'char': '[', 'input_after': ']'},
+# \ {'char': '[', 'at': '\\\%#'},
+# \ {'char': ']', 'at': '\%#]', 'leave': 1},
+# \ {'char': '<BS>', 'at': '[\%#]', 'delete': 1},
+# \ {'char': '"', 'input_after': '"'},
+# \ {'char': '"', 'at': '\%#"', 'leave': 1},
+# \ {'char': '"', 'at': '\\\%#'},
+# \ {'char': '"', 'at': '^\s*\%#', 'filetype': 'vim'},
+# \ {'char': '"', 'at': '\%#\s*$', 'filetype': 'vim'},
+# \ {'char': "'", 'input_after': "'"},
+# \ {'char': "'", 'at': '\w\%#''\@!'},
+# \ {'char': "'", 'at': '\\\%#'},
+# \ {'char': "'", 'at': '\\\%#', 'leave': 1, 'filetype': ['vim', 'sh', 'csh', 'ruby', 'tcsh', 'zsh']},
+# \ {'char': "'", 'filetype': ['haskell', 'lisp', 'clojure', 'ocaml', 'reason', 'scala', 'rust']},
+# \ {'char': '`', 'input_after': '`'},
+# \ {'char': '`', 'at': '\%#`', 'leave': 1},
+# \ {'char': '`', 'filetype': ['ocaml', 'reason']},
+# \ {'char': '`', 'at': '``\%#', 'input_after': '```'},
+# \ {'char': '`', 'at': '\%#```', 'leave': 3},
+# \ ]
 
-let s:lexima_default_rules = [
-\ {'char': '(', 'input_after': ')'},
-\ {'char': '(', 'at': '\\\%#'},
-\ {'char': ')', 'at': '\%#)', 'leave': 1},
-\ {'char': '<BS>', 'at': '(\%#)', 'delete': 1},
-\ {'char': '{', 'input_after': '}'},
-\ {'char': '}', 'at': '\%#}', 'leave': 1},
-\ {'char': '<BS>', 'at': '{\%#}', 'delete': 1},
-\ {'char': '[', 'input_after': ']'},
-\ {'char': '[', 'at': '\\\%#'},
-\ {'char': ']', 'at': '\%#]', 'leave': 1},
-\ {'char': '<BS>', 'at': '[\%#]', 'delete': 1},
-\ {'char': '"', 'input_after': '"'},
-\ {'char': '"', 'at': '\%#"', 'leave': 1},
-\ {'char': '"', 'at': '\\\%#'},
-\ {'char': '"', 'at': '^\s*\%#', 'filetype': 'vim'},
-\ {'char': '"', 'at': '\%#\s*$', 'filetype': 'vim'},
-\ {'char': "'", 'input_after': "'"},
-\ {'char': "'", 'at': '\w\%#''\@!'},
-\ {'char': "'", 'at': '\\\%#'},
-\ {'char': "'", 'at': '\\\%#', 'leave': 1, 'filetype': ['vim', 'sh', 'csh', 'ruby', 'tcsh', 'zsh']},
-\ {'char': "'", 'filetype': ['haskell', 'lisp', 'clojure', 'ocaml', 'reason', 'scala', 'rust']},
-\ {'char': '`', 'input_after': '`'},
-\ {'char': '`', 'at': '\%#`', 'leave': 1},
-\ {'char': '`', 'filetype': ['ocaml', 'reason']},
-\ {'char': '`', 'at': '``\%#', 'input_after': '```'},
-\ {'char': '`', 'at': '\%#```', 'leave': 3},
-\ ]
-
-for rule in s:lexima_default_rules
-  call lexima#add_rule(rule)
-endfor
-let s:lexima_my_rules = [
-\ {'char': 'z[', 'input': '「', 'input_after': '」'},
-\ {'char': 'z{', 'input': '『', 'input_after': '』'},
-\ {'char': 'z\', 'input': '【', 'input_after': '】'},
-\ {'char': 'z(', 'input': '（', 'input_after': '）'},
-\ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
-\ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
-\ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
-\ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
-\ ]
-for rule in s:lexima_my_rules
-  call lexima#add_rule(rule)
-endfor
-inoremap z] 」
-inoremap z} 』
-inoremap z) ）
-'''
+# for rule in s:lexima_default_rules
+#   call lexima#add_rule(rule)
+# endfor
+# let s:lexima_my_rules = [
+# \ {'char': 'z[', 'input': '「', 'input_after': '」'},
+# \ {'char': 'z{', 'input': '『', 'input_after': '』'},
+# \ {'char': 'z\', 'input': '【', 'input_after': '】'},
+# \ {'char': 'z(', 'input': '（', 'input_after': '）'},
+# \ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
+# \ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
+# \ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
+# \ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
+# \ ]
+# for rule in s:lexima_my_rules
+#   call lexima#add_rule(rule)
+# endfor
+# inoremap z] 」
+# inoremap z} 』
+# inoremap z) ）
+# '''
 
 [[plugins]]
 repo = 'kana/vim-operator-replace'
@@ -453,6 +456,8 @@ let g:choosewin_color_other = {
       \ }
 let g:choosewin_tabline_replace = 0
 let g:choosewin_statusline_replace = 1
+let g:choosewin_label_padding = 8
+let g:choosewin_return_on_single_win = 1
 let s:keymap = {
       \ '0':     'tab_first',
       \ '[':     'tab_prev',
@@ -492,8 +497,8 @@ nmap <silent>'dd <Plug>(operator-surround-delete)<Plug>(textobj-anyblock-a)
 nmap <silent>'rr <Plug>(operator-surround-replace)<Plug>(textobj-anyblock-a)
 '''
 hook_source = '''
-let g:operator#surround#recognizes_both_ends_as_surround = v:false
-let g:operator#surround#uses_input_if_no_block = v:false
+" let g:operator#surround#recognizes_both_ends_as_surround = v:false
+" let g:operator#surround#uses_input_if_no_block = v:false
 "2バイト括弧を追加
 let g:operator#surround#blocks = {}
 let g:operator#surround#blocks['-'] = [

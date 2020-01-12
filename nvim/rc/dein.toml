@@ -12,7 +12,7 @@ on_if = '!has("nvim")'
 [[plugins]]
 repo =  'itchyny/lightline.vim'
 depends = ['lightline-bufferline']
-hook_add = 'source ~/dotfiles/.vim/plugins/config/lightline.rc.vim'
+hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 
 [[plugins]]
 on_if = '!has("kaoriya")'
@@ -32,8 +32,19 @@ let g:jasentence_endpat = '[、。，．？！]\+'
 repo = 'tyru/skkdict.vim'
 
 [[plugins]]
-depends = ['vim-textobj-user']
 repo = 'kana/vim-textobj-user'
+hook_add = '''
+" https://github.com/todesking/dotfiles/blob/master/nvim/plug/plugins.vim
+call textobj#user#plugin('lastmofified', {
+\   'lastmodified': {
+\     'select-a': 'ag',
+\     'select-a-function': 'g:Vimrc_select_a_last_modified',
+\   },
+\ })
+function! g:Vimrc_select_a_last_modified() abort
+    return ['v', getpos("'["), getpos("']")]
+endfunction
+'''
 
 [[plugins]]
 depends = ['vim-textobj-user']
@@ -163,7 +174,7 @@ let g:airline#extensions#anzu#enabled = 0
 repo =  'kana/vim-operator-user'
 
 [[plugins]]
-repo = 'deoplete-plugins/deoplete-zsh'
+repo = 'deoplete-rc/deoplete-zsh'
 
 [[plugins]]
 repo =  'Shougo/neosnippet-snippets'
