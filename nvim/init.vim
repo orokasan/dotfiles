@@ -270,7 +270,6 @@ if !exists('*s:source_script')  "{{{
           \)
   endfunction
 endif  "}}}
-"}}}
 " pandoc/pandoc-crossref:put config file to ~/.pandoc-crossref/config.yaml
 function! s:pandoc_md_to_docx() "{{{
 " http://lierdakil.github.io/pandoc-crossref/

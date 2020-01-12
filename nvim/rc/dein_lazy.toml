@@ -809,9 +809,11 @@ call gina#custom#command#option('log', '--group', 'log-viewer')
 call gina#custom#command#option('status', '--group', 'status-viewer')
 call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
 call gina#custom#command#option('commit', '-v|--verbose')
+call gina#custom#command#option('commit', '--group', 'status-viewer')
 call gina#custom#command#option('branch', '-v', 'v')
 call gina#custom#command#option('status', '--short')
 call gina#custom#command#option('status', '--branch')
+call gina#custom#command#option('log', '--graph')
 call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
 "call gina#custom#command#option(
 "\ '/\%(status\|changes\)',
