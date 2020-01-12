@@ -134,8 +134,8 @@ set winheight=1
 set winwidth=1
 " Set maximam maximam command line window.
 set cmdwinheight=8
-" No equal window size.
-set noequalalways
+" equal window size.
+set equalalways
 " for cmdwin
 autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
 autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
