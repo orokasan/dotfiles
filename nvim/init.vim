@@ -196,11 +196,11 @@ set clipboard+=unnamed
 set winheight=1
 set winwidth=1
 " Set maximam maximam command line window.
-set cmdwinheight=5
+set cmdwinheight=8
 autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
 autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
 autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
-autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
+autocmd vimrc CmdwinEnter * setlocal scrolloff=0
 " No equal window size.
 set noequalalways
 " nicely folding
@@ -366,7 +366,7 @@ inoremap <expr><F2> strftime("%Y%m%d")
 cnoremap <expr><F2> strftime("%Y%m%d")
 nnoremap <C-y> q:
 
-autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR> | nmap <buffer> q :<C-u>close<CR>
+autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR> | nmap <silent><buffer> q :<C-u>close<CR>
 " shoot chars deleted by x to blackhole register
 nnoremap x "_x
 " yank by 'dd'
