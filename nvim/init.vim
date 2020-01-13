@@ -118,10 +118,11 @@ set hlsearch
 "completion
 set complete=.,w,b,u
 " viminfo
+set history=1000
 if has('nvim')
-  set shada=!,:10,'300,<50,s10,h,@10
+  set shada=!,'100,<100,s10,h
 else
-  set viminfo=!,'300,<50,s10,h,n~/.vim/.viminfo
+  set viminfo=!,'100,<100,s10,h,n~/.vim/.viminfo
 endif
 
 " set unnamed register to clipboard.
