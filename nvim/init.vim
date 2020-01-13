@@ -85,10 +85,10 @@ set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,verti
 
 " Editing {{{
 set virtualedit=block     "move cursor to one more char than end of line
-set scrolloff=5
 set display=lastline
 set wrap
 " Scroll
+set scrolloff=5
 set sidescrolloff=5
 set sidescroll=1
 " add japanese matchpairs
@@ -497,7 +497,7 @@ endfunction  "}}}
 
 " Terminal {{{
 if has('nvim')
-    autocmd vimrc TermOpen * setlocal nonumber signcolumn=no | startinsert
+    autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no  | startinsert
 endif
 
 if has('nvim')

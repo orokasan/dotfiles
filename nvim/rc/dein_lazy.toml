@@ -128,66 +128,36 @@ nmap <silent><buffer> [denite]h <Plug>(defx):<C-u>Denite
     \ defx/history<CR>
 setlocal signcolumn=no
 " Define mappings
-nnoremap <silent><buffer><expr> <CR>
-\ defx#do_action('drop')
+nnoremap <silent><buffer><expr> <CR> defx#do_action('drop')
 nnoremap <silent><buffer> <C-e> <C-w>p
-nnoremap <silent><buffer><expr> c
-\ defx#async_action('copy')
-nnoremap <silent><buffer><expr> m
-\ defx#async_action('move')
-nnoremap <silent><buffer><expr> p
-\ defx#async_action('paste')
-nnoremap <silent><buffer><expr> l 
-\ defx#is_directory() ?
-\ defx#do_action('open') :
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> E
-\ defx#do_action('open', 'vsplit')
-nnoremap <silent><buffer><expr> t
-\ defx#do_action('multi', ['toggle_sort','filename','redraw'])
-nnoremap <silent><buffer><expr> T
-\ defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
-nnoremap <silent><buffer><expr> P
-\ defx#do_action('open', 'pedit')
-nnoremap <silent><buffer><expr> K
-\ defx#do_action('new_directory')
-nnoremap <silent><buffer><expr> N
-\ defx#do_action('new_file')
+nnoremap <silent><buffer><expr> c defx#async_action('copy')
+nnoremap <silent><buffer><expr> m defx#async_action('move')
+nnoremap <silent><buffer><expr> p defx#async_action('paste')
+nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
+nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
+nnoremap <silent><buffer><expr> t defx#do_action('multi', ['toggle_sort','filename','redraw'])
+nnoremap <silent><buffer><expr> T defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
+nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
+nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
+nnoremap <silent><buffer><expr> N defx#do_action('new_file')
 "need 'pip install Send2Trash'
-nnoremap <silent><buffer><expr> d
-\ defx#async_action('remove_trash')
-nnoremap <silent><buffer><expr> r
-\ defx#do_action('rename')
-nnoremap <silent><buffer><expr> x
-\ defx#async_action('execute_system')
-nnoremap <silent><buffer><expr> f
-\ defx#do_action('open_or_close_tree')
-nnoremap <silent><buffer><expr> yy
-\ defx#do_action('yank_path')
-nnoremap <silent><buffer><expr> .
-\ defx#do_action('toggle_ignored_files')
-nnoremap <silent><buffer><expr> h
-\ defx#do_action('cd', ['..'])
-nnoremap <silent><buffer><expr> ~
-\ defx#do_action('cd')
-nnoremap <silent><buffer><expr> q
-\ defx#do_action('quit')
-nnoremap <silent><buffer><expr> i
-\ defx#do_action('toggle_select') . 'j'
-nnoremap <silent><buffer><expr> I
-\ defx#do_action('clear_select_all')
-nnoremap <silent><buffer><expr> *
-\ defx#do_action('toggle_select_all')
-nnoremap <silent><buffer><expr> j
-\ line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr> k
-\ line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <C-g>
-\ defx#do_action('print')
-nnoremap <silent><buffer><expr> cd
-\ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer><expr> <C-r>
-\ defx#do_action('call','Defx_to_denite_rec')
+nnoremap <silent><buffer><expr> d defx#async_action('remove_trash')
+nnoremap <silent><buffer><expr> r defx#do_action('rename')
+nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
+nnoremap <silent><buffer><expr> f defx#do_action('open_or_close_tree')
+nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
+nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
+nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
+nnoremap <silent><buffer><expr> q defx#do_action('quit')
+nnoremap <silent><buffer><expr> i defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> I defx#do_action('clear_select_all')
+nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
+nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
+nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
+nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd')
+nnoremap <silent><buffer><expr> <C-r> defx#do_action('call','Defx_to_denite_rec')
 '''
 
 [[plugins]]
@@ -270,7 +240,7 @@ repo = 'prabirshrestha/asyncomplete.vim'
 repo = 'Shougo/deol.nvim'
 on_cmd = ['Deol']
 hook_add = '''
-nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
+nnoremap <Leader>d :Deol -split='vertical'<CR>
 '''
 
 [[plugins]]
@@ -280,10 +250,10 @@ on_ft = 'vim'
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
+on_event = 'InsertEnter'
 # repo =  'orokasan/eskk.vim'
-on_map = {icrtn = '<Plug>(eskk:'}
+# on_map = {icrtn = '<Plug>(eskk:'}
 hook_add = '''
-"let g:eskk#marker_henkan = '' "''
 let g:eskk#marker_okuri = '*'
 let g:eskk#rom_input_style = 'msime'
 let g:eskk#egg_like_newline = 1
@@ -297,7 +267,7 @@ let g:eskk#dictionary = {
     \    'path': "~/GoogleDrive/rc/.skk-jisyo",
     \    'sorted': 0,
     \    'encoding': 'utf-8'
-    \}
+    \ }
 let g:eskk#set_undo_point = {
     \ 'sticky' : 0,
     \ 'kakutei' : 0
@@ -322,66 +292,32 @@ repo =  'cohama/lexima.vim'
 on_if = 'has("nvim")'
 on_event = 'InsertEnter'
 hook_add = '''
-"let g:lexima_no_default_rules = 1
-"call lexima#set_default_rules()
-
-let g:lexima_no_default_rules = 0
+let g:lexima_no_default_rules = 1
 let g:lexima_enable_basic_rules = 1
 let g:lexima_enable_space_rules = 0
 let g:lexima_nvim_accept_pum_with_enter = 0
 let g:lexima_ctrlh_as_backspace = 1
 let g:lexima_map_escape = ''
 '''
-# hook_post_source = '''
-# let s:lexima_default_rules = [
-# \ {'char': '(', 'input_after': ')'},
-# \ {'char': '(', 'at': '\\\%#'},
-# \ {'char': ')', 'at': '\%#)', 'leave': 1},
-# \ {'char': '<BS>', 'at': '(\%#)', 'delete': 1},
-# \ {'char': '{', 'input_after': '}'},
-# \ {'char': '}', 'at': '\%#}', 'leave': 1},
-# \ {'char': '<BS>', 'at': '{\%#}', 'delete': 1},
-# \ {'char': '[', 'input_after': ']'},
-# \ {'char': '[', 'at': '\\\%#'},
-# \ {'char': ']', 'at': '\%#]', 'leave': 1},
-# \ {'char': '<BS>', 'at': '[\%#]', 'delete': 1},
-# \ {'char': '"', 'input_after': '"'},
-# \ {'char': '"', 'at': '\%#"', 'leave': 1},
-# \ {'char': '"', 'at': '\\\%#'},
-# \ {'char': '"', 'at': '^\s*\%#', 'filetype': 'vim'},
-# \ {'char': '"', 'at': '\%#\s*$', 'filetype': 'vim'},
-# \ {'char': "'", 'input_after': "'"},
-# \ {'char': "'", 'at': '\w\%#''\@!'},
-# \ {'char': "'", 'at': '\\\%#'},
-# \ {'char': "'", 'at': '\\\%#', 'leave': 1, 'filetype': ['vim', 'sh', 'csh', 'ruby', 'tcsh', 'zsh']},
-# \ {'char': "'", 'filetype': ['haskell', 'lisp', 'clojure', 'ocaml', 'reason', 'scala', 'rust']},
-# \ {'char': '`', 'input_after': '`'},
-# \ {'char': '`', 'at': '\%#`', 'leave': 1},
-# \ {'char': '`', 'filetype': ['ocaml', 'reason']},
-# \ {'char': '`', 'at': '``\%#', 'input_after': '```'},
-# \ {'char': '`', 'at': '\%#```', 'leave': 3},
-# \ ]
-
-# for rule in s:lexima_default_rules
-#   call lexima#add_rule(rule)
-# endfor
-# let s:lexima_my_rules = [
-# \ {'char': 'z[', 'input': '「', 'input_after': '」'},
-# \ {'char': 'z{', 'input': '『', 'input_after': '』'},
-# \ {'char': 'z\', 'input': '【', 'input_after': '】'},
-# \ {'char': 'z(', 'input': '（', 'input_after': '）'},
-# \ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
-# \ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
-# \ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
-# \ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
-# \ ]
-# for rule in s:lexima_my_rules
-#   call lexima#add_rule(rule)
-# endfor
-# inoremap z] 」
-# inoremap z} 』
-# inoremap z) ）
-# '''
+hook_post_source = '''
+call lexima#set_default_rules()
+let s:lexima_my_rules = [
+\ {'char': 'z[', 'input': '「', 'input_after': '」'},
+\ {'char': 'z{', 'input': '『', 'input_after': '』'},
+\ {'char': 'z\', 'input': '【', 'input_after': '】'},
+\ {'char': 'z(', 'input': '（', 'input_after': '）'},
+\ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
+\ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
+\ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
+\ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
+\ ]
+for rule in s:lexima_my_rules
+  call lexima#add_rule(rule)
+endfor
+inoremap z] 」
+inoremap z} 』
+inoremap z) ）
+'''
 
 [[plugins]]
 repo = 'kana/vim-operator-replace'
@@ -670,6 +606,7 @@ hi link EasyMotionIncSearch Search
 
 [[plugins]]
 repo = 'thinca/vim-quickrun'
+depends = 'vim-quickrun-neovim-job'
 on_cmd = ['QuickRun']
 on_map = { n = '<Plug>(quickrun' }
 hook_add = '''
@@ -836,11 +773,6 @@ call gina#custom#mapping#nmap(
 call gina#custom#mapping#nmap(
     \ 'diff', 'q',
     \ ':bdelete<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'compare', 'q',
-    \ ':close<CR>',
     \ {'noremap': 1, 'silent': 1}
     \)
 call gina#custom#mapping#nmap(

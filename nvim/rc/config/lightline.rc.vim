@@ -4,7 +4,7 @@ let g:lightline = {
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount'],
-            \ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'quickrun', 'percent', 'denitebuffer',  'IMEstatus']
+            \ ['linter_errors', 'linter_warnings', 'quickrun', 'percent', 'denitebuffer',  'IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
@@ -34,16 +34,13 @@ let g:lightline = {
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
-        \ 'linter_checking': 'lightline#ale#checking',
         \ 'linter_warnings': 'LLLspWarning',
         \ 'linter_errors': 'LLLspError',
     \ },
    \ 'component_type' : {
         \ 'buffers': 'tabsel',
-        \ 'linter_checking': 'middle',
         \ 'linter_warnings': 'warning',
         \ 'linter_errors': 'error',
-        \ 'linter_ok': 'middle'
     \ }
 \ }
 
