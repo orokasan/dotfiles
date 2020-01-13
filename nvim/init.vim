@@ -497,7 +497,7 @@ endfunction  "}}}
 
 " Terminal {{{
 if has('nvim')
-    autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no  | startinsert
+    autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
 endif
 
 if has('nvim')

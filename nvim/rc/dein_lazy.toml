@@ -665,6 +665,20 @@ xmap <C-l> <Plug>(textmanip-move-right)
 '''
 
 [[plugins]]
+repo = 'kassio/neoterm'
+on_cmd = ['T', 'Ttoggle']
+hook_add = '''
+nnoremap '' :<C-u>Ttoggle<CR>
+let g:neoterm_repl_python = ''
+let g:neoterm_auto_repl_cmd = v:false
+let g:neoterm_default_mod='topleft'
+let g:neoterm_autoscroll = v:true
+let g:neoterm_size=15
+let g:neoterm_autoinsert = v:true
+let g:neoterm_autojump = v:true
+'''
+
+[[plugins]]
 repo = 'majutsushi/tagbar'
 on_cmd = ['Tagbar']
 
