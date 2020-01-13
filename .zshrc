@@ -98,7 +98,6 @@ alias h='fc -lt '%F %T' 1'
 alias cp='cp -iv'
 alias rm='rm -iv'
 alias mkdir='mkdir -pv'
-alias ..='c ../'
 alias back='pushd'
 alias diff='diff -U1'
 bindkey "^[[3~" delete-char
@@ -170,8 +169,8 @@ zstyle ':zle:*' word-style unspecified
 zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion::complete:*' use-cache true
-# bindkey '^r' history-incremental-pattern-search-backward
-# bindkey '^s' history-incremental-pattern-search-forward
+bindkey '^r' history-incremental-pattern-search-backward
+bindkey '^s' history-incremental-pattern-search-forward
 # # 例 ls まで打ってCtrl+pでlsコマンドをさかのぼる、Ctrl+bで逆順
 # autoload -Uz history-search-end
 # zle -N history-beginning-search-backward-end history-search-end
@@ -189,9 +188,11 @@ bindkey -e
 
 source ~/.zplug/init.zsh
 zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-autosuggestions"
+# zplug "zsh-users/zsh-autosuggestions"
 zplug "mafredri/zsh-async", from:github
 zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
+zplug "yukiycino-dotfiles/fancy-ctrl-z"
+bindkey '^z' fancy-ctrl-z
 
 if ! zplug check --verbose; then
     printf 'Install? [y/N]: '
@@ -213,14 +214,16 @@ fg() {
 }
 
 # fzf
+# Options to fzf command
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_COMPLETION_TRIGGER=''
+export FZF_COMPLETION_TRIGGER='**'
+export FZF_COMPLETION_OPTS='+c -x'
 bindkey '^T' fzf-completion
 bindkey '^I' $fzf_default_completion
+export FZF_DEFAULT_OPTS='--color=fg+:11 --height 40% --reverse --select-1 --exit-0 --multi'
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-export FZF_DEFAULT_OPTS='--height 40% --reverse'
 export FZF_CTRL_T_COMMAND='rg --files --hidden --glob "!.git/*"'
- export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
 
 # 一発でディレクトリ移動
 fd() {
@@ -230,6 +233,15 @@ fd() {
   cd "$dir"
 }
 
+# fzf-cdr 
+alias cdd='fzf-cdr'
+function fzf-cdr() {
+    target_dir=`cdr -l | sed 's/^[^ ][^ ]*  *//' | fzf`
+    target_dir=`echo ${target_dir/\~/$HOME}`
+    if [ -n "$target_dir" ]; then
+        cd $target_dir
+    fi
+}
 # 差分を確認しながらステージング
 fga() {
   modified_files=$(git status --short | awk '{print $2}') &&
@@ -253,11 +265,22 @@ fkill() {
     if [ "$UID" != "0" ]; then
         pid=$(ps -f -u $UID | sed 1d | fzf -m | awk '{print $2}')
     else
-        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
-    fi  
-
+        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}') fi  
     if [ "x$pid" != "x" ]
     then
         echo $pid | xargs kill -${1:-9}
     fi  
+}
+
+# fgをfzfで
+alias fgg='_fgg'
+function _fgg() {
+    wc=$(jobs | wc -l | tr -d ' ')
+    if [ $wc -ne 0 ]; then
+        job=$(jobs | awk -F "suspended" "{print $1 $2}"|sed -e "s/\-//g" -e "s/\+//g" -e "s/\[//g" -e "s/\]//g" | grep -v pwd | fzf | awk "{print $1}")
+        wc_grep=$(echo $job | grep -v grep | grep 'suspended')
+        if [ "$wc_grep" != "" ]; then
+            fg %$job
+        fi
+    fi
 }
