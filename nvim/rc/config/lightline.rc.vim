@@ -49,7 +49,8 @@ let g:lightline = {
 
 autocmd vimrc User lsp_diagnostic_done call lightline#update()
 
-let g:lightline.colorscheme = 'quack'
+" let g:lightline.colorscheme = 'quack'
+let g:lightline.colorscheme = 'snow_light'
 " if has('nvim')
 "     let g:lightline.subseparator= { 'left': '', 'right': '' }
 "     let g:lightline.separator= { 'left': '', 'right': '' }

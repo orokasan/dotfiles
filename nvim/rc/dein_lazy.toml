@@ -61,6 +61,8 @@ nnoremap <silent><buffer><expr> <C-s>
 denite-filter = '''
 if g:my_denite_filter_winblend_config ==# 1
     setlocal winblend=100
+else
+    setlocal winblend=0
 endif
 inoremap <silent><buffer> <CR> <ESC><C-w>p
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p

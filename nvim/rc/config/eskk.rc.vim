@@ -111,8 +111,14 @@ function! s:gethighlight(hi) abort
     let hl = substitute(hl, '\w*\ze\s\{3}', '', 'g')
     let hl = substitute(hl, '\(xxx\|\n\)', '', 'g')
     let hl = substitute(hl, 'links to .*', '', 'g')
-    " bgが無い場合適当な色を埋め込む
-    let hl = match(hl, 'guibg') == -1 ? 'guibg=#002b36 ' . hl : hl
+    if match(hl, '\v(guibg|cuibg)') == -1
+        redir => bg
+        silent execute 'highlight CursorColumn'
+        redir END
+        let gbg = matchstr(bg, 'guibg=#\w\{6}')
+        let cbg = matchstr(bg, 'cuibg=#\w\{6}')
+        let hl = hl . ' ' . cbg . ' ' . gbg
+    endif
     return hl
 endfunction
 

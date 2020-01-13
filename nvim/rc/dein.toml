@@ -114,7 +114,6 @@ autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg
 autocmd vimrc ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd vimrc ColorScheme iceberg highlight clear Search
 autocmd vimrc ColorScheme iceberg highligh Search gui=underline
-" colorscheme iceberg
 '''
 
 [[plugins]]
@@ -139,8 +138,11 @@ au ColorScheme solarized8_flat hi! Underlined gui=underline,bold
 au ColorScheme solarized8_flat hi! link Vimfunction Type
 au ColorScheme solarized8_flat hi! link diffSubname Comment
 au ColorScheme solarized8_flat hi! link diffIndexLine Comment
+if has('GUI') || has('nvim')
+    autocmd ColorScheme solarized8_flat hi link Folded NonText
+    autocmd ColorScheme solarized8_flat hi Folded guifg=bold
+endif
 augroup END
-colorscheme solarized8_flat
 ''' # }}}
 
 [[plugins]]
@@ -299,4 +301,19 @@ function! Set_Font(font) abort
   execute 'set guifont=' . a:font . ':h10'
 endfunction
 '''
+
+[[plugins]]
+# colorscheme seagull
+repo = 'nightsense/seabird'
+hook_add = '''
+au ColorScheme seagull hi NormalFloat guibg=#fbffff
+au ColorScheme seagull hi clear Search
+au ColorScheme seagull hi link Search IncSearch
+au ColorScheme seagull hi MatchParen ctermfg=1 ctermbg=NONE gui=reverse guifg=#ff4053 guibg=NONE
+au ColorScheme seagull hi Comment cterm=NONE ctermfg=14 guifg=#808487 gui=NONE
+'''
+
+[[plugins]]
+repo = 'nightsense/snow'
+
 # vim:set foldmethod=marker:

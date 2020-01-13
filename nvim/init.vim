@@ -80,7 +80,6 @@ set ttyfast
 " max candidate of completion menu
 set pumheight=15 " default
 set ambiwidth=double
-set background=dark
 set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,vertical
 "}}}
 
@@ -619,6 +618,18 @@ if has('nvim')
 endif
 "}}}
 
+" highlight {{{
+" for foldcolumn
+hi!  link SpecialKey Comment
+hi!  link NonText Comment
+if has('nvim')
+    hi! PmenuSel blend=0
+endif
+" edit fold column
+set background=light
+let g:colors_name='seagull'
+"}}}
+
 ""dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -660,20 +671,6 @@ syntax enable
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-"}}}
-
-" highlight {{{
-" for foldcolumn
-hi!  link SpecialKey Comment
-hi!  link NonText Comment
-if has('nvim')
-    hi! PmenuSel blend=0
-endif
-" edit fold column
-if has('GUI') || has('nvim')
-    autocmd vimrc ColorScheme * hi link Folded NonText
-    autocmd vimrc ColorScheme * hi Folded guifg=bold
-endif
 "}}}
 
 " misc {{{
@@ -735,6 +732,5 @@ execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
-
 "}}}
 " vim:set foldmethod=marker:
