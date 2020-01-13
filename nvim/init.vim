@@ -138,8 +138,12 @@ set cmdwinheight=8
 set equalalways
 " for cmdwin
 autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
-autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
-autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
+autocmd vimrc CmdwinEnter : call <SID>clear_useless_command()
+function! s:clear_useless_command() abort
+    silent g/^qa\?!\?$/d
+    silent g/^wq\?a\?!\?$/d
+    silent call feedkeys('G', 'n')
+endfunction
 autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 " open .docx as .zip
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
