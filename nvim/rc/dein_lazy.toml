@@ -671,7 +671,7 @@ hook_add = '''
 nnoremap '' :<C-u>Ttoggle<CR>
 let g:neoterm_repl_python = ''
 let g:neoterm_auto_repl_cmd = v:false
-let g:neoterm_default_mod='topleft'
+let g:neoterm_default_mod='aboveleft'
 let g:neoterm_autoscroll = v:true
 let g:neoterm_size=15
 let g:neoterm_autoinsert = v:true
