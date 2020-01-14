@@ -94,6 +94,7 @@ repo = 'cespare/vim-toml'
 
 [[plugins]]
 repo =  'mengelbrecht/lightline-bufferline'
+merged = '0'
 depends = ['lightline.vim']
 
 [[plugins]]

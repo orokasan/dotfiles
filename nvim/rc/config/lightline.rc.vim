@@ -4,7 +4,7 @@ let g:lightline = {
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount'],
-            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'denitebuffer','filetype', 'IMEstatus']
+            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'filetype', 'denitebuffer', 'IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
@@ -175,7 +175,7 @@ endfunction
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
 
 function! LLInactiveFilename()
-    return &filetype !~# s:ignore_filetype ? expand('%:t')
+    return &filetype !~# s:ignore_filetype ? expand('%:t') . ' | cd: ' . fnamemodify(getcwd(), ':~')
 	\ : &filetype is# 'denite' ? '': LLMode()
 endfunction
 

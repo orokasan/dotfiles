@@ -65,7 +65,6 @@ set modelines=5
 set termguicolors
 set t_Co=256
 set synmaxcol=512
-set lazyredraw
 set belloff=all
 set fillchars+=vert:\ ,fold:\ 
 set hidden          " be able to open files when editing other files
@@ -733,4 +732,5 @@ call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
 "}}}
+let g:lightline#bufferline#smarttab = 1
 " vim:set foldmethod=marker:
