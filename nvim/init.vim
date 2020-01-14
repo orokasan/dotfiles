@@ -94,7 +94,7 @@ set sidescroll=1
 " add japanese matchpairs
 set showmatch       " highlight matched pairs
 set matchtime=1     " highlighting long
-set matchpairs+=<:>,`:`,（:）,「:」,『:』,【:】,［:］,＜:＞
+set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞
 
 set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
