@@ -70,13 +70,13 @@ augroup VimLsp
             \ 'initialization_options': { 'vimruntime': $VIMRUNTIME, 'runtimepath': &rtp },
             \ })
     endif
-    " if executable('texlab')
-    "    au User lsp_setup call lsp#register_server({
-    "       \ 'name': 'texlab',
-    "       \ 'cmd': {server_info->['texlab']},
-    "       \ 'whitelist': ['tex', 'bib', 'sty'],
-    "       \ })
-    " endif
+    if executable('texlab')
+       au User lsp_setup call lsp#register_server({
+          \ 'name': 'texlab',
+          \ 'cmd': {server_info->['texlab']},
+          \ 'whitelist': ['tex', 'bib', 'sty'],
+          \ })
+    endif
     if executable('gopls')
         autocmd User lsp_setup call lsp#register_server({
             \ 'name': 'go-lang',
