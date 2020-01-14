@@ -97,7 +97,7 @@ let s:defx_ignore_files =
 call defx#custom#option('_', {
     \ 'winwidth': 35,
     \ 'split': 'vertical',
-    \ 'direction': 'topleft',
+    \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename',
     \ 'sort': 'TIME',
     \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
