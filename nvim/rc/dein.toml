@@ -269,6 +269,7 @@ let g:gitgutter_sign_modified = '~ '
 let g:gitgutter_sign_removed = '- '
 let g:gitgutter_sign_removed_first_line = '_ '
 let g:gitgutter_sign_modified_removed = '~-'
+let g:gitgutter_sign_priority = 1
 let g:gitgutter_map_keys = 0
 nmap <Leader>ap <Plug>(GitGutterPreviewHunk)
 nmap <Leader>aa <Plug>(GitGutterStageHunk)
@@ -315,5 +316,4 @@ au ColorScheme seagull hi Comment cterm=NONE ctermfg=14 guifg=#808487 gui=NONE
 
 [[plugins]]
 repo = 'nightsense/snow'
-
 # vim:set foldmethod=marker:
