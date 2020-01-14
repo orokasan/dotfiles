@@ -4,7 +4,7 @@ let g:lightline = {
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount'],
-            \ ['linter_errors', 'linter_warnings', 'quickrun', 'percent', 'denitebuffer',  'IMEstatus']
+            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'denitebuffer','filetype', 'IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
@@ -13,7 +13,7 @@ let g:lightline = {
     \ },
     \ 'tabline' : {
         \ 'left': [['buffers'], ['tabdenitesource']],
-        \ 'right': [['tab'], ['fileencoding','filetype'] ]
+        \ 'right': [['tab'], ['fileencoding', 'fileformat'] ]
     \ },
     \ 'component':{
         \ 'lineinfo':'%{LLruler()}%<'
@@ -322,7 +322,7 @@ function! s:deniteinput() abort
 endfunction
 
 function! s:denitebuf()
-    return 'denite:' . denite#get_status('buffer_name')
+    return denite#get_status('buffer_name')
 endfunction
 
 function! s:denitesource()
