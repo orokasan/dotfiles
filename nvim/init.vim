@@ -6,8 +6,8 @@ if !has('nvim')
 else
     scriptencoding utf-8
 endif
-set fileencoding=utf-8
-" set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
+" set fileencoding=utf-8
+set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 augroup vimrc
@@ -32,6 +32,8 @@ let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
+
+set ff=dos
 "Python,vimproc
 if has('win64')
     let g:python3_host_prog ='python.exe'
@@ -49,7 +51,7 @@ set nobackup                " no more backup file
 "}}}
 
 " Visual  {{{
-set shortmess+=aAcTtS
+set shortmess+=aAcTt
 set showtabline=2   " always show tabline
 set number          " show line number
 set signcolumn=yes  " show signcolumn
@@ -562,6 +564,7 @@ if has('GUI')
         let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
         let &guifont = s:myguifont
         let &guifontwide = s:myguifont
+        set guifont=Cica:h12
         set renderoptions=type:directx,renmode:5,geom:1
     endif
 endif
@@ -733,4 +736,10 @@ endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
 
 "}}}
+
+set shell=\"C:\msys64\usr\bin\bash.exe"\
+set shellcmdflag=-c
+set shellquote=\"
+set shellxescape=
+set shellxquote=
 " vim:set foldmethod=marker:

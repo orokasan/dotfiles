@@ -11,14 +11,11 @@ export TEXINPUTS='.//;'
 autoload -Uz compinit
 compinit
 setopt share_history
-HISTFILE=$HOME/.zsh-history
 HISTSIZE=10000
 SAVEHIST=10000
 # COLOR {{{
 # color at completion
 autoload colors
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # remove file mark
 unsetopt list_types
 setopt auto_cd

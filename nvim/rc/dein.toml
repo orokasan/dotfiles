@@ -239,54 +239,54 @@ hook_post_update = '''
   let g:dein#plugin.build = cmd
 '''
 
-[[plugins]]
-repo = 'thinca/vim-ambicmd'
-hook_add = '''
-set wildcharm=<TAB>
-cnoremap <expr> <Space> ambicmd#expand("\<Space>")
-cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
-let g:ambicmd#show_completion_menu = v:true
-augroup init_cmdwin
-  autocmd!
-  autocmd CmdwinEnter * call s:init_cmdwin()
-augroup END
-function! s:init_cmdwin()
-  inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
-  inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
-endfunction
-'''
+# [[plugins]]
+# repo = 'thinca/vim-ambicmd'
+# hook_add = '''
+# set wildcharm=<TAB>
+# cnoremap <expr> <Space> ambicmd#expand("\<Space>")
+# cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
+# let g:ambicmd#show_completion_menu = v:true
+# augroup init_cmdwin
+#   autocmd!
+#   autocmd CmdwinEnter * call s:init_cmdwin()
+# augroup END
+# function! s:init_cmdwin()
+#   inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
+#   inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
+# endfunction
+# '''
 
 [[plugins]]
 repo = 'chemzqm/denite-extra'
 
-[[plugins]]
-repo = 'airblade/vim-gitgutter'
-hook_add = '''
-let g:gitgutter_sign_added = '++'
-let g:gitgutter_sign_modified = '~~'
-let g:gitgutter_sign_removed = '--'
-let g:gitgutter_sign_removed_first_line = '__'
-let g:gitgutter_sign_modified_removed = '~-'
-'''
+# [[plugins]]
+# repo = 'airblade/vim-gitgutter'
+# hook_add = '''
+# let g:gitgutter_sign_added = '++'
+# let g:gitgutter_sign_modified = '~~'
+# let g:gitgutter_sign_removed = '--'
+# let g:gitgutter_sign_removed_first_line = '__'
+# let g:gitgutter_sign_modified_removed = '~-'
+# '''
 
-[[plugins]]
-repo = 'glacambre/firenvim'
-hook_post_update = 'call firenvim#install(0)'
-hook_add = '''
-if exists('g:started_by_firenvim')
-  set showtabline=0
-  colorscheme zellner
-  call lightline#disable()
-augroup Firenvim
-    au BufEnter github.com_*.txt set filetype=markdown
-  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
-  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
-  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
-augroup END
-endif
-let g:firenvim_font = 'Cica'
-function! Set_Font(font) abort
-  execute 'set guifont=' . a:font . ':h10'
-endfunction
-'''
+# [[plugins]]
+# repo = 'glacambre/firenvim'
+# hook_post_update = 'call firenvim#install(0)'
+# hook_add = '''
+# if exists('g:started_by_firenvim')
+#   set showtabline=0
+#   colorscheme zellner
+#   call lightline#disable()
+# augroup Firenvim
+#     au BufEnter github.com_*.txt set filetype=markdown
+#   au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
+#   au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
+#   au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
+# augroup END
+# endif
+# let g:firenvim_font = 'Cica'
+# function! Set_Font(font) abort
+#   execute 'set guifont=' . a:font . ':h10'
+# endfunction
+# '''
 # vim:set foldmethod=marker:
