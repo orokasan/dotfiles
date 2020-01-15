@@ -398,6 +398,8 @@ endfunction
 nnoremap <silent> q :close<CR>
 " escape 'q'
 nnoremap gq q
+" escape 'gq'
+nnoremap gQ gq
 " don't close window when closing buffer
 nnoremap <silent> Q :<C-u>Bclose<CR>
 xnoremap <silent> Q :<C-u>Bclose<CR>
@@ -460,6 +462,15 @@ xnoremap <silent> Q :<C-u>Bclose<CR>
  endfunction "}}}
 "}}}
 " autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
+" open tab by gt if no tab
+nnoremap <silent>gt :<C-u>call <SID>improved_gt()<CR>
+function! s:improved_gt() abort
+    if tabpagenr('$') == 1
+        execute 'tabnew'
+    else
+        normal! gt
+    endif
+endfunction
 " spliting windows
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -653,7 +664,7 @@ let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
     call dein#save_state()

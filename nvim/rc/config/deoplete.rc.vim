@@ -54,9 +54,9 @@ call deoplete#custom#option('sources', {
 call deoplete#custom#option({
     \ 'refresh_always': v:true,
     \ 'auto_refresh_delay': 100,
-    \ 'skip_multibyte': v:true,
+    \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': '',
+    \ 'prev_completion_mode': 'filter',
     \ 'ignore_sources': {
     \ 'vim': ['lsp'],
     \ 'python': ['member']

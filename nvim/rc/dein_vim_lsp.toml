@@ -3,6 +3,8 @@ repo = 'orokasan/vim-lsp'
 # lazy = 1'
 # on_ft = ['markdown', 'tex', 'python', 'go']
 hook_add = '''
+" let lsp_log_verbose = 1
+" let lsp_log_file = '/tmp/lsp.log'
 let g:lsp_auto_enable = 0
 let s:pyls_config = {'pyls': {'plugins': {
     \   'pycodestyle': {'enabled': v:true},
@@ -75,6 +77,9 @@ augroup VimLsp
           \ 'name': 'texlab',
           \ 'cmd': {server_info->['texlab']},
           \ 'whitelist': ['tex', 'bib', 'sty'],
+          \ 'workspace_config': { 'texlab':{
+          \ 'trace':{ 'server':'verbose' }
+          \ }},
           \ })
     endif
     if executable('gopls')
