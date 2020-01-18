@@ -21,17 +21,13 @@ else
 return path
 endif
 endfunction
-nnoremap <silent> [denite]S :<C-u>DeniteBufferDir
-    \ -start-filter
-    \  file/rec file:new<CR>
-nnoremap <silent> [denite]f :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
     \ -start-filter
     \  file/rec file:new<CR>
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
     \ -start-filter
     \  file file:new<CR>
-
 "プロジェクトディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
     \ -start-filter

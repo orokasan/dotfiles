@@ -37,17 +37,16 @@ call denite#custom#option('relative',{
     \ 'split': 'above_cursor',
     \ 'wincol': &columns * 1/3,
     \ 'winwidth': &columns/2,
-    \ 'winheight': 10,
+    \ 'winheight': 11,
     \ 'winrow' : &lines *1/3,
     \ })
 
-" call denite#custom#var('file/rec', 'command',
-" \ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
 ""need rg for grep/file-rec
-call denite#custom#var('file/rec', 'command',
-    \ ['rg', '--files', '--no-messages','--hidden',
-    \ '--glob', '!**/.git/*', '--glob','!*.tmp','-g','!AppData/*'])
-
+if executable('rg')
+    call denite#custom#var('file/rec', 'command',
+        \ ['rg', '--files', '--no-messages','--hidden',
+        \ '--glob', '!**/.git/*', '--glob','!*.tmp','-g','!AppData/*'])
+endif
 call denite#custom#source('grep', 'args', ['', '', '!'])
 call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
 call denite#custom#var('grep', 'recursive_opts', [])
