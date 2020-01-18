@@ -9,7 +9,7 @@ let g:lightline = {
     \ },
     \ 'inactive': {
         \ 'left': [['inactivefn']],
-        \ 'right': [[ 'percent' ], [], ['denitefilter']]
+        \ 'right': [[ 'percent' ], [], ['filetype','denitefilter']]
     \ },
     \ 'tabline' : {
         \ 'left': [['buffers'], ['tabdenitesource']],
@@ -312,7 +312,7 @@ function! s:denite_statusline() abort
     if &filetype isnot# 'denite'
         return ''
     else
-        let str = s:denitebuf() . ' ' . s:denitesource() . ' ' . s:denitepath()
+        let str = s:denitebuf() . ' ' . s:denitesource()
         return winwidth(0) * 2/3 > strwidth(str) ? str : s:denitesource()
    endif
 endfunction
@@ -327,7 +327,9 @@ endfunction
 
 function! s:denitesource()
     let l:sources = denite#get_status('sources')
-    return substitute(l:sources, " file:\['new'\\].*", '','g')
+    let l:sources = substitute(l:sources, " file:\\['new'\\](\\d\\+/\\d\\+)", '','g')
+    " let l:sources = substitute(l:sources, "\\[.*\\]", '','g')
+    return l:sources
 endfunction
 
 function! s:denitepath() abort

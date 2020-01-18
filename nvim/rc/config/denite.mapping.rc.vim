@@ -6,8 +6,8 @@ nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
 "現在開いているファイルのディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]s :<C-u>Denite
     \ -start-filter
-    \ -path=`<SID>denite_gitdir()`
-    \  file/rec file:new<CR>
+    \ file/rec:`<SID>denite_gitdir()`
+    \ file:new<CR>
 function! s:denite_gitdir() abort
 if finddir('.git', '.;') != ''
     let path = (empty(bufname('%')) || &buftype =~# '^\%(nofile\|acwrite\|quickfix\|terminal\)$') ? getcwd() : expand('%:p')
@@ -65,7 +65,7 @@ nnoremap <silent> [denite]/ :<C-u>Denite
     \ anzu<CR>
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
-    \ -buffer-name=search
+    \ -buffer-name=relative
     \ -split=above_cursor
     \ neoyank register<CR>
 "コマンド履歴
@@ -81,7 +81,7 @@ nnoremap <silent> [denite]g :<C-u>Denite
     \ `finddir('.git', '.;') != '' ? 'grep/git:::!' : 'grep'`<CR>
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
-    \ -buffer_name=menu
+    \ -buffer_name=relative
     \ -winheight=5
     \ menu<CR>
 "ヘルプ
@@ -100,7 +100,9 @@ nnoremap <silent> [denite]m :<C-u>Denite
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite change<CR>
 ":jump
-nnoremap <silent> [denite]j :<C-u>Denite jump <CR>
+nnoremap <silent> [denite]j :<C-u>Denite
+    \ -buffer-name=relative
+    \ jump <CR>
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
     \ -resume<CR>
