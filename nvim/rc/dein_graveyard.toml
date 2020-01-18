@@ -231,10 +231,6 @@ else
 endif
 
 [[plugins]]
-repo =  'Shougo/unite.vim'
-on_cmd = ['Unite']
-
-[[plugins]]
 repo =  'Shougo/neocomplete.vim'
 on_if = '!has("nvim")'
 on_event = 'InsertEnter'

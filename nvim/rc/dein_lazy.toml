@@ -7,7 +7,8 @@ hook_source = 'source ~/dotfiles/nvim/rc/config/denite.rc.vim'
 [plugins.ftplugin]
 denite = '''
 let g:my_denite_filter_winblend_config = 1
-let g:my_denite_filter_winblend_config = b:denite.buffer_name !~# '\v(float|menu)' ? 1 : 0
+let g:my_denite_filter_winblend_config = b:denite.buffer_name !~#
+\ '\v(float|menu|relative)' ? 1 : 0
 if has('nvim')
     setlocal winblend=10
 endif
@@ -71,10 +72,9 @@ inoremap <silent><buffer> <C-j>  <ESC><C-w>p:call cursor(line('.')+1,0)<CR><C-w>
 inoremap <silent><buffer> <C-k>  <ESC><C-w>p:call cursor(line('.')-1,0)<CR><C-w>pA
 inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
 inoremap <silent><buffer><expr> <Tab> denite#do_map('choose_action')
-imap <silent><buffer> <C-c> <Plug>(denite_filter_update)
 imap <silent><buffer> <C-[> <Plug>(denite_filter_update)
 imap <silent><buffer> <ESC> <Plug>(denite_filter_update)
-imap <silent><buffer> <C-q> <Plug>(denite_filter_quit)q
+imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)q
 nmap <silent><buffer> q <Plug>(denite_filter_quit)q
 '''
 
@@ -213,14 +213,15 @@ hook_source = '''
 " let g:neosnippet#disable_runtime_snippets = {
 " \   '_' : 1,
 " \ }
-" let g:neosnippet#enable_complete_done = 1
-" if has('conceal')
-"     set conceallevel=2 concealcursor=niv
-" endif
+let g:neosnippet#enable_completed_snippet = 1
+let g:neosnippet#enable_complete_done = 1
+if has('conceal')
+    set conceallevel=2 concealcursor=niv
+endif
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+" imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+" \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 '''
 
 [[plugins]]
@@ -264,7 +265,7 @@ let g:eskk#revert_henkan_style = 'okuri'
 " backspaceで確定
 let g:eskk#delete_implies_kakutei = 1
 let g:eskk#dictionary = {
-    \    'path': "~/GoogleDrive/rc/.skk-jisyo",
+    \    'path': "~/.skk/.skk-jisyo",
     \    'sorted': 0,
     \    'encoding': 'utf-8'
     \ }
@@ -901,5 +902,9 @@ endif
 # let g:go_highlight_generate_tags = 1
 # let g:go_highlight_variable_declarations = 1
 # '''
+
+[[plugins]]
+repo =  'Shougo/unite.vim'
+on_cmd = ['Unite']
 
 # vim:set foldmethod=marker:

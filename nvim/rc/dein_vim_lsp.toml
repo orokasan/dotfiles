@@ -162,12 +162,12 @@ repo = 'prabirshrestha/asyncomplete-lsp.vim'
 [[plugins]]
 lazy = 1'
 on_source = ['deoplete.nvim']
-repo = 'hrsh7th/vim-lsp-snippets'
+repo = 'thomasfaingnaert/vim-lsp-snippets'
 
 [[plugins]]
 lazy = 1'
 on_source = ['deoplete.nvim']
-repo = 'hrsh7th/vim-lsp-neosnippet'
+repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
 # [[plugins]]
 # # on_if = '!has("nvim")'

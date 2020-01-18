@@ -33,13 +33,16 @@ call denite#custom#option('float',{
     \ 'winheight': 10,
     \ 'winrow' : &lines - 12
     \ })
-call denite#custom#option('menu',{
+call denite#custom#option('relative',{
     \ 'split': 'above_cursor',
     \ 'wincol': &columns * 1/3,
-    \ 'winwidth': &columns/3,
+    \ 'winwidth': &columns/2,
     \ 'winheight': 10,
     \ 'winrow' : &lines *1/3,
     \ })
+
+" call denite#custom#var('file/rec', 'command',
+" \ ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
 ""need rg for grep/file-rec
 call denite#custom#var('file/rec', 'command',
     \ ['rg', '--files', '--no-messages','--hidden',
