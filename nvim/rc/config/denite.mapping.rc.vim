@@ -3,28 +3,27 @@ nnoremap [denite] <Nop>
 nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
     \ -start-filter
     \  source<CR>
-"現在開いているファイルのディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]s :<C-u>Denite
-    \ -start-filter
-    \ file/rec:`<SID>denite_gitdir()`
-    \ file:new<CR>
-function! s:denite_gitdir() abort
-if finddir('.git', '.;') != ''
-    let path = (empty(bufname('%')) || &buftype =~# '^\%(nofile\|acwrite\|quickfix\|terminal\)$') ? getcwd() : expand('%:p')
-    let dir = finddir('.git', path.';')
-    if empty(dir) | return '' | endif
-    let files = findfile('.git', path.';',-1)
-    if empty(files) | return fnamemodify(dir, ':p:h:h') | endif
-    let path = fnamemodify(files[-1], ':p:h')
-else
-    let path = expand('%:p:h')
-return path
-endif
-endfunction
-nnoremap <silent> [denite]f :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
     \ -start-filter
     \  file/rec file:new<CR>
-"現在開いているファイルのディレクトリ下のファイル一覧。
+"現在開いているファイルのgit配下のファイルを開く
+nnoremap <silent> [denite]f :<C-u>Denite
+    \ -start-filter
+    \ file/rec:`<SID>denite_gitdir()` file:new<CR>
+function! s:denite_gitdir() abort
+    if finddir('.git', '.;') != ''
+        let path = (empty(bufname('%')) || &buftype =~# '^\%(nofile\|acwrite\|quickfix\|terminal\)$') ? getcwd() : expand('%:p')
+        let dir = finddir('.git', path.';')
+        if empty(dir) | return '' | endif
+        let files = findfile('.git', path.';',-1)
+        if empty(files) | return fnamemodify(dir, ':p:h:h') | endif
+        let path = fnamemodify(files[-1], ':p:h')
+    else
+        let path = expand('%:p:h')
+    return path
+endif
+
+endfunction
 nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
     \ -start-filter
     \  file file:new<CR>
@@ -32,7 +31,6 @@ nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
 nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
     \ -start-filter
     \ file/rec file:new<CR>
-"プロジェクトディレクトリ下のファイル一覧。
 nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
     \ -start-filter
     \ file file:new<CR>
