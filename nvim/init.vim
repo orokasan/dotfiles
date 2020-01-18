@@ -683,6 +683,10 @@ command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
 
+" filetype config {{{
+let g:tex_conceal=''
+"}}}
+
 " misc {{{
 "選択範囲の行をカウント {{{
 function! g:LineCharVCount() range
