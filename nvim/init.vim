@@ -118,9 +118,9 @@ set complete=.,w,b,u
 " viminfo
 set history=1000
 if has('nvim')
-  set shada=!,'100,<100,s10,h
+  set shada=!,'200,<100,s10,h
 else
-  set viminfo=!,'100,<100,s10,h,n~/.vim/.viminfo
+  set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
 endif
 
 " set unnamed register to clipboard.

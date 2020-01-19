@@ -3,9 +3,9 @@ nnoremap [denite] <Nop>
 nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
     \ -start-filter
     \  source<CR>
-nnoremap <silent> [denite]s :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]s :<C-u>Denite
     \ -start-filter
-    \  file/rec file:new<CR>
+    \  file/rec:`expand('%:h')` file:new<CR>
 "現在開いているファイルのgit配下のファイルを開く
 nnoremap <silent> [denite]f :<C-u>Denite
     \ -start-filter
