@@ -312,8 +312,7 @@ function! s:denite_statusline() abort
     if &filetype isnot# 'denite'
         return ''
     else
-        let str = s:denitebuf() . ' ' . s:denitesource()
-        return winwidth(0) * 2/3 > strwidth(str) ? str : s:denitesource()
+        return s:denitesource()
    endif
 endfunction
 
@@ -328,18 +327,29 @@ endfunction
 function! s:denitesource()
     let l:sources = denite#get_status('sources')
     let l:sources = substitute(l:sources, " file:\\['new'\\](\\d\\+/\\d\\+)", '','g')
-    " let l:sources = substitute(l:sources, "\\[.*\\]", '','g')
-    return l:sources
-endfunction
-
-function! s:denitepath() abort
-    let l:path =denite#get_status('path')
-    let l:path = substitute(l:path, '\(\[\|\]\)', '', 'g')
+    let l:p = matchstr(l:sources, "\\[\'\\zs.*\\ze\'\\]", 'g')
+    echo l:p
+    if l:p == ''
+        let l:path = getcwd()
+    else
+        let l:path = l:p
+    endif
     let l:path = fnamemodify(l:path,':~')
     if strwidth(l:path) > 40
         let path = '.../' . fnamemodify(path,':h:h:t'). '/'
             \ . fnamemodify(path,':h:t'). '/'. fnamemodify(path, ':t')
     endif
+    let l:path =  '[' . l:path . ']'
+    let l:sources = substitute(l:sources, "\:\\[.*\\]", '','g')
+    return l:sources . l:path
+endfunction
 
-    return '[' . l:path . ']'
+function! s:denitepath() abort
+    let l:path =denite#get_status('path')
+    let l:path = substitute(l:path, '\(\[\|\]\)', '', 'g')
+    if strwidth(l:path) > 40
+        let path = '.../' . fnamemodify(path,':h:h:t'). '/'
+            \ . fnamemodify(path,':h:t'). '/'. fnamemodify(path, ':t')
+    endif
+
 endfunction
