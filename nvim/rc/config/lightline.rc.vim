@@ -21,6 +21,7 @@ let g:lightline = {
     \ 'component_function': {
         \ 'percent' : 'LLpercent',
         \ 'readonly':'LLReadonly',
+        \ 'filetype':'LLfiletype',
         \ 'inactivefn':'LLInactiveFilename',
         \ 'path':'LLMyFilepath',
         \ 'mode': 'LLMode',
@@ -175,8 +176,7 @@ endfunction
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
 
 function! LLInactiveFilename()
-    return &filetype !~# s:ignore_filetype ? expand('%:t') . ' | cd: ' . fnamemodify(getcwd(), ':~')
-	\ : &filetype is# 'denite' ? '': LLMode()
+    return &filetype !~# s:ignore_filetype ? expand('%:t') : &filetype is# 'denite' ? '': LLMode()
 endfunction
 
 function! LLeskk() abort
@@ -189,6 +189,10 @@ function! LLeskk() abort
     endif
 endfunction
 
+function! LLfiletype() abort
+    return &filetype !~# s:ignore_filetype ? &filetype : ''
+endfunction
+
 function! LLruler() abort
     let info = {'c': col('.'), 'l': line('.') }
     let l:fcol =
@@ -199,10 +203,8 @@ function! LLruler() abort
     if &filetype !~# s:ignore_filetype
         return s:threshold(0) ? printf('%s:%s«%d', fcol , fline , line('$') ) :
             \  s:threshold(1) ? printf('%s:%s', fcol , fline ) : ''
-    elseif &filetype =~# 'denite'
-        return ''
     else
-        return printf('%s:%s', fcol , fline )
+        return ''
     endif
 endfunction
 
@@ -328,7 +330,6 @@ function! s:denitesource()
     let l:sources = denite#get_status('sources')
     let l:sources = substitute(l:sources, " file:\\['new'\\](\\d\\+/\\d\\+)", '','g')
     let l:p = matchstr(l:sources, "\\[\'\\zs.*\\ze\'\\]", 'g')
-    echo l:p
     if l:p == ''
         let l:path = getcwd()
     else
@@ -342,14 +343,4 @@ function! s:denitesource()
     let l:path =  '[' . l:path . ']'
     let l:sources = substitute(l:sources, "\:\\[.*\\]", '','g')
     return l:sources . l:path
-endfunction
-
-function! s:denitepath() abort
-    let l:path =denite#get_status('path')
-    let l:path = substitute(l:path, '\(\[\|\]\)', '', 'g')
-    if strwidth(l:path) > 40
-        let path = '.../' . fnamemodify(path,':h:h:t'). '/'
-            \ . fnamemodify(path,':h:t'). '/'. fnamemodify(path, ':t')
-    endif
-
 endfunction
