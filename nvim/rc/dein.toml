@@ -245,13 +245,20 @@ hook_post_update = '''
 repo = 'thinca/vim-ambicmd'
 hook_add = '''
 set wildcharm=<TAB>
-cnoremap <expr> <Space> ambicmd#expand("\<Space>")
-cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
-let g:ambicmd#show_completion_menu = v:true
-augroup init_cmdwin
+let g:ambicmd#show_completion_menu = 1
+augroup init_ambicmd
   autocmd!
   autocmd CmdwinEnter * call s:init_cmdwin()
+  autocmd VimEnter * call s:init_ambicmd()
 augroup END
+function! s:init_ambicmd() abort
+" sourceできた時のみマップする
+" `ambicmd#expand`が無いときcmdlineでまともに入力できなくなる
+if dein#is_sourced('vim-ambicmd')
+  cnoremap <expr> <Space> ambicmd#expand("\<Space>")
+  cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
+endif
+endfunction
 function! s:init_cmdwin()
   inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
   inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
