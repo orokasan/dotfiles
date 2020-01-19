@@ -637,7 +637,7 @@ if has('nvim')
 endif
 " edit fold column
 set background=light
-let g:colors_name='seagull'
+let s:colorscheme = 'seagull'
 "}}}
 
 ""dein.vim {{{
@@ -748,4 +748,11 @@ endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
 "}}}
 let g:lightline#bufferline#smarttab = 1
+
+try
+    exe 'colorscheme ' . s:colorscheme
+catch /^Vim\%((\a\+)\)\=:E185:/
+    echom "colorscheme '"  . s:colorscheme .  "' is not found. Using 'peachpuff' instead"
+    exe 'colorscheme peachpuff'
+endtry
 " vim:set foldmethod=marker:
