@@ -296,9 +296,11 @@ hook_post_update = 'call firenvim#install(0)'
 hook_add = '''
 if exists('g:started_by_firenvim')
   set showtabline=0
-  colorscheme zellner
-  call lightline#disable()
+  set laststatus=2
+  " call lightline#disable()
 augroup Firenvim
+    au BufEnter * call Set_Font(g:firenvim_font)
+    au BufEnter *     colorscheme iceberg
     au BufEnter github.com_*.txt set filetype=markdown
   au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
   au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
@@ -321,7 +323,10 @@ au ColorScheme seagull hi link Search IncSearch
 au ColorScheme seagull hi MatchParen ctermfg=1 ctermbg=NONE gui=reverse guifg=#ff4053 guibg=NONE
 au ColorScheme seagull hi Comment cterm=NONE ctermfg=14 guifg=#808487 gui=NONE
 '''
-
 [[plugins]]
 repo = 'nightsense/snow'
+
+[[plugins]]
+repo = 'dstein64/vim-startuptime'
+
 # vim:set foldmethod=marker:

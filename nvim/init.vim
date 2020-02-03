@@ -127,7 +127,8 @@ endif
 " NOTE: not working well with CTRL-V in neovim.
 " workaround in neovim section.
 set clipboard+=unnamed
-
+" mouse in terminal
+set mouse=a
 " Set minimal height for current window.
 set winheight=1
 set winwidth=1
@@ -218,6 +219,11 @@ nnoremap <S-h> ^
 vnoremap <S-l> $
 vnoremap <S-h> ^
 nnoremap G Gzz
+nnoremap <C-f> <C-f>zz
+nnoremap <C-b> <C-b>zz
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+nnoremap <C-o> <C-o>zz
 " moving around between buffers
 nnoremap <silent><Leader>h :bprev!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
@@ -229,7 +235,7 @@ xmap <silent> g<TAB> <Plug>(MatchitVisualBackward)
 omap <silent> <TAB>  <Plug>(MatchitOperationForward)
 omap <silent> g<TAB> <Plug>(MatchitOperationBackward)
 " native <TAB> is useful
-nnoremap <C-p> <C-i>
+nnoremap <C-p> <C-i>zz
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
 "}}}
@@ -490,6 +496,9 @@ nnoremap <S-Down>  <C-w>+
 " maximize buffer window size temporally
 nmap <C-w>z <Plug>(my-zoom-window)
 nmap <C-w><C-z> <Plug>(my-zoom-window)
+" mouse mapping
+nmap <S-LeftMouse> <CR>
+nmap <2-LeftMouse> <CR>
 "{{{
 nnoremap <silent> <Plug>(my-zoom-window)
       \ :<C-u>call <SID>toggle_window_zoom()<CR>
@@ -664,7 +673,7 @@ let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
     call dein#save_state()
@@ -749,10 +758,12 @@ command! -nargs=* SearchYank call s:search(<q-args>)
 "}}}
 let g:lightline#bufferline#smarttab = 1
 
+" set colorscheme
 try
     exe 'colorscheme ' . s:colorscheme
 catch /^Vim\%((\a\+)\)\=:E185:/
     echom "colorscheme '"  . s:colorscheme .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
+let hoge = '~/dotfiles/'
 " vim:set foldmethod=marker:

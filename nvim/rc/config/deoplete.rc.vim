@@ -19,10 +19,6 @@ inoremap <silent><expr><C-l>
 inoremap <expr><silent> <C-g> deoplete#undo_completion()
     " \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
 "" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function() abort "{{{
-  return pumvisible() ? deoplete#close_popup() : "\<CR>"
-endfunction "}}}
 " call deoplete#custom#source('_', 'max_info_width',150)
 call deoplete#custom#source('_', 'matchers',
       \ ['matcher_fuzzy'])
@@ -49,9 +45,8 @@ call deoplete#custom#var('around', {
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
     \ })
-
+call deoplete#custom#option({ 'refresh_always': v:true})
 call deoplete#custom#option({
-    \ 'refresh_always': v:true,
     \ 'auto_refresh_delay': 100,
     \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,

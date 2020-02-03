@@ -103,19 +103,31 @@ call defx#custom#option('_', {
     \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
     \ 'ignored_files': s:defx_ignore_files
     \ })
+function! TestFunc(candidate) abort
+    echo a:candidate
+endfunction
 function! s:get_defx_bufferdir(candidate) abort
-    if line('.') == 1
-        let path_mod  = 'h'
-    else
-        let path_mod = isdirectory(a:candidate) ? '' : 'h'
-    endif
-    return fnamemodify(a:candidate,'\":p:' . path_mod . '\"')
+    " if line('.') == 1
+    "     let path_mod  = 'h'
+    " else
+    "     let path_mod = isdirectory(a:candidate) ? '' : 'h'
+    " endif
+    let path_mod = 'h'
+    return fnamemodify(a:candidate, ':' . path_mod)
 endfunction
 function! Defx_to_denite_rec(context) abort
-        let narrow_dir = '\"' . s:get_defx_bufferdir(a:context.targets[0]) . '\"'
+        let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
         silent! execute('Denite
         \ -default-action=defx
+        \ -start-filter
         \ file/rec:' .  narrow_dir)
+endfunction
+function! Defx_to_denite_file(context) abort
+        let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
+        silent! execute('Denite
+        \ -default-action=defx
+        \ -start-filter
+        \ -path='. narrow_dir. ' file')
 endfunction
 '''
 [plugins.ftplugin]
@@ -141,7 +153,7 @@ nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
 nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N defx#do_action('new_file')
 "need 'pip install Send2Trash'
-nnoremap <silent><buffer><expr> d defx#async_action('remove_trash')
+nnoremap <silent><buffer><expr><nowait> d defx#async_action('remove_trash')
 nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
 nnoremap <silent><buffer><expr> f defx#do_action('open_or_close_tree')
@@ -158,6 +170,8 @@ nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
 nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
 nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd')
 nnoremap <silent><buffer><expr> <C-r> defx#do_action('call','Defx_to_denite_rec')
+nnoremap <silent><buffer><expr> ss defx#do_action('call','Defx_to_denite_file')
+nnoremap <silent><buffer> sa :split<CR>:Defx -new -split=no<CR>
 '''
 
 [[plugins]]
@@ -226,6 +240,7 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
+rev = 'a2b0e0fe3e4c6189c9b5b76c9e038510758ac377'
 on_if = 'has("nvim")'
 on_event = 'InsertEnter'
 hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
@@ -265,17 +280,16 @@ let g:eskk#revert_henkan_style = 'okuri'
 " backspaceで確定
 let g:eskk#delete_implies_kakutei = 1
 let g:eskk#dictionary = {
-    \    'path': "~/.skk/.skk-jisyo",
+    \    'path': "~/.skk-jisyo",
     \    'sorted': 0,
     \    'encoding': 'utf-8'
     \ }
-let g:eskk#set_undo_point = {
-    \ 'sticky' : 0,
-    \ 'kakutei' : 0
-    \ }
+" let g:eskk#set_undo_point = {
+"     \ 'sticky' : 0,
+"     \ 'kakutei' : 0
+"     \ }
 
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
-let g:eskk#dictionary_save_count = 5
 let g:eskk#cursor_color = {
     \   'ascii': '#b4be82',
     \   'hira': '#e28878',
@@ -318,6 +332,10 @@ endfor
 inoremap z] 」
 inoremap z} 』
 inoremap z) ）
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function() abort "{{{
+  return pumvisible() ? deoplete#close_popup() : lexima#expand('<CR>', 'i')
+endfunction "}}}
 '''
 
 [[plugins]]
@@ -419,7 +437,7 @@ repo = 'previm/previm'
 depends = 'open-browser.vim'
 on_ft = ['markdown','md']
 hook_add = '''
-let g:previm_open_cmd = 'open -a Safari'
+let g:previm_open_cmd = 'open -a FireFox\ Nightly'
 nnoremap <silent><Leader>mp :PrevimOpen<CR>
 '''
 
@@ -670,22 +688,19 @@ repo = 'kassio/neoterm'
 on_cmd = ['T', 'Ttoggle']
 hook_add = '''
 nnoremap '' :<C-u>Ttoggle<CR>
+tnoremap <C-d> <C-\><C-n>:<C-u>Tclose<CR>
 let g:neoterm_repl_python = ''
 let g:neoterm_auto_repl_cmd = v:false
 let g:neoterm_default_mod='aboveleft'
 let g:neoterm_autoscroll = v:true
 let g:neoterm_size=15
-let g:neoterm_autoinsert = v:true
+let g:neoterm_autoinsert = v:false
 let g:neoterm_autojump = v:true
 '''
 
 [[plugins]]
 repo = 'majutsushi/tagbar'
 on_cmd = ['Tagbar']
-
-[[plugins]]
-repo = 'cocopon/colorswatch.vim'
-on_cmd = ['ColorSwatchGenerate']
 
 [[plugins]]
 repo = 'norcalli/nvim-colorizer.lua'

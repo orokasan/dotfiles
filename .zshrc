@@ -286,7 +286,10 @@ function _fgg() {
 
 alias gg='_gg'
 function _gg () {
-open -a /Applications/Safari.app \
+open -a /Applications/Firefox\ Nightly.app \
     "http://www.google.com/search?q= $1"
     echo "Now googling $1..."
 }
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+

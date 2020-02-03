@@ -68,8 +68,10 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -winheight=5
     \ -start-filter
     \ command_history<CR>
-"バッファディレクトリからgrep
-nnoremap <silent> [denite]g :<C-u>Denite
+nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
+    \ -start-filter
+    \ grep<CR>
+nnoremap <silent> [denite]G :<C-u>Denite
     \ -start-filter
     \ -path=`<SID>denite_gitdir()`
     \ `finddir('.git', '.;') != '' ? 'grep/git:::!' : 'grep'`<CR>
@@ -111,7 +113,8 @@ nnoremap [denite]p :<C-u>Denite
 " markdown TOC
 nnoremap <silent> [denite]o :<C-u>Denite
     \ -buffer-name=float
-    \ markdown<CR>
+    \ outline<CR>
+    " \ markdown<CR>
 nnoremap <silent> [denite]d :<C-u>Denite
     \ dirmark<CR>
 "bookmark by "add"action

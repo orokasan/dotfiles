@@ -1,10 +1,11 @@
 [[plugins]]
-repo = 'orokasan/vim-lsp'
+# repo = 'orokasan/vim-lsp'
+repo = 'prabirshrestha/vim-lsp'
 # lazy = 1'
 # on_ft = ['markdown', 'tex', 'python', 'go']
 hook_add = '''
-" let lsp_log_verbose = 1
-" let lsp_log_file = '/tmp/lsp.log'
+let lsp_log_verbose = 1
+let lsp_log_file = '/tmp/lsp.log'
 let g:lsp_auto_enable = 0
 let s:pyls_config = {'pyls': {'plugins': {
     \   'pycodestyle': {'enabled': v:true},
@@ -180,9 +181,9 @@ depends = ['vim-lsp']
 repo = 'lighttiger2505/deoplete-vim-lsp'
 hook_source ='''
 call deoplete#custom#option('sources', {
-    \ 'python': ['lsp','neosnippet', 'buffer'],
-    \ 'go': ['lsp','neosnippet', 'buffer'],
-    \ 'tex' :['lsp','eskk','neosnippet', 'buffer'],
+    \ 'python': ['lsp','eskk','neosnippet', 'buffer'],
+    \ 'go': ['lsp','eskk','neosnippet', 'buffer'],
+    \ 'tex' :['lsp','eskk','look','neosnippet', 'buffer'],
     \ })
 '''
 
