@@ -67,7 +67,6 @@ set modelines=5
 set termguicolors
 set t_Co=256
 set synmaxcol=512
-set lazyredraw
 set belloff=all
 set fillchars+=vert:\ ,fold:\ 
 set hidden          " be able to open files when editing other files
@@ -82,22 +81,21 @@ set ttyfast
 " max candidate of completion menu
 set pumheight=15 " default
 set ambiwidth=double
-set background=dark
 set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,vertical
 "}}}
 
 " Editing {{{
 set virtualedit=block     "move cursor to one more char than end of line
-set scrolloff=5
 set display=lastline
 set wrap
 " Scroll
+set scrolloff=5
 set sidescrolloff=5
 set sidescroll=1
 " add japanese matchpairs
 set showmatch       " highlight matched pairs
 set matchtime=1     " highlighting long
-set matchpairs+=<:>,`:`,（:）,「:」,『:』,【:】,［:］,＜:＞
+set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞
 
 set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
@@ -120,10 +118,11 @@ set hlsearch
 "completion
 set complete=.,w,b,u
 " viminfo
+set history=1000
 if has('nvim')
-  set shada=!,:10,'300,<50,s10,h,@10
+  set shada=!,'100,<100,s10,h
 else
-  set viminfo=!,'300,<50,s10,h,n~/.vim/.viminfo
+  set viminfo=!,'100,<100,s10,h,n~/.vim/.viminfo
 endif
 
 " set unnamed register to clipboard.
@@ -136,12 +135,16 @@ set winheight=1
 set winwidth=1
 " Set maximam maximam command line window.
 set cmdwinheight=8
-" No equal window size.
-set noequalalways
+" equal window size.
+set equalalways
 " for cmdwin
 autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
-autocmd vimrc CmdwinEnter : g/^qa\?!\?$/d
-autocmd vimrc CmdwinEnter : g/^wq\?a\?!\?$/d
+autocmd vimrc CmdwinEnter : call <SID>clear_useless_command()
+function! s:clear_useless_command() abort
+    silent g/^qa\?!\?$/d
+    silent g/^wq\?a\?!\?$/d
+    silent call feedkeys('G', 'n')
+endfunction
 autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 " open .docx as .zip
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
@@ -272,7 +275,6 @@ if !exists('*s:source_script')  "{{{
           \)
   endfunction
 endif  "}}}
-"}}}
 " pandoc/pandoc-crossref:put config file to ~/.pandoc-crossref/config.yaml
 function! s:pandoc_md_to_docx() "{{{
 " http://lierdakil.github.io/pandoc-crossref/
@@ -398,6 +400,8 @@ endfunction
 nnoremap <silent> q :close<CR>
 " escape 'q'
 nnoremap gq q
+" escape 'gq'
+nnoremap gQ gq
 " don't close window when closing buffer
 nnoremap <silent> Q :<C-u>Bclose<CR>
 xnoremap <silent> Q :<C-u>Bclose<CR>
@@ -460,6 +464,15 @@ xnoremap <silent> Q :<C-u>Bclose<CR>
  endfunction "}}}
 "}}}
 " autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
+" open tab by gt if no tab
+nnoremap <silent>gt :<C-u>call <SID>improved_gt()<CR>
+function! s:improved_gt() abort
+    if tabpagenr('$') == 1
+        execute 'tabnew'
+    else
+        normal! gt
+    endif
+endfunction
 " spliting windows
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -496,7 +509,7 @@ endfunction  "}}}
 
 " Terminal {{{
 if has('nvim')
-    autocmd vimrc TermOpen * setlocal nonumber signcolumn=no | startinsert
+    autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
 endif
 
 if has('nvim')
@@ -547,11 +560,11 @@ endfunction
 
 " +GUI {{{
 if has('GUI')
-    let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
-    set guioptions+=M
-    ""Nm秒後にカーソル点滅開始
-    set guicursor=n:blinkwait2000
-    let no_buffers_menu = 1
+    " let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
+    "set guioptions+=M
+    """Nm秒後にカーソル点滅開始
+    "set guicursor=n:blinkwait2000
+    "let no_buffers_menu = 1
     set lines=60 "ウィンドウの縦幅
     set columns=120 " ウィンドウの横幅
     winpos 2 10 " ウィンドウの起動時の位置
@@ -618,6 +631,18 @@ if has('nvim')
 endif
 "}}}
 
+" highlight {{{
+" for foldcolumn
+hi!  link SpecialKey Comment
+hi!  link NonText Comment
+if has('nvim')
+    hi! PmenuSel blend=0
+endif
+" edit fold column
+set background=light
+let g:colors_name='seagull'
+"}}}
+
 ""dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -642,7 +667,7 @@ let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
     call dein#save_state()
@@ -659,20 +684,6 @@ syntax enable
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-"}}}
-
-" highlight {{{
-" for foldcolumn
-hi!  link SpecialKey Comment
-hi!  link NonText Comment
-if has('nvim')
-    hi! PmenuSel blend=0
-endif
-" edit fold column
-if has('GUI') || has('nvim')
-    autocmd vimrc ColorScheme * hi link Folded NonText
-    autocmd vimrc ColorScheme * hi Folded guifg=bold
-endif
 "}}}
 
 " misc {{{
@@ -734,12 +745,11 @@ execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
-
 "}}}
-
-set shell=\"C:\msys64\usr\bin\bash.exe"\
+set shell=\"C:\msys64\usr\bin\bash.exe\"\ -f
 set shellcmdflag=-c
 set shellquote=\"
 set shellxescape=
 set shellxquote=
+
 " vim:set foldmethod=marker:

@@ -61,6 +61,8 @@ nnoremap <silent><buffer><expr> <C-s>
 denite-filter = '''
 if g:my_denite_filter_winblend_config ==# 1
     setlocal winblend=100
+else
+    setlocal winblend=0
 endif
 inoremap <silent><buffer> <CR> <ESC><C-w>p
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
@@ -95,10 +97,9 @@ let s:defx_ignore_files =
 call defx#custom#option('_', {
     \ 'winwidth': 35,
     \ 'split': 'vertical',
-    \ 'direction': 'topleft',
+    \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename',
     \ 'sort': 'TIME',
-    \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
     \ 'ignored_files': s:defx_ignore_files
     \ })
 function! s:get_defx_bufferdir(candidate) abort
@@ -126,66 +127,36 @@ nmap <silent><buffer> [denite]h <Plug>(defx):<C-u>Denite
     \ defx/history<CR>
 setlocal signcolumn=no
 " Define mappings
-nnoremap <silent><buffer><expr> <CR>
-\ defx#do_action('drop')
+nnoremap <silent><buffer><expr> <CR> defx#do_action('drop')
 nnoremap <silent><buffer> <C-e> <C-w>p
-nnoremap <silent><buffer><expr> c
-\ defx#async_action('copy')
-nnoremap <silent><buffer><expr> m
-\ defx#async_action('move')
-nnoremap <silent><buffer><expr> p
-\ defx#async_action('paste')
-nnoremap <silent><buffer><expr> l 
-\ defx#is_directory() ?
-\ defx#do_action('open') :
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> E
-\ defx#do_action('open', 'vsplit')
-nnoremap <silent><buffer><expr> t
-\ defx#do_action('multi', ['toggle_sort','filename','redraw'])
-nnoremap <silent><buffer><expr> T
-\ defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
-nnoremap <silent><buffer><expr> P
-\ defx#do_action('open', 'pedit')
-nnoremap <silent><buffer><expr> K
-\ defx#do_action('new_directory')
-nnoremap <silent><buffer><expr> N
-\ defx#do_action('new_file')
+nnoremap <silent><buffer><expr> c defx#async_action('copy')
+nnoremap <silent><buffer><expr> m defx#async_action('move')
+nnoremap <silent><buffer><expr> p defx#async_action('paste')
+nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
+nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
+nnoremap <silent><buffer><expr> t defx#do_action('multi', ['toggle_sort','filename','redraw'])
+nnoremap <silent><buffer><expr> T defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
+nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
+nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
+nnoremap <silent><buffer><expr> N defx#do_action('new_file')
 "need 'pip install Send2Trash'
-nnoremap <silent><buffer><expr> d
-\ defx#async_action('remove_trash')
-nnoremap <silent><buffer><expr> r
-\ defx#do_action('rename')
-nnoremap <silent><buffer><expr> x
-\ defx#async_action('execute_system')
-nnoremap <silent><buffer><expr> f
-\ defx#do_action('open_or_close_tree')
-nnoremap <silent><buffer><expr> yy
-\ defx#do_action('yank_path')
-nnoremap <silent><buffer><expr> .
-\ defx#do_action('toggle_ignored_files')
-nnoremap <silent><buffer><expr> h
-\ defx#do_action('cd', ['..'])
-nnoremap <silent><buffer><expr> ~
-\ defx#do_action('cd')
-nnoremap <silent><buffer><expr> q
-\ defx#do_action('quit')
-nnoremap <silent><buffer><expr> i
-\ defx#do_action('toggle_select') . 'j'
-nnoremap <silent><buffer><expr> I
-\ defx#do_action('clear_select_all')
-nnoremap <silent><buffer><expr> *
-\ defx#do_action('toggle_select_all')
-nnoremap <silent><buffer><expr> j
-\ line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr> k
-\ line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <C-g>
-\ defx#do_action('print')
-nnoremap <silent><buffer><expr> cd
-\ defx#do_action('change_vim_cwd')
-nnoremap <silent><buffer><expr> <C-r>
-\ defx#do_action('call','Defx_to_denite_rec')
+nnoremap <silent><buffer><expr> d defx#async_action('remove_trash')
+nnoremap <silent><buffer><expr> r defx#do_action('rename')
+nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
+nnoremap <silent><buffer><expr> f defx#do_action('open_or_close_tree')
+nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
+nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
+nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
+nnoremap <silent><buffer><expr> q defx#do_action('quit')
+nnoremap <silent><buffer><expr> i defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> I defx#do_action('clear_select_all')
+nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
+nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
+nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
+nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd')
+nnoremap <silent><buffer><expr> <C-r> defx#do_action('call','Defx_to_denite_rec')
 '''
 
 [[plugins]]
@@ -242,9 +213,9 @@ hook_source = '''
 " \   '_' : 1,
 " \ }
 " let g:neosnippet#enable_complete_done = 1
-if has('conceal')
-    set conceallevel=2 concealcursor=niv
-endif
+" if has('conceal')
+"     set conceallevel=2 concealcursor=niv
+" endif
 imap <C-k>     <Plug>(neosnippet_expand_or_jump)
 smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
@@ -278,10 +249,10 @@ on_ft = 'vim'
 
 [[plugins]]
 repo =  'tyru/eskk.vim'
+on_event = 'InsertEnter'
 # repo =  'orokasan/eskk.vim'
-on_map = {icrtn = '<Plug>(eskk:'}
+# on_map = {icrtn = '<Plug>(eskk:'}
 hook_add = '''
-"let g:eskk#marker_henkan = '' "''
 let g:eskk#marker_okuri = '*'
 let g:eskk#rom_input_style = 'msime'
 let g:eskk#egg_like_newline = 1
@@ -295,7 +266,7 @@ let g:eskk#dictionary = {
     \    'path': "~/GoogleDrive/rc/.skk-jisyo",
     \    'sorted': 0,
     \    'encoding': 'utf-8'
-    \}
+    \ }
 let g:eskk#set_undo_point = {
     \ 'sticky' : 0,
     \ 'kakutei' : 0
@@ -320,66 +291,32 @@ repo =  'cohama/lexima.vim'
 on_if = 'has("nvim")'
 on_event = 'InsertEnter'
 hook_add = '''
-"let g:lexima_no_default_rules = 1
-"call lexima#set_default_rules()
-
-let g:lexima_no_default_rules = 0
+let g:lexima_no_default_rules = 1
 let g:lexima_enable_basic_rules = 1
 let g:lexima_enable_space_rules = 0
 let g:lexima_nvim_accept_pum_with_enter = 0
 let g:lexima_ctrlh_as_backspace = 1
 let g:lexima_map_escape = ''
 '''
-# hook_post_source = '''
-# let s:lexima_default_rules = [
-# \ {'char': '(', 'input_after': ')'},
-# \ {'char': '(', 'at': '\\\%#'},
-# \ {'char': ')', 'at': '\%#)', 'leave': 1},
-# \ {'char': '<BS>', 'at': '(\%#)', 'delete': 1},
-# \ {'char': '{', 'input_after': '}'},
-# \ {'char': '}', 'at': '\%#}', 'leave': 1},
-# \ {'char': '<BS>', 'at': '{\%#}', 'delete': 1},
-# \ {'char': '[', 'input_after': ']'},
-# \ {'char': '[', 'at': '\\\%#'},
-# \ {'char': ']', 'at': '\%#]', 'leave': 1},
-# \ {'char': '<BS>', 'at': '[\%#]', 'delete': 1},
-# \ {'char': '"', 'input_after': '"'},
-# \ {'char': '"', 'at': '\%#"', 'leave': 1},
-# \ {'char': '"', 'at': '\\\%#'},
-# \ {'char': '"', 'at': '^\s*\%#', 'filetype': 'vim'},
-# \ {'char': '"', 'at': '\%#\s*$', 'filetype': 'vim'},
-# \ {'char': "'", 'input_after': "'"},
-# \ {'char': "'", 'at': '\w\%#''\@!'},
-# \ {'char': "'", 'at': '\\\%#'},
-# \ {'char': "'", 'at': '\\\%#', 'leave': 1, 'filetype': ['vim', 'sh', 'csh', 'ruby', 'tcsh', 'zsh']},
-# \ {'char': "'", 'filetype': ['haskell', 'lisp', 'clojure', 'ocaml', 'reason', 'scala', 'rust']},
-# \ {'char': '`', 'input_after': '`'},
-# \ {'char': '`', 'at': '\%#`', 'leave': 1},
-# \ {'char': '`', 'filetype': ['ocaml', 'reason']},
-# \ {'char': '`', 'at': '``\%#', 'input_after': '```'},
-# \ {'char': '`', 'at': '\%#```', 'leave': 3},
-# \ ]
-
-# for rule in s:lexima_default_rules
-#   call lexima#add_rule(rule)
-# endfor
-# let s:lexima_my_rules = [
-# \ {'char': 'z[', 'input': '「', 'input_after': '」'},
-# \ {'char': 'z{', 'input': '『', 'input_after': '』'},
-# \ {'char': 'z\', 'input': '【', 'input_after': '】'},
-# \ {'char': 'z(', 'input': '（', 'input_after': '）'},
-# \ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
-# \ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
-# \ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
-# \ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
-# \ ]
-# for rule in s:lexima_my_rules
-#   call lexima#add_rule(rule)
-# endfor
-# inoremap z] 」
-# inoremap z} 』
-# inoremap z) ）
-# '''
+hook_post_source = '''
+call lexima#set_default_rules()
+let s:lexima_my_rules = [
+\ {'char': 'z[', 'input': '「', 'input_after': '」'},
+\ {'char': 'z{', 'input': '『', 'input_after': '』'},
+\ {'char': 'z\', 'input': '【', 'input_after': '】'},
+\ {'char': 'z(', 'input': '（', 'input_after': '）'},
+\ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
+\ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
+\ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
+\ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
+\ ]
+for rule in s:lexima_my_rules
+  call lexima#add_rule(rule)
+endfor
+inoremap z] 」
+inoremap z} 』
+inoremap z) ）
+'''
 
 [[plugins]]
 repo = 'kana/vim-operator-replace'
@@ -584,6 +521,7 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 
 [[plugins]]
 repo = 'haya14busa/incsearch-migemo.vim'
+on_if = "!has('kaoriya')"
 depends = 'incsearch.vim'
 on_map = { nx = '<Plug>(incsearch-migemo-' }
 hook_add = '''
@@ -668,6 +606,7 @@ hi link EasyMotionIncSearch Search
 
 [[plugins]]
 repo = 'thinca/vim-quickrun'
+depends = 'vim-quickrun-neovim-job'
 on_cmd = ['QuickRun']
 on_map = { n = '<Plug>(quickrun' }
 hook_add = '''
@@ -726,6 +665,20 @@ xmap <C-l> <Plug>(textmanip-move-right)
 '''
 
 [[plugins]]
+repo = 'kassio/neoterm'
+on_cmd = ['T', 'Ttoggle']
+hook_add = '''
+nnoremap '' :<C-u>Ttoggle<CR>
+let g:neoterm_repl_python = ''
+let g:neoterm_auto_repl_cmd = v:false
+let g:neoterm_default_mod='aboveleft'
+let g:neoterm_autoscroll = v:true
+let g:neoterm_size=15
+let g:neoterm_autoinsert = v:true
+let g:neoterm_autojump = v:true
+'''
+
+[[plugins]]
 repo = 'majutsushi/tagbar'
 on_cmd = ['Tagbar']
 
@@ -772,129 +725,126 @@ hook_add = '''
 # #     \})
 # '''
 
-# [[plugins]]
-# repo =  'lambdalisue/gina.vim'
-# on_cmd = ['Gina']
-# hook_add = '''
-# nnoremap <silent> <Leader>gg :<C-u>Gina status<CR>
-# nnoremap <silent> <Leader>gA :<C-u>Gina changes HEAD<CR>
-# nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
-# nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
-# nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
-# nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
-# nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
-# nnoremap <silent> <Leader>gd :<C-u>Gina diff<CR>
-# nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
-# nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
-# nnoremap <silent> <Leader>gl :<C-u>Gina log<CR>
-# nnoremap <silent> <Leader>gL :<C-u>Gina log %<CR>
-# nnoremap <silent> <Leader>gf :<C-u>Gina ls<CR>
-# nnoremap <silent> <Leader>gp :<C-u>Gina!! add -p<CR>
-# let g:gina#core#spinner#delaytime = 10
-# '''
-# hook_source = '''
-# call gina#custom#command#alias('branch', 'br')
-# call gina#custom#command#alias('diff', 'df')
-# call gina#custom#command#option('df', '--stat')
-# call gina#custom#command#option(
-#     \ '/\%(log\|reflog\|diff\)',
-#     \ '--opener', 'vsplit'
-#     \)
-# call gina#custom#command#option(
-#     \ '/\%(status\|branch\|ls\|grep\|changes\|tag\|df\)',
-#     \ '--opener' , 'botright 10split'
-#     \)
-# call gina#custom#command#option('commit', '--opener' , 'split')
-# call gina#custom#command#option('log', '--group', 'log-viewer')
-# call gina#custom#command#option('status', '--group', 'status-viewer')
-# call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
-# call gina#custom#command#option('commit', '-v|--verbose')
-# call gina#custom#command#option('branch', '-v', 'v')
-# call gina#custom#command#option('status', '--short')
-# call gina#custom#command#option('status', '--branch')
-# call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
-# "call gina#custom#command#option(
-# "\ '/\%(status\|changes\)',
-# "\ '--ignore-submodules'
-# "\)
+[[plugins]]
+repo =  'lambdalisue/gina.vim'
+on_cmd = ['Gina']
+hook_add = '''
+nnoremap <silent> <Leader>gg :<C-u>Gina status<CR>
+nnoremap <silent> <Leader>gA :<C-u>Gina changes HEAD<CR>
+nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
+nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
+nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
+nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
+nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
+nnoremap <silent> <Leader>gd :<C-u>Gina diff<CR>
+nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
+nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
+nnoremap <silent> <Leader>gl :<C-u>Gina log<CR>
+nnoremap <silent> <Leader>gL :<C-u>Gina log %<CR>
+nnoremap <silent> <Leader>gf :<C-u>Gina ls<CR>
+nnoremap <silent> <Leader>gp :<C-u>Gina!! add -p<CR>
+let g:gina#core#spinner#delaytime = 10
+'''
+hook_source = '''
+call gina#custom#command#alias('branch', 'br')
+call gina#custom#command#alias('diff', 'df')
+call gina#custom#command#option('df', '--stat')
+call gina#custom#command#option(
+    \ '/\%(log\|reflog\|diff\)',
+    \ '--opener', 'vsplit'
+    \)
+call gina#custom#command#option(
+    \ '/\%(status\|branch\|ls\|grep\|changes\|tag\|df\)',
+    \ '--opener' , 'botright 10split'
+    \)
+call gina#custom#command#option('commit', '--opener' , 'split')
+call gina#custom#command#option('log', '--group', 'log-viewer')
+call gina#custom#command#option('status', '--group', 'status-viewer')
+call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
+call gina#custom#command#option('commit', '-v|--verbose')
+call gina#custom#command#option('commit', '--group', 'status-viewer')
+call gina#custom#command#option('branch', '-v', 'v')
+call gina#custom#command#option('status', '--short')
+call gina#custom#command#option('status', '--branch')
+call gina#custom#command#option('log', '--graph')
+call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
+"call gina#custom#command#option(
+"\ '/\%(status\|changes\)',
+"\ '--ignore-submodules'
+"\)
 
-# "call gina#custom#action#alias(
-# "\ 'branch', 'track',
-# "\ 'checkout:track'
-# "\)
-# call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
-# call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
-# call gina#custom#mapping#nmap(
-#     \ '/.*', 'q',
-#     \ ':close<CR>',
-#     \ {'noremap': 1, 'silent': 1}
-#     \)
-# call gina#custom#mapping#nmap(
-#     \ 'diff', 'q',
-#     \ ':bdelete<CR>',
-#     \ {'noremap': 1, 'silent': 1}
-#     \)
-# call gina#custom#mapping#nmap(
-#     \ 'compare', 'q',
-#     \ ':close<CR>',
-#     \ {'noremap': 1, 'silent': 1}
-#     \)
-# call gina#custom#mapping#nmap(
-#     \ 'status', '<C-^>',
-#     \ ':<C-u>Gina commit<CR>',
-#     \ {'noremap': 1, 'silent': 1}
-#     \)
-# call gina#custom#mapping#nmap(
-#     \ 'commit', '<C-^>',
-#     \ ':<C-u>Gina status<CR>',
-#     \ {'noremap': 1, 'silent': 1}
-#     \)
-# call gina#custom#mapping#nmap(
-#     \ 'status', '<C-6>',
-#     \ ':<C-u>Gina commit<CR>',
-#     \ {'noremap': 1, 'silent': 1}
-#     \)
-# call gina#custom#mapping#nmap(
-#     \ 'commit', '<C-6>',
-#     \ ':<C-u>Gina status<CR>',
-#     \ {'noremap': 1, 'silent': 1}
-#     \)
-# call gina#custom#mapping#nmap(
-#     \ 'commit', 'I',
-#     \ 'ggI',
-#     \ {'noremap': 1, 'silent': 1}
-#     \)
-# call gina#custom#action#alias(
-#       \ '/\%(blame\|log\|reflog\)',
-#       \ 'preview',
-#       \ 'topleft show:commit:preview',
-#       \)
-# call gina#custom#mapping#nmap(
-#       \ '/\%(blame\|log\|reflog\)',
-#       \ 'p',
-#       \ ':<C-u>call gina#action#call(''preview'')<CR>',
-#       \ {'noremap': 1, 'silent': 1}
-#       \)
-# call gina#custom#action#alias(
-#       \ '/\%(blame\|log\|reflog\)',
-#       \ 'changes',
-#       \ 'topleft changes:of:preview',
-#       \)
-# call gina#custom#mapping#nmap(
-#       \ '/\%(blame\|log\|reflog\)',
-#       \ 'c',
-#       \ ':<C-u>call gina#action#call(''changes'')<CR>',
-#       \ {'noremap': 1, 'silent': 1}
-#       \)
-# call gina#custom#execute(
-#       \ '/\%(ls\|log\|reflog\|grep\)',
-#       \ 'setlocal noautoread',
-#       \)
-# call gina#custom#execute(
-#       \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
-#       \ 'setlocal cursorline',
-#       \)
-# '''
+"call gina#custom#action#alias(
+"\ 'branch', 'track',
+"\ 'checkout:track'
+"\)
+call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
+call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
+call gina#custom#mapping#nmap(
+    \ '/.*', 'q',
+    \ ':close<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'diff', 'q',
+    \ ':bdelete<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', '<C-^>',
+    \ ':<C-u>Gina commit<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'commit', '<C-^>',
+    \ ':<C-u>Gina status<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', '<C-6>',
+    \ ':<C-u>Gina commit<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'commit', '<C-6>',
+    \ ':<C-u>Gina status<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'commit', 'I',
+    \ 'ggI',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#action#alias(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'preview',
+      \ 'topleft show:commit:preview',
+      \)
+call gina#custom#mapping#nmap(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'p',
+      \ ':<C-u>call gina#action#call(''preview'')<CR>',
+      \ {'noremap': 1, 'silent': 1}
+      \)
+call gina#custom#action#alias(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'changes',
+      \ 'topleft changes:of:preview',
+      \)
+call gina#custom#mapping#nmap(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'c',
+      \ ':<C-u>call gina#action#call(''changes'')<CR>',
+      \ {'noremap': 1, 'silent': 1}
+      \)
+call gina#custom#execute(
+      \ '/\%(ls\|log\|reflog\|grep\)',
+      \ 'setlocal noautoread',
+      \)
+call gina#custom#execute(
+      \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
+      \ 'setlocal cursorline',
+      \)
+'''
 
 [[plugins]]
 repo = 'kana/vim-niceblock'
@@ -951,5 +901,7 @@ endif
 # let g:go_highlight_generate_tags = 1
 # let g:go_highlight_variable_declarations = 1
 # '''
-
+[[plugins]]
+repo =  'Shougo/unite.vim'
+on_cmd = ['Unite']
 # vim:set foldmethod=marker:

@@ -230,9 +230,6 @@ else
     let g:lightline#ale#indicator_ok = "\uf43a"
 endif
 
-[[plugins]]
-repo =  'Shougo/unite.vim'
-on_cmd = ['Unite']
 
 [[plugins]]
 repo =  'Shougo/neocomplete.vim'

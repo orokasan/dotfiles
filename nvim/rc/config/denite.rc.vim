@@ -6,6 +6,7 @@ call denite#custom#option('_', {
     \ 'highlight_preview_line': 'Underlined',
     \ 'max_dynamic_update_candidates': 50000,
     \ 'vertical_preview': v:false,
+    \ 'source_names': 'short',
     \ 'statusline': v:false,
     \ 'direction': 'botright',
     \ 'quick_move_table': {

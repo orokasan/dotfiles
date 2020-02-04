@@ -4,7 +4,7 @@ let g:lightline = {
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount'],
-            \ [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok', 'quickrun', 'percent', 'denitebuffer',  'IMEstatus']
+            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'filetype', 'denitebuffer', 'IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
@@ -13,7 +13,7 @@ let g:lightline = {
     \ },
     \ 'tabline' : {
         \ 'left': [['buffers'], ['tabdenitesource']],
-        \ 'right': [['tab'], ['fileencoding','filetype'] ]
+        \ 'right': [['tab'], ['fileencoding', 'fileformat'] ]
     \ },
     \ 'component':{
         \ 'lineinfo':'%{LLruler()}%<'
@@ -34,32 +34,30 @@ let g:lightline = {
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
-        \ 'linter_checking': 'lightline#ale#checking',
         \ 'linter_warnings': 'LLLspWarning',
         \ 'linter_errors': 'LLLspError',
     \ },
    \ 'component_type' : {
         \ 'buffers': 'tabsel',
-        \ 'linter_checking': 'middle',
         \ 'linter_warnings': 'warning',
         \ 'linter_errors': 'error',
-        \ 'linter_ok': 'middle'
     \ }
 \ }
 
 autocmd vimrc User lsp_diagnostic_done call lightline#update()
 
-let g:lightline.colorscheme = 'quack'
+" let g:lightline.colorscheme = 'quack'
+let g:lightline.colorscheme = 'snow_light'
 " if has('nvim')
 "     let g:lightline.subseparator= { 'left': '', 'right': '' }
 "     let g:lightline.separator= { 'left': '', 'right': '' }
 " endif
-if !has('nvim')
-    let g:lightline.subseparator= { 'left': '', 'right': '' }
-    let g:lightline.separator= { 'left': '', 'right': '' }
-    let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
-    let g:lightline.tabline_separator= { 'left': '', 'right': '' }
-endif
+" if !has('nvim')
+"     let g:lightline.subseparator= { 'left': '', 'right': '' }
+"     let g:lightline.separator= { 'left': '', 'right': '' }
+"     let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
+"     let g:lightline.tabline_separator= { 'left': '', 'right': '' }
+" endif
 "    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
 "    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
 function! LLmybufferline() abort
@@ -177,7 +175,7 @@ endfunction
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
 
 function! LLInactiveFilename()
-    return &filetype !~# s:ignore_filetype ? expand('%:t')
+    return &filetype !~# s:ignore_filetype ? expand('%:t') . ' | cd: ' . fnamemodify(getcwd(), ':~')
 	\ : &filetype is# 'denite' ? '': LLMode()
 endfunction
 
@@ -324,7 +322,7 @@ function! s:deniteinput() abort
 endfunction
 
 function! s:denitebuf()
-    return 'denite:' . denite#get_status('buffer_name')
+    return denite#get_status('buffer_name')
 endfunction
 
 function! s:denitesource()
