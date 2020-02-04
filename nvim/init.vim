@@ -662,6 +662,7 @@ endif
 
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
+let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 
 let s:lsp = 0
 let s:lsp_toml = s:lsp == 0 ? '~/dotfiles/nvim/rc/dein_vim_lsp.toml' :
@@ -672,9 +673,13 @@ let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
-    call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lsp_toml,  {'merged': 1})
-    call dein#load_toml(s:lazy_toml, {'lazy': 1})
+        call dein#load_toml(s:toml,      {'lazy': 0})
+        call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    if has('python3')
+        call dein#load_toml(s:lazy_toml, {'lazy': 1})
+    else
+        call dein#load_toml(s:no_dependency_toml)
+    endif
     call dein#end()
     call dein#save_state()
 
