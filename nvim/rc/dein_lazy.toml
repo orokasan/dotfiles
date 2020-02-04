@@ -100,7 +100,6 @@ call defx#custom#option('_', {
     \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename',
     \ 'sort': 'TIME',
-    \ 'drives': [ expand('~/GoogleDrive'), expand('~')],
     \ 'ignored_files': s:defx_ignore_files
     \ })
 function! TestFunc(candidate) abort
@@ -240,24 +239,23 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
-rev = 'a2b0e0fe3e4c6189c9b5b76c9e038510758ac377'
 on_if = 'has("nvim")'
 on_event = 'InsertEnter'
 hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 
-[[plugins]]
+# [[plugins]]
+# # on_if = '!has("nvim")'
 # on_if = '!has("nvim")'
-on_if = '!has("nvim")'
-depends = ['async.vim']
-on_event = 'InsertEnter'
-repo = 'prabirshrestha/asyncomplete.vim'
+# depends = ['async.vim']
+# on_event = 'InsertEnter'
+# repo = 'prabirshrestha/asyncomplete.vim'
 
-[[plugins]]
-repo = 'Shougo/deol.nvim'
-on_cmd = ['Deol']
-hook_add = '''
-nnoremap <Leader>d :Deol -split='vertical'<CR>
-'''
+# [[plugins]]
+# repo = 'Shougo/deol.nvim'
+# on_cmd = ['Deol']
+# hook_add = '''
+# nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
+# '''
 
 [[plugins]]
 repo =  'Shougo/neco-vim'
@@ -541,6 +539,7 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 
 [[plugins]]
 repo = 'haya14busa/incsearch-migemo.vim'
+on_if = "!has('kaoriya')"
 depends = 'incsearch.vim'
 on_map = { nx = '<Plug>(incsearch-migemo-' }
 hook_add = '''

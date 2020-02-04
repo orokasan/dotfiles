@@ -127,10 +127,10 @@ autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 [[plugins]]
 repo = 'prabirshrestha/async.vim'
 
-[[plugins]]
-on_if = '!has("nvim")'
-depends = ['asyncomplete.vim', 'vim-lsp']
-repo = 'prabirshrestha/asyncomplete-lsp.vim'
+# [[plugins]]
+# on_if = '!has("nvim")'
+# depends = ['asyncomplete.vim', 'vim-lsp']
+# repo = 'prabirshrestha/asyncomplete-lsp.vim'
 
 # [[plugins]]
 # repo = 'hrsh7th/vim-vsnip'

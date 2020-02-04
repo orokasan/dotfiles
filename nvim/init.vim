@@ -6,8 +6,8 @@ if !has('nvim')
 else
     scriptencoding utf-8
 endif
-set fileencoding=utf-8
-" set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
+" set fileencoding=utf-8
+set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 augroup vimrc
@@ -32,6 +32,8 @@ let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
+
+set ff=dos
 "Python,vimproc
 if has('win64')
     let g:python3_host_prog ='python.exe'
@@ -49,7 +51,7 @@ set nobackup                " no more backup file
 "}}}
 
 " Visual  {{{
-set shortmess+=aAcTtS
+set shortmess+=aAcTt
 set showtabline=2   " always show tabline
 set number          " show line number
 set signcolumn=yes  " show signcolumn
@@ -567,11 +569,11 @@ endfunction
 
 " +GUI {{{
 if has('GUI')
-    let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
-    set guioptions+=M
-    ""Nm秒後にカーソル点滅開始
-    set guicursor=n:blinkwait2000
-    let no_buffers_menu = 1
+    " let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
+    "set guioptions+=M
+    """Nm秒後にカーソル点滅開始
+    "set guicursor=n:blinkwait2000
+    "let no_buffers_menu = 1
     set lines=60 "ウィンドウの縦幅
     set columns=120 " ウィンドウの横幅
     winpos 2 10 " ウィンドウの起動時の位置
@@ -584,6 +586,7 @@ if has('GUI')
         let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
         let &guifont = s:myguifont
         let &guifontwide = s:myguifont
+        set guifont=Cica:h12
         set renderoptions=type:directx,renmode:5,geom:1
     endif
 endif
@@ -770,5 +773,12 @@ catch /^Vim\%((\a\+)\)\=:E185:/
     echom "colorscheme '"  . s:colorscheme .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
-let hoge = '~/dotfiles/'
+if has('win32')
+set shell=\"C:\msys64\usr\bin\bash.exe\"\ -f
+set shellcmdflag=-c
+set shellquote=\"
+set shellxescape=
+set shellxquote=
+endif
+
 " vim:set foldmethod=marker:
