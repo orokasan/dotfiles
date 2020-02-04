@@ -317,4 +317,7 @@ repo = 'nightsense/snow'
 [[plugins]]
 repo = 'dstein64/vim-startuptime'
 
+[[plugins]]
+repo = 'lambdalisue/fern.vim'
+
 # vim:set foldmethod=marker:

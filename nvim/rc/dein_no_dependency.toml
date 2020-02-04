@@ -679,4 +679,7 @@ endif
 repo =  'Shougo/unite.vim'
 on_cmd = ['Unite']
 
+[[plugins]]
+repo = 'lambdalisue/fern.vim'
+
 # vim:set foldmethod=marker:
