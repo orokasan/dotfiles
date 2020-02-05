@@ -569,8 +569,8 @@ endfunction
 
 " +GUI {{{
 if has('GUI')
-    " let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
-    "set guioptions+=M
+     let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
+    set guioptions+=M
     """Nm秒後にカーソル点滅開始
     "set guicursor=n:blinkwait2000
     "let no_buffers_menu = 1
@@ -773,11 +773,11 @@ catch /^Vim\%((\a\+)\)\=:E185:/
     echom "colorscheme '"  . s:colorscheme .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
-if has('win32')
-set shell=\"C:\msys64\usr\bin\bash.exe\"\ -f
-set shellcmdflag=-c
-set shellquote=\"
-set shellxescape=
-set shellxquote=
-endif
+" if has('win32')
+" set shell=\"C:\msys64\usr\bin\bash.exe\"\ -f
+" set shellcmdflag=-c
+" set shellquote=\"
+" set shellxescape=
+" set shellxquote=
+" endif
 " vim:set foldmethod=marker:
