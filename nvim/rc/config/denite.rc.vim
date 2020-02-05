@@ -114,20 +114,25 @@ function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
     if isdirectory(dir)
-        let sdir = fnamemodify(dir, ':p:h')
+        let fdir = fnamemodify(dir, ':h:~')
     else
-        let sdir = fnamemodify(dir, ':p')
+        let fdir = fnamemodify(dir, ':~')
     endif
-    let fdir = '\"' . sdir. '\"'
-    execute('Denite file/rec:' . sdir)
+    " let fdir = '\"' . sdir. '\"'
+    execute('Denite
+        \ -path=' . fdir .
+        \ ' file/rec')
 endfunction
 
 function! s:denite_directory_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
-        let sdir = fnamemodify(dir, ':p:h')
-    let fdir = '\"' . sdir . '\"'
-    execute('Denite directory_rec:' . sdir)
+        let sdir = fnamemodify(dir, ':~:h')
+    " execute('Denite directory_rec:' . sdir)
+    let fdir = '\"' . sdir. '\"'
+    execute('Denite
+        \ -path=' . fdir .
+        \ ' directory_rec')
 endfunction
 
 call denite#custom#action(

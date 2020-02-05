@@ -780,5 +780,4 @@ set shellquote=\"
 set shellxescape=
 set shellxquote=
 endif
-
 " vim:set foldmethod=marker:

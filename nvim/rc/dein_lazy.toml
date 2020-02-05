@@ -102,31 +102,28 @@ call defx#custom#option('_', {
     \ 'sort': 'TIME',
     \ 'ignored_files': s:defx_ignore_files
     \ })
-function! TestFunc(candidate) abort
-    echo a:candidate
-endfunction
+
 function! s:get_defx_bufferdir(candidate) abort
-    " if line('.') == 1
-    "     let path_mod  = 'h'
-    " else
-    "     let path_mod = isdirectory(a:candidate) ? '' : 'h'
-    " endif
-    let path_mod = 'h'
-    return fnamemodify(a:candidate, ':' . path_mod)
+    let path_mod = ':~:h'
+    let dir = denite#util#substitute_path_separator(a:candidate)
+    let dir = fnamemodify(dir, path_mod)
+    let fdir = '\"' . l:dir. '\"'
+    return fdir
 endfunction
 function! Defx_to_denite_rec(context) abort
         let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
         silent! execute('Denite
         \ -default-action=defx
         \ -start-filter
-        \ file/rec:' .  narrow_dir)
+        \ -path=' . narrow_dir .
+        \ ' file/rec')
 endfunction
 function! Defx_to_denite_file(context) abort
         let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
         silent! execute('Denite
         \ -default-action=defx
         \ -start-filter
-        \ -path='. narrow_dir. ' file')
+        \ -path='. narrow_dir . ' file')
 endfunction
 '''
 [plugins.ftplugin]
@@ -687,7 +684,6 @@ repo = 'kassio/neoterm'
 on_cmd = ['T', 'Ttoggle']
 hook_add = '''
 nnoremap '' :<C-u>Ttoggle<CR>
-tnoremap <C-d> <C-\><C-n>:<C-u>Tclose<CR>
 let g:neoterm_repl_python = ''
 let g:neoterm_auto_repl_cmd = v:false
 let g:neoterm_default_mod='aboveleft'
@@ -696,6 +692,7 @@ let g:neoterm_size=15
 let g:neoterm_autoinsert = v:false
 let g:neoterm_autojump = v:true
 '''
+hook_source = 'tnoremap <C-d> <C-\><C-n>:<C-u>Tclose<CR>'
 
 [[plugins]]
 repo = 'majutsushi/tagbar'
