@@ -7,7 +7,7 @@ call denite#custom#option('_', {
     \ 'max_dynamic_update_candidates': 50000,
     \ 'vertical_preview': v:false,
     \ 'source_names': 'short',
-    \ 'statusline': v:false,
+    \ 'statusline': v:true,
     \ 'direction': 'botright',
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
