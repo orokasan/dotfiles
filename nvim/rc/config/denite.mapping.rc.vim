@@ -5,11 +5,13 @@ nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
     \  source<CR>
 nnoremap <silent> [denite]s :<C-u>Denite
     \ -start-filter
-    \  file/rec:`expand('%:h')` file:new<CR>
+    \ -path=`expand('%:h')`
+    \  file/rec file:new<CR>
 "現在開いているファイルのgit配下のファイルを開く
 nnoremap <silent> [denite]f :<C-u>Denite
     \ -start-filter
-    \ file/rec:`<SID>denite_gitdir()` file:new<CR>
+    \ -path=`<SID>denite_gitdir()`
+    \ file/rec file:new<CR>
 function! s:denite_gitdir() abort
     if finddir('.git', '.;') != ''
         let path = (empty(bufname('%')) || &buftype =~# '^\%(nofile\|acwrite\|quickfix\|terminal\)$') ? getcwd() : expand('%:p')

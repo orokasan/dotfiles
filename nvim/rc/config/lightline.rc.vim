@@ -329,12 +329,8 @@ endfunction
 function! s:denitesource()
     let l:sources = denite#get_status('sources')
     let l:sources = substitute(l:sources, " file:\\['new'\\](\\d\\+/\\d\\+)", '','g')
-    let l:p = matchstr(l:sources, "\\[\'\\zs.*\\ze\'\\]", 'g')
-    if l:p == ''
-        let l:path = getcwd()
-    else
-        let l:path = l:p
-    endif
+    let l:p = denite#get_status('path')
+    let l:path = matchstr(l:p, "\\[\\zs.*\\ze\\]", 'g')
     let l:path = fnamemodify(l:path,':~')
     if strwidth(l:path) > 40
         let path = '.../' . fnamemodify(path,':h:h:t'). '/'

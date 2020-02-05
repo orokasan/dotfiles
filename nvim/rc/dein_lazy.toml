@@ -119,7 +119,8 @@ function! Defx_to_denite_rec(context) abort
         silent! execute('Denite
         \ -default-action=defx
         \ -start-filter
-        \ file/rec:' .  narrow_dir)
+        \ -path=' . narrow_dir .
+        \ ' file/rec')
 endfunction
 function! Defx_to_denite_file(context) abort
         let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
