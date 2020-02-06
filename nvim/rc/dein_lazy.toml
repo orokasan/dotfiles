@@ -729,15 +729,24 @@ on_cmd = ['Clap']
 repo = 'liuchengxu/vim-clap'
 
 [[plugins]]
-repo = 'voldikss/vim-translate-me'
+repo = 'voldikss/vim-translator'
 #TODO:qitta
 on_map = { nx = '<Plug>Translate' }
+on_cmd = ['Translate', 'TranslateV']
 hook_add = '''
-  nmap <silent> <Leader>t <Plug>TranslateW
-  vmap <silent> <Leader>t <Plug>TranslateWV
-  let g:vtm_target_lang = 'ja'
-  let g:vtm_default_engines = ['google']
-  let g:vtm_default_mapping = 0
+" コマンドが-rangeに対応してないため<Plug>側で:Translate!を実装
+nmap <silent> <Plug>TranslateB   :call translator#translate('-w ' . expand('<cword>'), 'echo', v:false, '!')<CR>
+vmap <silent> <Plug>TranslateBV  :<C-U>call translator#translate('', 'echo', v:true, '!')<CR>
+nmap <silent> <Leader>t <Plug>Translate
+vmap <silent> <Leader>t <Plug>TranslateV
+nmap <silent> <Leader>T <Plug>TranslateB
+vmap <silent> <Leader>T <Plug>TranslateBV
+" nmap <silent> <Leader>T :Translate -tl 'en'<CR>
+" vmap <silent> <Leader>T :TranslateV -tl 'en'<CR>
+let g:translator_target_lang = 'ja'
+let g:translator_source_lang = 'en'
+let g:translator_default_engines = ['google']
+let g:translator_window_borderchars = v:null
 '''
 
 # [[plugins]]
