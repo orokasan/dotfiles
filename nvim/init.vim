@@ -33,7 +33,6 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 
-set ff=dos
 "Python,vimproc
 if has('win64')
     let g:python3_host_prog ='python.exe'
@@ -763,7 +762,7 @@ execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
-"}}}
+
 let g:lightline#bufferline#smarttab = 1
 
 " set colorscheme
@@ -773,6 +772,7 @@ catch /^Vim\%((\a\+)\)\=:E185:/
     echom "colorscheme '"  . s:colorscheme .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
+
 " if has('win32')
 " set shell=\"C:\msys64\usr\bin\bash.exe\"\ -f
 " set shellcmdflag=-c
@@ -780,4 +780,6 @@ endtry
 " set shellxescape=
 " set shellxquote=
 " endif
+"}}}
+
 " vim:set foldmethod=marker:
