@@ -35,12 +35,14 @@ repo = 'tyru/skkdict.vim'
 repo = 'kana/vim-textobj-user'
 hook_add = '''
 " https://github.com/todesking/dotfiles/blob/master/nvim/plug/plugins.vim
+if exists('*textobj#user#plugin')
 call textobj#user#plugin('lastmofified', {
 \   'lastmodified': {
 \     'select-a': 'ag',
 \     'select-a-function': 'g:Vimrc_select_a_last_modified',
 \   },
 \ })
+endif
 function! g:Vimrc_select_a_last_modified() abort
     return ['v', getpos("'["), getpos("']")]
 endfunction
@@ -239,30 +241,6 @@ hook_post_update = '''
     let cmd = 'make'
   endif
   let g:dein#plugin.build = cmd
-'''
-
-[[plugins]]
-repo = 'thinca/vim-ambicmd'
-hook_add = '''
-set wildcharm=<TAB>
-let g:ambicmd#show_completion_menu = 1
-augroup init_ambicmd
-  autocmd!
-  autocmd CmdwinEnter * call s:init_cmdwin()
-  autocmd VimEnter * call s:init_ambicmd()
-augroup END
-function! s:init_ambicmd() abort
-" sourceできた時のみマップする
-" `ambicmd#expand`が無いときcmdlineでまともに入力できなくなる
-if dein#is_sourced('vim-ambicmd')
-  cnoremap <expr> <Space> ambicmd#expand("\<Space>")
-  cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
-endif
-endfunction
-function! s:init_cmdwin()
-  inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
-  inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
-endfunction
 '''
 
 [[plugins]]
