@@ -19,6 +19,7 @@ let s:pyls_config = {'pyls': {'plugins': {
     \ }
     \ }
     \}
+autocmd BufAdd * call lsp#enable()
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
@@ -31,11 +32,10 @@ function! s:lsp_local_setting()
     nmap <buffer> ,p <plug>(lsp-previous-error)
     nmap <buffer> sa <plug>(lsp-document-diagnostics)
     call lsp#enable()
-    autocmd VimLsp BufAdd * call lsp#enable()
 endfunction
 function! s:lsp_setup()
     let g:lsp_auto_enable = 1
-    " let g:lsp_insert_text_enabled = 1
+    let g:lsp_insert_text_enabled = 1
     let g:lsp_virtual_text_enabled = 0
     let g:lsp_diagnostics_enabled = 1
     let g:lsp_highlights_enabled = 0

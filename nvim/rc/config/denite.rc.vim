@@ -16,16 +16,13 @@ call denite#custom#option('_', {
         \ }
     \ })
 if has('nvim')
-call denite#custom#option('_',{
-    \ 'filter_split_direction' : 'floating'
-    \ })
+    call denite#custom#option('_',{ 'filter_split_direction' : 'floating' })
+else
+    call denite#custom#option('_',{ 'filter_split_direction' : 'aboveleft' })
 endif
-call denite#custom#option('normal', {
-    \ 'winheight': 9
-    \})
-call denite#custom#option('search', {
-    \ 'winheight': 9
-    \ })
+
+call denite#custom#option('normal', {'winheight': 9})
+call denite#custom#option('search', {'winheight': 9})
 call denite#custom#option('float',{
     \ 'split': 'floating',
     \ 'wincol': 0,
@@ -167,3 +164,4 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
+

@@ -236,7 +236,7 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 
 [[plugins]]
 repo =  'Shougo/deoplete.nvim'
-on_if = 'has("nvim")'
+# on_if = 'has("nvim")'
 on_event = 'InsertEnter'
 hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 

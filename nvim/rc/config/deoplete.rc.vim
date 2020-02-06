@@ -14,7 +14,7 @@ inoremap <silent><expr><C-h>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><BS>
     \ deoplete#smart_close_popup()."\<C-h>"
-inoremap <silent><expr><C-l> 
+inoremap <silent><expr><C-l>
     \ deoplete#complete_common_string()
 inoremap <expr><silent> <C-g> deoplete#undo_completion()
     " \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
@@ -45,14 +45,18 @@ call deoplete#custom#var('around', {
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
     \ })
+if has('nvim')
 call deoplete#custom#option({ 'refresh_always': v:true})
+else
+call deoplete#custom#option({ 'refresh_always': v:false})
+endif
 call deoplete#custom#option({
     \ 'auto_refresh_delay': 100,
     \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'filter',
     \ 'ignore_sources': {
-    \ 'vim': ['lsp'],
+    \ 'vim': [],
     \ 'python': ['member']
     \    }
     \ })

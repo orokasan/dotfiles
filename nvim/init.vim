@@ -404,7 +404,6 @@ endfunction
 " :close by 'q'
 nnoremap <silent> q :close<CR>
 " escape 'q'
-nnoremap gq q
 " escape 'gq'
 nnoremap gQ gq
 " don't close window when closing buffer
@@ -478,6 +477,7 @@ function! s:improved_gt() abort
         normal! gt
     endif
 endfunction
+
 " spliting windows
 nnoremap <leader>ws :sp<CR>:bprev<CR>
 nnoremap <leader>wv :vsp<CR>:bprev<CR>
@@ -651,7 +651,7 @@ set background=light
 let s:colorscheme = 'seagull'
 "}}}
 
-""dein.vim {{{
+" dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 if &runtimepath !~# '/dein.vim'
@@ -675,13 +675,9 @@ let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
-        call dein#load_toml(s:toml,      {'lazy': 0})
-        call dein#load_toml(s:lsp_toml,  {'merged': 1})
-    if has('python3')
-        call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    else
-        call dein#load_toml(s:no_dependency_toml)
-    endif
+    call dein#load_toml(s:toml,      {'lazy': 0})
+    call dein#load_toml(s:lazy_toml, {'lazy': 1})
+    call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#end()
     call dein#save_state()
 

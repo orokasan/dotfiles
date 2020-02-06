@@ -4,7 +4,10 @@ hook_add = '''
 " can't load nvim-lsp modules when it is not merged in dein repo.
 " so set rtp manually.
 set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
+let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
 lua << EOF
+local nvim_lsp = require'nvim_lsp'
+local configs = require'nvim_lsp/configs'
 
 vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
@@ -47,16 +50,57 @@ require'nvim_lsp'.texlab.setup{
     settings = {
       latex = {
         build = {
-          executable = "latex";
-          args = {"-pdfdvi", "-interaction=nonstopmode", "-synctex=1"};
+          executable = "latexmk";
+          args = {"uplatex", "-kanji=utf-8", "-halt-on-error", "-synctex=1", "-interaction=nonstopmode", "-file-line-error"};
           onSave = false;
             };
         };
     };
 }
-
+if not nvim_lsp.pyls_ms then
+    config.pyls_ms ={
+        default_config = {
+            init_options = {
+              interpreter = {
+                properties = {
+                  InterpreterPath = "/usr/bin/python";
+                  Version = "3.7";
+                };
+              };
+            };
+  };
+}
+end
+-- require'nvim_lsp'.pyls_ms.setup{}
 require'nvim_lsp'.pyls.setup{}
+require'nvim_lsp'.sumneko_lua.setup{}
 require'nvim_lsp'.vimls.setup{}
+-- efm_config_path = '-c=' + vim.funcref("expand('~/.config/efm-langserver/config.yaml')")
+
+  -- configs.efm_langserver = {
+  --   default_config = {
+  --     cmd = {"efm-langserver", vim.api.nvim_eval("s:efm_config_path")};
+  --     filetypes = {'tex','eruby', 'markdown', 'yaml'};
+  --     root_dir = vim.loop.os_homedir();
+  --     log_level = vim.lsp.protocol.MessageType.Warning;
+  --     settings = {};
+  --   };
+  -- }
+-- nvim_lsp.efm_langserver.setup{}
+
+do
+  local method = 'textDocument/publishDiagnostics'
+  local default_callback = vim.lsp.callbacks[method]
+  vim.lsp.callbacks[method] = function(err, method, result, client_id)
+    default_callback(err, method, result, client_id)
+    if result and result.diagnostics then
+      for _, v in ipairs(result.diagnostics) do
+        v.uri = v.uri or result.uri
+      end
+      vim.lsp.util.set_qflist(result.diagnostics)
+    end
+  end
+end
 EOF
 
 "lsp.txtそのまま
