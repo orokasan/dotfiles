@@ -5,3 +5,4 @@ nvim/rplugin/
 nvim/view/
 nvim/undo/
 nvim/swap/
+.goneovim/sessions/
