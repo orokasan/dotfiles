@@ -519,7 +519,7 @@ endfunction  "}}}
 if has('nvim')
     autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
 else
-    autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no
+    autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
 endif
 
 if has('nvim')
