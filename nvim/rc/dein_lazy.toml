@@ -772,6 +772,7 @@ let g:translator_window_borderchars = v:null
 repo =  'lambdalisue/gina.vim'
 on_cmd = ['Gina']
 hook_add = '''
+let g:gina#process#command = "git --no-pager"
 nnoremap <silent> <Leader>gg :<C-u>Gina status<CR>
 nnoremap <silent> <Leader>gA :<C-u>Gina changes HEAD<CR>
 nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
