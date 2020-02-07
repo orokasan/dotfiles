@@ -518,6 +518,8 @@ endfunction  "}}}
 " Terminal {{{
 if has('nvim')
     autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
+else
+    autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no
 endif
 
 if has('nvim')
@@ -575,7 +577,7 @@ if has('GUI')
     "let no_buffers_menu = 1
     set lines=60 "ウィンドウの縦幅
     set columns=120 " ウィンドウの横幅
-    winpos 2 10 " ウィンドウの起動時の位置
+    winpos 500 10 " ウィンドウの起動時の位置
     if has('mac')
         set guifont=Cica:h14
     else
@@ -585,7 +587,7 @@ if has('GUI')
         let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
         let &guifont = s:myguifont
         let &guifontwide = s:myguifont
-        set guifont=Cica:h12
+        set guifont=Cica:h12:
         set renderoptions=type:directx,renmode:5,geom:1
     endif
 endif
@@ -648,7 +650,11 @@ if has('nvim')
 endif
 " edit fold column
 set background=light
-let s:colorscheme = 'seagull'
+if has('windows')
+    let g:mycolorscheme = 'iceberg'
+else
+    let g:mycolorscheme = 'seagull'
+endif
 "}}}
 
 " dein.vim {{{
@@ -763,9 +769,9 @@ let g:lightline#bufferline#smarttab = 1
 
 " set colorscheme
 try
-    exe 'colorscheme ' . s:colorscheme
+    exe 'colorscheme ' . g:mycolorscheme
 catch /^Vim\%((\a\+)\)\=:E185:/
-    echom "colorscheme '"  . s:colorscheme .  "' is not found. Using 'peachpuff' instead"
+    echom "colorscheme '"  . g:mycolorscheme .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
 
