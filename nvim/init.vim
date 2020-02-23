@@ -150,6 +150,9 @@ autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
 au vimrc BufRead .textlintrc set ft=json
+
+set completeopt+=menuone
+set completeopt-=preview
 " nicely folding
 "{{{
     function! s:is_view_available() abort
@@ -518,6 +521,8 @@ endfunction  "}}}
 " Terminal {{{
 if has('nvim')
     autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
+else
+    autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
 endif
 
 if has('nvim')
@@ -569,13 +574,13 @@ endfunction
 " +GUI {{{
 if has('GUI')
      let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
-    set guioptions+=M
+    set guioptions+=Mc!
     """Nm秒後にカーソル点滅開始
     "set guicursor=n:blinkwait2000
     "let no_buffers_menu = 1
     set lines=60 "ウィンドウの縦幅
     set columns=120 " ウィンドウの横幅
-    winpos 2 10 " ウィンドウの起動時の位置
+    winpos 500 10 " ウィンドウの起動時の位置
     if has('mac')
         set guifont=Cica:h14
     else
@@ -585,7 +590,7 @@ if has('GUI')
         let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
         let &guifont = s:myguifont
         let &guifontwide = s:myguifont
-        set guifont=Cica:h12
+        set guifont=Cica:h12:
         set renderoptions=type:directx,renmode:5,geom:1
     endif
 endif
@@ -602,7 +607,7 @@ if has('kaoriya')
     nnoremap <C-CR> :ScreenMode 6<CR>
     nnoremap <S-CR> :ScreenMode 1<CR>
     " background transparency
-    autocmd vimrc GUIEnter * set transparency=235
+    " autocmd vimrc GUIEnter * set transparency=235
     " insert date
     inoremap <F3> Last Change: .
     set ambiwidth=auto
@@ -648,7 +653,11 @@ if has('nvim')
 endif
 " edit fold column
 set background=light
-let s:colorscheme = 'seagull'
+if has('windows')
+    let g:mycolorscheme = 'iceberg'
+else
+    let g:mycolorscheme = 'seagull'
+endif
 "}}}
 
 " dein.vim {{{
@@ -677,7 +686,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
 
@@ -763,9 +772,9 @@ let g:lightline#bufferline#smarttab = 1
 
 " set colorscheme
 try
-    exe 'colorscheme ' . s:colorscheme
+    exe 'colorscheme ' . g:mycolorscheme
 catch /^Vim\%((\a\+)\)\=:E185:/
-    echom "colorscheme '"  . s:colorscheme .  "' is not found. Using 'peachpuff' instead"
+    echom "colorscheme '"  . g:mycolorscheme .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
 
@@ -777,8 +786,6 @@ endtry
 " set shellxquote=
 " endif
 "}}}
-
-
 	autocmd FileType denite call s:denite_my_settings()
 	function! s:denite_my_settings() abort
 	  nnoremap <silent><buffer><expr> a

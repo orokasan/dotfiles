@@ -297,5 +297,6 @@ repo = 'dstein64/vim-startuptime'
 
 [[plugins]]
 repo = 'lambdalisue/fern.vim'
+hook_add = 'let g:fern#loaded = 1 '
 
 # vim:set foldmethod=marker:

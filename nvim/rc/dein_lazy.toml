@@ -6,11 +6,11 @@ hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
 hook_source = 'source ~/dotfiles/nvim/rc/config/denite.rc.vim'
 [plugins.ftplugin]
 denite = '''
+if has('nvim')
 let g:my_denite_filter_winblend_config = 1
 let g:my_denite_filter_winblend_config = b:denite.buffer_name !~#
 \ '\v(float|menu|relative)' ? 1 : 0
-if has('nvim')
-    setlocal winblend=10
+setlocal winblend=10
 endif
 setlocal signcolumn=yes
 nnoremap <silent><buffer><expr> j
@@ -79,7 +79,8 @@ nmap <silent><buffer> q <Plug>(denite_filter_quit)q
 '''
 
 [[plugins]]
-repo =  'Shougo/defx.nvim'
+repo =  'orokasan/defx.nvim'
+# repo =  'Shougo/defx.nvim'
 on_cmd = 'Defx'
 hook_add = '''
 nmap <C-e> <Plug>(defx)
@@ -437,7 +438,7 @@ repo = 'previm/previm'
 depends = 'open-browser.vim'
 on_ft = ['markdown','md']
 hook_add = '''
-let g:previm_open_cmd = 'open -a FireFox\ Nightly'
+" let g:previm_open_cmd = 'open -a FireFox\ Nightly'
 nnoremap <silent><Leader>mp :PrevimOpen<CR>
 '''
 
