@@ -150,6 +150,9 @@ autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
 au vimrc BufRead .textlintrc set ft=json
+
+set completeopt+=menuone
+set completeopt-=preview
 " nicely folding
 "{{{
     function! s:is_view_available() abort
@@ -571,7 +574,7 @@ endfunction
 " +GUI {{{
 if has('GUI')
      let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
-    set guioptions+=M
+    set guioptions+=Mc!
     """Nm秒後にカーソル点滅開始
     "set guicursor=n:blinkwait2000
     "let no_buffers_menu = 1
@@ -604,7 +607,7 @@ if has('kaoriya')
     nnoremap <C-CR> :ScreenMode 6<CR>
     nnoremap <S-CR> :ScreenMode 1<CR>
     " background transparency
-    autocmd vimrc GUIEnter * set transparency=235
+    " autocmd vimrc GUIEnter * set transparency=235
     " insert date
     inoremap <F3> Last Change: .
     set ambiwidth=auto
@@ -683,7 +686,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
 
@@ -783,5 +786,4 @@ endtry
 " set shellxquote=
 " endif
 "}}}
-
 " vim:set foldmethod=marker:

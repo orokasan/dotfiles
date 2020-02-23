@@ -173,6 +173,10 @@ repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 # [[plugins]]
 # # on_if = '!has("nvim")'
 # merged = '0'
+[[plugins]]
+on_if = 'has("windows")'
+merged = '0'
+repo = 'mattn/vim-lsp-settings'
 
 [[plugins]]
 lazy = '1'
