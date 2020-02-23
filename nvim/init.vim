@@ -778,4 +778,20 @@ endtry
 " endif
 "}}}
 
+
+	autocmd FileType denite call s:denite_my_settings()
+	function! s:denite_my_settings() abort
+	  nnoremap <silent><buffer><expr> a
+    \ denite#do_map('do_action', 'A')
+	  nnoremap <nowait><silent><buffer><expr> s
+    \ denite#do_map('do_action', 'B')
+	  nnoremap <nowait><silent><buffer><expr> d
+    \ denite#do_map('do_action', 'C')
+	  nnoremap <silent><buffer><expr> p
+    \ denite#do_map('do_action', 'prefix')
+	  nnoremap <silent><buffer><expr> b
+    \ denite#do_map('do_action', 'any')
+	  nnoremap <silent><buffer><expr> u
+    \ denite#do_map('do_action', 'undo')
+	endfunction
 " vim:set foldmethod=marker:

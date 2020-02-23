@@ -284,6 +284,11 @@ let g:eskk#dictionary = {
 "     \ 'kakutei' : 0
 "     \ }
 
+				let g:eskk#server = {
+				\	'host': 'localhost',
+				\	'port': 55100,
+				\	'type': 'notfound',
+				\}
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#cursor_color = {
     \   'ascii': '#b4be82',
@@ -948,5 +953,4 @@ endif
 [[plugins]]
 repo =  'Shougo/unite.vim'
 on_cmd = ['Unite']
-
 # vim:set foldmethod=marker:
