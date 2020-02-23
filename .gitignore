@@ -1,7 +1,7 @@
 .viminfo
 .DS_Store
 minivimrc*
-nvim/rplugin/
+nvim/rplugin/python3/denite/source/__pycache__/
 nvim/view/
 nvim/undo/
 nvim/swap/
