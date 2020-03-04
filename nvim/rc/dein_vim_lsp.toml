@@ -19,7 +19,7 @@ let s:pyls_config = {'pyls': {'plugins': {
     \ }
     \ }
     \}
-autocmd BufAdd * call lsp#enable()
+autocmd dein BufAdd * call lsp#enable()
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)

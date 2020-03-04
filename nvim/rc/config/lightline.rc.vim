@@ -45,7 +45,7 @@ let g:lightline = {
     \ }
 \ }
 
-autocmd vimrc User lsp_diagnostic_done call lightline#update()
+autocmd dein User LspDiagnosticsChanged call lightline#update()
 
 " let g:lightline.colorscheme = 'quack'
 if g:mycolorscheme is 'iceberg'
@@ -276,8 +276,8 @@ function! LLgit() abort
 endfunction
 
 "重いのでキャッシュする
-autocmd vimrc BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
-autocmd vimrc SourcePost $MYVIMRC call <SID>llgitcache()
+autocmd dein BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
+autocmd dein SourcePost $MYVIMRC call <SID>llgitcache()
 function! s:llgitcache() abort
     let s:llgitbranch = ''
     if !exists('*gitbranch#name')
@@ -288,11 +288,11 @@ function! s:llgitcache() abort
 endfunction
 
 " 検索ステータスを表示 (vim-anzuを利用) {{{
-autocmd vimrc InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status')
+autocmd dein InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status')
     \| call anzu#clear_search_status() | endif
 
-autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
-autocmd vimrc User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
+autocmd dein CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
+autocmd dein User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
 
 function! s:llanzu()
     let s:anzu = anzu#search_status()

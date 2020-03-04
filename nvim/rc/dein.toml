@@ -1,5 +1,10 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
+hook_add = '''
+augroup dein
+    autocmd!
+augroup END
+'''
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
@@ -112,11 +117,11 @@ repo = 'Shougo/context_filetype.vim'
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
 hook_add = '''
-autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
-autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd vimrc ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd vimrc ColorScheme iceberg highlight clear Search
-autocmd vimrc ColorScheme iceberg highligh Search gui=underline
+autocmd dein ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
+autocmd dein ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd dein ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd dein ColorScheme iceberg highlight clear Search
+autocmd dein ColorScheme iceberg highligh Search gui=underline
 '''
 
 [[plugins]]
