@@ -2,11 +2,11 @@ function! s:check_back_space() abort "{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
-imap <silent><expr> <TAB>
-    \ neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" :
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ deoplete#manual_complete()
+" imap <silent><expr> <TAB>
+"       \ neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" :
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ deoplete#manual_complete()
 inoremap <silent><expr> <C-n>
     \ pumvisible() ? "\<C-n>" :
     \ deoplete#manual_complete()
@@ -31,9 +31,6 @@ call deoplete#custom#source('file', 'rank', 1000)
 call deoplete#custom#source('neosnippet', 'rank', 250)
 call deoplete#custom#source('buffer', 'rank', 200)
 call deoplete#custom#source('look', 'rank', 50)
-call deoplete#custom#source('omni', 'functions' , {
-    \ 'python': '',
-    \ })
 
 call deoplete#custom#var('around', {
     \   'range_above': 20,

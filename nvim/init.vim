@@ -104,7 +104,7 @@ set softtabstop=4
 let g:vim_indent_cont = 4
 set autoindent
 set shiftwidth=4            " number of spaces inserted when auto indentation by vim
-set formatoptions+=mMjo
+set formatoptions+=mMjoB
 
 " Searching
 set ignorecase
@@ -653,7 +653,7 @@ if has('nvim')
 endif
 " edit fold column
 set background=light
-if has('windows')
+if has('Win32')
     let g:mycolorscheme = 'iceberg'
 else
     let g:mycolorscheme = 'seagull'
@@ -786,19 +786,4 @@ endtry
 " set shellxquote=
 " endif
 "}}}
-	autocmd FileType denite call s:denite_my_settings()
-	function! s:denite_my_settings() abort
-	  nnoremap <silent><buffer><expr> a
-    \ denite#do_map('do_action', 'A')
-	  nnoremap <nowait><silent><buffer><expr> s
-    \ denite#do_map('do_action', 'B')
-	  nnoremap <nowait><silent><buffer><expr> d
-    \ denite#do_map('do_action', 'C')
-	  nnoremap <silent><buffer><expr> p
-    \ denite#do_map('do_action', 'prefix')
-	  nnoremap <silent><buffer><expr> b
-    \ denite#do_map('do_action', 'any')
-	  nnoremap <silent><buffer><expr> u
-    \ denite#do_map('do_action', 'undo')
-	endfunction
 " vim:set foldmethod=marker:

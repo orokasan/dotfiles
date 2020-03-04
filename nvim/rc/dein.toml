@@ -251,15 +251,15 @@ hook_post_update = '''
 [[plugins]]
 repo = 'chemzqm/denite-extra'
 
-# [[plugins]]
-# repo = 'airblade/vim-gitgutter'
-# hook_add = '''
-# let g:gitgutter_sign_added = '++'
-# let g:gitgutter_sign_modified = '~~'
-# let g:gitgutter_sign_removed = '--'
-# let g:gitgutter_sign_removed_first_line = '__'
-# let g:gitgutter_sign_modified_removed = '~-'
-# '''
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+hook_add = '''
+let g:gitgutter_sign_added = '++'
+let g:gitgutter_sign_modified = '~~'
+let g:gitgutter_sign_removed = '--'
+let g:gitgutter_sign_removed_first_line = '__'
+let g:gitgutter_sign_modified_removed = '~-'
+'''
 
 [[plugins]]
 repo = 'glacambre/firenvim'
