@@ -122,13 +122,30 @@ function! s:threshold(n) abort
 endfunction
 
 function! LLLspError() abort
-    let d = lsp#get_buffer_diagnostics_counts()
-    return d.error ? '' . d.error : ''
+" workaround
+" gopls is crashed by calling vim.lsp.buf.server_ready()
+if &filetype ==# 'go'
+    return ''
+endif
+
+if luaeval('vim.lsp.buf.server_ready()')
+    let e = luaeval("vim.lsp.util.buf_diagnostics_count(\"Error\")")
+    return e ? '' . e : ''
+else
+    return ''
+endif
 endfunction
 
 function! LLLspWarning() abort
-    let d = lsp#get_buffer_diagnostics_counts()
-    return  d.warning ? '' . d.warning : ''
+if &filetype ==# 'go'
+    return ''
+endif
+if luaeval('vim.lsp.buf.server_ready()')
+    let w = luaeval("vim.lsp.util.buf_diagnostics_count(\"Warning\")")
+    return  w ? '' . w : ''
+else
+    return ''
+endif
 endfunction
 
 function! LL_quickrun_running()

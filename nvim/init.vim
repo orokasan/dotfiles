@@ -675,11 +675,11 @@ let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 
-let s:lsp = 0
-let s:lsp_toml = s:lsp == 0 ? '~/dotfiles/nvim/rc/dein_vim_lsp.toml' :
-    \ s:lsp == 1 ? '~/dotfiles/nvim/rc/dein_lcnvim.toml' :
-    \ s:lsp == 2 ? '~/dotfiles/nvim/rc/dein_nvim_lsp.toml' : ''
-
+if has('nvim')
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
+else
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
+endif
 let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
