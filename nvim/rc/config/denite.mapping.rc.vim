@@ -135,6 +135,10 @@ nnoremap <silent> [denite], :<C-u>Denite
     \ -cursor-pos=-1
     \ -immediately
     \ <CR>
+nnoremap <silent> [denite]c :<C-u>Denite
+    \ -post-action=open
+    \ -buffer-name=combo
+    \ combo<CR>
 
 function! s:denite_lsp_diagnostics() abort
 " let command = 'Denite -buffer-name=float location_list'

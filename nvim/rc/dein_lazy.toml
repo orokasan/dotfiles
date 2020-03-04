@@ -58,6 +58,21 @@ nnoremap <silent><buffer><expr> <C-g>
     \ denite#do_map('do_action','grep')
 nnoremap <silent><buffer><expr> <C-s>
     \ denite#do_map('change_sorters', 'sorter/rank,sorter/word')
+
+if b:denite.buffer_name ==# 'combo'
+  nnoremap <silent><buffer><expr> a
+\ denite#do_map('do_action', 'A')
+  nnoremap <nowait><silent><buffer><expr> s
+\ denite#do_map('do_action', 'B')
+  nnoremap <nowait><silent><buffer><expr> d
+\ denite#do_map('do_action', 'C')
+  nnoremap <silent><buffer><expr> p
+\ denite#do_map('do_action', 'prefix')
+  nnoremap <silent><buffer><expr> b
+\ denite#do_map('do_action', 'any')
+  nnoremap <silent><buffer><expr> u
+\ denite#do_map('do_action', 'undo')
+endif
 '''
 denite-filter = '''
 if g:my_denite_filter_winblend_config ==# 1
