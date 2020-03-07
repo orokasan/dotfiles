@@ -33,6 +33,7 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 hogehoge
+hugahuga
 "Python,vimproc
 if has('win64')
     let g:python3_host_prog ='python.exe'
