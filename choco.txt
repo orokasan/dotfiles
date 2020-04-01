@@ -1,0 +1,26 @@
+Chocolatey v0.10.15
+2 validations performed. 1 success(es), 1 warning(s), and 0 error(s).
+
+Validation Warnings:
+ - A pending system reboot request has been detected, however, this is
+   being ignored due to the current command being used 'list'.
+   It is recommended that you reboot at your earliest convenience.
+
+ag 2.1.0.1
+chocolatey 0.10.15
+chocolatey-core.extension 1.3.5.1
+chocolatey-windowsupdate.extension 1.0.4
+cica 5.0.1.20190723
+ConEmu 19.10.12.0
+fzf 0.21.0
+KB2919355 1.0.20160915
+KB2919442 1.0.20160915
+KB2999226 1.0.20181019
+KB3033929 1.0.5
+KB3035131 1.0.3
+neovim 0.4.3
+pandoc 2.9.2.1
+ripgrep 12.0.1
+vcredist140 14.24.28127.4
+vcredist2015 14.0.24215.20170201
+17 packages installed.

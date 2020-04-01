@@ -801,4 +801,7 @@ endtry
 	  nnoremap <silent><buffer><expr> u
     \ denite#do_map('do_action', 'undo')
 	endfunction
+
+set runtimepath+=~/.vim
+nnoremap <silent> sc :Denite -post-action=open combo<CR>
 " vim:set foldmethod=marker:
