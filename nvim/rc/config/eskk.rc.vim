@@ -1,4 +1,4 @@
-autocmd vimrc User eskk-initialize-pre call s:eskk_initial_pre()
+autocmd dein User eskk-initialize-pre call s:eskk_initial_pre()
 " let g:eskk#log_cmdline_level = 4
 " let g:eskk#log_file_level = 4
 function! s:eskk_initial_pre() abort
@@ -32,7 +32,7 @@ let g:eskk_keep_enable = 0
 let s:eskk_status = 0
 "TODO :qitta
 augroup myeskk
-autocmd!
+    autocmd!
     autocmd InsertLeave * call <SID>eskk_save_status()
     autocmd InsertEnter * call <SID>eskk_insert_status()
 augroup END

@@ -50,6 +50,7 @@ set nobackup                " no more backup file
 "}}}
 
 " Visual  {{{
+language C
 set shortmess+=aAcTt
 set showtabline=2   " always show tabline
 set number          " show line number
@@ -74,7 +75,7 @@ set noruler
 " Display candidates by list.
 set wildmenu
 set wildmode=longest:full,full
-set previewheight=8 " Adjust window size of preview 
+set previewheight=20 " Adjust window size of preview 
 set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
@@ -104,7 +105,7 @@ set softtabstop=4
 let g:vim_indent_cont = 4
 set autoindent
 set shiftwidth=4            " number of spaces inserted when auto indentation by vim
-set formatoptions+=mMjo
+set formatoptions+=mMjoB
 
 " Searching
 set ignorecase
@@ -653,7 +654,7 @@ if has('nvim')
 endif
 " edit fold column
 set background=light
-if has('windows')
+if has('Win32')
     let g:mycolorscheme = 'iceberg'
 else
     let g:mycolorscheme = 'seagull'
@@ -675,11 +676,11 @@ let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 
-let s:lsp = 0
-let s:lsp_toml = s:lsp == 0 ? '~/dotfiles/nvim/rc/dein_vim_lsp.toml' :
-    \ s:lsp == 1 ? '~/dotfiles/nvim/rc/dein_lcnvim.toml' :
-    \ s:lsp == 2 ? '~/dotfiles/nvim/rc/dein_nvim_lsp.toml' : ''
-
+if has('nvim')
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
+else
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
+endif
 let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
@@ -689,7 +690,6 @@ if dein#load_state(s:dein_dir)
     call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
-
     if !has('vim_starting')
         call dein#call_hook('source')
         call dein#call_hook('post_source')
@@ -777,7 +777,6 @@ catch /^Vim\%((\a\+)\)\=:E185:/
     echom "colorscheme '"  . g:mycolorscheme .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
-
 " if has('win32')
 " set shell=\"C:\msys64\usr\bin\bash.exe\"\ -f
 " set shellcmdflag=-c
@@ -786,22 +785,5 @@ endtry
 " set shellxquote=
 " endif
 "}}}
-	autocmd FileType denite call s:denite_my_settings()
-	function! s:denite_my_settings() abort
-	  nnoremap <silent><buffer><expr> a
-    \ denite#do_map('do_action', 'A')
-	  nnoremap <nowait><silent><buffer><expr> s
-    \ denite#do_map('do_action', 'B')
-	  nnoremap <nowait><silent><buffer><expr> d
-    \ denite#do_map('do_action', 'C')
-	  nnoremap <silent><buffer><expr> p
-    \ denite#do_map('do_action', 'prefix')
-	  nnoremap <silent><buffer><expr> b
-    \ denite#do_map('do_action', 'any')
-	  nnoremap <silent><buffer><expr> u
-    \ denite#do_map('do_action', 'undo')
-	endfunction
-
-set runtimepath+=~/.vim
-nnoremap <silent> sc :Denite -post-action=open combo<CR>
+hi MatchParen ctermfg=LightGreen ctermbg=blue
 " vim:set foldmethod=marker:

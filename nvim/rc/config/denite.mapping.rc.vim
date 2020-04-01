@@ -62,7 +62,6 @@ nnoremap <silent> [denite]/ :<C-u>Denite
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
     \ -buffer-name=relative
-    \ -split=above_cursor
     \ neoyank register<CR>
 "コマンド履歴
 nnoremap <silent> [denite]c :<C-u>Denite
@@ -135,6 +134,10 @@ nnoremap <silent> [denite], :<C-u>Denite
     \ -cursor-pos=-1
     \ -immediately
     \ <CR>
+nnoremap <silent> [denite]c :<C-u>Denite
+    \ -post-action=open
+    \ -buffer-name=combo
+    \ combo<CR>
 
 function! s:denite_lsp_diagnostics() abort
 " let command = 'Denite -buffer-name=float location_list'

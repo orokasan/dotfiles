@@ -1,5 +1,10 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
+hook_add = '''
+augroup dein
+    autocmd!
+augroup END
+'''
 
 [[plugins]]
 repo =  'roxma/nvim-yarp'
@@ -112,11 +117,11 @@ repo = 'Shougo/context_filetype.vim'
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
 hook_add = '''
-autocmd vimrc ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
-autocmd vimrc ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd vimrc ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd vimrc ColorScheme iceberg highlight clear Search
-autocmd vimrc ColorScheme iceberg highligh Search gui=underline
+autocmd dein ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
+autocmd dein ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd dein ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd dein ColorScheme iceberg highlight clear Search
+autocmd dein ColorScheme iceberg highligh Search gui=underline
 '''
 
 [[plugins]]
@@ -246,18 +251,31 @@ hook_post_update = '''
 [[plugins]]
 repo = 'chemzqm/denite-extra'
 
-# [[plugins]]
-# repo = 'airblade/vim-gitgutter'
-# hook_add = '''
-# let g:gitgutter_sign_added = '++'
-# let g:gitgutter_sign_modified = '~~'
-# let g:gitgutter_sign_removed = '--'
-# let g:gitgutter_sign_removed_first_line = '__'
-# let g:gitgutter_sign_modified_removed = '~-'
-# '''
+[[plugins]]
+# repo =  'Shougo/neoyank.vim'
+repo =  'orokasan/neoyank.vim'
+on_event = 'TextYankPost'
+on_source = ['denite.nvim']
+hook_add = '''
+let g:neoyank#save_registers = ['*']
+'''
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+hook_add = '''
+let g:gitgutter_sign_added = '++'
+let g:gitgutter_sign_modified = '~~'
+let g:gitgutter_sign_removed = '--'
+let g:gitgutter_sign_removed_first_line = '__'
+let g:gitgutter_sign_modified_removed = '~-'
+nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
+nmap <Leader>xx <Plug>(GitGutterStageHunk)
+nmap <Leader>xu <Plug>(GitGutterUndoHunk)
+'''
 
 [[plugins]]
 repo = 'glacambre/firenvim'
+on_if = 'has("nvim")'
 hook_post_update = 'call firenvim#install(0)'
 hook_add = '''
 if exists('g:started_by_firenvim')
@@ -282,12 +300,14 @@ endfunction
 [[plugins]]
 # colorscheme seagull
 repo = 'nightsense/seabird'
+merged = '0'
 hook_add = '''
-au ColorScheme seagull hi NormalFloat guibg=#fbffff
+" au ColorScheme seagull hi NormalFloat guibg=#fbffff
+au ColorScheme seagull hi NormalFloat guibg=#f5f5f5
 au ColorScheme seagull hi clear Search
 au ColorScheme seagull hi link Search IncSearch
 au ColorScheme seagull hi MatchParen ctermfg=1 ctermbg=NONE gui=reverse guifg=#ff4053 guibg=NONE
-au ColorScheme seagull hi Comment cterm=NONE ctermfg=14 guifg=#808487 gui=NONE
+au ColorScheme seagull hi Comment cterm=NONE ctermfg=14 guifg=#8d9193 gui=NONE
 '''
 [[plugins]]
 repo = 'nightsense/snow'
@@ -295,8 +315,50 @@ repo = 'nightsense/snow'
 [[plugins]]
 repo = 'dstein64/vim-startuptime'
 
+# [[plugins]]
+# repo = 'lambdalisue/fern.vim'
+# hook_add = 'let g:fern#loaded = 1 '
+
 [[plugins]]
-repo = 'lambdalisue/fern.vim'
-hook_add = 'let g:fern#loaded = 1 '
+repo =  'rhysd/git-messenger.vim'
+
+[[plugins]]
+repo = 'thinca/vim-qfreplace'
+
+[[plugins]]
+repo = 'tpope/vim-sleuth'
+
+[[plugins]]
+merged = '0'
+repo ='eikendev/denite-fzf'
+
+[[plugins]]
+repo = 'numirias/semshi'
+# on_ft = 'python'
+# on_cmd = ['Semshi']
+hook_add = '''
+let g:semshi#simplify_markup = v:true
+let g:semshi#error_sign = v:false
+function MyCustomHighlights()
+  hi semshiLocal           ctermfg=209 guifg=#ff875f
+  hi semshiGlobal          ctermfg=214 guifg=#ff6200
+  "hi! link semshiImported   Normal
+  hi semshiImported   guifg=#9854ff gui=NONE
+  " hi semshiParameter       ctermfg=75  guifg=#9854ff
+  hi! link semshiParameter   Special
+  hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline
+  hi semshiFree            ctermfg=218 guifg=#ffafd7
+  hi! link semshiBuiltin      Type
+  hi semshiAttribute       ctermfg=49  guifg=#0099ff
+  hi! link semshiSelf          Comment
+  hi clear semshiUnresolved
+  hi clear semshiSelected        gui=underline
+  hi semshiSelected        gui=underline
+  hi semshiErrorSign       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
+  hi semshiErrorChar       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
+endfunction
+autocmd FileType python call MyCustomHighlights()
+'''
+
 
 # vim:set foldmethod=marker:

@@ -11,9 +11,12 @@ class Source(Base):
     def on_init(self, context):
         pass
 
+    def on_close(self, context):
+        pass
+
     def gather_candidates(self, context):
         candidates = []
-        normal = ['5', '2','6', 'j', 'j6','j2']
+        normal = ['5', '2','6', 'j', 'j6','j2', 'D']
         special = ['236', '214', 'j236', '63214']
         tech = normal + special
         for l in tech:
@@ -31,18 +34,19 @@ class Kind(Word):
         self.redraw_actions += [] #pylint: disable=E1101
         self.default_action = 'next'
         self.name = 'combo'
+        self.space = ' -> '
 
     def action_A(self, context):
         target = context['targets'][0]
-        target['action__text'] = target['word'] + 'A '
+        target['action__text'] = target['word'] + 'A' + self.space
         self.action_append(context)
     def action_B(self, context):
         target = context['targets'][0]
-        target['action__text'] = target['word'] + 'B '
+        target['action__text'] = target['word'] + 'B' + self.space
         self.action_append(context)
     def action_C(self, context):
         target = context['targets'][0]
-        target['action__text'] = target['word'] + 'C '
+        target['action__text'] = target['word'] + 'C' + self.space
         self.action_append(context)
 
     def action_prefix(self, context):
@@ -55,7 +59,7 @@ class Kind(Word):
                                   '',
                                   ''))
         target = context['targets'][0]
-        target['action__text'] = prefix + target['word'] + button
+        target['action__text'] = prefix + target['word'] + button + self.space
         self.action_append(context)
 
     def action_any(self, context):
@@ -64,7 +68,7 @@ class Kind(Word):
                                   '',
                                   ''))
         target = context['targets'][0]
-        target['action__text'] = target['word'] + button
+        target['action__text'] = target['word'] + button + self.space
         self.action_append(context)
 
     def action_undo(self, context):

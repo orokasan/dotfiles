@@ -19,7 +19,7 @@ let s:pyls_config = {'pyls': {'plugins': {
     \ }
     \ }
     \}
-autocmd BufAdd * call lsp#enable()
+autocmd dein BufAdd * call lsp#enable()
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
@@ -189,6 +189,26 @@ call deoplete#custom#option('sources', {
     \ 'go': ['lsp','eskk','neosnippet', 'buffer'],
     \ 'tex' :['lsp','eskk','look','neosnippet', 'buffer'],
     \ })
+'''
+
+[[plugins]]
+lazy = '1'
+repo =  'Shougo/neosnippet'
+on_event = 'InsertEnter'
+on_ft = 'snippet'
+hook_source = '''
+let g:neosnippet#disable_runtime_snippets = {
+\   '_' : 1,
+\ }
+let g:neosnippet#enable_completed_snippet = 1
+let g:neosnippet#enable_complete_done = 1
+if has('conceal')
+    set conceallevel=2 concealcursor=niv
+endif
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+" imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+" \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 '''
 
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'

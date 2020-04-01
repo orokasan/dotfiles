@@ -69,6 +69,7 @@ done
 ln -snfv ${DOTPATH}/nvim ${HOME}/.vim
 ln -snfv ${DOTPATH}/nvim ${XDG_CONFIG_HOME}/nvim
 ln -snfv ${DOTPATH}/nvim/init.vim ${HOME}/.vimrc
+ln -snfv ${DOTPATH}/.goneovim ${HOME}/.goneovim
 ln -snfv ${DOTPATH}/efm-langserver ${HOME}/.config/efm-langserver
 ln -snfv ${DOTPATH}/package.json ${HOME}/package.json
 echo $(tput setaf 2)Deploy dotfiles complete!. ✔︎$(tput sgr0)

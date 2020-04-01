@@ -3,34 +3,40 @@ repo = 'neovim/nvim-lsp'
 hook_add = '''
 " can't load nvim-lsp modules when it is not merged in dein repo.
 " so set rtp manually.
-set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
 let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
 lua << EOF
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
+-- local vim = vim
+
+local function err_message(...)
+  vim.api.nvim_err_writeln(table.concat(vim.tbl_flatten{...}))
+  vim.api.nvim_command("redraw")
+end
 
 vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
-    if vim.api.nvim_get_var('enable_nvim_lsp_diagnostics') then
-      local util = vim.lsp.util
-      local uri = result.uri
-      local bufnr = vim.uri_to_bufnr(uri)
-      if not bufnr then
-        err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
-        return
-      end
-      util.buf_clear_diagnostics(bufnr)
-      util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
-      util.buf_diagnostics_underline(bufnr, result.diagnostics)
-      util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
-    end
+    local util = vim.lsp.util
+  if not result then return end
+  local uri = result.uri
+  local bufnr = vim.uri_to_bufnr(uri)
+  if not bufnr then
+    err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
+    return
   end
+  util.buf_clear_diagnostics(bufnr)
+  util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
+  util.buf_diagnostics_underline(bufnr, result.diagnostics)
+  -- util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
+  util.buf_diagnostics_signs(bufnr, result.diagnostics)
+  vim.api.nvim_command("doautocmd User LspDiagnosticsChanged")
+end
 
 require'nvim_lsp'.gopls.setup{
     capabilities = {
       textDocument = {
         completion = {
-          completionItem = {
+            completionItem = {
             snippetSupport = true
           }
         }
@@ -46,94 +52,96 @@ require'nvim_lsp'.gopls.setup{
     };
   }
 
-require'nvim_lsp'.texlab.setup{
-    settings = {
-      latex = {
-        build = {
-          executable = "latexmk";
-          args = {"uplatex", "-kanji=utf-8", "-halt-on-error", "-synctex=1", "-interaction=nonstopmode", "-file-line-error"};
-          onSave = false;
-            };
-        };
-    };
-}
-if not nvim_lsp.pyls_ms then
-    config.pyls_ms ={
-        default_config = {
-            init_options = {
-              interpreter = {
-                properties = {
-                  InterpreterPath = "/usr/bin/python";
-                  Version = "3.7";
-                };
-              };
-            };
-  };
-}
-end
+require'nvim_lsp'.texlab.setup{}
+    -- settings = {
+    --   latex = {
+    --     build = {
+    --       executable = "latexmk";
+    --       args = {"uplatex", "-kanji=utf-8", "-halt-on-error", "-synctex=1", "-interaction=nonstopmode", "-file-line-error"};
+    --       onSave = false;
+    --         };
+    --     };
+    -- };
+-- }
+
 -- require'nvim_lsp'.pyls_ms.setup{}
 require'nvim_lsp'.pyls.setup{}
 require'nvim_lsp'.sumneko_lua.setup{}
 require'nvim_lsp'.vimls.setup{}
--- efm_config_path = '-c=' + vim.funcref("expand('~/.config/efm-langserver/config.yaml')")
 
-  -- configs.efm_langserver = {
-  --   default_config = {
-  --     cmd = {"efm-langserver", vim.api.nvim_eval("s:efm_config_path")};
-  --     filetypes = {'tex','eruby', 'markdown', 'yaml'};
-  --     root_dir = vim.loop.os_homedir();
-  --     log_level = vim.lsp.protocol.MessageType.Warning;
-  --     settings = {};
-  --   };
-  -- }
--- nvim_lsp.efm_langserver.setup{}
+-- --  efm_config_path = '-c=' + vim.eval('expand("~/.config/efm-langserver/config.yaml")')
+--   configs.efm_langserver = {
+--     default_config = {
+--       cmd = {"efm-langserver"};
+--       filetypes = {'tex'};
+--       -- filetypes = {'tex','eruby', 'markdown', 'yaml'};
+--       root_dir = vim.loop.os_homedir();
+--     };
+--   }
+-- require'nvim_lsp'.efm_langserver.setup{}
 
-do
-  local method = 'textDocument/publishDiagnostics'
-  local default_callback = vim.lsp.callbacks[method]
-  vim.lsp.callbacks[method] = function(err, method, result, client_id)
-    default_callback(err, method, result, client_id)
-    if result and result.diagnostics then
-      for _, v in ipairs(result.diagnostics) do
-        v.uri = v.uri or result.uri
-      end
-      vim.lsp.util.set_qflist(result.diagnostics)
-    end
-  end
-end
+-- do
+--   local method = 'textDocument/publishDiagnostics'
+--   local default_callback = vim.lsp.callbacks[method]
+--   vim.lsp.callbacks[method] = function(err, method, result, client_id)
+--     default_callback(err, method, result, client_id)
+--     if result and result.diagnostics then
+--       for _, v in ipairs(result.diagnostics) do
+--         v.uri = v.uri or result.uri
+--       end
+--       vim.lsp.util.set_qflist(result.diagnostics)
+--     end
+--   end
+-- end
 EOF
 
 "lsp.txtそのまま
-setlocal omnifunc=v:lua.vim.lsp.omnifunc
+"set omnifunc=v:lua.vim.lsp.omnifunc
 nnoremap <silent> <c-]>      <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> <c-k>      <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> K          <cmd>lua vim.lsp.buf.hover()<CR>
+" nnoremap <silent> <c-k>      <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <c-k>          <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gd         <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> g0         <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent> gD         <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> 1gD        <cmd>lua vim.lsp.buf.type_definition()<CR>
 nnoremap <silent><Leader>rf  <cmd>lua vim.lsp.buf.references({ includeDeclaration = true })<CR>
 nnoremap <silent><Leader>fmt <cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 let g:tex_flavor = "latex"
+set updatetime=1000
+function! s:vimenter() abort
+augroup nvim_lsp
+au!
+autocmd CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
+autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
+"autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
+endfunction
+autocmd dein BufEnter * call s:vimenter()
+let g:LspDiagnosticsErrorSign = ''
+let g:LspDiagnosticsWarningSign = ''
+let g:LspDiagnosticsInformationSign = ' !'
+let g:LspDiagnosticsHintSign = ' ?'
+autocmd ColorScheme * highlight LspDiagnosticsError guifg=Red
+autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
+autocmd ColorScheme * highlight LspDiagnosticsUnderline guifg=Magenta
 '''
 
-# [[plugins]]
+[[plugins]]
 # lazy = '1'
-# repo = 'hrsh7th/vim-vsnip'
+repo = 'hrsh7th/vim-vsnip'
 # on_source = ['deoplete.nvim']
-# hook_add = '''
-# imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-# smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-# imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-# '''
+hook_add = '''
+imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+imap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+'''
 
-# [[plugins]]
-# lazy = '1'
-# on_source = ['deoplete.nvim']
-# repo = 'hrsh7th/vim-vsnip-integ'
+[[plugins]]
+lazy = '1'
+on_source = ['deoplete.nvim']
+repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
 repo = 'Shougo/deoplete-lsp'

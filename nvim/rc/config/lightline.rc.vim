@@ -45,7 +45,7 @@ let g:lightline = {
     \ }
 \ }
 
-autocmd vimrc User lsp_diagnostic_done call lightline#update()
+autocmd dein User LspDiagnosticsChanged call lightline#update()
 
 " let g:lightline.colorscheme = 'quack'
 if g:mycolorscheme is 'iceberg'
@@ -122,13 +122,30 @@ function! s:threshold(n) abort
 endfunction
 
 function! LLLspError() abort
-    let d = lsp#get_buffer_diagnostics_counts()
-    return d.error ? '' . d.error : ''
+" workaround
+" gopls is crashed by calling vim.lsp.buf.server_ready()
+if &filetype ==# 'go'
+    return ''
+endif
+
+if luaeval('vim.lsp.buf.server_ready()')
+    let e = luaeval("vim.lsp.util.buf_diagnostics_count(\"Error\")")
+    return e ? '' . e : ''
+else
+    return ''
+endif
 endfunction
 
 function! LLLspWarning() abort
-    let d = lsp#get_buffer_diagnostics_counts()
-    return  d.warning ? '' . d.warning : ''
+if &filetype ==# 'go'
+    return ''
+endif
+if luaeval('vim.lsp.buf.server_ready()')
+    let w = luaeval("vim.lsp.util.buf_diagnostics_count(\"Warning\")")
+    return  w ? '' . w : ''
+else
+    return ''
+endif
 endfunction
 
 function! LL_quickrun_running()
@@ -276,8 +293,8 @@ function! LLgit() abort
 endfunction
 
 "重いのでキャッシュする
-autocmd vimrc BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
-autocmd vimrc SourcePost $MYVIMRC call <SID>llgitcache()
+autocmd dein BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
+autocmd dein SourcePost $MYVIMRC call <SID>llgitcache()
 function! s:llgitcache() abort
     let s:llgitbranch = ''
     if !exists('*gitbranch#name')
@@ -288,11 +305,11 @@ function! s:llgitcache() abort
 endfunction
 
 " 検索ステータスを表示 (vim-anzuを利用) {{{
-autocmd vimrc InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status')
+autocmd dein InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status')
     \| call anzu#clear_search_status() | endif
 
-autocmd vimrc CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
-autocmd vimrc User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
+autocmd dein CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
+autocmd dein User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
 
 function! s:llanzu()
     let s:anzu = anzu#search_status()
