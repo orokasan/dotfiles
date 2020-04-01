@@ -12,7 +12,7 @@ let g:my_denite_filter_winblend_config = b:denite.buffer_name !~#
 \ '\v(float|menu|relative)' ? 1 : 0
 setlocal winblend=10
 endif
-setlocal signcolumn=yes
+setlocal signcolumn=no
 nnoremap <silent><buffer><expr> j
 \ line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k
@@ -47,7 +47,7 @@ nnoremap <silent><buffer><expr> t
 nnoremap <silent><buffer><expr> A
     \ denite#do_map('toggle_select_all').'j'
 nnoremap <silent><buffer><expr> r
-    \ denite#do_map('toggle_matchers', 'matcher/regexp,matcher/fuzzy')
+    \ denite#do_map('toggle_matchers', 'matcher/regexp, matcher/fuzzy')
 nnoremap <silent><buffer><expr> <C-r>
     \ denite#do_map('do_action','file/rec')
 nnoremap <silent><buffer><expr> <C-e>
@@ -355,14 +355,6 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 '''
 
 [[plugins]]
-repo =  'Shougo/neoyank.vim'
-on_event = 'TextYankPost'
-on_source = ['denite.nvim']
-hook_add = '''
-let g:neoyank#save_registers = ['*']
-'''
-
-[[plugins]]
 repo = 'glidenote/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
@@ -430,15 +422,6 @@ let g:choosewin_blink_on_land = 0
 '''
 
 [[plugins]]
-repo = 'previm/previm'
-depends = 'open-browser.vim'
-on_ft = ['markdown','md']
-hook_add = '''
-" let g:previm_open_cmd = 'open -a FireFox\ Nightly'
-nnoremap <silent><Leader>mp :PrevimOpen<CR>
-'''
-
-[[plugins]]
 repo =  'rhysd/vim-operator-surround'
 depends = 'vim-operator-user'
 on_map = {nv= '<Plug>'}
@@ -462,27 +445,27 @@ let g:operator#surround#blocks['-'] = [
 \ ]
 '''
 
-[[plugins]]
-repo = 'thinca/vim-ambicmd'
-on_event = ['CmdwinEnter', 'CmdlineEnter']
-hook_add = '''
-set wildcharm=<TAB>
-let g:ambicmd#show_completion_menu = 1
-augroup init_ambicmd
-  autocmd!
-  autocmd CmdwinEnter * call s:init_cmdwin()
-augroup END
-function! s:init_cmdwin()
-  inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
-  inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
-endfunction
-'''
-hook_source = '''
-" sourceできた時のみマップする
-" `ambicmd#expand`が無いときcmdlineでまともに入力できなくなる
-cnoremap <expr> <Space> ambicmd#expand("\<Space>")
-cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
-'''
+# [[plugins]]
+# repo = 'thinca/vim-ambicmd'
+# on_event = ['CmdwinEnter', 'CmdlineEnter']
+# hook_add = '''
+# set wildcharm=<TAB>
+# let g:ambicmd#show_completion_menu = 1
+# augroup init_ambicmd
+#   autocmd!
+#   autocmd CmdwinEnter * call s:init_cmdwin()
+# augroup END
+# function! s:init_cmdwin()
+#   inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
+#   inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
+# endfunction
+# '''
+# hook_source = '''
+# " sourceできた時のみマップする
+# " `ambicmd#expand`が無いときcmdlineでまともに入力できなくなる
+# cnoremap <expr> <Space> ambicmd#expand("\<Space>")
+# cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
+# '''
 
 [[plugins]]
 repo = 'itchyny/vim-cursorword'
@@ -703,20 +686,22 @@ xmap <C-l> <Plug>(textmanip-move-right)
 " xmap <F10> <Plug>(textmanip-toggle-mode)
 '''
 
-[[plugins]]
-repo = 'kassio/neoterm'
-on_cmd = ['T', 'Ttoggle']
-hook_add = '''
-nnoremap '' :<C-u>Ttoggle<CR>
-let g:neoterm_repl_python = ''
-let g:neoterm_auto_repl_cmd = v:false
-let g:neoterm_default_mod='aboveleft'
-let g:neoterm_autoscroll = v:true
-let g:neoterm_size=15
-let g:neoterm_autoinsert = v:false
-let g:neoterm_autojump = v:true
-'''
-hook_source = 'tnoremap <C-d> <C-\><C-n>:<C-u>Tclose<CR>'
+# [[plugins]]
+# repo = 'kassio/neoterm'
+# on_cmd = ['T', 'Ttoggle']
+# hook_add = '''
+# '''
+# hook_source = '''
+# tnoremap <C-d> <C-\><C-n>:<C-u>Tclose<CR>'
+# nnoremap '' :<C-u>Ttoggle<CR>
+# let g:neoterm_repl_python = ''
+# let g:neoterm_auto_repl_cmd = v:false
+# let g:neoterm_default_mod='aboveleft'
+# let g:neoterm_autoscroll = v:true
+# let g:neoterm_size=15
+# let g:neoterm_autoinsert = v:false
+# let g:neoterm_autojump = v:true
+# '''
 
 [[plugins]]
 repo = 'majutsushi/tagbar'
@@ -950,4 +935,15 @@ endif
 [[plugins]]
 repo =  'Shougo/unite.vim'
 on_cmd = ['Unite']
+
+[[plugins]]
+repo = 'previm/previm'
+depends = 'open-browser.vim'
+on_cmd = ['PrevimOpen']
+on_ft = 'markdown'
+hook_add = '''
+" let g:previm_open_cmd = 'open -a FireFox\ Nightly'
+nnoremap <silent><Leader>mp :PrevimOpen<CR>
+'''
+
 # vim:set foldmethod=marker:

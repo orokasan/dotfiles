@@ -50,6 +50,7 @@ set nobackup                " no more backup file
 "}}}
 
 " Visual  {{{
+language C
 set shortmess+=aAcTt
 set showtabline=2   " always show tabline
 set number          " show line number
@@ -74,7 +75,7 @@ set noruler
 " Display candidates by list.
 set wildmenu
 set wildmode=longest:full,full
-set previewheight=8 " Adjust window size of preview 
+set previewheight=20 " Adjust window size of preview 
 set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
@@ -777,7 +778,6 @@ catch /^Vim\%((\a\+)\)\=:E185:/
     echom "colorscheme '"  . g:mycolorscheme .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
-
 " if has('win32')
 " set shell=\"C:\msys64\usr\bin\bash.exe\"\ -f
 " set shellcmdflag=-c
@@ -786,4 +786,5 @@ endtry
 " set shellxquote=
 " endif
 "}}}
+hi MatchParen ctermfg=LightGreen ctermbg=blue
 " vim:set foldmethod=marker:

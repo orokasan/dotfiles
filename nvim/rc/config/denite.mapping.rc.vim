@@ -62,7 +62,6 @@ nnoremap <silent> [denite]/ :<C-u>Denite
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
     \ -buffer-name=relative
-    \ -split=above_cursor
     \ neoyank register<CR>
 "コマンド履歴
 nnoremap <silent> [denite]c :<C-u>Denite

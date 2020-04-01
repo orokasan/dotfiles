@@ -120,13 +120,6 @@ let g:SignatureMap = {
  "           \ execute 'nunmap <buffer>' key | endfor
  ''' # }}}
 
-[[plugins]]
-on_if ='has("nvim")'
-repo = 'ncm2/float-preview.nvim'
-hook_add = '''
-let g:float_preview#docked = 0
-let g:float_preview#max_height = 5
-'''
 
  [[plugins]]
  repo = 'voldikss/vim-floaterm'
@@ -235,4 +228,14 @@ repo =  'Shougo/neocomplete.vim'
 on_if = '!has("nvim")'
 on_event = 'InsertEnter'
 
-''' # }}}
+'''
+
+[[plugins]]
+# on_if ='has("nvim")'
+repo = 'ncm2/float-preview.nvim'
+hook_add = '''
+let g:float_preview#docked = 1
+let g:float_preview#max_height = 12
+'''
+
+# }}}

@@ -37,7 +37,7 @@ call deoplete#custom#var('around', {
     \   'range_below': 20,
     \   'mark_above': '[↑]',
     \   'mark_below': '[↓]',
-    \   'mark_changes': '[*]',
+    \   'mark_changes': '[c]',
     \})
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
@@ -51,12 +51,9 @@ call deoplete#custom#option({
     \ 'auto_refresh_delay': 100,
     \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'filter',
-    \ 'ignore_sources': {
-    \ 'vim': [],
-    \ 'python': ['member']
-    \    }
+    \ 'prev_completion_mode': 'filter'
     \ })
+
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
     \ 'converter_remove_overlap',
@@ -65,5 +62,16 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_truncate_kind',
     \ 'converter_auto_delimiter'
     \ ])
+" deoplete-lsp should not be lazy loaded
+
+if dein#is_sourced('deoplete-lsp')
+    let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex']
+    let ignore_source = ['around', 'buffer', 'look', 'member']
+    let config = {}
+    for ft in lsp_enabled_filetype
+        let config[ft] = ignore_source
+    endfor
+    call deoplete#custom#option({'ignore_sources': config})
+endif
 
 call deoplete#enable()

@@ -26,12 +26,13 @@ call denite#custom#option('search', {'winheight': 9})
 call denite#custom#option('float',{
     \ 'split': 'floating',
     \ 'wincol': 0,
-    \ 'winwidth': &columns-2,
+    \ 'winwidth': &columns,
     \ 'winheight': 10,
     \ 'winrow' : &lines - 12
     \ })
 call denite#custom#option('relative',{
-    \ 'split': 'above_cursor',
+    \ 'split': 'floating_relative',
+    \ 'auto_resize': v:true,
     \ 'wincol': &columns * 1/3,
     \ 'winwidth': &columns/2,
     \ 'winheight': 11,
@@ -74,6 +75,12 @@ call denite#custom#var('menu', 'menus', s:menus)
 
 " call denite#custom#kind('file', 'default_action', 'drop')
 " call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy', 'matcher/ignore_globs'])
+if executable('fzf')
+call denite#custom#source('_', 'matchers', ['matcher/fzf'])
+else
+call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
+endif
+call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#alias('source', 'grep/git', 'grep')
@@ -164,4 +171,3 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
-

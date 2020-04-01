@@ -6,29 +6,39 @@ Width = 1400
 # Editor minimum window height (>= 600)
 Height = 900
 
+StartMaximizedWindow = true
+
 # Editor external font-family, font-size, and linespace.
 FontFamily = "Cica"
-FontSize = 12
-Linespace = 0
-
-# Drawing window border instead of vertical split, statusline
-DrawBorder = true
+FontSize = 13
+Linespace = 1
 
 # Copy yanked text to clipboard
 Clipboard = true
 
 # Disable IME in Normal mode
-DisableImeInNormal = false
+DisableImeInNormal = true
 
-# Transparent window alpha
-# Note: This setting also implicitly enables the Drawborder setting
-Transparent = 0.8
+# Drawing window and Transparent breaks statusline and tabline.
+## Transparent window alpha
+## Note: This setting also implicitly enables the Drawborder setting
+#Transparent = 0.95
+##
+## Drawing window border instead of vertical split, statusline
+#DrawBorder = true
+
+ExtCmdline = false
+ExtPopupmenu = false
+ExtTabline = false
+ExtMessages = true
+
+IndentGuide = true
 
 [Statusline]
-Visible = true
+Visible = false
 
 # Options: “textLabel” / “icon” / “background” / “none”
-ModeIndicatorType = "textLabel"
+ModeIndicatorType = "background"
 
 # Optional setting colors per Neovim editing modes
 NormalModeColor = "#3cabeb"
@@ -64,6 +74,14 @@ DetailWidth = 250
 [Tabline]
 Visible = true
 
+[Lint]
+Visible = false
+
+[ScrollBar]
+Visible = false
+
+[MiniMap]
+Visible = false
 # # Restore session — information that was ended without being saved
 # RestoreSession = false
 

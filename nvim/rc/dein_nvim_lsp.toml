@@ -109,9 +109,11 @@ nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 let g:tex_flavor = "latex"
 set updatetime=1000
 function! s:vimenter() abort
-autocmd vimrc CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
-autocmd vimrc CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
-"autocmd vimrc CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
+augroup nvim_lsp
+au!
+autocmd CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
+autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
+"autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
 endfunction
 autocmd dein BufEnter * call s:vimenter()
 let g:LspDiagnosticsErrorSign = ''
