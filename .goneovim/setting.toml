@@ -2,15 +2,15 @@
 
 [Editor]
 # Editor minimum window width (>= 800)
-Width = 1400
+Width = 1000
 # Editor minimum window height (>= 600)
-Height = 900
+Height = 1200
 
-StartMaximizedWindow = true
+StartMaximizedWindow = false
 
 # Editor external font-family, font-size, and linespace.
 FontFamily = "Cica"
-FontSize = 13
+FontSize = 12
 Linespace = 1
 
 # Copy yanked text to clipboard
@@ -28,9 +28,9 @@ DisableImeInNormal = true
 #DrawBorder = true
 
 ExtCmdline = false
-ExtPopupmenu = false
+ExtPopupmenu = true
 ExtTabline = false
-ExtMessages = true
+ExtMessages = false
 
 IndentGuide = true
 

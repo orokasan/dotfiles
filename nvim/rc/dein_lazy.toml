@@ -1,6 +1,6 @@
 [[plugins]]
-# repo =  'Shougo/denite.nvim'
-repo =  'orokasan/denite.nvim'
+repo =  'Shougo/denite.nvim'
+# repo =  'orokasan/denite.nvim'
 on_cmd = ['Denite']
 hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
 hook_source = 'source ~/dotfiles/nvim/rc/config/denite.rc.vim'
