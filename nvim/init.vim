@@ -764,6 +764,7 @@ endfunction
 " yank searched results
 function! s:search(pat)
 let l:cache = []
+
 execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
@@ -787,4 +788,5 @@ endtry
 " endif
 "}}}
 hi MatchParen ctermfg=LightGreen ctermbg=blue
+
 " vim:set foldmethod=marker:

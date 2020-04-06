@@ -2,6 +2,7 @@ function! s:check_back_space() abort "{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
+
 " imap <silent><expr> <TAB>
 "       \ neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" :
 "       \ pumvisible() ? "\<C-n>" :
@@ -17,11 +18,12 @@ inoremap <silent><expr><BS>
 inoremap <silent><expr><C-l>
     \ deoplete#complete_common_string()
 inoremap <expr><silent> <C-g> deoplete#undo_completion()
+
     " \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
 "" <CR>: close popup and save indent.
 " call deoplete#custom#source('_', 'max_info_width',150)
-call deoplete#custom#source('_', 'matchers',
-      \ ['matcher_fuzzy'])
+" call deoplete#custom#source('_', 'matchers',
+"       \ ['matcher_fuzzy'])
 "eskkにmatcherを指定してはいけない
 call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('eskk', 'mark' , '▼')
@@ -42,18 +44,14 @@ call deoplete#custom#var('around', {
 call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
     \ })
-if has('nvim')
-call deoplete#custom#option({ 'refresh_always': v:true})
-else
 call deoplete#custom#option({ 'refresh_always': v:false})
-endif
 call deoplete#custom#option({
     \ 'auto_refresh_delay': 100,
-    \ 'skip_multibyte': v:false,
+    \ 'skip_multibyte': v:true,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': 'filter'
+    \ 'prev_completion_mode': '',
+    \ 'num_process': 0
     \ })
-
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
     \ 'converter_remove_overlap',
@@ -63,7 +61,6 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_auto_delimiter'
     \ ])
 " deoplete-lsp should not be lazy loaded
-
 if dein#is_sourced('deoplete-lsp')
     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex']
     let ignore_source = ['around', 'buffer', 'look', 'member']

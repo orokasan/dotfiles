@@ -280,12 +280,6 @@ let g:eskk#dictionary = {
 "     \ 'sticky' : 0,
 "     \ 'kakutei' : 0
 "     \ }
-
-				let g:eskk#server = {
-				\	'host': 'localhost',
-				\	'port': 55100,
-				\	'type': 'notfound',
-				\}
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#cursor_color = {
     \   'ascii': '#b4be82',
@@ -323,6 +317,13 @@ let s:lexima_my_rules = [
 \ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
 \ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
 \ ]
+" Markdown list and todolist
+call lexima#add_rule({'at': '^\s*\%#', 'char': '*', 'input': '*<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '^\s*\%#', 'char': '-', 'input': '-<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '^*\s.*\%#$', 'char': '<CR>', 'input': '<CR>*<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '^-\s.*\%#$', 'char': '<CR>', 'input': '<CR>-<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '- \%#',   'char': '[', 'input': '[<Space>]<Space>', 'filetype': 'markdown'})
+
 for rule in s:lexima_my_rules
   call lexima#add_rule(rule)
 endfor
@@ -330,6 +331,7 @@ inoremap z] 」
 inoremap z} 』
 inoremap z) ）
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+
 function! s:my_cr_function() abort "{{{
   return pumvisible() ? deoplete#close_popup() : lexima#expand('<CR>', 'i')
 endfunction "}}}
@@ -367,12 +369,13 @@ nnoremap <silent><Leader>mg  :<C-u>Denite
     \ grep:~/GoogleDrive/memo::<CR>
 " use denite (default 0)
 let g:memolist_denite = 1
+let g:memolist_memo_suffix = 'md'
 let g:memolist_path = "~/GoogleDrive/memo"
 let g:memolist_template_dir_path = "~/GoogleDrive/memo/template"
-let g:memolist_memo_suffix = "markdown"
 let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
+
 " categories prompt (default 0)
-let g:memolist_prompt_categories = 1
+" let g:memolist_prompt_categories = 1
 '''
 
 [[plugins]]
@@ -945,5 +948,4 @@ hook_add = '''
 " let g:previm_open_cmd = 'open -a FireFox\ Nightly'
 nnoremap <silent><Leader>mp :PrevimOpen<CR>
 '''
-
 # vim:set foldmethod=marker:
