@@ -690,7 +690,6 @@ if dein#load_state(s:dein_dir)
     call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
-
     if !has('vim_starting')
         call dein#call_hook('source')
         call dein#call_hook('post_source')
