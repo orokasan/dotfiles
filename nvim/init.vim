@@ -1,11 +1,7 @@
 "ork's vimrc
 " Basic setting {{{
 set encoding=utf-8
-if !has('nvim')
-    scriptencoding utf-8,cp932
-else
-    scriptencoding utf-8
-endif
+scriptencoding utf-8,cp932
 " set fileencoding=utf-8
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
@@ -50,7 +46,7 @@ set nobackup                " no more backup file
 "}}}
 
 " Visual  {{{
-language C
+" language C
 set shortmess+=aAcTt
 set showtabline=2   " always show tabline
 set number          " show line number
@@ -62,7 +58,7 @@ set noshowmode      " don't let show current mode on commandline
 set cursorline      " highlight cursorline
 " autocmd vimrc ColorScheme *  hi clear CursorLine
 set list            " show invisible character
-set listchars=tab:\ \ ,trail:-,extends:»,precedes:«,nbsp:%
+set listchars=tab:\ \ ,trail:\ ,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
 set t_Co=256
@@ -75,7 +71,7 @@ set noruler
 " Display candidates by list.
 set wildmenu
 set wildmode=longest:full,full
-set previewheight=20 " Adjust window size of preview 
+set previewheight=20 " Adjust window size of preview
 set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
@@ -623,15 +619,15 @@ endif
 if has('nvim')
     " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
     " fix CTRL-V yank issue
-    set clipboard=
-    nnoremap y "*y
-    xnoremap y "*ygv<ESC>
-    nnoremap Y "*y$
-    xnoremap Y "*y$gv<ESC>
-    nnoremap gp "*p
-    xnoremap gp "*p
-    nnoremap gP "*P
-    xnoremap gP "*P
+    set clipboard=unnamedplus
+    " nnoremap y "+y
+    " xnoremap y "+ygv<ESC>
+    " nnoremap Y "+y$
+    " xnoremap Y "+y$gv<ESC>
+    " nnoremap gp "+p
+    " xnoremap gp "+p
+    " nnoremap gP "+P
+    " xnoremap gP "+P
     set completeopt+=menuone
     set completeopt-=preview
     " show complettion popup in commandline.
@@ -786,6 +782,9 @@ endtry
 " set shellxquote=
 " endif
 "}}}
-hi MatchParen ctermfg=LightGreen ctermbg=blue
-
+" augroup HighlightTrailingSpaces
+"   autocmd!
+"   autocmd VimEnter,WinEnter,ColorScheme * highlight TrailingSpaces term=underline guibg=Red ctermbg=Red
+"   autocmd VimEnter,WinEnter * match TrailingSpaces /\s\+$/
+" augroup END
 " vim:set foldmethod=marker:
