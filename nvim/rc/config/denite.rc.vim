@@ -40,19 +40,32 @@ call denite#custom#option('relative',{
     \ })
 
 ""need rg for grep/file-rec
+call denite#custom#source('grep', 'args', ['', '', '!'])
+" when filtering multibyte char interactivelly, should insert space at fist. 
+if executable('jvgrep')
+    call denite#custom#var('grep', {
+            \ 'command': ['jvgrep'],
+            \ 'default_opts': ['-i'],
+            \ 'recursive_opts': ['-R'],
+            \ 'pattern_opt': [],
+            \ 'separator': [],
+            \ 'final_opts': [],
+            \ })
+elseif executable('rg')
+    call denite#custom#var('grep', {
+            \ 'command': ['rg'],
+            \ 'default_opts': ['-i', '--vimgrep', '--no-heading'],
+            \ 'recursive_opts': [],
+            \ 'pattern_opt': ['--regexp'],
+            \ 'separator': ['--'],
+            \ 'final_opts': [],
+            \ })
+endif
 if executable('rg')
     call denite#custom#var('file/rec', 'command',
         \ ['rg', '--files', '--no-messages','--hidden',
         \ '--glob', '!**/.git/*', '--glob','!*.tmp','-g','!AppData/*'])
 endif
-call denite#custom#source('grep', 'args', ['', '', '!'])
-call denite#custom#var('grep', 'command', ['rg', '--threads', '1'])
-call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'final_opts', [])
-call denite#custom#var('grep', 'separator', ['--'])
-call denite#custom#var('grep', 'default_opts',
-      \ ['--vimgrep', '--no-heading'])
-
 " Add custom menus
 let s:menus = {
     \ }

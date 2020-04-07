@@ -11,6 +11,9 @@ endfunction "}}}
 inoremap <silent><expr> <C-n>
     \ pumvisible() ? "\<C-n>" :
     \ deoplete#manual_complete()
+inoremap <silent><expr> <C-n>
+    \ pumvisible() ? "\<C-n>" :
+    \ deoplete#manual_complete()
 inoremap <silent><expr><C-h>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><BS>
