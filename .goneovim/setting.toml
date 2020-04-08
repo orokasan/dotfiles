@@ -9,7 +9,7 @@ Height = 1200
 StartMaximizedWindow = false
 
 # Editor external font-family, font-size, and linespace.
-FontFamily = "Cica"
+FontFamily = "RictyDiminished NF"
 FontSize = 12
 Linespace = 1
 
@@ -28,7 +28,7 @@ DisableImeInNormal = true
 #DrawBorder = true
 
 ExtCmdline = false
-ExtPopupmenu = true
+ExtPopupmenu = false
 ExtTabline = false
 ExtMessages = false
 

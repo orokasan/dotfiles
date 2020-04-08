@@ -12,6 +12,7 @@ function! s:eskk_initial_pre() abort
     call t.add_map('~', '〜')
     call t.add_map('zc', '©')
     call t.add_map('zr', '®')
+    call t.add_map('zk', '■')
     call t.add_map('z9', '（')
     call t.add_map('z0', '）')
     call t.add_map('z-', '-')

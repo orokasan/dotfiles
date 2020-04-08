@@ -582,13 +582,13 @@ if has('GUI')
         set guifont=Cica:h14
     else
     "https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
-        let s:fontsize = '12'
-        let s:font = 'Ricty_Diminished_with-icons'
-        let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
-        let &guifont = s:myguifont
-        let &guifontwide = s:myguifont
-        set guifont=Cica:h12:
-        set renderoptions=type:directx,renmode:5,geom:1
+        " let s:fontsize = '12'
+        " let s:font = 'Ricty_Diminished_with-icons'
+        " let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
+        " let &guifont = s:myguifont
+        " let &guifontwide = s:myguifont
+        " set guifont=Cica:h12:
+        " set renderoptions=type:directx,renmode:5,geom:1
     endif
 endif
 "}}}
@@ -787,4 +787,23 @@ endtry
 "   autocmd VimEnter,WinEnter,ColorScheme * highlight TrailingSpaces term=underline guibg=Red ctermbg=Red
 "   autocmd VimEnter,WinEnter * match TrailingSpaces /\s\+$/
 " augroup END
+if g:gonvim_running
+ augroup GonvimAuStatusline
+    autocmd!
+  augroup end
+  augroup GonvimAuLint
+    autocmd!
+  augroup end
+  augroup GonvimAuMd
+    autocmd!
+  augroup end
+  augroup GonvimAuFilePath
+    autocmd!
+  augroup end
+  augroup GonvimAuScrollbar
+    autocmd!
+  augroup end
+endif
+
+nnoremap <F1> :split ~/Dropbox/ToDo_??/ToDo_??.txt<CR>
 " vim:set foldmethod=marker:
