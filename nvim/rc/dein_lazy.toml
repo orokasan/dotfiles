@@ -84,9 +84,11 @@ inoremap <silent><buffer> <CR> <ESC><C-w>p
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
 inoremap <silent><buffer> <C-j>  <ESC><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
+imap <buffer> <C-l> <Plug>(eskk:toggle)
 inoremap <silent><buffer> <C-k>  <ESC><C-w>p:call cursor(line('.')-1,0)<CR><C-w>pA
-inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
-inoremap <silent><buffer><expr> <Tab> denite#do_map('choose_action')
+inoremap <silent><buffer><expr> ; denite#do_map('do_action')
+inoremap z; ;
+inoremap <silent><buffer><expr> <S-Tab> denite#do_map('choose_action')
 imap <silent><buffer> <C-[> <Plug>(denite_filter_update)
 imap <silent><buffer> <ESC> <Plug>(denite_filter_update)
 imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)q
