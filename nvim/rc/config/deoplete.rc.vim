@@ -27,8 +27,6 @@ inoremap <expr><silent> <C-g> deoplete#undo_completion()
 " call deoplete#custom#source('_', 'max_info_width',150)
 " call deoplete#custom#source('_', 'matchers',
 "       \ ['matcher_fuzzy'])
-"eskkにmatcherを指定してはいけない
-call deoplete#custom#source('eskk', 'matchers', [])
 call deoplete#custom#source('eskk', 'mark' , '▼')
 call deoplete#custom#source('file', 'force_completion_length' , '3')
 call deoplete#custom#source('vim', 'rank' , 200)
@@ -50,9 +48,9 @@ call deoplete#custom#option('sources', {
 call deoplete#custom#option({ 'refresh_always': v:false})
 call deoplete#custom#option({
     \ 'auto_refresh_delay': 100,
-    \ 'skip_multibyte': v:true,
+    \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
-    \ 'prev_completion_mode': '',
+    \ 'prev_completion_mode': 'filter',
     \ 'num_process': 0
     \ })
 call deoplete#custom#source('_', 'converters', [
@@ -66,7 +64,7 @@ call deoplete#custom#source('_', 'converters', [
 " deoplete-lsp should not be lazy loaded
 if dein#is_sourced('deoplete-lsp')
     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex']
-    let ignore_source = ['around', 'buffer', 'look', 'member']
+    let ignore_source = ['around', 'look', 'member']
     let config = {}
     for ft in lsp_enabled_filetype
         let config[ft] = ignore_source

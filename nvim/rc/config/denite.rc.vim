@@ -9,6 +9,7 @@ call denite#custom#option('_', {
     \ 'source_names': 'short',
     \ 'statusline': v:false,
     \ 'direction': 'botright',
+    \ 'match_highlight': v:true,
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
         \   'h' : 5, 'l' : 6, ';' : 7,
@@ -88,11 +89,11 @@ call denite#custom#var('menu', 'menus', s:menus)
 
 " call denite#custom#kind('file', 'default_action', 'drop')
 " call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy', 'matcher/ignore_globs'])
-if executable('fzf')
-call denite#custom#source('_', 'matchers', ['matcher/fzf'])
-else
+" if executable('fzf')
+" call denite#custom#source('_', 'matchers', ['matcher/fzf'])
+" else
 call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
-endif
+" endif
 call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')

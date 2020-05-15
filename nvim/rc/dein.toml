@@ -19,9 +19,9 @@ repo =  'itchyny/lightline.vim'
 depends = ['lightline-bufferline']
 hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 
-[[plugins]]
-on_if = '!has("kaoriya")'
-repo = 'vim-jp/vimdoc-ja'
+# [[plugins]]
+# on_if = '!has("kaoriya")'
+# repo = 'vim-jp/vimdoc-ja'
 
 [[plugins]]
 repo = 'fuenor/JpFormat.vim'
@@ -111,8 +111,8 @@ depends = ['lightline.vim']
 [[plugins]]
 repo = 'orokasan/vim-quack-lightline'
 
-[[plugins]]
-repo = 'Shougo/context_filetype.vim'
+# [[plugins]]
+# repo = 'Shougo/context_filetype.vim'
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
@@ -268,6 +268,7 @@ let g:gitgutter_sign_modified = '~~'
 let g:gitgutter_sign_removed = '--'
 let g:gitgutter_sign_removed_first_line = '__'
 let g:gitgutter_sign_modified_removed = '~-'
+let g:gitgutter_sign_priority = 0
 nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
 nmap <Leader>xx <Plug>(GitGutterStageHunk)
 nmap <Leader>xu <Plug>(GitGutterUndoHunk)

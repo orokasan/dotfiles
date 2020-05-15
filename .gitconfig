@@ -39,3 +39,8 @@
     sd = !git sl | xargs git stash drop
 [commit]
 	verbose = true
+
+[merge]
+    tool = vimdiff
+    conflictstyle = diff3
+    prompt = false

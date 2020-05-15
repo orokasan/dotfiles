@@ -11,7 +11,7 @@ syntax match   gihyoTitle       '^■■■[^■]*$'
 syntax match   gihyoSubTitle    '^■■[^■]*$'
 syntax match   gihyoSubSubTitle '^■[^■]*$'
 syntax match   gihyoLead        '^▲（リード）$'
-syntax match   gihyoBullet       '\%^[-*・]\ze.*$'
+syntax match   gihyoBullet      '^・\ze.*$'
 syntax match   gihyoPoint       '^●\ze.*$'
 
 syntax match   gihyoDStrong      '\"..\{-}\"'
@@ -46,6 +46,8 @@ highlight link gihyoNotUseChar  Error
 
 highlight link gihyoDStrong     PreProc
 highlight link gihyoSStrong     PreProc
+syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
+hi link txtDialog Constant
 
 finish
 

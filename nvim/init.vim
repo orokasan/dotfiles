@@ -28,7 +28,6 @@ let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
-
 "Python,vimproc
 if has('win64')
     let g:python3_host_prog ='python.exe'
@@ -227,6 +226,7 @@ nnoremap <C-u> <C-u>zz
 nnoremap <C-o> <C-o>zz
 " moving around between buffers
 nnoremap <silent><Leader>h :bprev!<CR>
+nnoremap <silent><Leader>l :bnext!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
 " matchit mapping
 nmap <silent> <TAB>  <Plug>(MatchitNormalForward)
@@ -672,11 +672,11 @@ let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 
-" if has('nvim')
-"     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
-" else
+if has('nvim')
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
+else
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
-" endif
+endif
 let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
@@ -787,7 +787,7 @@ endtry
 "   autocmd VimEnter,WinEnter,ColorScheme * highlight TrailingSpaces term=underline guibg=Red ctermbg=Red
 "   autocmd VimEnter,WinEnter * match TrailingSpaces /\s\+$/
 " augroup END
-if g:gonvim_running
+if exists('g:gonvim_running')
  augroup GonvimAuStatusline
     autocmd!
   augroup end
@@ -804,6 +804,24 @@ if g:gonvim_running
     autocmd!
   augroup end
 endif
-
-nnoremap <F1> :split ~/Dropbox/ToDo_??/ToDo_??.txt<CR>
+nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 " vim:set foldmethod=marker:
+" echo len(b)
+" function! s:move_to_lastused_buf() abort
+" let s:current = getbufinfo('%')[0].lastused
+" let s:lastused = 0
+" let s:buflist
+" for item in getbufinfo({'buflisted':1})
+"   let l = item['lastused']
+"   if l == s:current
+"     return
+"   endif 
+"   if l > s:lastused['lastused']
+
+"   let s:lastused = item
+"   endif
+" endfor
+" execute 'buffer ' .  s:lastused['bufnr']
+
+" endfunction
+" call s:move_to_lastused_buf()

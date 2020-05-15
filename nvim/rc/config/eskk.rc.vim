@@ -17,6 +17,8 @@ function! s:eskk_initial_pre() abort
     call t.add_map('z0', '）')
     call t.add_map('z-', '-')
     call t.add_map('z%', '％')
+    call t.add_map('z.', '・')
+    call t.add_map('z/', '…')
       " "1." のように数字の後のドットはそのまま入力
     for n in range(10)
       call t.add_map(n . '.', n . '.')

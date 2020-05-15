@@ -116,10 +116,14 @@ autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
 "autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
 endfunction
 autocmd dein BufEnter * call s:vimenter()
-let g:LspDiagnosticsErrorSign = ''
-let g:LspDiagnosticsWarningSign = ''
-let g:LspDiagnosticsInformationSign = ' !'
-let g:LspDiagnosticsHintSign = ' ?'
+" let g:LspDiagnosticsErrorSign = ''
+" let g:LspDiagnosticsWarningSign = ''
+" let g:LspDiagnosticsInformationSign = ' !'
+" let g:LspDiagnosticsHintSign = ' ?'
+sign define LspDiagnosticsErrorSign text= texthl=LspDiagnosticsError linehl= numhl=
+sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning linehl= numhl=
+sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=
+sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numhl=
 autocmd ColorScheme * highlight LspDiagnosticsError guifg=Red
 autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
 autocmd ColorScheme * highlight LspDiagnosticsUnderline guifg=Magenta
