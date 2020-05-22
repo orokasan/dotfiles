@@ -26,7 +26,7 @@ function! s:eskk_initial_pre() abort
     call eskk#register_mode_table('hira', t)
     " lでeskkを終了
     EskkMap -type=disable l
-    " CursorLineNrを変数に保存
+    " SignColumnを変数に保存
 endfunction
 " eskk_keep_stateがうまく動かないので自前で設定
 nnoremap <silent><C-j> :call <SID>eskk_keep_enable_toggle()<CR>
@@ -93,7 +93,7 @@ function! s:eskk_enable_post()
 endfunction
 
 function! s:eskk_restore_highlight_linenr()
-    let l:hi = 'highlight! CursorLineNr ' . s:eskk_default_linenr_hi
+    let l:hi = 'highlight! SignColumn ' . s:eskk_default_linenr_hi
     if mode() is# 'i'
         silent execute(l:hi)
     else
@@ -127,10 +127,10 @@ endfunction
 
 function! s:eskk_highlight_linenr() abort
     " eskkがonの時のhighlightを指定
-    let s:eskk_hl = 'highlight CursorLineNr guibg=#cb4b16 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
+    let s:eskk_hl = 'highlight SignColumn guibg=#cb4b16 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
     silent execute(s:eskk_hl)
 endfunction
 " eskkのsource時に設定
-let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
+let s:eskk_default_linenr_hi =s:gethighlight('SignColumn')
 " ColorSchemeが変わった時に読み込み直す
-autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
+autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('SignColumn')

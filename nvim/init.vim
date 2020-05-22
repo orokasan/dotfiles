@@ -48,7 +48,7 @@ set nobackup                " no more backup file
 " language C
 set shortmess+=aAcTt
 set showtabline=2   " always show tabline
-set number          " show line number
+set nonumber          " show line number
 set signcolumn=yes  " show signcolumn
 set laststatus=2    " always show statusline
 set cmdheight=1     " set commandline lines
@@ -123,7 +123,7 @@ endif
 " set unnamed register to clipboard.
 " NOTE: not working well with CTRL-V in neovim.
 " workaround in neovim section.
-set clipboard+=unnamed
+set clipboard+=unnamedplus
 " mouse in terminal
 set mouse=a
 " Set minimal height for current window.
@@ -146,7 +146,6 @@ autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
 au vimrc BufRead .textlintrc set ft=json
-
 set completeopt+=menuone
 set completeopt-=preview
 " nicely folding
@@ -249,8 +248,7 @@ xmap ; :
 " Enter normal mode
 inoremap jk <esc>
 " change mark keymapping
-nnoremap ` m
-nnoremap ! `
+nnoremap M m
 " cancel highlight search
 nmap<silent> <Esc><Esc> :nohlsearch<CR>
 nmap<silent> <C-c><C-c> :nohlsearch<CR>
@@ -306,23 +304,25 @@ nnoremap Y y$
 xnoremap Y y$gv<ESC>
 xnoremap y ygv<ESC>
 " 'v' behave more compatible with 'y'
-nnoremap vv V
-nnoremap V v$
+" nnoremap vv V
+" nnoremap V v$
 " shoot chars deleted by x to blackhole register
 nnoremap x "_x
-" yank by 'dd'
-nnoremap dd "*dd
 " Create a blank line above/below current line
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
 " repeat :substitute with same flag
-noremap <silent> & :&&<CR>
+nnoremap <silent> & :&&<CR>
 " << keeps visual mode
 vnoremap < <gv
+vnoremap > >gv
 vnoremap > >gv
 " insert date
 inoremap <expr><F2> strftime("%Y%m%d")
 cnoremap <expr><F2> strftime("%Y%m%d")
+"improve command completion
+cnoremap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<DOWN>"
+cnoremap <expr> <C-p> pumvisible() ? "\<C-p>" : "\<UP>"
 " for IME status saving
 inoremap <silent><ESC> <ESC>
 inoremap <silent><C-[> <ESC>
@@ -619,7 +619,7 @@ endif
 if has('nvim')
     " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
     " fix CTRL-V yank issue
-    set clipboard=unnamedplus
+    " set clipboard=unnamedplus
     " nnoremap y "+y
     " xnoremap y "+ygv<ESC>
     " nnoremap Y "+y$
@@ -644,8 +644,8 @@ endif
 
 " highlight {{{
 " for foldcolumn
-hi!  link SpecialKey Comment
-hi!  link NonText Comment
+hi! link SpecialKey Comment
+hi! link NonText Comment
 if has('nvim')
     hi! PmenuSel blend=0
 endif
@@ -663,10 +663,13 @@ let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 if &runtimepath !~# '/dein.vim'
       if !isdirectory(s:dein_repo_dir)
+        if !executable('git')
+          echo 'Please install git or update your path to include the git executable!'
+        endif
         echo 'install dein.vim ...'
         execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
       endif
- execute 'set runtimepath+=' .fnamemodify(s:dein_repo_dir, ':p')
+    execute 'set runtimepath+=' .fnamemodify(s:dein_repo_dir, ':p')
 endif
 
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'

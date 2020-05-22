@@ -256,7 +256,7 @@ repo =  'orokasan/neoyank.vim'
 on_event = 'TextYankPost'
 on_source = ['denite.nvim']
 hook_add = '''
-let g:neoyank#save_registers = ['*']
+let g:neoyank#save_registers = ['+']
 '''
 
 [[plugins]]
@@ -300,14 +300,15 @@ nmap <Leader>xu <Plug>(GitGutterUndoHunk)
 [[plugins]]
 # colorscheme seagull
 repo = 'nightsense/seabird'
-merged = '0'
 hook_add = '''
 " au ColorScheme seagull hi NormalFloat guibg=#fbffff
-au ColorScheme seagull hi NormalFloat guibg=#f5f5f5
-au ColorScheme seagull hi clear Search
-au ColorScheme seagull hi link Search IncSearch
-au ColorScheme seagull hi MatchParen ctermfg=1 ctermbg=NONE gui=reverse guifg=#ff4053 guibg=NONE
-au ColorScheme seagull hi Comment cterm=NONE ctermfg=14 guifg=#8d9193 gui=NONE
+au ColorScheme seagull hi! NormalFloat guibg=#f5f5f5
+au ColorScheme seagull hi! clear Search
+au ColorScheme seagull hi! link Search IncSearch
+au ColorScheme seagull hi! clear MatchParen
+au ColorScheme seagull hi! MatchParen ctermfg=1 ctermbg=NONE guibg=#b4b8bf
+au ColorScheme seagull hi! Comment cterm=NONE ctermfg=14 guifg=#8d9193 gui=NONE
+au ColorScheme seagull hi! link SignColumn CursorColumn
 '''
 [[plugins]]
 repo = 'nightsense/snow'
