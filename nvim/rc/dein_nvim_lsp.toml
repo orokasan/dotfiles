@@ -7,13 +7,6 @@ let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
 lua << EOF
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
--- local vim = vim
-
-local function err_message(...)
-  vim.api.nvim_err_writeln(table.concat(vim.tbl_flatten{...}))
-  vim.api.nvim_command("redraw")
-end
-
 vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
     local util = vim.lsp.util
@@ -25,6 +18,11 @@ vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
     return
   end
   util.buf_clear_diagnostics(bufnr)
+  for _, diagnostic in ipairs(result.diagnostics) do
+    if diagnostic.severity == nil then
+      diagnostic.severity = protocol.DiagnosticSeverity.Error
+    end
+  end
   util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
   util.buf_diagnostics_underline(bufnr, result.diagnostics)
   -- util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
@@ -103,8 +101,8 @@ nnoremap <silent> <c-k>          <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gd         <cmd>lua vim.lsp.buf.declaration()<CR>
 nnoremap <silent> gD         <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> 1gD        <cmd>lua vim.lsp.buf.type_definition()<CR>
-nnoremap <silent><Leader>rf  <cmd>lua vim.lsp.buf.references({ includeDeclaration = true })<CR>
 nnoremap <silent><Leader>fmt <cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 let g:tex_flavor = "latex"
 set updatetime=1000
@@ -113,13 +111,10 @@ augroup nvim_lsp
 au!
 autocmd CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
 autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
-"autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
+autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
+autocmd CursorMovedI <buffer> lua vim.lsp.util.show_line_diagnostics()
 endfunction
 autocmd dein BufEnter * call s:vimenter()
-" let g:LspDiagnosticsErrorSign = ''
-" let g:LspDiagnosticsWarningSign = ''
-" let g:LspDiagnosticsInformationSign = ' !'
-" let g:LspDiagnosticsHintSign = ' ?'
 sign define LspDiagnosticsErrorSign text= texthl=LspDiagnosticsError linehl= numhl=
 sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning linehl= numhl=
 sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=

@@ -638,6 +638,7 @@ if has('nvim')
     set fillchars+=eob:\ 
     "transparent completions menu
     set pumblend=15
+    au TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 200)
 endif
 "}}}
 
@@ -677,6 +678,7 @@ if has('nvim')
 else
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 endif
+
 let s:myvimrc = expand('$MYVIMRC')
 
 if dein#load_state(s:dein_dir)
@@ -782,11 +784,6 @@ endtry
 " set shellxquote=
 " endif
 "}}}
-" augroup HighlightTrailingSpaces
-"   autocmd!
-"   autocmd VimEnter,WinEnter,ColorScheme * highlight TrailingSpaces term=underline guibg=Red ctermbg=Red
-"   autocmd VimEnter,WinEnter * match TrailingSpaces /\s\+$/
-" augroup END
 if exists('g:gonvim_running')
  augroup GonvimAuStatusline
     autocmd!
@@ -806,22 +803,3 @@ if exists('g:gonvim_running')
 endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 " vim:set foldmethod=marker:
-" echo len(b)
-" function! s:move_to_lastused_buf() abort
-" let s:current = getbufinfo('%')[0].lastused
-" let s:lastused = 0
-" let s:buflist
-" for item in getbufinfo({'buflisted':1})
-"   let l = item['lastused']
-"   if l == s:current
-"     return
-"   endif 
-"   if l > s:lastused['lastused']
-
-"   let s:lastused = item
-"   endif
-" endfor
-" execute 'buffer ' .  s:lastused['bufnr']
-
-" endfunction
-" call s:move_to_lastused_buf()

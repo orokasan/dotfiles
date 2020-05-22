@@ -4,17 +4,17 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "vim-language-server": "^1.4.1"
+    "vim-language-server": "^1.9.0"
   },
   "devDependencies": {
     "@textlint-ja/textlint-rule-no-synonyms": "^1.0.2",
-    "bash-language-server": "^1.7.0",
-    "neovim": "^4.7.0",
+    "bash-language-server": "^1.15.0",
+    "neovim": "^4.8.0",
     "prh": "^5.4.4",
     "sudachi-synonyms-dictionary": "^4.1.0",
-    "textlint": "^11.6.0",
+    "textlint": "^11.6.3",
     "textlint-filter-rule-whitelist": "^2.0.0",
-    "textlint-plugin-latex2e": "^0.3.0",
+    "textlint-plugin-latex2e": "^0.3.4",
     "textlint-rule-apostrophe": "^1.0.0",
     "textlint-rule-common-misspellings": "^1.0.1",
     "textlint-rule-ja-hiragana-fukushi": "^1.2.0",

@@ -101,7 +101,6 @@ repo = 'cespare/vim-toml'
 
 [[plugins]]
 repo =  'mengelbrecht/lightline-bufferline'
-merged = '0'
 depends = ['lightline.vim']
 
 [[plugins]]
@@ -333,31 +332,31 @@ repo = 'tpope/vim-sleuth'
 merged = '0'
 repo ='eikendev/denite-fzf'
 
-[[plugins]]
-repo = 'numirias/semshi'
-# on_ft = 'python'
-# on_cmd = ['Semshi']
-hook_add = '''
-let g:semshi#simplify_markup = v:true
-let g:semshi#error_sign = v:false
-function! MyCustomHighlights()
-  hi semshiLocal           ctermfg=209 guifg=#ff875f
-  hi semshiGlobal          ctermfg=214 guifg=#ff6200
-  "hi! link semshiImported   Normal
-  hi semshiImported   guifg=#9854ff gui=NONE
-  " hi semshiParameter       ctermfg=75  guifg=#9854ff
-  hi! link semshiParameter   Special
-  hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline
-  hi semshiFree            ctermfg=218 guifg=#ffafd7
-  hi! link semshiBuiltin      Type
-  hi semshiAttribute       ctermfg=49  guifg=#0099ff
-  hi! link semshiSelf          Comment
-  hi clear semshiUnresolved
-  hi clear semshiSelected        gui=underline
-  hi semshiSelected        gui=underline
-  hi semshiErrorSign       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
-  hi semshiErrorChar       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
-endfunction
-autocmd dein FileType python call MyCustomHighlights()
-'''
+# [[plugins]]
+# repo = 'numirias/semshi'
+# # on_ft = 'python'
+# # on_cmd = ['Semshi']
+# hook_add = '''
+# let g:semshi#simplify_markup = v:true
+# let g:semshi#error_sign = v:false
+# function! MyCustomHighlights()
+#   hi semshiLocal           ctermfg=209 guifg=#ff875f
+#   hi semshiGlobal          ctermfg=214 guifg=#ff6200
+#   "hi! link semshiImported   Normal
+#   hi semshiImported   guifg=#9854ff gui=NONE
+#   " hi semshiParameter       ctermfg=75  guifg=#9854ff
+#   hi! link semshiParameter   Special
+#   hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline
+#   hi semshiFree            ctermfg=218 guifg=#ffafd7
+#   hi! link semshiBuiltin      Type
+#   hi semshiAttribute       ctermfg=49  guifg=#0099ff
+#   hi! link semshiSelf          Comment
+#   hi clear semshiUnresolved
+#   hi clear semshiSelected        gui=underline
+#   hi semshiSelected        gui=underline
+#   hi semshiErrorSign       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
+#   hi semshiErrorChar       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
+# endfunction
+# autocmd dein FileType python call MyCustomHighlights()
+# '''
 # vim:set foldmethod=marker:

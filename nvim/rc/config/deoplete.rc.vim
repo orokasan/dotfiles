@@ -25,8 +25,7 @@ inoremap <expr><silent> <C-g> deoplete#undo_completion()
     " \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
 "" <CR>: close popup and save indent.
 " call deoplete#custom#source('_', 'max_info_width',150)
-" call deoplete#custom#source('_', 'matchers',
-"       \ ['matcher_fuzzy'])
+
 call deoplete#custom#source('eskk', 'mark' , '▼')
 call deoplete#custom#source('file', 'force_completion_length' , '3')
 call deoplete#custom#source('vim', 'rank' , 200)
@@ -46,13 +45,15 @@ call deoplete#custom#option('sources', {
     \ 'denite-filter': ['denite'],
     \ })
 call deoplete#custom#option({ 'refresh_always': v:false})
+
 call deoplete#custom#option({
-    \ 'auto_refresh_delay': 100,
+    \ 'auto_refresh_delay': 10,
     \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'filter',
     \ 'num_process': 0
     \ })
+
 call deoplete#custom#source('_', 'converters', [
     \ 'converter_remove_paren',
     \ 'converter_remove_overlap',

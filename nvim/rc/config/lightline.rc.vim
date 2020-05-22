@@ -65,15 +65,6 @@ endif
 "     let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
 "     let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 " endif
-"    let g:lightline.separator =  { 'left': '⮀', 'right': '⮂' }
-"    let g:lightline.subseparator = { 'left': '⮁', 'right': '⮃' }
-function! LLmybufferline() abort
-    if &filetype is# 'denite' || &filetype is# 'denite-filter'
-        return s:denitebuf()
-    else
-      return lightline#bufferline#buffers()
-    endif
-endfunction
 let g:component_function_visible_condition = {
         \ 'readonly': 1,
         \ 'denitebuf': 1,
@@ -90,13 +81,15 @@ let g:component_function_visible_condition = {
 "         \'IMEstatus':'%{IMStatus("-JP-")}'
 "         \}
 " endif
-
-let g:lightline#bufferline#unnamed = '**'
+if has('nvim')
+   let g:lightline#bufferline#clickable = 1
+   let g:lightline.component_raw = {'buffers': 1}
+endif
+let g:lightline#bufferline#unnamed = '*'
 let g:lightline#bufferline#filename_modifier = ':t'
 let g:lightline#bufferline#show_number = 2
-let g:lightline#bufferline#more_buffers = '...'
+let g:lightline#bufferline#more_buffers = '…'
 let g:lightline#bufferline#number_separator = ''
-" let g:lightline#bufferline#enable_devicons = 1
 let g:lightline#bufferline#number_map = {
 \ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
 \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
