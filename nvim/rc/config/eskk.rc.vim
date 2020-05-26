@@ -127,7 +127,8 @@ endfunction
 
 function! s:eskk_highlight_linenr() abort
     " eskkがonの時のhighlightを指定
-    let s:eskk_hl = 'highlight SignColumn guibg=#cb4b16 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
+    let s:eskk_hl = 'highlight SignColumn guibg=#84a0c6 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
+    " let s:eskk_hl = 'highlight SignColumn guibg=#cb4b16 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
     silent execute(s:eskk_hl)
 endfunction
 " eskkのsource時に設定

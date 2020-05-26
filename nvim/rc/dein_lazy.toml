@@ -110,7 +110,7 @@ nnoremap <silent> <Plug>(defxprojectdir) :<C-u>Defx ~/<CR>
 hook_source = '''
 let s:defx_ignore_files =
     \ '.*,ntuser*,desktop.ini,__pycache__,' .
-    \ '*.aux,*.dvi,*.bbl,*.out,*.fdb_latexmk,*.bst,*.blg,*.toc'
+    \ '*.aux,*.dvi,*.bbl,*.out,*.fdb_latexmk,*.bst,*.blg,*.toc,Icon'
 
 call defx#custom#option('_', {
     \ 'winwidth': 35,
@@ -155,6 +155,7 @@ nmap <silent><buffer> [denite]h <Plug>(defx):<C-u>Denite
 setlocal signcolumn=no
 " Define mappings
 nnoremap <silent><buffer><expr> <CR> defx#async_action('drop')
+nnoremap <silent><buffer><expr> S defx#async_action('drop', 'split')
 nnoremap <silent><buffer> <C-e> <C-w>p
 nnoremap <silent><buffer><expr> c defx#async_action('copy')
 nnoremap <silent><buffer><expr> m defx#async_action('move')
@@ -165,6 +166,7 @@ nnoremap <silent><buffer><expr> t defx#do_action('multi', ['toggle_sort','filena
 nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
 nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N defx#do_action('new_file')
+nnoremap <silent><buffer><expr> F defx#do_action('new_multiple_files')
 "need 'pip install Send2Trash'
 nnoremap <silent><buffer><expr><nowait> d defx#async_action('remove_trash')
 nnoremap <silent><buffer><expr> r defx#_action('rename')
@@ -181,7 +183,7 @@ nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
 nnoremap <silent><buffer><expr><nowait> <C-g> defx#do_action('print')
-nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd') | pwd
+nnoremap <silent><buffer><expr> \ defx#do_action('change_vim_cwd','print')
 nnoremap <silent><buffer><expr> ss defx#do_action('call','Defx_to_denite_rec')
 nnoremap <silent><buffer><expr> sf defx#do_action('call','Defx_to_denite_file')
 nnoremap <silent><buffer> sa :split<CR>:Defx -new -split=no<CR>

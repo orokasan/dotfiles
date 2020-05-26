@@ -37,10 +37,11 @@ endif
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
 set undofile
-set directory=~/.vim/swap
-set undodir=~/.vim/undo " put together undo files
+set directory=~/.backup/vim/swap
+set undodir=~/.backup/vim/undo " put together undo files
+set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
-set nobackup                " no more backup file
+set backup                " no more backup file
 "set backupdir=~/vimfiles/backup
 "}}}
 
@@ -401,11 +402,11 @@ endfunction
 " }}}
 
 "Key map - window {{{
-" :close by 'q'
-nnoremap <silent> q :close<CR>
+" " :close by 'q'
+" nnoremap <silent> q :close<CR>
 " escape 'q'
 " escape 'gq'
-nnoremap gQ gq
+" nnoremap gQ gq
 " don't close window when closing buffer
 nnoremap <silent> Q :<C-u>Bclose<CR>
 xnoremap <silent> Q :<C-u>Bclose<CR>
@@ -650,12 +651,15 @@ if has('nvim')
     hi! PmenuSel blend=0
 endif
 " edit fold column
-set background=light
 if has('Win32')
+    set background=dark
     let g:mycolorscheme = 'iceberg'
 else
+    set background=light
     let g:mycolorscheme = 'seagull'
 endif
+    set background=dark
+    let g:mycolorscheme = 'iceberg'
 "}}}
 
 " dein.vim {{{
@@ -794,13 +798,7 @@ if exists('g:gonvim_running')
   augroup GonvimAuLint
     autocmd!
   augroup end
-  augroup GonvimAuMd
-    autocmd!
-  augroup end
   augroup GonvimAuFilePath
-    autocmd!
-  augroup end
-  augroup GonvimAuScrollbar
     autocmd!
   augroup end
 endif

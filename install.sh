@@ -72,6 +72,10 @@ ln -snfv ${DOTPATH}/nvim/init.vim ${HOME}/.vimrc
 ln -snfv ${DOTPATH}/.goneovim ${HOME}/.goneovim
 ln -snfv ${DOTPATH}/efm-langserver ${HOME}/.config/efm-langserver
 ln -snfv ${DOTPATH}/package.json ${HOME}/package.json
+mkdir -pv ${HOME}/.backup/vim/swap
+mkdir -pv ${HOME}/.backup/vim/backup
+mkdir -pv ${HOME}/.backup/vim/undo
+mkdir -pv ${HOME}/.backup/vim/view
 echo $(tput setaf 2)Deploy dotfiles complete!. ✔︎$(tput sgr0)
 #
 # 引数によって場合分け

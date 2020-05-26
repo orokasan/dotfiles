@@ -3,8 +3,9 @@ mklink %HOMEPATH%"\.textlintrc" %HOMEPATH%"\dotfiles\.textlintrc"
 mklink /D %HOMEPATH%"\AppData\Local\nvim" %HOMEPATH%"\dotfiles\nvim"
 mklink /D %HOMEPATH%"\.vim" %HOMEPATH%"\dotfiles\nvim"
 mklink /D %HOMEPATH%"\.goneovim" %HOMEPATH%"\dotfiles\.goneovim"
-mkdir %HOMEPATH%"\dotfiles\nvim\swap"
-mkdir %HOMEPATH%"\dotfiles\nvim\undo"
-mkdir %HOMEPATH%"\dotfiles\nvim\view"
+mkdir %HOMEPATH%"\.backup\vim\swap"
+mkdir %HOMEPATH%"\.backup\vim\undo"
+mkdir %HOMEPATH%"\.backup\vim\view"
+mkdir %HOMEPATH%"\.backup\vim\backup"
 
 exit 0

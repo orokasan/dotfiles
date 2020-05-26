@@ -4,7 +4,7 @@
 # Editor minimum window width (>= 800)
 Width = 1000
 # Editor minimum window height (>= 600)
-Height = 1200
+Height = 850
 
 StartMaximizedWindow = false
 
@@ -21,8 +21,6 @@ DisableImeInNormal = true
 
 DrawShadowForFloatWindow = false
 
-DrawBorderForFloatWindow = true
-
 # Drawing window and Transparent breaks statusline and tabline.
 ## Transparent window alpha
 ## Note: This setting also implicitly enables the Drawborder setting
@@ -37,12 +35,25 @@ ExtTabline = false
 ExtMessages = false
 
 IndentGuide = true
+# ClickEffect = true
+
+# [Palette]
+# ## Specifies the proportion of the command line palette to the height of the entire window.
+# AreaRatio = 0.5
+# ## Specifies the number of items to be displayed in the command line palette.
+# MaxNumberOfResultItems = 30
+# ## Specifies the opacity of the command line palette.
+# Transparent = 1.0
+
+# [Message]
+# ## Specifies the opacity of the message window.
+# Transparent = 1.0
 
 [Statusline]
 Visible = false
 
 # Options: “textLabel” / “icon” / “background” / “none”
-ModeIndicatorType = "background"
+ModeIndicatorType = "textLabel"
 
 # Optional setting colors per Neovim editing modes
 NormalModeColor = "#3cabeb"
@@ -85,9 +96,8 @@ InfoWidth = 1
 ## width of `detail` column
 DetailWidth = 250
 
-
 [Tabline]
-Visible = true
+VIsible = true
 
 [Lint]
 Visible = false
