@@ -42,7 +42,6 @@ set undodir=~/.backup/vim/undo " put together undo files
 set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup                " no more backup file
-"set backupdir=~/vimfiles/backup
 "}}}
 
 " Visual  {{{
@@ -407,6 +406,7 @@ endfunction
 " escape 'q'
 " escape 'gq'
 " nnoremap gQ gq
+autocmd FileType help nnoremap <buffer> q <C-w>c
 " don't close window when closing buffer
 nnoremap <silent> Q :<C-u>Bclose<CR>
 xnoremap <silent> Q :<C-u>Bclose<CR>

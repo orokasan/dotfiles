@@ -14,7 +14,7 @@ FontSize = 15
 Linespace = 1
 
 # Copy yanked text to clipboard
-Clipboard = true
+Clipboard = false
 
 # Disable IME in Normal mode
 DisableImeInNormal = true

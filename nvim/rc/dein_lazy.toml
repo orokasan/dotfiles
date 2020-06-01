@@ -169,7 +169,7 @@ nnoremap <silent><buffer><expr> N defx#do_action('new_file')
 nnoremap <silent><buffer><expr> F defx#do_action('new_multiple_files')
 "need 'pip install Send2Trash'
 nnoremap <silent><buffer><expr><nowait> d defx#async_action('remove_trash')
-nnoremap <silent><buffer><expr> r defx#_action('rename')
+nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
 nnoremap <silent><buffer><expr> f defx#async_action('open_tree', 'nested', 'toggle')
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
@@ -360,7 +360,8 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 '''
 
 [[plugins]]
-repo = 'glidenote/memolist.vim'
+# repo = 'glidenote/memolist.vim'
+repo = 'orokasan/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn  :MemoNew<CR>
@@ -382,6 +383,7 @@ let g:memolist_memo_suffix = 'md'
 let g:memolist_path = "~/Dropbox/memo"
 let g:memolist_template_dir_path = "~/Dropbox/memo/template"
 let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
+ let g:memolist_filename_date = "%y%m%d_"
 
 " categories prompt (default 0)
 " let g:memolist_prompt_categories = 1

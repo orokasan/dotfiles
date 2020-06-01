@@ -333,6 +333,12 @@ repo = 'tpope/vim-sleuth'
 merged = '0'
 repo ='eikendev/denite-fzf'
 
+[[plugins]]
+repo = 'vim-scripts/autodate.vim'
+hook_add = '''
+let g:autodate_format="%Y-%m-%d[%H:%M]"
+'''
+
 # [[plugins]]
 # repo = 'numirias/semshi'
 # # on_ft = 'python'

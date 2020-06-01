@@ -82,10 +82,10 @@ function! LLmyeskk() abort
     return '[' . status . ']'
 endfunction
 
-"IME/skkの状態に応じてsigncolumnの色を変える（WIP）
-autocmd vimrc User eskk-enable-post call s:eskk_enable_post()
-" InsertLeaveの前に発生するイベントであることに注意する
-autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_linenr()
+""IME/skkの状態に応じてsigncolumnの色を変える（WIP）
+"autocmd vimrc User eskk-enable-post call s:eskk_enable_post()
+"" InsertLeaveの前に発生するイベントであることに注意する
+"autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_linenr()
 
 function! s:eskk_enable_post()
     " ハイライトを有効化
@@ -126,6 +126,7 @@ function! s:gethighlight(hi) abort
 endfunction
 
 function! s:eskk_highlight_linenr() abort
+    return
     " eskkがonの時のhighlightを指定
     let s:eskk_hl = 'highlight SignColumn guibg=#84a0c6 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
     " let s:eskk_hl = 'highlight SignColumn guibg=#cb4b16 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
