@@ -10,7 +10,7 @@ StartMaximizedWindow = false
 
 # Editor external font-family, font-size, and linespace.
 FontFamily = "RictyDiminished NF"
-FontSize = 15
+FontSize = 12
 Linespace = 1
 
 # Copy yanked text to clipboard

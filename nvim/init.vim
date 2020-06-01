@@ -31,6 +31,7 @@ let g:loaded_matchparen = 1
 "Python,vimproc
 if has('win64')
     let g:python3_host_prog ='python.exe'
+let g:vimproc#download_windows_dll = 1
 endif
 
 " Backup
@@ -802,5 +803,8 @@ if exists('g:gonvim_running')
     autocmd!
   augroup end
 endif
+  augroup GonvimAuMd
+    autocmd!
+  augroup end
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 " vim:set foldmethod=marker:
