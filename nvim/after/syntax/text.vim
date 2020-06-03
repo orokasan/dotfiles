@@ -10,6 +10,8 @@ endif
 syntax match   gihyoTitle       '^■■■[^■]*$'
 syntax match   gihyoSubTitle    '^■■[^■]*$'
 syntax match   gihyoSubSubTitle '^■[^■]*$'
+syntax match   gihyoSubTitle '^◎[^◎]*$'
+syntax match   gihyoHead '^◆\ze[^◆]*$'
 syntax match   gihyoLead        '^▲（リード）$'
 syntax match   gihyoBullet      '^・\ze.*$'
 syntax match   gihyoPoint       '^●\ze.*$'
@@ -24,6 +26,8 @@ syntax match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
 
 syntax region  gihyoList        start=/\n====リスト/ end=/\n====\n\n/
 syntax region  gihyoTable       start=/\n▼表/ end=/\n.\{-}\n\n/
+syntax region  gihyoTable       start=/\n▼コード/ end=/\n.\{-}\n\n/
+syntax region  gihyoTable       start=/\n▼構文/ end=/\n.\{-}\n\n/
 syntax region  gihyoCode        start=/\n▼リスト/ end=/\n.\{-}\n\n/
 syntax region  gihyoCommand     start=/\n==コマンド\n/ end=/\n==.\{-}\n\n/
 
@@ -32,6 +36,7 @@ highlight link gihyoTitle       Title
 highlight link gihyoSubTitle    Title
 highlight link gihyoSubSubTitle Statement
 highlight link gihyoLead        Special
+highlight link gihyoHead    Title
 highlight link gihyoList        Special
 highlight link gihyoTable       Special
 highlight link gihyoCode        PreProc
@@ -46,8 +51,8 @@ highlight link gihyoNotUseChar  Error
 
 highlight link gihyoDStrong     PreProc
 highlight link gihyoSStrong     PreProc
-syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
-hi link txtDialog Constant
+" syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
+" hi link txtDialog Constant
 
 finish
 
