@@ -7,17 +7,17 @@ elseif exists('b:current_syntax')
 endif
 
 " pattern match
-syntax match   gihyoTitle       '^■■■[^■]*$'
+syntax match   gihyoTitle       '^■[^■]*$'
 syntax match   gihyoSubTitle    '^■■[^■]*$'
-syntax match   gihyoSubSubTitle '^■[^■]*$'
+syntax match   gihyoSubSubTitle '^■■■[^■]*$'
 syntax match   gihyoSubTitle '^◎[^◎]*$'
 syntax match   gihyoHead '^◆\ze[^◆]*$'
 syntax match   gihyoLead        '^▲（リード）$'
 syntax match   gihyoBullet      '^・\ze.*$'
 syntax match   gihyoPoint       '^●\ze.*$'
 
-syntax match   gihyoDStrong      '\"..\{-}\"'
-syntax match   gihyoSStrong      '\'..\{-}\''
+" syntax match   gihyoDStrong      '\"..\{-}\"'
+" syntax match   gihyoSStrong      '\'..\{-}\''
 
 syntax match   gihyoRuler       "\(=\|-\|+\)\{50,120}"
 syntax match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@A-Za-z_~]\+"
@@ -25,21 +25,22 @@ syntax match   gihyoTodo        '^TODO.*'
 syntax match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
 
 syntax region  gihyoList        start=/\n====リスト/ end=/\n====\n\n/
-syntax region  gihyoTable       start=/\n▼表/ end=/\n.\{-}\n\n/
-syntax region  gihyoTable       start=/\n▼コード/ end=/\n.\{-}\n\n/
-syntax region  gihyoTable       start=/\n▼構文/ end=/\n.\{-}\n\n/
+syntax region  gihyoTable       start=/^▼表-----$/ end=/^\{-}-----\n/
+syntax region  gihyoCode       start=/^▼コード-----$/ end=/^\{-}-----\n/
 syntax region  gihyoCode        start=/\n▼リスト/ end=/\n.\{-}\n\n/
 syntax region  gihyoCommand     start=/\n==コマンド\n/ end=/\n==.\{-}\n\n/
+
+syntax region  gihyoTable       start=/^▼構文-----$/ end=/^\{-}-----\n/
 
 " highlight link
 highlight link gihyoTitle       Title
 highlight link gihyoSubTitle    Title
 highlight link gihyoSubSubTitle Statement
 highlight link gihyoLead        Special
-highlight link gihyoHead    Title
+highlight link gihyoHead    Statement
 highlight link gihyoList        Special
 highlight link gihyoTable       Special
-highlight link gihyoCode        PreProc
+highlight link gihyoCode        Statement
 highlight link gihyoCommand     PreProc
 highlight link gihyoBullet       Identifier
 highlight link gihyoPoint       Identifier

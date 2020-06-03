@@ -259,7 +259,7 @@ command! OpenTempfile :edit `=tempname()`
 " open location list
 nnoremap <Leader>f :<C-u>lopen<CR>
 " open cmdwin
-nnoremap <C-y> q:
+nnoremap <C-y> q:"_dd
 autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR>
 " open vimrc quickly
 nnoremap <silent> <leader>v :e $MYVIMRC<CR>
