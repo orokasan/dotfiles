@@ -137,12 +137,14 @@ set equalalways
 " for cmdwin
 autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
 autocmd vimrc CmdwinEnter : call <SID>clear_useless_command()
+autocmd vimrc CmdwinEnter [:/?=] nnoremap <buffer> q <C-w>c
+autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 function! s:clear_useless_command() abort
     silent g/^qa\?!\?$/d
     silent g/^wq\?a\?!\?$/d
     silent call feedkeys('G', 'n')
+    silent call feedkeys('$', 'n')
 endfunction
-autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
 " open .docx as .zip
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
@@ -258,7 +260,7 @@ command! OpenTempfile :edit `=tempname()`
 " open location list
 nnoremap <Leader>f :<C-u>lopen<CR>
 " open cmdwin
-nnoremap <C-y> q:
+nnoremap <C-y> q:"_dd
 autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR>
 " open vimrc quickly
 nnoremap <silent> <leader>v :e $MYVIMRC<CR>
