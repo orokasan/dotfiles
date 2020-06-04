@@ -105,7 +105,6 @@ nnoremap <silent> [denite]r :<C-u>Denite
     \ -resume<CR>
 nnoremap <silent> [denite]R :<C-u>Denite
     \ -buffer-name=search
-    \ -refresh
     \ -resume<CR>
 "コマンド結果をdeniteに出力
 nnoremap [denite]p :<C-u>Denite
@@ -138,7 +137,9 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -post-action=open
     \ -buffer-name=combo
     \ combo<CR>
-
+nnoremap [denite]t :<C-u>Denite
+    \ -buffer-name=search
+    \ text<CR>
 function! s:denite_lsp_diagnostics() abort
 " let command = 'Denite -buffer-name=float location_list'
 let command = 'Denite -buffer-name=float -auto-resume -refresh location_list'

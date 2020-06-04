@@ -811,4 +811,6 @@ endif
     autocmd!
   augroup end
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
+let text_minlines = 50
+autocmd FileType text syntax sync minlines=500
 " vim:set foldmethod=marker:

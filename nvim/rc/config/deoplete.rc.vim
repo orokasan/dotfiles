@@ -20,7 +20,7 @@ inoremap <silent><expr><BS>
     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><C-l>
     \ deoplete#complete_common_string()
-inoremap <expr><silent> <C-g> deoplete#undo_completion()
+" inoremap <expr><silent> <C-g> deoplete#undo_completion()
 
     " \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
 "" <CR>: close popup and save indent.
