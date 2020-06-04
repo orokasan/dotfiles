@@ -117,7 +117,7 @@ call defx#custom#option('_', {
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename',
-    \ 'sort': 'TIME',
+    \ 'sort': 'extension',
     \ 'ignored_files': s:defx_ignore_files
     \ })
 
@@ -172,6 +172,7 @@ nnoremap <silent><buffer><expr><nowait> d defx#async_action('remove_trash')
 nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
 nnoremap <silent><buffer><expr> f defx#async_action('open_tree', 'nested', 'toggle')
+nnoremap <silent><buffer><expr> <MiddleMouse> defx#async_action('open_tree', 'nested', 'toggle')
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
 nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
 nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
@@ -261,7 +262,7 @@ on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
 [[plugins]]
-repo =  'tyru/eskk.vim'
+repo =  'orokasan/eskk.vim'
 on_event = ['InsertEnter', 'CmdlineEnter']
 # repo =  'orokasan/eskk.vim'
 # on_map = {icrtn = '<Plug>(eskk:'}
@@ -361,8 +362,8 @@ let g:indent_guides_exclude_filetypes = ['help', 'defx']
 '''
 
 [[plugins]]
-# repo = 'glidenote/memolist.vim'
-repo = 'orokasan/memolist.vim'
+repo = 'glidenote/memolist.vim'
+# repo = 'orokasan/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn  :MemoNew<CR>

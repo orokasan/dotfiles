@@ -47,6 +47,7 @@ set backup                " no more backup file
 
 " Visual  {{{
 " language C
+set ambiwidth=double
 set shortmess+=aAcTt
 set showtabline=2   " always show tabline
 set nonumber          " show line number
@@ -58,7 +59,7 @@ set noshowmode      " don't let show current mode on commandline
 set cursorline      " highlight cursorline
 " autocmd vimrc ColorScheme *  hi clear CursorLine
 set list            " show invisible character
-set listchars=tab:\ \ ,trail:\ ,extends:»,precedes:«,nbsp:%
+set listchars=tab:^-,trail:\ ,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
 set t_Co=256
@@ -76,7 +77,6 @@ set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
 set pumheight=15 " default
-set ambiwidth=double
 set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,vertical
 "}}}
 
@@ -95,7 +95,7 @@ set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞
 
 set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
-set tabstop=4               " number of spaces inserted by <TAB>
+set tabstop=8               " number of spaces inserted by <TAB>
 set expandtab
 set softtabstop=4
 let g:vim_indent_cont = 4
@@ -695,7 +695,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    " call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -794,6 +794,7 @@ endtry
 " set shellxquote=
 " endif
 "}}}
+
 if exists('g:gonvim_running')
  augroup GonvimAuStatusline
     autocmd!
@@ -804,6 +805,7 @@ if exists('g:gonvim_running')
   augroup GonvimAuFilePath
     autocmd!
   augroup end
+  cd ~/
 endif
   augroup GonvimAuMd
     autocmd!

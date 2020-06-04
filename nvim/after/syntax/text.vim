@@ -34,6 +34,7 @@ syntax region  gihyoTable       start=/^▼構文-----$/ end=/^\{-}-----\n/
 
 " highlight link
 highlight link gihyoTitle       Title
+highlight link gihyoSection       Title
 highlight link gihyoSubTitle    Title
 highlight link gihyoSubSubTitle Statement
 highlight link gihyoLead        Special
