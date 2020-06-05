@@ -35,6 +35,10 @@ ExtTabline = false
 ExtMessages = false
 
 IndentGuide = true
+
+DiffAddPattern    = 1
+DiffDeletePattern = 1
+DiffChangePattern = 1
 # ClickEffect = true
 
 # [Palette]

@@ -813,4 +813,6 @@ endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 let text_minlines = 50
 autocmd FileType text syntax sync minlines=500
+set diffopt=internal,context:50,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler
+autocmd WinNew * if &diff | windo set wrap | endif
 " vim:set foldmethod=marker:

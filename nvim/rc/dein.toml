@@ -257,6 +257,7 @@ on_event = 'TextYankPost'
 on_source = ['denite.nvim']
 hook_add = '''
 let g:neoyank#save_registers = ['+']
+autocmd dein TextYankPost * call neoyank#update()
 '''
 
 [[plugins]]
@@ -366,4 +367,6 @@ let g:autodate_format="%Y-%m-%d[%H:%M]"
 # endfunction
 # autocmd dein FileType python call MyCustomHighlights()
 # '''
+[[plugins]]
+repo = 'tpope/vim-fugitive'
 # vim:set foldmethod=marker:
