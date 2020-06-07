@@ -367,6 +367,9 @@ let g:autodate_format="%Y-%m-%d[%H:%M]"
 # endfunction
 # autocmd dein FileType python call MyCustomHighlights()
 # '''
-[[plugins]]
-repo = 'tpope/vim-fugitive'
+# [[plugins]]
+# repo = 'tpope/vim-fugitive'
+# hook_add = '''
+# nnoremap <Leader><Leader> :aboveleft Gstatus \| resize 10<CR>
+# '''
 # vim:set foldmethod=marker:

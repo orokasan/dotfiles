@@ -117,7 +117,7 @@ call defx#custom#option('_', {
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename',
-    \ 'sort': 'extension',
+    \ 'sort': 'filename',
     \ 'ignored_files': s:defx_ignore_files
     \ })
 
@@ -545,8 +545,8 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 repo = 'junegunn/vim-easy-align'
 on_map = '<Plug>(EasyAlign)'
 hook_add = '''
-vmap ga <Plug>(EasyAlign)
-nmap ga <Plug>(EasyAlign)
+vmap <Leader>ga <Plug>(EasyAlign)
+nmap <Leader>ga <Plug>(EasyAlign)
 '''
 
 [[plugins]]
@@ -776,14 +776,14 @@ let g:translator_window_borderchars = v:null
 repo =  'lambdalisue/gina.vim'
 on_cmd = ['Gina']
 hook_add = '''
-nnoremap <silent> <Leader>gg :<C-u>Gina status<CR>
+nnoremap <silent> <Leader><Leader> :<C-u>Gina status<CR>
 nnoremap <silent> <Leader>gA :<C-u>Gina changes HEAD<CR>
 nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
 nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
 nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
 nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
-nnoremap <silent> <Leader>gd :<C-u>Gina diff<CR>
+nnoremap <silent> <Leader>gd :<C-u>Gina compare<CR>
 nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
 nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
 nnoremap <silent> <Leader>gl :<C-u>Gina log<CR>
@@ -810,6 +810,8 @@ call gina#custom#command#option('status', '--group', 'status-viewer')
 call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
 call gina#custom#command#option('commit', '-v|--verbose')
 call gina#custom#command#option('commit', '--group', 'status-viewer')
+call gina#custom#command#option('diff', '-U0')
+call gina#custom#command#option('compare', '-R')
 call gina#custom#command#option('branch', '-v', 'v')
 call gina#custom#command#option('status', '--short')
 call gina#custom#command#option('status', '--branch')
@@ -827,13 +829,13 @@ call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
 call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
 call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
 call gina#custom#mapping#nmap(
-    \ '/.*', 'q',
-    \ ':close<CR>',
+    \ '/.*', 'gq',
+    \ ':tabclose<CR>',
     \ {'noremap': 1, 'silent': 1}
     \)
 call gina#custom#mapping#nmap(
-    \ 'diff', 'q',
-    \ ':bdelete<CR>',
+    \ '/.*', 'q',
+    \ ':close<CR>',
     \ {'noremap': 1, 'silent': 1}
     \)
 call gina#custom#mapping#nmap(
@@ -852,6 +854,26 @@ call gina#custom#mapping#nmap(
     \ {'noremap': 1, 'silent': 1}
     \)
 call gina#custom#mapping#nmap(
+    \ 'status', '-',
+    \ '<Plug>(gina-index-toggle)',
+    \ { 'silent': 1, 'nowait': 1}
+    \)
+call gina#custom#mapping#vmap(
+    \ 'status', '-',
+    \ '<Plug>(gina-index-toggle)',
+    \ { 'silent': 1, 'nowait': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', 'c',
+    \ ':<C-u>Gina commit<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', 'C',
+    \ ':<C-u>Gina compare<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
     \ 'commit', '<C-6>',
     \ ':<C-u>Gina status<CR>',
     \ {'noremap': 1, 'silent': 1}
@@ -865,6 +887,11 @@ call gina#custom#action#alias(
       \ '/\%(blame\|log\|reflog\)',
       \ 'preview',
       \ 'topleft show:commit:preview',
+      \)
+call gina#custom#action#alias(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'preview',
+      \ 'show:commit:above',
       \)
 call gina#custom#mapping#nmap(
       \ '/\%(blame\|log\|reflog\)',
