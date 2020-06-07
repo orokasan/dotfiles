@@ -783,7 +783,8 @@ nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
 nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
 nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
-nnoremap <silent> <Leader>gd :<C-u>Gina compare<CR>
+nnoremap <silent> <Leader>gd :<C-u>Gina compare<CR>zz
+nnoremap <silent> <Leader>gg :<C-u>Gina diff<CR>
 nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
 nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
 nnoremap <silent> <Leader>gl :<C-u>Gina log<CR>
@@ -903,6 +904,11 @@ call gina#custom#action#alias(
       \ '/\%(blame\|log\|reflog\)',
       \ 'changes',
       \ 'topleft changes:of:preview',
+      \)
+call gina#custom#action#alias(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'changes',
+      \ 'changes:of:preview',
       \)
 call gina#custom#mapping#nmap(
       \ '/\%(blame\|log\|reflog\)',
