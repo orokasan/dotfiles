@@ -72,7 +72,7 @@ set noruler
 " Display candidates by list.
 set wildmenu
 set wildmode=longest:full,full
-set previewheight=20 " Adjust window size of preview
+set previewheight=10 " Adjust window size of preview
 set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
