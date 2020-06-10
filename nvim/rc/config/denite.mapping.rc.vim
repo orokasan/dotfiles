@@ -90,6 +90,9 @@ nnoremap <silent> [denite]h :<C-u>Denite
 nnoremap <silent> [denite]n :<C-u>Denite
     \ -buffer-name=normal
     \ file/old<CR>
+nnoremap <silent> <RightMouse> :<C-u>Denite
+    \ -buffer-name=normal
+    \ file/old<CR>
 "mark一覧
 nnoremap <silent> [denite]m :<C-u>Denite
     \ -buffer-name=normal
@@ -155,3 +158,6 @@ else
 endif
 endfunction
 nnoremap <silent> sl :<C-u>call <SID>denite_lsp_diagnostics()<CR>
+
+" some other options
+au dein BufEnter * if &ft !~# '\v(denite|denite-filter)' | setlocal scroll=3 | endif

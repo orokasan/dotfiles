@@ -35,7 +35,7 @@ call denite#custom#option('relative',{
     \ 'split': 'floating_relative',
     \ 'auto_resize': v:true,
     \ 'wincol': &columns * 1/3,
-    \ 'winwidth': &columns/2,
+    \ 'winwidth': &columns*2/3,
     \ 'winheight': 11,
     \ 'winrow' : &lines *1/3,
     \ })
@@ -95,6 +95,7 @@ call denite#custom#var('menu', 'menus', s:menus)
 call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
 " endif
 call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
+" call denite#custom#source('file/old', 'converters', ['converter/tail_path'])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#alias('source', 'grep/git', 'grep')

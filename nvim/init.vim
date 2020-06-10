@@ -135,16 +135,23 @@ set cmdwinheight=8
 " equal window size.
 set equalalways
 " for cmdwin
-autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
-autocmd vimrc CmdwinEnter : call <SID>clear_useless_command()
-autocmd vimrc CmdwinEnter [:/?=] nnoremap <buffer> q <C-w>c
-autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
-function! s:clear_useless_command() abort
+" autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
+" autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
+" autocmd vimrc CmdwinEnter [:/?=] nnoremap <buffer>q :close<CR>
+autocmd vimrc CmdwinEnter : call <SID>cmdwin_settings()
+function! s:cmdwin_settings() abort
+    " delete useless commands
     silent g/^qa\?!\?$/d
     silent g/^wq\?a\?!\?$/d
+    " move to nice position
     silent call feedkeys('G', 'n')
     silent call feedkeys('$', 'n')
+    " CmdwinEnter seems not to fire below commands
+    setlocal signcolumn=no            
+    setlocal scrolloff=0              
+    nnoremap <buffer><silent>q :close<CR>     
 endfunction
+
 " open .docx as .zip
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
@@ -648,8 +655,7 @@ endif
 
 " highlight {{{
 " for foldcolumn
-hi! link SpecialKey Comment
-hi! link NonText Comment
+" hi! link SpecialKey Comment
 if has('nvim')
     hi! PmenuSel blend=0
 endif
@@ -795,6 +801,7 @@ endtry
 " endif
 "}}}
 
+hi! link NonText Comment
 if exists('g:gonvim_running')
  augroup GonvimAuStatusline
     autocmd!
@@ -802,14 +809,18 @@ if exists('g:gonvim_running')
   augroup GonvimAuLint
     autocmd!
   augroup end
-  augroup GonvimAuFilePath
+  augroup GonvimAuFilepath
     autocmd!
   augroup end
-  cd ~/
-endif
+  augroup GonvimAuMinimap
+    autocmd!
+  augroup end
   augroup GonvimAuMd
     autocmd!
   augroup end
+  cd ~/
+  set mouse=nicr
+endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 let text_minlines = 50
 autocmd FileType text syntax sync minlines=500
@@ -824,5 +835,10 @@ function! Vimdiff_config(timer) abort
 endfunction
 " autocmd vimrc TabLeave * silent! unmap q
 nnoremap <C-q> :tabclose<CR>
+noremap <ScrollWheelUp> <C-u>
+noremap <ScrollWheelDown> <C-d>
+" au vimrc BufEnter * set scroll=3
+set scrolljump=5
+nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
 " vim:set foldmethod=marker:

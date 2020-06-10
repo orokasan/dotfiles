@@ -372,4 +372,15 @@ let g:autodate_format="%Y-%m-%d[%H:%M]"
 # hook_add = '''
 # nnoremap <Leader><Leader> :aboveleft Gstatus \| resize 10<CR>
 # '''
+
+[[plugins]]
+repo = 'haya14busa/incsearch-migemo.vim'
+on_if = "!has('kaoriya')"
+# depends = 'incsearch.vim'
+# on_map = { nx = '<Plug>(incsearch-migemo-' }
+hook_add = '''
+map g/ <Plug>(incsearch-migemo-/)
+map g? <Plug>(incsearch-migemo-?)
+'''
+
 # vim:set foldmethod=marker:

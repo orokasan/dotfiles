@@ -55,6 +55,7 @@ highlight link gihyoDStrong     PreProc
 highlight link gihyoSStrong     PreProc
 " syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
 " hi link txtDialog Constant
+hi! link NonText Comment
 
 finish
 
