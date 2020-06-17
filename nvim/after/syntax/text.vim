@@ -1,61 +1,70 @@
 scriptencoding utf-8
 
-if version < 700
-  syntax clear
-elseif exists('b:current_syntax')
+if             version <                700
+  syntax       clear
+elseif         exists('b:current_syntax')
   finish
 endif
 
 " pattern match
-syntax match   gihyoTitle       '^■[^■]*$'
-syntax match   gihyoSubTitle    '^■■[^■]*$'
-syntax match   gihyoSubSubTitle '^■■■[^■]*$'
-syntax match   gihyoSubTitle '^◎[^◎]*$'
-syntax match   gihyoHead '^◆\ze[^◆]*$'
-syntax match   gihyoLead        '^▲（リード）$'
-syntax match   gihyoBullet      '^・\ze.*$'
-syntax match   gihyoPoint       '^●\ze.*$'
+" syntax         match   gihyoSubTitle    '^◎[^◎]*$'
+" syntax         match   gihyoHead        '^◆\ze[^◆]*$'
+" syntax         match   gihyoLead        '^▲（リード）$'
+" syntax         match   gihyoBullet      '^・\ze.*$'
+" syntax         match   gihyoPoint       '^●\ze.*$'
+
 
 " syntax match   gihyoDStrong      '\"..\{-}\"'
 " syntax match   gihyoSStrong      '\'..\{-}\''
 
-syntax match   gihyoRuler       "\(=\|-\|+\)\{50,120}"
-syntax match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@A-Za-z_~]\+"
-syntax match   gihyoTodo        '^TODO.*'
-syntax match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
+syntax         match   gihyoRuler       "\(=\|-\|+\)\{50,120}"
+syntax         match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@A-Za-z_~]\+"
+syntax         match   gihyoTodo        '^TODO.*'
+syntax         match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
 
-syntax region  gihyoList        start=/\n====リスト/ end=/\n====\n\n/
-syntax region  gihyoTable       start=/^▼表-----$/ end=/^\{-}-----\n/
-syntax region  gihyoCode       start=/^▼コード-----$/ end=/^\{-}-----\n/
-syntax region  gihyoCode        start=/\n▼リスト/ end=/\n.\{-}\n\n/
-syntax region  gihyoCommand     start=/\n==コマンド\n/ end=/\n==.\{-}\n\n/
+syntax         match   gihyoSubTitle    '^◎[^◎]*$'
+syn region  gihyoHeader1    start='^■[^■]' end='$'
+syn region  gihyoHeader2    start='^■■[^■]' end='$'
+syn region  gihyoHeader3    start='^■■■[^■]' end='$'
+syn region  gihyoHeader4    start='^■■■■[^■]' end='$'
+syn region  gihyoBullet    start='^・' end='$'
+syntax         region   gihyoPoint       start='^●' end='$'
+syntax         region   gihyoHead        start='^◆' end='$'
+syntax         region   gihyoLead        start='^▲' end='$'
 
-syntax region  gihyoTable       start=/^▼構文-----$/ end=/^\{-}-----\n/
+syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/
+syntax         region  gihyoTable       start=/^▼表-----$/     end=/^\{-}-----\n/
+syntax         region  gihyoCode        start=/^▼コード-----$/ end=/^\{-}-----\n/
+syntax         region  gihyoCode        start=/\n▼リスト/      end=/\n.\{-}\n\n/
+syntax         region  gihyoCommand     start=/\n==コマンド\n/  end=/\n==.\{-}\n\n/
+
+syntax         region  gihyoTable       start=/^▼構文-----$/   end=/^\{-}-----\n/
 
 " highlight link
-highlight link gihyoTitle       Title
-highlight link gihyoSection       Title
-highlight link gihyoSubTitle    Title
-highlight link gihyoSubSubTitle Statement
-highlight link gihyoLead        Special
-highlight link gihyoHead    Statement
-highlight link gihyoList        Special
-highlight link gihyoTable       Special
-highlight link gihyoCode        Statement
-highlight link gihyoCommand     PreProc
-highlight link gihyoBullet       Identifier
-highlight link gihyoPoint       Identifier
+highlight      link    gihyoHeader1 Title
+highlight      link    gihyoHeader2    Title
+highlight      link    gihyoHeader3 Statement
+highlight      link    gihyoHeader4 Statement
+highlight      link    gihyoSubTitle    Title
+highlight      link    gihyoLead        Special
+highlight      link    gihyoHead        Statement
+highlight      link    gihyoList        Special
+highlight      link    gihyoTable       Special
+highlight      link    gihyoCode        Statement
+highlight      link    gihyoCommand     PreProc
+highlight      link    gihyoBullet      Identifier
+highlight      link    gihyoPoint       Identifier
 
-highlight link gihyoRuler       Special
-highlight link gihyoURL         Underlined
-highlight link gihyoTodo        Todo
-highlight link gihyoNotUseChar  Error
+highlight      link    gihyoRuler       Special
+highlight      link    gihyoURL         Underlined
+highlight      link    gihyoTodo        Todo
+highlight      link    gihyoNotUseChar  Error
 
-highlight link gihyoDStrong     PreProc
-highlight link gihyoSStrong     PreProc
+highlight      link    gihyoDStrong     PreProc
+highlight      link    gihyoSStrong     PreProc
 " syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
 " hi link txtDialog Constant
-hi! link NonText Comment
+hi!            link    NonText          Comment
 
 finish
 

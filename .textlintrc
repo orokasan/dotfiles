@@ -1,38 +1,7 @@
 {
-  "filters": {
-      "whitelist": {
-          "allow": [
-              "/%\\s.*/g"
-          ]
-      }
-    },
-  "rules": {
-    "@textlint-ja/no-synonyms": true,
-    "ja-hiragana-keishikimeishi": false,
-    "ja-hiragana-fukushi": false,
-    "ja-hiragana-hojodoushi": false,
-    "apostrophe": true,
-    "common-misspellings":true,
-    "spellcheck-tech-word":true,
-    "preset-ja-technical-writing": {
-        "sentence-length": false,
-        "max-comma": false,
-        "max-ten": false,
-        "no-exclamation-question-mark": false,
-        "max-kanji-continuous-len": {
-                // 連続できる漢字の文字数
-                // Allow max continuous length of kanji
-                // If {current} > max(5), report Error.
-                max: 8,
-                allow: [""]
-            },
-        "no-doubled-joshi": false,
-        "ja-no-mixed-period": false,
-        "no-mix-dearu-desumasu": false,
-        "ja-unnatural-alphabet": true,
-        "no-unmatched-pair": true,
-        "ja-no-abusage": true,
-        "ja-no-redundant-expression": false
+    "rules": {
+        "prh": {
+            "rulePaths" :["~/prh.yml"]
         }
     }
 }

@@ -184,7 +184,7 @@ nmap <silent><buffer> [denite]h <Plug>(defx):<C-u>Denite
     \ defx/history<CR>
 setlocal signcolumn=no
 " Define mappings
-nnoremap <silent><buffer><expr> <CR> defx#async_action('drop')
+nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
 nnoremap <silent><buffer><expr> S defx#async_action('drop', 'split')
 nnoremap <silent><buffer> <C-e> <C-w>p
 nnoremap <silent><buffer><expr> c defx#async_action('multi', ['copy','redraw'])
@@ -869,6 +869,76 @@ let g:translator_window_borderchars = v:null
 # '''
 
 [[plugins]]
+repo = 'kana/vim-niceblock'
+on_map = {x = '<Plug>(niceblock-'}
+hook_add = '''
+  xmap I  <Plug>(niceblock-I)
+  xmap A  <Plug>(niceblock-A)
+'''
+
+[[plugins]]
+repo = 'liuchengxu/vista.vim'
+on_cmd = ['Vista']
+hook_add ='''
+let g:vista_icon_indent = ["▸ ", ""]
+let g:vista_echo_cursor = 1
+let g:vista_cursor_delay = 200
+let g:vista_echo_cursor_strategy = 'floating_win'
+let g:vista_finder_alternative_executives = ['vim_lsp']
+let g:vista#renderer#enable_icon = 0
+'''
+
+[[plugins]]
+on_map = {nxo = '<Plug>Commentary'}
+repo = 'tpope/vim-commentary'
+hook_add = '''
+if !hasmapto('<Plug>Commentary') || maparg('gc','n') ==# ''
+  xmap gc  <Plug>Commentary
+  nmap gc  <Plug>Commentary
+  omap gc  <Plug>Commentary
+  nmap gcc <Plug>CommentaryLine
+  if maparg('c','n') ==# '' && !exists('v:operator')
+    nmap cgc <Plug>ChangeCommentary
+  endif
+  nmap gcu <Plug>Commentary<Plug>Commentary
+endif
+'''
+
+# [[plugins]]
+# on_ft = 'go'
+# repo = 'mattn/vim-goimports'
+
+# [[plugins]]
+# repo = 'fatih/vim-go'
+# on_ft = ['go']
+# hook_add = '''
+# let g:go_snippet_engine = "neosnippet"
+# let g:go_gopls_enabled = 0
+# " highlight
+# let g:go_highlight_functions = 1
+# let g:go_highlight_function_parameters = 1
+# let g:go_highlight_types = 1
+# " let g:go_highlight_fields = 1
+# " let g:go_highlight_build_constraints = 1
+# let g:go_highlight_generate_tags = 1
+# let g:go_highlight_variable_declarations = 1
+# '''
+
+[[plugins]]
+repo =  'Shougo/unite.vim'
+on_cmd = ['Unite']
+
+[[plugins]]
+repo = 'previm/previm'
+depends = 'open-browser.vim'
+on_cmd = ['PrevimOpen']
+on_ft = 'markdown'
+hook_add = '''
+" let g:previm_open_cmd = 'open -a FireFox\ Nightly'
+nnoremap <silent><Leader>mp :PrevimOpen<CR>
+'''
+
+[[plugins]]
 repo =  'lambdalisue/gina.vim'
 on_cmd = ['Gina']
 hook_add = '''
@@ -879,7 +949,7 @@ nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
 nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
 nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
-nnoremap <silent> <Leader>gd :<C-u>Gina compare<CR>zz
+nnoremap <silent> <Leader>gd :<C-u>nos Gina compare<CR>zz
 nnoremap <silent> <Leader>gg :<C-u>Gina diff<CR>
 nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
 nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
@@ -918,7 +988,6 @@ call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
 "\ '/\%(status\|changes\)',
 "\ '--ignore-submodules'
 "\)
-
 "call gina#custom#action#alias(
 "\ 'branch', 'track',
 "\ 'checkout:track'
@@ -1023,72 +1092,7 @@ call gina#custom#execute(
 '''
 
 [[plugins]]
-repo = 'kana/vim-niceblock'
-on_map = {x = '<Plug>(niceblock-'}
-hook_add = '''
-  xmap I  <Plug>(niceblock-I)
-  xmap A  <Plug>(niceblock-A)
-'''
+repo =  'mattn/vim-sonictemplate' 
+on_cmd = ['Template']
 
-[[plugins]]
-repo = 'liuchengxu/vista.vim'
-on_cmd = ['Vista']
-hook_add ='''
-let g:vista_icon_indent = ["▸ ", ""]
-let g:vista_echo_cursor = 1
-let g:vista_cursor_delay = 200
-let g:vista_echo_cursor_strategy = 'floating_win'
-let g:vista_finder_alternative_executives = ['vim_lsp']
-let g:vista#renderer#enable_icon = 0
-'''
-
-[[plugins]]
-on_map = {nxo = '<Plug>Commentary'}
-repo = 'tpope/vim-commentary'
-hook_add = '''
-if !hasmapto('<Plug>Commentary') || maparg('gc','n') ==# ''
-  xmap gc  <Plug>Commentary
-  nmap gc  <Plug>Commentary
-  omap gc  <Plug>Commentary
-  nmap gcc <Plug>CommentaryLine
-  if maparg('c','n') ==# '' && !exists('v:operator')
-    nmap cgc <Plug>ChangeCommentary
-  endif
-  nmap gcu <Plug>Commentary<Plug>Commentary
-endif
-'''
-
-# [[plugins]]
-# on_ft = 'go'
-# repo = 'mattn/vim-goimports'
-
-# [[plugins]]
-# repo = 'fatih/vim-go'
-# on_ft = ['go']
-# hook_add = '''
-# let g:go_snippet_engine = "neosnippet"
-# let g:go_gopls_enabled = 0
-# " highlight
-# let g:go_highlight_functions = 1
-# let g:go_highlight_function_parameters = 1
-# let g:go_highlight_types = 1
-# " let g:go_highlight_fields = 1
-# " let g:go_highlight_build_constraints = 1
-# let g:go_highlight_generate_tags = 1
-# let g:go_highlight_variable_declarations = 1
-# '''
-
-[[plugins]]
-repo =  'Shougo/unite.vim'
-on_cmd = ['Unite']
-
-[[plugins]]
-repo = 'previm/previm'
-depends = 'open-browser.vim'
-on_cmd = ['PrevimOpen']
-on_ft = 'markdown'
-hook_add = '''
-" let g:previm_open_cmd = 'open -a FireFox\ Nightly'
-nnoremap <silent><Leader>mp :PrevimOpen<CR>
-'''
 # vim:set foldmethod=marker:

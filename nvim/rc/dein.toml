@@ -321,14 +321,14 @@ repo = 'dstein64/vim-startuptime'
 # repo = 'lambdalisue/fern.vim'
 # hook_add = 'let g:fern#loaded = 1 '
 
-[[plugins]]
-repo =  'rhysd/git-messenger.vim'
+# [[plugins]]
+# repo =  'rhysd/git-messenger.vim'
 
 [[plugins]]
 repo = 'thinca/vim-qfreplace'
 
-[[plugins]]
-repo = 'tpope/vim-sleuth'
+# [[plugins]]
+# repo = 'tpope/vim-sleuth'
 
 [[plugins]]
 merged = '0'
@@ -382,5 +382,7 @@ hook_add = '''
 map g/ <Plug>(incsearch-migemo-/)
 map g? <Plug>(incsearch-migemo-?)
 '''
+# [[plugins]]
+# repo = 'heavenshell/vim-textlint' 
 
 # vim:set foldmethod=marker:

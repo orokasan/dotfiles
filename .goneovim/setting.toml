@@ -2,9 +2,9 @@
 
 [Editor]
 # Editor minimum window width (>= 800)
-Width = 1000
+Width = 1200
 # Editor minimum window height (>= 600)
-Height = 850
+Height = 960
 
 StartMaximizedWindow = false
 
@@ -12,7 +12,14 @@ StartMaximizedWindow = false
 FontFamily = "RictyDiminished NF"
 FontSize = 12
 Linespace = 1
-
+#
+# Goneovim has a cached rendering feature enabled to speed up the process.
+# If you want to disable it, set it to false
+ CachedDrawing = true
+# You can specify the cache size to be used by the cache rendering feature of goneovim.
+# The default is 320.
+ CacheSize = 320
+#
 # Copy yanked text to clipboard
 Clipboard = false
 
@@ -36,9 +43,9 @@ ExtMessages = false
 
 IndentGuide = true
 
-DiffAddPattern    = 1
-DiffDeletePattern = 1
-DiffChangePattern = 1
+# DiffAddPattern    = 1
+# DiffDeletePattern = 1
+# DiffChangePattern = 1
 # ClickEffect = true
 
 # [Palette]
@@ -56,21 +63,6 @@ DiffChangePattern = 1
 [Statusline]
 Visible = false
 
-# Options: “textLabel” / “icon” / “background” / “none”
-ModeIndicatorType = "textLabel"
-
-# Optional setting colors per Neovim editing modes
-NormalModeColor = "#3cabeb"
-CommandModeColor = "#5285b8"
-InsertModeColor = "#2abcb4"
-ReplaceModeColor = "#ff8c0a"
-VisualModeColor = "#9932cc"
-TerminalModeColor = "#778899"
-
-# Statusline components
-Left = [ "mode", "filepath", "filename" ]
-Right = [ "message", "git", "filetype", "fileformat", "fileencoding", "curpos", "lint" ]
-
 [Palette]
 Transparent = 0.8
 
@@ -86,19 +78,19 @@ Transparent = 0.8
 
 ## The following options specify whether to display a dedicated column in the popupmenu
 ## to display the long text displayed in the `info` part.
-ShowDetail = true
+# ShowDetail = true
 
-## total number to display item
-Total = 15
+# ## total number to display item
+# Total = 15
 
-## width of `menu` column
-MenuWidth = 400
+# ## width of `menu` column
+# MenuWidth = 400
 
-## width of `info` column
-InfoWidth = 1
+# ## width of `info` column
+# InfoWidth = 1
 
-## width of `detail` column
-DetailWidth = 250
+# ## width of `detail` column
+# DetailWidth = 250
 
 [Tabline]
 VIsible = true

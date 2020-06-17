@@ -1,31 +1,32 @@
-languages:
-  eruby:
-    lint-command: 'erb -x -T - | ruby -c'
-    lint-stdin: true
-    lint-offset: 1
-    format-command: 'htmlbeautifier'
+version: 2
+commands:
+  - command: notepad
+    arguments:
+      - ${INPUT}
+    title: メモ帳
 
-  vim:
-    lint-command: 'vint -'
-    lint-stdin: true
-    lint-formats:
-      - '%f:%l:%c: %m'
+tools:
+  # vim:
+  #   lint-command: 'vint -'
+  #   lint-stdin: true
+  #   lint-formats:
+  #     - '%f:%l:%c: %m'
 
-  markdown:
-    lint-command: 'npx textlint -f unix --stdin'
-    # textlintがmarkdownを考慮しないので
-    # がんばって設定したけど動かなかったが
-    # lint-command: 'npx textlint -f unix --stdin --stdin-filename foo.md | sed -e "s/markdown/text/g"'
-    # lint-stdin:false で解決
-    lint-stdin: false
-    lint-formats:
-        - '%f:%l:%c: %m'
+#   markdown:
+#     lint-command: 'npx textlint -f unix --stdin'
+#     # textlintがmarkdownを考慮しないので
+#     # がんばって設定したけど動かなかったが
+#     # lint-command: 'npx textlint -f unix --stdin --stdin-filename foo.md | sed -e "s/markdown/text/g"'
+#     # lint-stdin:false で解決
+#     lint-stdin: false
+#     lint-formats:
+#         - '%f:%l:%c: %m'
 
-  tex:
-    lint-command: 'npx textlint -f unix --stdin'
-    lint-stdin: true
+
+  textlint: &textlint
+    lint-command: 'npx textlint --format unix ${INPUT}'
     lint-formats:
-      - '%f:%l:%c: %m'
+      - '%f:%l:%n: %m'
 
   # tex:
   #   lint-command: 'chktex -v0 -q'
@@ -33,13 +34,16 @@ languages:
   #   lint-formats:
   #       - '%f:%l:%c:%n:%m'
 
-  yaml:
+  yaml-yamllint: &yaml-yamllint
     lint-command: 'yamllint -f parsable -'
     lint-stdin: true
-    lint-formats:
-      - '%f:%l:%c: %m'
 
-  javascript:
-    lint-command: 'eslint -f unix --stdin'
-    lint-ignore-exit-code: true
-    lint-stdin: true
+languages:
+    text:
+        - << *textlint
+    txt:
+        - << *textlint
+    markdown:
+        - << *textlint
+    yaml:
+        - << *yaml-yamllint

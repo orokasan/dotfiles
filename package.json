@@ -9,6 +9,7 @@
   "devDependencies": {
     "@textlint-ja/textlint-rule-no-synonyms": "^1.0.2",
     "bash-language-server": "^1.15.0",
+    "mdpdf": "^2.1.2",
     "neovim": "^4.8.0",
     "prh": "^5.4.4",
     "sudachi-synonyms-dictionary": "^4.1.0",

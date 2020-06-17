@@ -2,7 +2,6 @@
 " Basic setting {{{
 set encoding=utf-8
 scriptencoding utf-8,cp932
-" set fileencoding=utf-8
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
@@ -598,8 +597,8 @@ if has('GUI')
         " let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
         " let &guifont = s:myguifont
         " let &guifontwide = s:myguifont
-        " set guifont=Cica:h12:
-        " set renderoptions=type:directx,renmode:5,geom:1
+        set guifont=Cica:h12:
+        set renderoptions=type:directx,renmode:5,geom:1
     endif
 endif
 "}}}
@@ -701,7 +700,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    " call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -806,7 +805,13 @@ if exists('g:gonvim_running')
  augroup GonvimAuStatusline
     autocmd!
   augroup end
+ augroup GonvimAu
+    autocmd!
+  augroup end
   augroup GonvimAuLint
+    autocmd!
+  augroup end
+  augroup GonvimAuFiler
     autocmd!
   augroup end
   augroup GonvimAuFilepath
@@ -815,7 +820,13 @@ if exists('g:gonvim_running')
   augroup GonvimAuMinimap
     autocmd!
   augroup end
+  augroup GonvimAuMinimapSync
+    autocmd!
+  augroup end
   augroup GonvimAuMd
+    autocmd!
+  augroup end
+  augroup GonvimAuWorkspace
     autocmd!
   augroup end
   cd ~/
@@ -828,6 +839,7 @@ set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-h
 autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
 function! Vimdiff_config(timer) abort
 " if &diff
+
   windo set wrap
   " wincmd w
   " nnoremap q :tabclose<CR>
@@ -841,4 +853,5 @@ noremap <ScrollWheelDown> <C-d>
 set scrolljump=5
 nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
+set background=dark
 " vim:set foldmethod=marker:
