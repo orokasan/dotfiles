@@ -1,10 +1,4 @@
 version: 2
-commands:
-  - command: notepad
-    arguments:
-      - ${INPUT}
-    title: メモ帳
-
 tools:
   # vim:
   #   lint-command: 'vint -'
@@ -25,8 +19,9 @@ tools:
 
   textlint: &textlint
     lint-command: 'npx textlint --format unix ${INPUT}'
+    lint-stdin: true
     lint-formats:
-      - '%f:%l:%n: %m'
+      - '%f:%l:%c: %m'
 
   # tex:
   #   lint-command: 'chktex -v0 -q'
@@ -39,11 +34,14 @@ tools:
     lint-stdin: true
 
 languages:
-    text:
-        - << *textlint
-    txt:
-        - << *textlint
-    markdown:
-        - << *textlint
-    yaml:
-        - << *yaml-yamllint
+  text:
+    - <<: *textlint
+
+  txt:
+    - <<: *textlint
+
+  markdown:
+    - <<: *textlint
+
+  yaml:
+    - <<: *yaml-yamllint
