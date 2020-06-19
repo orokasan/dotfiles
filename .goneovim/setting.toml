@@ -13,12 +13,12 @@ FontFamily = "RictyDiminished NF"
 FontSize = 12
 Linespace = 1
 #
-# Goneovim has a cached rendering feature enabled to speed up the process.
-# If you want to disable it, set it to false
- CachedDrawing = true
-# You can specify the cache size to be used by the cache rendering feature of goneovim.
-# The default is 320.
- CacheSize = 320
+# # Goneovim has a cached rendering feature enabled to speed up the process.
+# # If you want to disable it, set it to false
+#  CachedDrawing = true
+# # You can specify the cache size to be used by the cache rendering feature of goneovim.
+# # The default is 320.
+#  CacheSize = 320
 #
 # Copy yanked text to clipboard
 Clipboard = false
@@ -29,12 +29,12 @@ DisableImeInNormal = true
 DrawShadowForFloatWindow = false
 
 # Drawing window and Transparent breaks statusline and tabline.
-## Transparent window alpha
-## Note: This setting also implicitly enables the Drawborder setting
-#Transparent = 0.95
-##
-## Drawing window border instead of vertical split, statusline
-#DrawBorder = true
+# Transparent window alpha
+# Note: This setting also implicitly enables the Drawborder setting
+# Transparent = 0.95
+#
+# Drawing window border instead of vertical split, statusline
+# DrawBorder = false
 
 ExtCmdline = false
 ExtPopupmenu = false

@@ -13,6 +13,7 @@ function! s:eskk_initial_pre() abort
     call t.add_map('zc', '©')
     call t.add_map('zr', '®')
     call t.add_map('zk', '■')
+    call t.add_map('zm', '●')
     call t.add_map('zH', '←')
     call t.add_map('zJ', '↑')
     call t.add_map('zK', '↓')
@@ -21,8 +22,15 @@ function! s:eskk_initial_pre() abort
     call t.add_map('zsu', '▲')
     call t.add_map('zds', '◇')
     call t.add_map('zdk', '◆')
-    call t.add_map('z9', '（')
-    call t.add_map('z0', '）')
+    call t.add_map('z1', '①')
+    call t.add_map('z2', '②')
+    call t.add_map('z3', '③')
+    call t.add_map('z4', '④')
+    call t.add_map('z5', '⑤')
+    call t.add_map('z6', '⑥')
+    call t.add_map('z7', '⑦')
+    call t.add_map('z8', '⑧')
+    call t.add_map('z9', '⑨')
     call t.add_map('z-', '-')
     call t.add_map('z%', '％')
     call t.add_map('z.', '・')
@@ -47,6 +55,8 @@ augroup myeskk
     autocmd!
     autocmd InsertLeave * call <SID>eskk_save_status()
     autocmd InsertEnter * call <SID>eskk_insert_status()
+    " somehow eskk status is saved by default in cmdline
+    " autocmd CmdlineLeave * if exists('*eskk#enable') && eskk#is_enabled() | call eskk#disable() | endif
 augroup END
 
 " ノーマルモードでもeskkの状態を操作する
@@ -86,7 +96,7 @@ function! LLmyeskk() abort
             \ get(g:eskk#statusline_mode_strings,
             \ eskk#get_current_instance().mode, '??'))
     elseif mode() !=# 'i'
-        let status = g:eskk_keep_enable || s:eskk_status ? 'あ' : 'aA'
+        let status = (g:eskk_keep_enable || s:eskk_status) ? 'あ' : 'aA'
     endif
     return '[' . status . ']'
 endfunction

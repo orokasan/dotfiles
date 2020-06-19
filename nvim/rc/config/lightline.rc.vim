@@ -45,15 +45,29 @@ let g:lightline = {
     \ }
 \ }
 
-autocmd dein User LspDiagnosticsChanged call lightline#update()
+" workaround for nvim bug
+" https://github.com/neovim/neovim/issues/8796
+autocmd dein User LspDiagnosticsChanged if mode() is# 'n' | call lightline#update() | endif
 
 " let g:lightline.colorscheme = 'quack'
-if g:mycolorscheme is 'iceberg'
-let g:lightline.colorscheme = 'iceberg'
+autocmd dein ColorScheme * call <SID>lightline_set_colorscheme()
+function! s:lightline_set_colorscheme() abort
+" if !exists('g:loaded_lightline')
+" return
+" endif
+try
+if g:colors_name ==# 'seagull'
+  let g:lightline.colorscheme = 'snow_light'
+elseif g:colors_name =~# 'iceberg\|wombat\|solarized\|landscape\|jellybeans\|seoul256\|Tomorrow'
+  let g:lightline.colorscheme =
+        \ substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '')
 endif
-if g:mycolorscheme is 'seagull'
-let g:lightline.colorscheme = 'snow_light'
-endif
+  call lightline#init()
+  call lightline#colorscheme()
+  call lightline#update()
+catch
+endtry
+endfunction
 
 " if has('nvim')
 "     let g:lightline.subseparator= { 'left': '', 'right': '' }
@@ -164,8 +178,8 @@ endfunction
 function! LLMyFilepath()
     if &filetype =~# s:ignore_filetype
         return ''
-    elseif exists('*anzu#search_status') && strwidth(anzu#search_status())
-        return s:llanzu()
+    " elseif exists('*anzu#search_status') && strwidth(s:llanzu())
+    "     return s:llanzu()
     else
         if exists('g:loaded_webdevicons')
             let icon = WebDevIconsGetFileTypeSymbol()
@@ -196,7 +210,7 @@ function! LLInactiveFilename()
 endfunction
 
 function! LLeskk() abort
-    if &filetype =~# s:ignore_filetype || !s:threshold(1)
+    if &filetype =~# s:ignore_filetype || !s:threshold(2)
         return ''
     elseif !exists('*LLmyeskk')
         return '[aA]'
@@ -227,7 +241,7 @@ endfunction
 function! LLCharcount()
     if &filetype !~# s:ignore_filetype
         let abbr = s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
-            \ s:threshold(2) ? '' . s:llcharcount : ''
+            \ s:threshold(1) ? '' . s:llcharcount : ''
         return abbr
     else
         return ''
@@ -298,14 +312,14 @@ function! s:llgitcache() abort
 endfunction
 
 " 検索ステータスを表示 (vim-anzuを利用) {{{
-autocmd dein InsertEnter,BufEnter,CursorMoved * if exists('*anzu#clear_search_status')
-    \| call anzu#clear_search_status() | endif
+" autocmd dein InsertEnter,BufEnter,CursorMoved,CmdlineEnter * if exists('*anzu#clear_search_status')
+"     \| call anzu#clear_search_status() | endif
 
-autocmd dein CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
-autocmd dein User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
+" autocmd dein CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
+" autocmd dein User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
 
 function! s:llanzu()
-    let s:anzu = anzu#search_status()
+    let s:anzu = substitute(anzu#search_status(), '\v^(\\v|\\V)', "" , "")
     return strwidth(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
 endfunction "}}}
 

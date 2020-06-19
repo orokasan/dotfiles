@@ -1,4 +1,8 @@
+
 version: 2
+log: C:\Users\t_kuriki\output.log
+loglevel: 2
+
 tools:
   # vim:
   #   lint-command: 'vint -'
@@ -18,7 +22,7 @@ tools:
 
 
   textlint: &textlint
-    lint-command: 'npx textlint --format unix ${INPUT}'
+    lint-command: 'npx textlint --format unix --stdin ${INPUT}'
     lint-stdin: true
     lint-formats:
       - '%f:%l:%c: %m'

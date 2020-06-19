@@ -4,8 +4,9 @@ repo = 'prabirshrestha/vim-lsp'
 # lazy = 1'
 # on_ft = ['markdown', 'tex', 'python', 'go']
 hook_add = '''
-" let lsp_log_verbose = 1
-" let lsp_log_file = '/tmp/lsp.log'
+    let g:lsp_highlight_references_enabled = 1
+let lsp_log_verbose = 1
+let lsp_log_file = 'C:\Users\t_kuriki\temp\lsp.log'
 let g:lsp_auto_enable = 0
 let s:pyls_config = {'pyls': {'plugins': {
     \   'pycodestyle': {'enabled': v:true},
@@ -49,6 +50,7 @@ function! s:lsp_setup()
 endfunction
 
 let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
+let s:efm_config_path = '-c=' .. expand('~\AppData\Roaming\efm-langserver\config.yaml')
 let s:efm_log_path = '-log=' .. expand('~/efmlog')
 augroup VimLsp
     au!
@@ -102,7 +104,7 @@ augroup VimLsp
     if executable('efm-langserver')
     autocmd User lsp_setup call lsp#register_server({
       \ 'name': 'efm-langserver',
-      \ 'cmd': {server_info->['efm-langserver', s:efm_config_path, s:efm_log_path]},
+      \ 'cmd': {server_info->['efm-langserver', s:efm_config_path]},
       \ 'whitelist': ['tex','eruby', 'markdown', 'yaml'],
       \ })
     endif

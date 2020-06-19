@@ -42,6 +42,7 @@ set undodir=~/.backup/vim/undo " put together undo files
 set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup                " no more backup file
+
 "}}}
 
 " Visual  {{{
@@ -500,8 +501,8 @@ nnoremap <C-w><C-w> <C-w>p
 nnoremap <C-w>u <C-w><C-w>
 nnoremap <C-w><C-u> <C-w><C-w>
 " change window size
-nnoremap <S-Left>  <C-w><
-nnoremap <S-Right> <C-w>>
+nnoremap <S-Left>  <C-w>>
+nnoremap <S-Right> <C-w><
 nnoremap <S-Up>    <C-w>-
 nnoremap <S-Down>  <C-w>+
 " maximize buffer window size temporally
@@ -563,7 +564,7 @@ autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
     nnoremap <silent><buffer> q :<C-u>quit<CR>
-    " nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
+    nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
     noremap <buffer> p  <CR>zz<C-w>p
 endfunction
 function! s:is_loc()
@@ -648,6 +649,7 @@ if has('nvim')
     set fillchars+=eob:\ 
     "transparent completions menu
     set pumblend=15
+    set inccommand=nosplit
     au TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 200)
 endif
 "}}}
@@ -661,15 +663,12 @@ endif
 " edit fold column
 if has('Win32')
     set background=dark
-    let g:mycolorscheme = 'iceberg'
+    let g:colors_name = 'iceberg'
 else
     set background=light
-    let g:mycolorscheme = 'seagull'
+    let g:colors_name= 'seagull'
 endif
-    set background=dark
-    let g:mycolorscheme = 'iceberg'
 "}}}
-
 " dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -786,9 +785,9 @@ let g:lightline#bufferline#smarttab = 1
 
 " set colorscheme
 try
-    exe 'colorscheme ' . g:mycolorscheme
+    exe 'colorscheme ' . g:colors_name
 catch /^Vim\%((\a\+)\)\=:E185:/
-    echom "colorscheme '"  . g:mycolorscheme .  "' is not found. Using 'peachpuff' instead"
+    echom "colorscheme '"  . g:colors_name .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
 " if has('win32')
@@ -833,13 +832,12 @@ if exists('g:gonvim_running')
   set mouse=nicr
 endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
-let text_minlines = 50
+let text_minlines = 100
+set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
 autocmd FileType text syntax sync minlines=500
-set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler
 autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
 function! Vimdiff_config(timer) abort
 " if &diff
-
   windo set wrap
   " wincmd w
   " nnoremap q :tabclose<CR>
@@ -854,4 +852,12 @@ set scrolljump=5
 nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
 set background=dark
+
+nnoremap S :<C-u>%s/
+vnoremap S :%s/
+nnoremap gs :%s///g<Left><Left>
+vnoremap gs :<C-u>%s///g<Left><Left>
+" /\v(①|②|③|④|⑤|⑥|⑦|⑧|⑨|⑩)/
+nnoremap /  /\v
+nnoremap ?  ?\v
 " vim:set foldmethod=marker:

@@ -41,18 +41,18 @@ call denite#custom#option('relative',{
     \ })
 
 ""need rg for grep/file-rec
-call denite#custom#source('grep', 'args', ['', '', '!'])
-" when filtering multibyte char interactivelly, should insert space at fist. 
+" call denite#custom#source('grep', 'args', ['', '', '!'])
 if executable('jvgrep')
-    call denite#custom#var('grep', {
+    call denite#custom#var('grep/jv', {
             \ 'command': ['jvgrep'],
-            \ 'default_opts': ['-i'],
+            \ 'default_opts': ['-i', '--no-color', '-r', '-I'],
             \ 'recursive_opts': ['-R'],
             \ 'pattern_opt': [],
             \ 'separator': [],
             \ 'final_opts': [],
             \ })
-elseif executable('rg')
+endif
+if executable('rg')
     call denite#custom#var('grep', {
             \ 'command': ['rg'],
             \ 'default_opts': ['-i', '--vimgrep', '--no-heading'],
@@ -61,8 +61,6 @@ elseif executable('rg')
             \ 'separator': ['--'],
             \ 'final_opts': [],
             \ })
-endif
-if executable('rg')
     call denite#custom#var('file/rec', 'command',
         \ ['rg', '--files', '--no-messages','--hidden',
         \ '--glob', '!**/.git/*', '--glob','!*.tmp','-g','!AppData/*'])
@@ -99,6 +97,7 @@ call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#alias('source', 'grep/git', 'grep')
+call denite#custom#alias('source', 'grep/jv', 'grep')
 call denite#custom#var('grep/git', 'command', ['git', 'grep'])
 " call denite#custom#source('_', 'sorters', ['sorter/reverse'])
 call denite#custom#var('file/rec/git', 'command',
