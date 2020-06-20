@@ -82,6 +82,15 @@ depends = ['vim-textobj-user']
 repo = 'kana/vim-textobj-line'
 
 [[plugins]]
+# av, iv
+# aV, iV
+depends = ['vim-textobj-user']
+repo = 'rhysd/vim-textobj-word-column'
+
+[[plugins]]
+repo = 'AndrewRadev/switch.vim'
+
+[[plugins]]
 repo =  'deton/jasegment.vim'
 #TODO:qitta
 hook_add = ''' "{{{
@@ -107,8 +116,8 @@ depends = ['lightline.vim']
 repo =  'itchyny/vim-gitbranch'
 depends = ['lightline.vim']
 
-[[plugins]]
-repo = 'orokasan/vim-quack-lightline'
+# [[plugins]]
+# repo = 'orokasan/vim-quack-lightline'
 
 # [[plugins]]
 # repo = 'Shougo/context_filetype.vim'
@@ -123,44 +132,44 @@ autocmd dein ColorScheme iceberg highlight clear Search
 autocmd dein ColorScheme iceberg highligh Search gui=underline
 '''
 
-[[plugins]]
-repo = 'lifepillar/vim-solarized8'
-hook_add =''' " {{{
-let g:solarized_old_cursor_style = 1
-let g:solarized_italics = 0
-let g:solarized_statusline = 'flat'
-augroup Solarized8
-au!
-au ColorScheme solarized8_flat hi! DiffChange
-    \ cterm=bold ctermbg=5 gui=bold guifg=#b58900 guibg=#073642 guisp=#b58900
-au ColorScheme solarized8_flat hi! DiffText
-    \ cterm=bold ctermbg=9 gui=bold guifg=#268bd2 guibg=#073642 guisp=#268bd2
-au ColorScheme solarized8_flat hi! DiffAdd
-    \ cterm=bold ctermbg=4 gui=bold guifg=#859900 guibg=#073642 guisp=#859900
-au ColorScheme solarized8_flat hi! VertSplit guifg=#05252C guibg=#05252C
-au ColorScheme solarized8_flat hi! link EndOfBuffer Comment
-au ColorScheme solarized8_flat hi! NormalFloat guibg=#05252C
-au ColorScheme solarized8_flat hi clear Underlined
-au ColorScheme solarized8_flat hi! Underlined gui=underline,bold
-au ColorScheme solarized8_flat hi! link Vimfunction Type
-au ColorScheme solarized8_flat hi! link diffSubname Comment
-au ColorScheme solarized8_flat hi! link diffIndexLine Comment
-if has('GUI') || has('nvim')
-    autocmd ColorScheme solarized8_flat hi link Folded NonText
-    autocmd ColorScheme solarized8_flat hi Folded guifg=bold
-endif
-augroup END
-''' # }}}
+# [[plugins]]
+# repo = 'lifepillar/vim-solarized8'
+# hook_add =''' " {{{
+# let g:solarized_old_cursor_style = 1
+# let g:solarized_italics = 0
+# let g:solarized_statusline = 'flat'
+# augroup Solarized8
+# au!
+# au ColorScheme solarized8_flat hi! DiffChange
+#     \ cterm=bold ctermbg=5 gui=bold guifg=#b58900 guibg=#073642 guisp=#b58900
+# au ColorScheme solarized8_flat hi! DiffText
+#     \ cterm=bold ctermbg=9 gui=bold guifg=#268bd2 guibg=#073642 guisp=#268bd2
+# au ColorScheme solarized8_flat hi! DiffAdd
+#     \ cterm=bold ctermbg=4 gui=bold guifg=#859900 guibg=#073642 guisp=#859900
+# au ColorScheme solarized8_flat hi! VertSplit guifg=#05252C guibg=#05252C
+# au ColorScheme solarized8_flat hi! link EndOfBuffer Comment
+# au ColorScheme solarized8_flat hi! NormalFloat guibg=#05252C
+# au ColorScheme solarized8_flat hi clear Underlined
+# au ColorScheme solarized8_flat hi! Underlined gui=underline,bold
+# au ColorScheme solarized8_flat hi! link Vimfunction Type
+# au ColorScheme solarized8_flat hi! link diffSubname Comment
+# au ColorScheme solarized8_flat hi! link diffIndexLine Comment
+# if has('GUI') || has('nvim')
+#     autocmd ColorScheme solarized8_flat hi link Folded NonText
+#     autocmd ColorScheme solarized8_flat hi Folded guifg=bold
+# endif
+# augroup END
+# ''' # }}}
 
-[[plugins]]
-repo = 'markonm/traces.vim'
-hook_add ='''
-let g:traces_num_range_preview = 1
-nnoremap S :<C-u>%s/
-vnoremap S :%s/
-nnoremap gs :%s///g<Left><Left>
-vnoremap gs :<C-u>%s///g<Left><Left>
-'''
+# [[plugins]]
+# repo = 'markonm/traces.vim'
+# hook_add ='''
+# let g:traces_num_range_preview = 1
+# nnoremap S :<C-u>%s/
+# vnoremap S :%s/
+# nnoremap gs :%s///g<Left><Left>
+# vnoremap gs :<C-u>%s///g<Left><Left>
+# '''
 
 [[plugins]]
 repo = 'Shougo/neco-syntax'
@@ -171,29 +180,27 @@ repo = 'hrsh7th/vim-neco-calc'
 [[plugins]]
 repo = 'ujihisa/neco-look'
 
-[[plugins]]
-repo = 'tpope/vim-repeat'
+# [[plugins]]
+# repo = 'tpope/vim-repeat'
 
 [[plugins]]
 repo = 'haya14busa/is.vim'
 #TODO:qitta
 hook_add = ''' " {{{
 let g:is#do_default_mapping = 0
+nmap n <Plug>(is-n)zvzz
+nmap N <Plug>(is-N)zvzz
 ''' # }}}
 
-[[plugins]]
-repo = 'osyo-manga/vim-anzu'
-hook_add = ''' " {{{
-"nnoremap <silent><expr> <Plug>(anzu-n-zzzv) anzu#mode#mapexpr("n", "", "zzzv")
-"nnoremap <silent><expr> <Plug>(anzu-N-zzzv) anzu#mode#mapexpr("N", "", "zzzv")
-"nmap n <Plug>(is-nohl)<Plug>(anzu-n-zzzv)
-"nmap N <Plug>(is-nohl)<Plug>(anzu-N-zzzv)
-    nmap n <Plug>(is-nohl)<Plug>(anzu-n)zvzz
-    nmap N <Plug>(is-nohl)<Plug>(anzu-N)zvzz
-    nmap * <Plug>(is-nohl)<Plug>(anzu-star)zvzz
-    nmap # <Plug>(is-nohl)<Plug>(anzu-sharp)zvzz
-let g:airline#extensions#anzu#enabled = 0
-''' # }}}
+# [[plugins]]
+# repo = 'osyo-manga/vim-anzu'
+# hook_add = ''' " {{{
+# "nnoremap <silent><expr> <Plug>(anzu-n-zzzv) anzu#mode#mapexpr("n", "", "zzzv")
+# "nnoremap <silent><expr> <Plug>(anzu-N-zzzv) anzu#mode#mapexpr("N", "", "zzzv")
+# "nmap n <Plug>(is-nohl)<Plug>(anzu-n-zzzv)
+# "nmap N <Plug>(is-nohl)<Plug>(anzu-N-zzzv)
+# let g:airline#extensions#anzu#enabled = 0
+# ''' # }}}
 
 [[plugins]]
 repo =  'kana/vim-operator-user'
@@ -321,18 +328,18 @@ repo = 'dstein64/vim-startuptime'
 # repo = 'lambdalisue/fern.vim'
 # hook_add = 'let g:fern#loaded = 1 '
 
-[[plugins]]
-repo =  'rhysd/git-messenger.vim'
+# [[plugins]]
+# repo =  'rhysd/git-messenger.vim'
 
 [[plugins]]
 repo = 'thinca/vim-qfreplace'
 
-[[plugins]]
-repo = 'tpope/vim-sleuth'
+# [[plugins]]
+# repo = 'tpope/vim-sleuth'
 
-[[plugins]]
-merged = '0'
-repo ='eikendev/denite-fzf'
+# [[plugins]]
+# merged = '0'
+# repo ='eikendev/denite-fzf'
 
 [[plugins]]
 repo = 'vim-scripts/autodate.vim'
@@ -367,9 +374,19 @@ let g:autodate_format="%Y-%m-%d[%H:%M]"
 # endfunction
 # autocmd dein FileType python call MyCustomHighlights()
 # '''
+[[plugins]]
+repo = 'haya14busa/incsearch-migemo.vim'
+on_if = "!has('kaoriya')"
+# depends = 'incsearch.vim'
+# on_map = { nx = '<Plug>(incsearch-migemo-' }
+hook_add = '''
+map g/ <Plug>(incsearch-migemo-/)
+map g? <Plug>(incsearch-migemo-?)
+'''
 # [[plugins]]
-# repo = 'tpope/vim-fugitive'
-# hook_add = '''
-# nnoremap <Leader><Leader> :aboveleft Gstatus \| resize 10<CR>
-# '''
+# repo = 'heavenshell/vim-textlint' 
+
+[[plugins]]
+repo = 'rhysd/conflict-marker.vim'
+
 # vim:set foldmethod=marker:

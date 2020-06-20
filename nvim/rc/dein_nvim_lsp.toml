@@ -3,32 +3,26 @@ repo = 'neovim/nvim-lsp'
 hook_add = '''
 " can't load nvim-lsp modules when it is not merged in dein repo.
 " so set rtp manually.
-let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
 lua << EOF
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
+
+local util = require 'nvim_lsp/util'
+
+local server_name = "efm_ls"
+local bin_name = "efm-langserver"
+
+configs[server_name] = {
+  default_config = {
+    cmd = {bin_name};
+      root_dir = function(fname)
+        return nvim_lsp.util.find_git_ancestor(fname) or vim.loop.os_homedir()
+      end;
+  };
+}
+nvim_lsp.efm_ls.setup{}
+
 vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
-vim.lsp.callbacks['textDocument/publishDiagnostics'] = function(_, _, result)
-    local util = vim.lsp.util
-  if not result then return end
-  local uri = result.uri
-  local bufnr = vim.uri_to_bufnr(uri)
-  if not bufnr then
-    err_message("LSP.publishDiagnostics: Couldn't find buffer for ", uri)
-    return
-  end
-  util.buf_clear_diagnostics(bufnr)
-  for _, diagnostic in ipairs(result.diagnostics) do
-    if diagnostic.severity == nil then
-      diagnostic.severity = protocol.DiagnosticSeverity.Error
-    end
-  end
-  util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
-  util.buf_diagnostics_underline(bufnr, result.diagnostics)
-  -- util.buf_diagnostics_virtual_text(bufnr, result.diagnostics)
-  util.buf_diagnostics_signs(bufnr, result.diagnostics)
-  vim.api.nvim_command("doautocmd User LspDiagnosticsChanged")
-end
 
 require'nvim_lsp'.gopls.setup{
     capabilities = {
@@ -63,34 +57,25 @@ require'nvim_lsp'.texlab.setup{}
 -- }
 
 -- require'nvim_lsp'.pyls_ms.setup{}
-require'nvim_lsp'.pyls.setup{}
-require'nvim_lsp'.sumneko_lua.setup{}
-require'nvim_lsp'.vimls.setup{}
+-- require'nvim_lsp'.pyls.setup{}
+-- require'nvim_lsp'.sumneko_lua.setup{}
+-- require'nvim_lsp'.vimls.setup{}
 
--- --  efm_config_path = '-c=' + vim.eval('expand("~/.config/efm-langserver/config.yaml")')
---   configs.efm_langserver = {
---     default_config = {
---       cmd = {"efm-langserver"};
---       filetypes = {'tex'};
---       -- filetypes = {'tex','eruby', 'markdown', 'yaml'};
---       root_dir = vim.loop.os_homedir();
---     };
---   }
--- require'nvim_lsp'.efm_langserver.setup{}
 
--- do
---   local method = 'textDocument/publishDiagnostics'
---   local default_callback = vim.lsp.callbacks[method]
---   vim.lsp.callbacks[method] = function(err, method, result, client_id)
---     default_callback(err, method, result, client_id)
---     if result and result.diagnostics then
---       for _, v in ipairs(result.diagnostics) do
---         v.uri = v.uri or result.uri
---       end
---       vim.lsp.util.set_qflist(result.diagnostics)
---     end
---   end
--- end
+do
+  local method = 'textDocument/publishDiagnostics'
+  local default_callback = vim.lsp.callbacks[method]
+  vim.lsp.callbacks[method] = function(err, method, result, client_id)
+    default_callback(err, method, result, client_id)
+    if result and result.diagnostics then
+      for _, v in ipairs(result.diagnostics) do
+        v.uri = v.uri or result.uri
+      end
+      vim.lsp.util.set_loclist(result.diagnostics)
+    end
+  end
+end
+
 EOF
 
 "lsp.txtそのまま
@@ -104,21 +89,26 @@ nnoremap <silent> 1gD        <cmd>lua vim.lsp.buf.type_definition()<CR>
 nnoremap <silent><Leader>fmt <cmd>lua vim.lsp.buf.formatting()<CR>
 nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-let g:tex_flavor = "latex"
-set updatetime=1000
-function! s:vimenter() abort
-augroup nvim_lsp
-au!
-autocmd CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
-autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
-autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
-autocmd CursorMovedI <buffer> lua vim.lsp.util.show_line_diagnostics()
-endfunction
-autocmd dein BufEnter * call s:vimenter()
+nnoremap <silent> <C-k> <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+"let g:tex_flavor = "latex"
+"set updatetime=1000
+"function! s:vimenter() abort
+""augroup nvim_lsp
+"au!
+"autocmd CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
+"autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
+"autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
+"autocmd CursorMovedI <buffer> lua vim.lsp.util.show_line_diagnostics()
+"endfunction
+"autocmd dein BufEnter * call s:vimenter()
 sign define LspDiagnosticsErrorSign text= texthl=LspDiagnosticsError linehl= numhl=
 sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning linehl= numhl=
 sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=
 sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numhl=
+
+autocmd ColorScheme * highlight LspReferenceText guifg=Red
+autocmd ColorScheme * highlight LspReferenceWrite guifg=Red
+autocmd ColorScheme * highlight LspReferenceRead guifg=Red
 autocmd ColorScheme * highlight LspDiagnosticsError guifg=Red
 autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
 autocmd ColorScheme * highlight LspDiagnosticsUnderline guifg=Magenta

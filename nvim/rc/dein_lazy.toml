@@ -17,6 +17,10 @@ nnoremap <silent><buffer><expr> j
 \ line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k
 \ line('.') == 1 ? 'G' : 'k'
+nnoremap <silent><buffer><expr> l
+    \ denite#do_map('do_action')
+nnoremap <silent><buffer><expr> <2-LeftMouse>
+    \ denite#do_map('do_action')
 nnoremap <silent><buffer><expr> a
     \ denite#do_map('choose_action')
 nnoremap <silent><buffer><expr> <CR>
@@ -116,17 +120,29 @@ call defx#custom#option('_', {
     \ 'winwidth': 35,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
-    \ 'columns':'mark:indent:icons:filename',
+    \ 'columns':'mark:indent:icons:filename:size:space:time',
     \ 'sort': 'filename',
     \ 'ignored_files': s:defx_ignore_files
     \ })
-
+call defx#custom#column('filename', {
+      \ 'max_width': 200,
+      \ 'root_marker_highlight': 'Constant',
+      \ })
+call defx#custom#column('time', {
+      \ 'format': '%y/%m/%d %H:%M',
+      \ })
 function! s:get_defx_bufferdir(candidate) abort
     let path_mod = ':~:h'
     let dir = denite#util#substitute_path_separator(a:candidate)
     let dir = fnamemodify(dir, path_mod)
     let fdir = '\"' . l:dir. '\"'
     return fdir
+endfunction
+function! s:get_defx_file_extension(candidate) abort
+    let path_mod = ':e'
+    let dir = defx#get_candidate()
+    let dir = fnamemodify(a:candidate., path_mod)
+    return dir
 endfunction
 function! Defx_to_denite_rec(context) abort
         let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
@@ -135,6 +151,20 @@ function! Defx_to_denite_rec(context) abort
         \ -start-filter
         \ -path=' . narrow_dir .
         \ ' file/rec')
+endfunction
+function! Defx_improved_open(context) abort
+        if l:extension =~# l:ex
+         echo 'hoge'
+         endif
+        if defx#is_directory() 
+            call defx#do_action('open')
+        endif
+        let l:extension = defx#get_candidate().
+        "elseif l:extension =~# l:ex
+        "    call defx#async_action('execute_system')
+        "else
+        "    call defx#do_action('drop')
+        "endif
 endfunction
 function! Defx_to_denite_file(context) abort
         let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
@@ -147,20 +177,21 @@ endfunction
 [plugins.ftplugin]
 defx = '''
 nmap <silent><buffer> [denite]d <Plug>(defx):<C-u>Denite
-    \ -buffer-name=normal
+    \ -buffer-name=relative
     \ defx/dirmark<CR>
 nmap <silent><buffer> [denite]h <Plug>(defx):<C-u>Denite
-    \ -buffer-name=normal
+    \ -buffer-name=relative
     \ defx/history<CR>
 setlocal signcolumn=no
 " Define mappings
-nnoremap <silent><buffer><expr> <CR> defx#async_action('drop')
+nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
 nnoremap <silent><buffer><expr> S defx#async_action('drop', 'split')
 nnoremap <silent><buffer> <C-e> <C-w>p
-nnoremap <silent><buffer><expr> c defx#async_action('copy')
-nnoremap <silent><buffer><expr> m defx#async_action('move')
+nnoremap <silent><buffer><expr> c defx#async_action('multi', ['copy','redraw'])
+nnoremap <silent><buffer><expr> m defx#async_action('multi', ['move','redraw'])
 nnoremap <silent><buffer><expr> p defx#async_action('paste')
 nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
+nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
 nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
 nnoremap <silent><buffer><expr> t defx#do_action('multi', ['toggle_sort','filename','redraw'])
 nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
@@ -189,6 +220,17 @@ nnoremap <silent><buffer><expr> \ defx#do_action('change_vim_cwd','print')
 nnoremap <silent><buffer><expr> ss defx#do_action('call','Defx_to_denite_rec')
 nnoremap <silent><buffer><expr> sf defx#do_action('call','Defx_to_denite_file')
 nnoremap <silent><buffer> sa :split<CR>:Defx -new -split=no<CR>
+xnoremap <silent><buffer><expr> i defx#do_action('toggle_select_visual')
+function! s:defx_is_plaintxt()
+    let file = defx#get_candidate()['action__path']
+    let extension = fnamemodify(file, ':e')
+    let ex = '\v(png|xlsm|jpg|docx|docs|xlsx|pdf)'
+    if ex !~# extension
+    return 1
+    else
+    return
+    endif
+endfunction
 '''
 
 [[plugins]]
@@ -199,8 +241,10 @@ let g:defx_icons_enable_syntax_highlight = 1
 let g:defx_icons_column_length = 2
 let g:defx_icons_directory_icon = ''
 let g:defx_icons_mark_icon = '*'
+let g:defx_icons_copy_icon = ''
+let g:defx_icons_move_icon = ''
 let g:defx_icons_parent_icon = ''
-let g:defx_icons_default_icon = ''
+let g:defx_icons_default_icon = ''
 let g:defx_icons_directory_symlink_icon = ''
 " Options below are applicable only when using "tree" feature
 let g:defx_icons_root_opened_tree_icon = ''
@@ -230,10 +274,72 @@ let g:defx_icons_extensions = {
     \'docx' : { 'icon':'', 'color': s:colors.blue},
     \'doc' : { 'icon':'', 'color': s:colors.blue},
     \'xlsx' : { 'icon':'', 'color': s:colors.green},
+    \'xlsm' : { 'icon':'', 'color': s:colors.green},
     \'pptx' : { 'icon':'', 'color': s:colors.orange},
     \'ppt' : { 'icon':'', 'color': s:colors.orange},
     \'tex' : { 'icon':'', 'color': s:colors.orange},
     \}
+hi default link DefxIconsCopyIcon Error
+hi default link DefxIconsMoveIcon Constant
+hi default link DefxIconsOpenedTreeIcon Title
+hi default link DefxIconsNestedTreeIcon Constant
+hi default link DefxIconsMarkIcon Error
+hi default link DefxIconsParentDirectory Function
+
+"NerdFont List{{{
+"This list is useful for testing and choosing interesting symbols.
+"Also it's more consistent with current fonts than codepoints shown in README.
+"So, it may worth to add this to the wiki - I've opened issue just to ask is this appropriate. Probably it's better to put it on page with Nerd font loaded.
+"
+"IEC Power Symbols (23FB-23FE,2B58)
+"⏻⏼⏽⏾⭘
+"Font Awesome Extension (moved E000-E0A9 → E200-E2A9)
+"
+"
+"
+"
+"
+"Powerline Extra Symbols (E0A0-E0A3 E0B0-E0BF E0C0-E0C8 E0CC-E0CF E0D0-E0D2 E0D4)
+"
+"Devicons (moved E600-E6C5 → E700-E7C5)
+"
+"
+"
+"
+"
+"Font Awesome (F000-F2E0 with holes)
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"
+"Octicons (2665,26A1, moved F000-F105 with holes → F400-F4A8, moved F27C → F67C)
+"♥⚡
+"
+"
+"
+"
+"
+"Pomicons (E000-E00A)
+"
+"Font Linux (moved F100-F115 with holes → F300-F313)
+"
+"Seti-UI + Custom (E5FA-E62B)
+"
+"
+" }}}
 '''
 
 [[plugins]]
@@ -304,11 +410,11 @@ on_if = 'has("nvim")'
 on_event = 'InsertEnter'
 hook_add = '''
 let g:lexima_no_default_rules = 1
-let g:lexima_enable_basic_rules = 1
-let g:lexima_enable_space_rules = 0
-let g:lexima_nvim_accept_pum_with_enter = 0
+" let g:lexima_no_default_rules = 1
+" let g:lexima_enable_basic_rules = 1
+" let g:lexima_enable_space_rules = 0
 let g:lexima_ctrlh_as_backspace = 1
-let g:lexima_map_escape = ''
+" let g:lexima_map_escape = ''
 '''
 hook_post_source = '''
 call lexima#set_default_rules()
@@ -323,12 +429,11 @@ let s:lexima_my_rules = [
 \ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
 \ ]
 " Markdown list and todolist
-call lexima#add_rule({'at': '^\s*\%#', 'char': '*', 'input': '*<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '^\s*\%#', 'char': '-', 'input': '-<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '^*\s.*\%#$', 'char': '<CR>', 'input': '<CR>*<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '^-\s.*\%#$', 'char': '<CR>', 'input': '<CR>-<Space>',         'filetype': 'markdown'})
+"call lexima#add_rule({'at': '^\s*\%#', 'char': '*', 'input': '*<Space>',         'filetype': 'markdown'})
+"call lexima#add_rule({'at': '^\s*\%#', 'char': '-', 'input': '-<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '^\s*\*\s.*\%#$', 'char': '<CR>', 'input': '<CR>*<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '^\s*-\s.*\%#$', 'char': '<CR>', 'input': '<CR>-<Space>',         'filetype': 'markdown'})
 call lexima#add_rule({'at': '- \%#',   'char': '[', 'input': '[<Space>]<Space>', 'filetype': 'markdown'})
-
 for rule in s:lexima_my_rules
   call lexima#add_rule(rule)
 endfor
@@ -558,16 +663,6 @@ vmap <Leader>o <Plug>(openbrowser-smart-search)
 '''
 
 [[plugins]]
-repo = 'haya14busa/incsearch-migemo.vim'
-on_if = "!has('kaoriya')"
-depends = 'incsearch.vim'
-on_map = { nx = '<Plug>(incsearch-migemo-' }
-hook_add = '''
-map g/ <Plug>(incsearch-migemo-/)
-map g? <Plug>(incsearch-migemo-?)
-'''
-
-[[plugins]]
 on_source = 'incsearch-migemo.vim'
 repo = 'haya14busa/incsearch.vim'
 hook_add = 'let g:incsearch#auto_nohlsearch = 1'
@@ -609,10 +704,14 @@ on_map = { nx = '<Plug>(asterisk'}
 depends = 'is.vim'
 hook_add = '''
 "let g:asterisk#keeppos = 1
-map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
-map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
-map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
-map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
+"map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
+"map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
+"map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
+"map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
+map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
+map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
+map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
+map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 '''
 
 [[plugins]]
@@ -620,7 +719,7 @@ on_map = { nxi = '<Plug>(easymotion'}
 repo = 'easymotion/vim-easymotion'
 hook_add = '''
 let g:EasyMotion_do_mapping = 0
-nmap m <Plug>(easymotion-s2)
+nmap m <Plug>(easymotion-overwin-f2)
 imap <C-z> <ESC><Plug>(easymotion-s2)
 xmap m <Plug>(easymotion-s2)
 omap m <Plug>(easymotion-s2)
@@ -632,7 +731,7 @@ let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
 let g:EasyMotion_smartcase = 1
 let g:EasyMotion_space_jump_first = 1
-let g:EasyMotion_use_migemo = 1
+"let g:EasyMotion_use_migemo = 1
 let g:EasyMotion_prompt = '{n}>>> '
 let g:EasyMotion_verbose = 0
 hi link EasyMotionTarget Type
@@ -650,6 +749,7 @@ on_cmd = ['QuickRun']
 on_map = { n = '<Plug>(quickrun' }
 hook_add = '''
 nmap <Leader>q <Plug>(quickrun)
+xmap <Leader>q <Plug>(quickrun)
 let g:quickrun_config = {'_': {}}
 let g:quickrun_config = {
     \ "_" : {
@@ -679,6 +779,12 @@ let g:quickrun_config['tex'] = {
             \   'cmdopt': '',
             \   'exec': ['%c %o %s']
             \ }
+let g:quickrun_config['text'] = {
+            \   'command' : 'npx',
+            \   'outputter' : 'message',
+            \   'cmdopt': 'textlint',
+            \   'exec': ['%c %o %s']
+            \ }
 '''
 
 [[plugins]]
@@ -688,6 +794,7 @@ on_cmd = ['UndotreeToggle']
 hook_add = '''
 nnoremap U :<C-u>UndotreeToggle<CR>
 let g:undotree_SetFocusWhenToggle = 1
+let g:undotree_WindowLayout = 2
 '''
 
 [[plugins]]
@@ -773,6 +880,76 @@ let g:translator_window_borderchars = v:null
 # '''
 
 [[plugins]]
+repo = 'kana/vim-niceblock'
+on_map = {x = '<Plug>(niceblock-'}
+hook_add = '''
+  xmap I  <Plug>(niceblock-I)
+  xmap A  <Plug>(niceblock-A)
+'''
+
+[[plugins]]
+repo = 'liuchengxu/vista.vim'
+on_cmd = ['Vista']
+hook_add ='''
+let g:vista_icon_indent = ["▸ ", ""]
+let g:vista_echo_cursor = 1
+let g:vista_cursor_delay = 200
+let g:vista_echo_cursor_strategy = 'floating_win'
+let g:vista_finder_alternative_executives = ['vim_lsp']
+let g:vista#renderer#enable_icon = 0
+'''
+
+[[plugins]]
+on_map = {nxo = '<Plug>Commentary'}
+repo = 'tpope/vim-commentary'
+hook_add = '''
+if !hasmapto('<Plug>Commentary') || maparg('gc','n') ==# ''
+  xmap gc  <Plug>Commentary
+  nmap gc  <Plug>Commentary
+  omap gc  <Plug>Commentary
+  nmap gcc <Plug>CommentaryLine
+  if maparg('c','n') ==# '' && !exists('v:operator')
+    nmap cgc <Plug>ChangeCommentary
+  endif
+  nmap gcu <Plug>Commentary<Plug>Commentary
+endif
+'''
+
+# [[plugins]]
+# on_ft = 'go'
+# repo = 'mattn/vim-goimports'
+
+# [[plugins]]
+# repo = 'fatih/vim-go'
+# on_ft = ['go']
+# hook_add = '''
+# let g:go_snippet_engine = "neosnippet"
+# let g:go_gopls_enabled = 0
+# " highlight
+# let g:go_highlight_functions = 1
+# let g:go_highlight_function_parameters = 1
+# let g:go_highlight_types = 1
+# " let g:go_highlight_fields = 1
+# " let g:go_highlight_build_constraints = 1
+# let g:go_highlight_generate_tags = 1
+# let g:go_highlight_variable_declarations = 1
+# '''
+
+[[plugins]]
+repo =  'Shougo/unite.vim'
+on_cmd = ['Unite']
+
+[[plugins]]
+repo = 'previm/previm'
+depends = 'open-browser.vim'
+on_cmd = ['PrevimOpen']
+on_ft = 'markdown'
+hook_add = '''
+" let g:previm_open_cmd = 'open -a FireFox\ Nightly'
+nnoremap <silent><Leader>mp :PrevimOpen<CR>
+'''
+
+[[plugins]]
 repo =  'lambdalisue/gina.vim'
 on_cmd = ['Gina']
 hook_add = '''
@@ -783,7 +960,7 @@ nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
 nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
 nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
-nnoremap <silent> <Leader>gd :<C-u>Gina compare<CR>zz
+nnoremap <silent> <Leader>gd :<C-u>nos Gina compare<CR>zz
 nnoremap <silent> <Leader>gg :<C-u>Gina diff<CR>
 nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
 nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
@@ -822,7 +999,6 @@ call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
 "\ '/\%(status\|changes\)',
 "\ '--ignore-submodules'
 "\)
-
 "call gina#custom#action#alias(
 "\ 'branch', 'track',
 "\ 'checkout:track'
@@ -927,72 +1103,13 @@ call gina#custom#execute(
 '''
 
 [[plugins]]
-repo = 'kana/vim-niceblock'
-on_map = {x = '<Plug>(niceblock-'}
+repo =  'mattn/vim-sonictemplate' 
+on_cmd = ['Template']
+
+[[plugins]]
+repo = 'tpope/vim-fugitive'
+on_cmd = ['Git', 'G']
 hook_add = '''
-  xmap I  <Plug>(niceblock-I)
-  xmap A  <Plug>(niceblock-A)
 '''
 
-[[plugins]]
-repo = 'liuchengxu/vista.vim'
-on_cmd = ['Vista']
-hook_add ='''
-let g:vista_icon_indent = ["▸ ", ""]
-let g:vista_echo_cursor = 1
-let g:vista_cursor_delay = 200
-let g:vista_echo_cursor_strategy = 'floating_win'
-let g:vista_finder_alternative_executives = ['vim_lsp']
-let g:vista#renderer#enable_icon = 0
-'''
-
-[[plugins]]
-on_map = {nxo = '<Plug>Commentary'}
-repo = 'tpope/vim-commentary'
-hook_add = '''
-if !hasmapto('<Plug>Commentary') || maparg('gc','n') ==# ''
-  xmap gc  <Plug>Commentary
-  nmap gc  <Plug>Commentary
-  omap gc  <Plug>Commentary
-  nmap gcc <Plug>CommentaryLine
-  if maparg('c','n') ==# '' && !exists('v:operator')
-    nmap cgc <Plug>ChangeCommentary
-  endif
-  nmap gcu <Plug>Commentary<Plug>Commentary
-endif
-'''
-
-# [[plugins]]
-# on_ft = 'go'
-# repo = 'mattn/vim-goimports'
-
-# [[plugins]]
-# repo = 'fatih/vim-go'
-# on_ft = ['go']
-# hook_add = '''
-# let g:go_snippet_engine = "neosnippet"
-# let g:go_gopls_enabled = 0
-# " highlight
-# let g:go_highlight_functions = 1
-# let g:go_highlight_function_parameters = 1
-# let g:go_highlight_types = 1
-# " let g:go_highlight_fields = 1
-# " let g:go_highlight_build_constraints = 1
-# let g:go_highlight_generate_tags = 1
-# let g:go_highlight_variable_declarations = 1
-# '''
-
-[[plugins]]
-repo =  'Shougo/unite.vim'
-on_cmd = ['Unite']
-
-[[plugins]]
-repo = 'previm/previm'
-depends = 'open-browser.vim'
-on_cmd = ['PrevimOpen']
-on_ft = 'markdown'
-hook_add = '''
-" let g:previm_open_cmd = 'open -a FireFox\ Nightly'
-nnoremap <silent><Leader>mp :PrevimOpen<CR>
-'''
 # vim:set foldmethod=marker:

@@ -2,7 +2,6 @@
 " Basic setting {{{
 set encoding=utf-8
 scriptencoding utf-8,cp932
-" set fileencoding=utf-8
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
@@ -43,6 +42,7 @@ set undodir=~/.backup/vim/undo " put together undo files
 set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup                " no more backup file
+
 "}}}
 
 " Visual  {{{
@@ -135,16 +135,23 @@ set cmdwinheight=8
 " equal window size.
 set equalalways
 " for cmdwin
-autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
-autocmd vimrc CmdwinEnter : call <SID>clear_useless_command()
-autocmd vimrc CmdwinEnter [:/?=] nnoremap <buffer> q <C-w>c
-autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
-function! s:clear_useless_command() abort
+" autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
+" autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
+" autocmd vimrc CmdwinEnter [:/?=] nnoremap <buffer>q :close<CR>
+autocmd vimrc CmdwinEnter : call <SID>cmdwin_settings()
+function! s:cmdwin_settings() abort
+    " delete useless commands
     silent g/^qa\?!\?$/d
     silent g/^wq\?a\?!\?$/d
+    " move to nice position
     silent call feedkeys('G', 'n')
     silent call feedkeys('$', 'n')
+    " CmdwinEnter seems not to fire below commands
+    setlocal signcolumn=no            
+    setlocal scrolloff=0              
+    nnoremap <buffer><silent>q :close<CR>     
 endfunction
+
 " open .docx as .zip
 au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
@@ -494,8 +501,8 @@ nnoremap <C-w><C-w> <C-w>p
 nnoremap <C-w>u <C-w><C-w>
 nnoremap <C-w><C-u> <C-w><C-w>
 " change window size
-nnoremap <S-Left>  <C-w><
-nnoremap <S-Right> <C-w>>
+nnoremap <S-Left>  <C-w>>
+nnoremap <S-Right> <C-w><
 nnoremap <S-Up>    <C-w>-
 nnoremap <S-Down>  <C-w>+
 " maximize buffer window size temporally
@@ -557,7 +564,7 @@ autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
     nnoremap <silent><buffer> q :<C-u>quit<CR>
-    " nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
+    nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
     noremap <buffer> p  <CR>zz<C-w>p
 endfunction
 function! s:is_loc()
@@ -591,8 +598,8 @@ if has('GUI')
         " let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
         " let &guifont = s:myguifont
         " let &guifontwide = s:myguifont
-        " set guifont=Cica:h12:
-        " set renderoptions=type:directx,renmode:5,geom:1
+        set guifont=Cica:h12:
+        set renderoptions=type:directx,renmode:5,geom:1
     endif
 endif
 "}}}
@@ -642,29 +649,26 @@ if has('nvim')
     set fillchars+=eob:\ 
     "transparent completions menu
     set pumblend=15
+    set inccommand=nosplit
     au TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 200)
 endif
 "}}}
 
 " highlight {{{
 " for foldcolumn
-hi! link SpecialKey Comment
-hi! link NonText Comment
+" hi! link SpecialKey Comment
 if has('nvim')
     hi! PmenuSel blend=0
 endif
 " edit fold column
 if has('Win32')
     set background=dark
-    let g:mycolorscheme = 'iceberg'
+    let g:colors_name = 'iceberg'
 else
     set background=light
-    let g:mycolorscheme = 'seagull'
+    let g:colors_name= 'seagull'
 endif
-    set background=dark
-    let g:mycolorscheme = 'iceberg'
 "}}}
-
 " dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -695,7 +699,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    " call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -781,9 +785,9 @@ let g:lightline#bufferline#smarttab = 1
 
 " set colorscheme
 try
-    exe 'colorscheme ' . g:mycolorscheme
+    exe 'colorscheme ' . g:colors_name
 catch /^Vim\%((\a\+)\)\=:E185:/
-    echom "colorscheme '"  . g:mycolorscheme .  "' is not found. Using 'peachpuff' instead"
+    echom "colorscheme '"  . g:colors_name .  "' is not found. Using 'peachpuff' instead"
     exe 'colorscheme peachpuff'
 endtry
 " if has('win32')
@@ -795,25 +799,42 @@ endtry
 " endif
 "}}}
 
+hi! link NonText Comment
 if exists('g:gonvim_running')
  augroup GonvimAuStatusline
+    autocmd!
+  augroup end
+ augroup GonvimAu
     autocmd!
   augroup end
   augroup GonvimAuLint
     autocmd!
   augroup end
-  augroup GonvimAuFilePath
+  augroup GonvimAuFiler
     autocmd!
   augroup end
-  cd ~/
-endif
+  augroup GonvimAuFilepath
+    autocmd!
+  augroup end
+  augroup GonvimAuMinimap
+    autocmd!
+  augroup end
+  augroup GonvimAuMinimapSync
+    autocmd!
+  augroup end
   augroup GonvimAuMd
     autocmd!
   augroup end
+  augroup GonvimAuWorkspace
+    autocmd!
+  augroup end
+  cd ~/
+  set mouse=nicr
+endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
-let text_minlines = 50
+let text_minlines = 100
+set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
 autocmd FileType text syntax sync minlines=500
-set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler
 autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
 function! Vimdiff_config(timer) abort
 " if &diff
@@ -824,5 +845,19 @@ function! Vimdiff_config(timer) abort
 endfunction
 " autocmd vimrc TabLeave * silent! unmap q
 nnoremap <C-q> :tabclose<CR>
+noremap <ScrollWheelUp> <C-u>
+noremap <ScrollWheelDown> <C-d>
+" au vimrc BufEnter * set scroll=3
+set scrolljump=5
+nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
+set background=dark
+
+nnoremap S :<C-u>%s/
+vnoremap S :%s/
+nnoremap gs :%s///g<Left><Left>
+vnoremap gs :<C-u>%s///g<Left><Left>
+" /\v(①|②|③|④|⑤|⑥|⑦|⑧|⑨|⑩)/
+nnoremap /  /\v
+nnoremap ?  ?\v
 " vim:set foldmethod=marker:

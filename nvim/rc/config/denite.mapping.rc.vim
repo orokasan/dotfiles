@@ -48,16 +48,16 @@ nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
 "    \ file file:new<CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-    \ -buffer-name=float
+    \ -buffer-name=normal
     \ -start-filter
     \ buffer<CR>
-nnoremap <silent> \ :<C-u>Denite
-    \ -winheight=5
-    \ -start-filter
-    \ -buffer-name=command
-    \ command command_history<CR>
+" nnoremap <silent> \ :<C-u>Denite
+"     \ -winheight=5
+"     \ -start-filter
+"     \ -buffer-name=command
+"     \ command command_history<CR>
 nnoremap <silent> [denite]/ :<C-u>Denite
-    \ -buffer-name=search
+    \ -buffer-name=default
     \ anzu<CR>
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
@@ -70,12 +70,18 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -start-filter
     \ command_history<CR>
 nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
+    \ -path=`expand('%:h')`
+    \ grep/jv<CR>
+nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
+    \ -path=`expand('%:h')`
     \ -start-filter
-    \ grep<CR>
-nnoremap <silent> [denite]G :<C-u>Denite
-    \ -start-filter
-    \ -path=`<SID>denite_gitdir()`
-    \ `finddir('.git', '.;') != '' ? 'grep/git:::!' : 'grep'`<CR>
+    \ grep:::!<CR>
+nnoremap <silent> ,n :<C-u>silent Denite -resume -buffer-name=default -cursor-pos=+1 -immediately<CR>
+nnoremap <silent> ,p :<C-u>silent Denite -resume -buffer-name=default -cursor-pos=-1 -immediately<CR>
+" nnoremap <silent> [denite]G :<C-u>Denite
+"     \ -start-filter
+"     \ -path=`<SID>denite_gitdir()`
+"     \ `finddir('.git', '.;') != '' ? 'grep/git:::!' : 'grep'`<CR>
 "メニュー
 nnoremap <silent> [denite]u :<C-u>Denite
     \ -buffer_name=relative
@@ -88,6 +94,9 @@ nnoremap <silent> [denite]h :<C-u>Denite
     \ help<CR>
 " MRU
 nnoremap <silent> [denite]n :<C-u>Denite
+    \ -buffer-name=normal
+    \ file/old<CR>
+nnoremap <silent> <RightMouse> :<C-u>Denite
     \ -buffer-name=normal
     \ file/old<CR>
 "mark一覧
@@ -155,3 +164,6 @@ else
 endif
 endfunction
 nnoremap <silent> sl :<C-u>call <SID>denite_lsp_diagnostics()<CR>
+
+" some other options
+au dein BufEnter * if &ft !~# '\v(denite|denite-filter)' | setlocal scroll=3 | endif

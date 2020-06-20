@@ -1,71 +1,8 @@
 {
-  "filters": {
-      "whitelist": {
-          "allow": [
-              "/%\\s.*/g"
-          ]
-      }
-    },
-  "rules": {
-    "@textlint-ja/no-synonyms": true,
-    "ja-hiragana-keishikimeishi": true,
-    "ja-hiragana-fukushi": true,
-    "ja-hiragana-hojodoushi": true,
-    "apostrophe": true,
-    "common-misspellings":true,
-    "spellcheck-tech-word":true,
-    "preset-ja-technical-writing": {
-        "sentence-length": {
-            max: 125
-            },
-        "max-comma": {
-               max: 5
-           },
-        "max-ten": {
-            "max" : 3
-            },
-        "no-exclamation-question-mark": {
-            // allow to use !
-            "allowHalfWidthExclamation": false,
-            // allow to use ！
-            "allowFullWidthExclamation": true,
-            // allow to use ?
-            "allowHalfWidthQuestion": false,
-            // allow to use ？
-            "allowFullWidthQuestion": true
-            },
-        "max-kanji-continuous-len": {
-                // 連続できる漢字の文字数
-                // Allow max continuous length of kanji
-                // If {current} > max(5), report Error.
-                max: 8,
-                allow: [""]
-            },
-        "no-doubled-joshi": {
-                    // 助詞のtoken同士の距離が2以下ならエラー
-                    "min_interval" : 1,
-                    // 例外を許可するかどうか
-                    "strict": false,
-                    // 助詞のうち「も」「や」は複数回の出現を許す
-                    "allow": ["とか", "たり","にも"],
-                    // 文区切り文字の配列
-                },
-        "ja-no-mixed-period": {
-                     // 優先する句点文字
-                     "periodMark": "。",
-                     // 句点文字として許可する文字列の配列
-                     "allowPeriodMarks": [")", "]", "}","."],
-                     // 末尾に絵文字を置くことを許可するか
-                     "allowEmojiAtEnd": false,
-                     // 句点で終わって無い場合に`periodMark`を--fix時に追加するかどうか
-                     "forceAppendPeriod": false
-                },
-        "no-mix-dearu-desumasu": false,
-        "ja-unnatural-alphabet": true,
-        "no-unmatched-pair": true,
-        "ja-no-abusage": true
+    "rules": {
+        "prh": {
+            "rulePaths" :["~/prh.yml"]
         }
-    },
-  plugins: ["latex2e"]
+    }
 }
  // cache : true
