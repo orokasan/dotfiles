@@ -5,11 +5,13 @@ call denite#custom#option('_', {
     \ 'highlight_matched_char': 'Title',
     \ 'highlight_preview_line': 'Underlined',
     \ 'max_dynamic_update_candidates': 50000,
-    \ 'vertical_preview': v:false,
+    \ 'vertical_preview': v:true,
     \ 'source_names': 'short',
     \ 'statusline': v:false,
     \ 'direction': 'botright',
+    \ 'preview_width': &columns/2,
     \ 'match_highlight': v:true,
+    \ 'highlight_matched_range' : 'NONE',
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
         \   'h' : 5, 'l' : 6, ';' : 7,
@@ -23,7 +25,7 @@ else
 endif
 
 call denite#custom#option('normal', {'winheight': 9})
-call denite#custom#option('search', {'winheight': 9})
+call denite#custom#option('search', {'winheight': 15})
 call denite#custom#option('float',{
     \ 'split': 'floating',
     \ 'wincol': 0,
@@ -90,7 +92,7 @@ call denite#custom#var('menu', 'menus', s:menus)
 " if executable('fzf')
 " call denite#custom#source('_', 'matchers', ['matcher/fzf'])
 " else
-call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
+" call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
 " endif
 call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file/old', 'converters', ['converter/tail_path'])
@@ -185,3 +187,6 @@ call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'defx',
     \  function('s:defx_open'))
+
+autocmd dein CursorHold * if &filetype ==# 'denite' | call denite#call_map('do_action', 'preview') | endif
+

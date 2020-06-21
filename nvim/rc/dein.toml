@@ -337,9 +337,9 @@ repo = 'thinca/vim-qfreplace'
 # [[plugins]]
 # repo = 'tpope/vim-sleuth'
 
-# [[plugins]]
-# merged = '0'
-# repo ='eikendev/denite-fzf'
+[[plugins]]
+merged = '0'
+repo ='eikendev/denite-fzf'
 
 [[plugins]]
 repo = 'vim-scripts/autodate.vim'

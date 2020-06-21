@@ -643,12 +643,12 @@ if has('nvim')
     set completeopt-=preview
     " show complettion popup in commandline.
     set wildoptions=pum
-    set winblend=20
+    set winblend=0
     set termguicolors
     " remove end of buffer ~~~~~~~~~
     set fillchars+=eob:\ 
     "transparent completions menu
-    set pumblend=15
+    set pumblend=0
     set inccommand=nosplit
     au TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 200)
 endif
@@ -661,13 +661,15 @@ if has('nvim')
     hi! PmenuSel blend=0
 endif
 " edit fold column
-if has('Win32')
+" if has('Win32')
+"     set background=dark
+"     let g:colors_name = 'iceberg'
+" else
+"     set background=light
+"     let g:colors_name= 'seagull'
+" endif
     set background=dark
     let g:colors_name = 'iceberg'
-else
-    set background=light
-    let g:colors_name= 'seagull'
-endif
 "}}}
 " dein.vim {{{
 let s:dein_dir = expand('~/.cache/dein')
@@ -860,4 +862,5 @@ vnoremap gs :<C-u>%s///g<Left><Left>
 " /\v(①|②|③|④|⑤|⑥|⑦|⑧|⑨|⑩)/
 nnoremap /  /\v
 nnoremap ?  ?\v
+set updatetime=1500
 " vim:set foldmethod=marker:

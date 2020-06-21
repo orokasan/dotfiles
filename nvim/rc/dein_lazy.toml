@@ -10,7 +10,7 @@ if has('nvim')
 let g:my_denite_filter_winblend_config = 1
 let g:my_denite_filter_winblend_config = b:denite.buffer_name !~#
 \ '\v(float|menu|relative)' ? 1 : 0
-setlocal winblend=10
+setlocal winblend=0
 endif
 setlocal signcolumn=no
 nnoremap <silent><buffer><expr> j

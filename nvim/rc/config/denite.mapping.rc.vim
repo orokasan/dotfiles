@@ -57,8 +57,8 @@ nnoremap <silent> [denite]b :<C-u>Denite
 "     \ -buffer-name=command
 "     \ command command_history<CR>
 nnoremap <silent> [denite]/ :<C-u>Denite
-    \ -buffer-name=default
-    \ anzu<CR>
+    \ -buffer-name=search
+    \ line
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
     \ -buffer-name=relative
@@ -146,9 +146,13 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -post-action=open
     \ -buffer-name=combo
     \ combo<CR>
-nnoremap [denite]t :<C-u>Denite
+nnoremap <silent> [denite]t :<C-u>Denite
     \ -buffer-name=search
     \ text<CR>
+nnoremap <silent> [denite]/ :<C-u>Denite
+    \ -buffer-name=search
+    \ -no-empty
+    \ searchres<CR>
 function! s:denite_lsp_diagnostics() abort
 " let command = 'Denite -buffer-name=float location_list'
 let command = 'Denite -buffer-name=float -auto-resume -refresh location_list'
