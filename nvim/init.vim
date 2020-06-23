@@ -43,6 +43,56 @@ set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup                " no more backup file
 
+let mapleader = "\<Space>"
+"}}}
+
+" dein.vim {{{
+let s:dein_dir = expand('~/.cache/dein')
+let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
+if &runtimepath !~# '/dein.vim'
+      if !isdirectory(s:dein_repo_dir)
+        if !executable('git')
+          echo 'Please install git or update your path to include the git executable!'
+        endif
+        echo 'install dein.vim ...'
+        execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+      endif
+      " let path = fnamemodify(s:dein_repo_dir, ':p')
+    " execute 'set runtimepath+=' . substitute(path, '\\$', '', '')
+    execute 'set runtimepath+=' . fnamemodify(s:dein_repo_dir, ':p')
+endif
+
+let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
+let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
+let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
+
+if has('nvim')
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
+else
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
+endif
+
+let s:myvimrc = expand('$MYVIMRC')
+
+if dein#load_state(s:dein_dir)
+    call dein#begin(s:dein_dir,s:myvimrc)
+    call dein#load_toml(s:toml,      {'lazy': 0})
+    call dein#load_toml(s:lazy_toml, {'lazy': 1})
+    call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    call dein#end()
+    call dein#save_state()
+    if !has('vim_starting')
+        call dein#call_hook('source')
+        call dein#call_hook('post_source')
+    endif
+endif
+
+filetype plugin indent on
+syntax enable
+
+command! -nargs=0 -complete=command DeinInstall  call dein#install()
+command! -nargs=0 -complete=command DeinUpdate call dein#update()
+command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
 
 " Visual  {{{
@@ -153,7 +203,7 @@ function! s:cmdwin_settings() abort
 endfunction
 
 " open .docx as .zip
-au vimrc BufReadCmd *.docx,*.doc,*.pages call zip#Browse(expand("<amatch>"))
+au vimrc BufReadCmd *.docx,*.doc,*.pages,*.xlsm,*.xlsx  call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
 au vimrc BufRead .textlintrc set ft=json
 set completeopt+=menuone
@@ -213,7 +263,6 @@ endif
 ""}}}
 
 "Key map - moving {{{
-let mapleader = "\<Space>"
 " improved insert
 " in neovim, 'cc' overwrite unnamed register.
 "nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
@@ -661,61 +710,8 @@ if has('nvim')
     hi! PmenuSel blend=0
 endif
 " edit fold column
-" if has('Win32')
-"     set background=dark
-"     let g:colors_name = 'iceberg'
-" else
-"     set background=light
-"     let g:colors_name= 'seagull'
-" endif
-    set background=dark
-    let g:colors_name = 'iceberg'
-"}}}
-" dein.vim {{{
-let s:dein_dir = expand('~/.cache/dein')
-let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
-if &runtimepath !~# '/dein.vim'
-      if !isdirectory(s:dein_repo_dir)
-        if !executable('git')
-          echo 'Please install git or update your path to include the git executable!'
-        endif
-        echo 'install dein.vim ...'
-        execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
-      endif
-    execute 'set runtimepath+=' .fnamemodify(s:dein_repo_dir, ':p')
-endif
-
-let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
-let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
-let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
-
-if has('nvim')
-    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
-else
-    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
-endif
-
-let s:myvimrc = expand('$MYVIMRC')
-
-if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_dir,s:myvimrc)
-    call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    call dein#load_toml(s:lsp_toml,  {'merged': 1})
-    call dein#end()
-    call dein#save_state()
-    if !has('vim_starting')
-        call dein#call_hook('source')
-        call dein#call_hook('post_source')
-    endif
-endif
-
-filetype plugin indent on
-syntax enable
-
-command! -nargs=0 -complete=command DeinInstall  call dein#install()
-command! -nargs=0 -complete=command DeinUpdate call dein#update()
-command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
+set background=dark
+colorscheme iceberg
 "}}}
 
 " filetype config {{{
@@ -806,9 +802,6 @@ if exists('g:gonvim_running')
  augroup GonvimAuStatusline
     autocmd!
   augroup end
- augroup GonvimAu
-    autocmd!
-  augroup end
   augroup GonvimAuLint
     autocmd!
   augroup end
@@ -834,7 +827,6 @@ if exists('g:gonvim_running')
   set mouse=nicr
 endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
-let text_minlines = 100
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
 autocmd FileType text syntax sync minlines=500
 autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')

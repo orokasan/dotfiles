@@ -49,8 +49,7 @@ let g:lightline = {
 " https://github.com/neovim/neovim/issues/8796
 autocmd dein User LspDiagnosticsChanged if mode() is# 'n' | call lightline#update() | endif
 
-" let g:lightline.colorscheme = 'quack'
-autocmd dein ColorScheme * call <SID>lightline_set_colorscheme()
+autocmd dein ColorScheme,VimEnter * call <SID>lightline_set_colorscheme()
 function! s:lightline_set_colorscheme() abort
 " if !exists('g:loaded_lightline')
 " return
@@ -69,16 +68,10 @@ catch
 endtry
 endfunction
 
-" if has('nvim')
-"     let g:lightline.subseparator= { 'left': '', 'right': '' }
-"     let g:lightline.separator= { 'left': '', 'right': '' }
-" endif
-" if !has('nvim')
-"     let g:lightline.subseparator= { 'left': '', 'right': '' }
-"     let g:lightline.separator= { 'left': '', 'right': '' }
-"     let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
-"     let g:lightline.tabline_separator= { 'left': '', 'right': '' }
-" endif
+" let g:lightline.subseparator= { 'left': '', 'right': '' }
+" let g:lightline.separator= { 'left': '', 'right': '' }
+" let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
+" let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 let g:component_function_visible_condition = {
         \ 'readonly': 1,
         \ 'denitebuf': 1,
@@ -170,8 +163,9 @@ function! LLMode()
         \ &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'defx' ? 'Defx' :
         \ &filetype is# 'denite' ? LLDeniteMode() :
-        \ &filetype is# 'gundo' ? 'Gundo' :
+        \ &filetype is# 'undotree' ? 'undotree' :
         \ &filetype is# 'tweetvim' ? 'Tweetvim' :
+        \ &previewwindow ? 'preview' :
         \ lightline#mode()
 endfunction
 
@@ -204,13 +198,16 @@ endfunction
 
 "例外filetype
 let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
+function! s:ignore_window() abort
+    return &filetype =~# s:ignore_filetype || &previewwindow
+endfunction
 
 function! LLInactiveFilename()
-    return &filetype !~# s:ignore_filetype ? expand('%:t') : &filetype is# 'denite' ? '': LLMode()
+    return s:ignore_window() ? expand('%:t') : &filetype is# 'denite' ? '': LLMode()
 endfunction
 
 function! LLeskk() abort
-    if &filetype =~# s:ignore_filetype || !s:threshold(2)
+    if s:ignore_window() || !s:threshold(2)
         return ''
     elseif !exists('*LLmyeskk')
         return '[aA]'
@@ -220,7 +217,7 @@ function! LLeskk() abort
 endfunction
 
 function! LLfiletype() abort
-    return &filetype !~# s:ignore_filetype ? &filetype : ''
+    return s:ignore_window() ? &filetype : ''
 endfunction
 
 function! LLruler() abort
@@ -230,7 +227,7 @@ function! LLruler() abort
         \ info['c'] < 100 ? ' ' . info['c'] : info['c']
     let l:fline = info['l'] < 10 ? ' ' . info['l'] : info['l']
 
-    if &filetype !~# s:ignore_filetype
+    if s:ignore_window()
         return s:threshold(0) ? printf('%s:%s«%d', fcol , fline , line('$') ) :
             \  s:threshold(1) ? printf('%s:%s', fcol , fline ) : ''
     else
@@ -239,7 +236,7 @@ function! LLruler() abort
 endfunction
 
 function! LLCharcount()
-    if &filetype !~# s:ignore_filetype
+    if s:ignore_window()
         let abbr = s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
             \ s:threshold(1) ? '' . s:llcharcount : ''
         return abbr
@@ -291,7 +288,7 @@ endfunction
 
 call get(s:, 'llgitbranch', '')
 function! LLgit() abort
-    if &filetype =~# s:ignore_filetype
+    if s:ignore_window() 
         return ''
     else
         return s:threshold(1) ? ' '. s:llgitbranch :
@@ -314,6 +311,7 @@ endfunction
 " 検索ステータスを表示 (vim-anzuを利用) {{{
 " autocmd dein InsertEnter,BufEnter,CursorMoved,CmdlineEnter * if exists('*anzu#clear_search_status')
 "     \| call anzu#clear_search_status() | endif
+
 
 " autocmd dein CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
 " autocmd dein User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif

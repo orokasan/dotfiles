@@ -54,40 +54,6 @@ endfunction
 '''
 
 [[plugins]]
-depends = ['vim-textobj-user']
-# ae, ie
-repo = 'kana/vim-textobj-entire'
-
-[[plugins]]
-depends = ['vim-textobj-user']
-# gb
-repo = 'saaguero/vim-textobj-pastedtext'
-
-[[plugins]]
-# ab, ib
-depends = ['vim-textobj-user']
-repo = 'rhysd/vim-textobj-anyblock'
-hook_add = '''
-let g:textobj#anyblock#blocks = ['(', '{', '[', '"', "'", '<' , 'f`']
-'''
-
-[[plugins]]
-# ay, iy
-depends = ['vim-textobj-user']
-repo = 'kana/vim-textobj-syntax'
-
-[[plugins]]
-# al, il
-depends = ['vim-textobj-user']
-repo = 'kana/vim-textobj-line'
-
-[[plugins]]
-# av, iv
-# aV, iV
-depends = ['vim-textobj-user']
-repo = 'rhysd/vim-textobj-word-column'
-
-[[plugins]]
 repo = 'AndrewRadev/switch.vim'
 
 [[plugins]]
@@ -96,10 +62,10 @@ repo =  'deton/jasegment.vim'
 hook_add = ''' "{{{
 let g:jasegment#model='knbc_bunsetu'
 let g:jasegment#highlight = 0
-omap <silent><buffer> aW <Plug>JaSegmentTextObjA
-omap <silent><buffer> iW <Plug>JaSegmentTextObjI
-xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
-xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
+"omap <silent><buffer> aW <Plug>JaSegmentTextObjA
+"omap <silent><buffer> iW <Plug>JaSegmentTextObjI
+"xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
+"xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
 '''# }}} 
 
 [[plugins]]
@@ -119,8 +85,11 @@ depends = ['lightline.vim']
 # [[plugins]]
 # repo = 'orokasan/vim-quack-lightline'
 
-# [[plugins]]
-# repo = 'Shougo/context_filetype.vim'
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+hook_add = '''
+let g:context_filetype#search_offset = 100
+'''
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
@@ -263,7 +232,7 @@ repo =  'orokasan/neoyank.vim'
 on_event = 'TextYankPost'
 on_source = ['denite.nvim']
 hook_add = '''
-let g:neoyank#save_registers = ['+']
+let g:neoyank#save_registers = ['*']
 autocmd dein TextYankPost * call neoyank#update()
 '''
 
@@ -321,8 +290,8 @@ au ColorScheme seagull hi! link SignColumn CursorColumn
 [[plugins]]
 repo = 'nightsense/snow'
 
-[[plugins]]
-repo = 'dstein64/vim-startuptime'
+# [[plugins]]
+# repo = 'dstein64/vim-startuptime'
 
 # [[plugins]]
 # repo = 'lambdalisue/fern.vim'
@@ -374,19 +343,54 @@ let g:autodate_format="%Y-%m-%d[%H:%M]"
 # endfunction
 # autocmd dein FileType python call MyCustomHighlights()
 # '''
-[[plugins]]
-repo = 'haya14busa/incsearch-migemo.vim'
-on_if = "!has('kaoriya')"
-# depends = 'incsearch.vim'
-# on_map = { nx = '<Plug>(incsearch-migemo-' }
-hook_add = '''
-map g/ <Plug>(incsearch-migemo-/)
-map g? <Plug>(incsearch-migemo-?)
-'''
+
+# [[plugins]]
+# # repo = 'haya14busa/incsearch.vim'
+# merged = 0
+# repo = 'orokasan/incsearch.vim'
+# hook_add = 'let g:incsearch#auto_nohlsearch = 1'
+# # TODO vimproc依存をなくす
+
+# [[plugins]]
+# # repo = 'haya14busa/incsearch-migemo.vim'
+# merged = 0
+# repo = 'orokasan/incsearch-migemo.vim'
+# on_if = "!has('kaoriya')"
+# # depends = 'incsearch.vim'
+# # on_map = { nx = '<Plug>(incsearch-migemo-' }
+# hook_add = '''
+# map g/ <Plug>(incsearch-migemo-/)
+# map g? <Plug>(incsearch-migemo-?)
+# '''
+
 # [[plugins]]
 # repo = 'heavenshell/vim-textlint' 
 
 [[plugins]]
 repo = 'rhysd/conflict-marker.vim'
 
+[[plugins]]
+repo = 'osyo-manga/vim-precious'
+hook_source = '''
+" カーソル移動時の自動切り替えを無効化
+" このオプションは filetype ごとに設定可能
+" "*" は全ての filetype に影響する
+" let g:precious_enable_switch_CursorMoved = {
+" \   "*" : 0
+" \}
+" let g:precious_enable_switch_CursorMoved_i = {
+" \   "*" : 0
+" \}
+" " insert に入った時にスイッチし、抜けた時に元に戻す
+" augroup test
+"     autocmd!
+"     autocmd InsertEnter * :PreciousSwitch
+" augroup END
+'''
+[[plugins]]
+merged = 0
+repo =  'vim-jp/vital.vim' 
+
+[[plugins]]
+repo =  'haya14busa/revital.vim' 
 # vim:set foldmethod=marker:

@@ -152,20 +152,6 @@ function! Defx_to_denite_rec(context) abort
         \ -path=' . narrow_dir .
         \ ' file/rec')
 endfunction
-function! Defx_improved_open(context) abort
-        if l:extension =~# l:ex
-         echo 'hoge'
-         endif
-        if defx#is_directory() 
-            call defx#do_action('open')
-        endif
-        let l:extension = defx#get_candidate().
-        "elseif l:extension =~# l:ex
-        "    call defx#async_action('execute_system')
-        "else
-        "    call defx#do_action('drop')
-        "endif
-endfunction
 function! Defx_to_denite_file(context) abort
         let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
         silent! execute('Denite
@@ -173,6 +159,25 @@ function! Defx_to_denite_file(context) abort
         \ -start-filter
         \ -path='. narrow_dir . ' file')
 endfunction
+
+"https://github.com/Shougo/defx.nvim/issues/175
+function! s:open_defx_if_directory()
+  " This throws an error if the buffer name contains unusual characters like
+  " [[buffergator]]. Desired behavior in those scenarios is to consider the
+  " buffer not to be a directory.
+  try
+    let l:full_path = expand(expand('%:p'))
+  catch
+    return
+  endtry
+
+  " If the path is a directory, delete the (useless) buffer and open defx for
+  " that directory instead.
+  if isdirectory(l:full_path)
+    silent! execute "Defx `expand('%:p')` | bd " . expand('%:p')
+  endif
+endfunction
+autocmd dein BufEnter * call s:open_defx_if_directory()
 '''
 [plugins.ftplugin]
 defx = '''
@@ -211,6 +216,7 @@ nnoremap <silent><buffer><expr> <RightMouse> defx#do_action('cd', ['..'])
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
 nnoremap <silent><buffer><expr> i defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> e defx#async_action('toggle_select')
 nnoremap <silent><buffer><expr> I defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
@@ -221,6 +227,7 @@ nnoremap <silent><buffer><expr> ss defx#do_action('call','Defx_to_denite_rec')
 nnoremap <silent><buffer><expr> sf defx#do_action('call','Defx_to_denite_file')
 nnoremap <silent><buffer> sa :split<CR>:Defx -new -split=no<CR>
 xnoremap <silent><buffer><expr> i defx#do_action('toggle_select_visual')
+xnoremap <silent><buffer><expr> e defx#async_action('toggle_select_visual')
 function! s:defx_is_plaintxt()
     let file = defx#get_candidate()['action__path']
     let extension = fnamemodify(file, ':e')
@@ -560,8 +567,8 @@ hook_source = '''
 "2バイト括弧を追加
 let g:operator#surround#blocks = {}
 let g:operator#surround#blocks['-'] = [
-\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
-\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['K'] },
+\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
+\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
 \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
 \ ]
 '''
@@ -604,26 +611,6 @@ nmap <C-g><C-c> <Plug>(cursorword-toggle)
 '''
 
 [[plugins]]
-repo = 'osyo-manga/vim-precious'
-on_ft = 'toml'
-hook_source = '''
-" カーソル移動時の自動切り替えを無効化
-" このオプションは filetype ごとに設定可能
-" "*" は全ての filetype に影響する
-let g:precious_enable_switch_CursorMoved = {
-\   "*" : 0
-\}
-let g:precious_enable_switch_CursorMoved_i = {
-\   "*" : 0
-\}
-" insert に入った時にスイッチし、抜けた時に元に戻す
-augroup test
-    autocmd!
-    autocmd InsertEnter * :PreciousSwitch
-augroup END
-'''
-
-[[plugins]]
 repo = 'mattn/benchvimrc-vim'
 on_cmd = 'BenchVimrc'
 
@@ -656,17 +643,11 @@ nmap <Leader>ga <Plug>(EasyAlign)
 
 [[plugins]]
 repo =  'tyru/open-browser.vim'
-on_map = {nx = '<Plug>(openbrowser-'}
+on_map = {nx = '<Plug>(openbrowser'}
 hook_add ='''
 nmap <Leader>o <Plug>(openbrowser-smart-search)
-vmap <Leader>o <Plug>(openbrowser-smart-search)
+xmap <Leader>o <Plug>(openbrowser-smart-search)
 '''
-
-[[plugins]]
-on_source = 'incsearch-migemo.vim'
-repo = 'haya14busa/incsearch.vim'
-hook_add = 'let g:incsearch#auto_nohlsearch = 1'
-# TODO vimproc依存をなくす
 
 [[plugins]]
 repo = 'orokasan/clever-f.vim'
@@ -719,7 +700,8 @@ on_map = { nxi = '<Plug>(easymotion'}
 repo = 'easymotion/vim-easymotion'
 hook_add = '''
 let g:EasyMotion_do_mapping = 0
-nmap m <Plug>(easymotion-overwin-f2)
+" nmap m <Plug>(easymotion-overwin-f2)
+nmap m <Plug>(easymotion-s2)
 imap <C-z> <ESC><Plug>(easymotion-s2)
 xmap m <Plug>(easymotion-s2)
 omap m <Plug>(easymotion-s2)
@@ -731,7 +713,7 @@ let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
 let g:EasyMotion_smartcase = 1
 let g:EasyMotion_space_jump_first = 1
-"let g:EasyMotion_use_migemo = 1
+let g:EasyMotion_use_migemo = 1
 let g:EasyMotion_prompt = '{n}>>> '
 let g:EasyMotion_verbose = 0
 hi link EasyMotionTarget Type
@@ -1112,4 +1094,88 @@ on_cmd = ['Git', 'G']
 hook_add = '''
 '''
 
+[[plugins]]
+on_map = {n = '<Plug>(vigemo-'}
+repo =  'orokasan/vim-vigemo' 
+hook_add = '''
+nmap g/ <Plug>(vigemo-search)
+nmap g? <Plug>(vigemo-search)
+'''
+
+[[plugins]]
+on_map = {xo = '<Plug>(textobj-'}
+depends = ['vim-textobj-user']
+# ae, ie
+repo = 'kana/vim-textobj-entire'
+hook_add = '''
+xmap ae <Plug>(textobj-entire-a)
+omap ae <Plug>(textobj-entire-a)
+xmap ie <Plug>(textobj-entire-i)
+omap ie <Plug>(textobj-entire-i)
+'''
+
+[[plugins]]
+on_map = {xo = '<Plug>(textobj-pastedtext'}
+depends = ['vim-textobj-user']
+# gb
+repo = 'saaguero/vim-textobj-pastedtext'
+hook_add = '''
+xmap gb <Plug>(textobj-pastedtext-text)
+omap gb <Plug>(textobj-pastedtext-text)
+'''
+
+[[plugins]]
+# ab, ib
+on_map = {xo = '<Plug>(textobj-anyblock'}
+
+depends = ['vim-textobj-user']
+repo = 'rhysd/vim-textobj-anyblock'
+hook_add = '''
+let g:textobj#anyblock#blocks = ['(', '{', '[', '"', "'", '<' , 'f`']
+xmap ab <Plug>(textobj-anyblock-a)
+omap ab <Plug>(textobj-anyblock-a)
+xmap ib <Plug>(textobj-anyblock-i)
+omap ib <Plug>(textobj-anyblock-i)
+'''
+
+[[plugins]]
+# ay, iy
+on_map = {xo = '<Plug>(textobj-syntax'}
+depends = ['vim-textobj-user']
+repo = 'kana/vim-textobj-syntax'
+hook_add = '''
+xmap ay <Plug>(textobj-syntax-a)
+omap ay <Plug>(textobj-syntax-a)
+xmap iy <Plug>(textobj-syntax-i)
+omap iy <Plug>(textobj-syntax-i)
+'''
+
+[[plugins]]
+# al, il
+depends = ['vim-textobj-user']
+on_map = {xo = '<Plug>(textobj-line'}
+repo = 'kana/vim-textobj-line'
+hook_add = '''
+xmap al <Plug>(textobj-line-a)
+omap al <Plug>(textobj-line-a)
+xmap il <Plug>(textobj-line-i)
+omap il <Plug>(textobj-line-i)
+'''
+
+[[plugins]]
+# av, iv
+# aV, iV
+depends = ['vim-textobj-user']
+on_map = {xo = '<Plug>(textobj-wordcolumn'}
+repo = 'rhysd/vim-textobj-word-column'
+hook_add = '''
+xmap av <Plug>(textobj-wordcolumn-w-a)
+omap av <Plug>(textobj-wordcolumn-w-a)
+xmap iv <Plug>(textobj-wordcolumn-w-i)
+omap iv <Plug>(textobj-wordcolumn-w-i)
+xmap aV <Plug>(textobj-wordcolumn-W-a)
+omap aV <Plug>(textobj-wordcolumn-W-a)
+xmap iV <Plug>(textobj-wordcolumn-W-i)
+omap iV <Plug>(textobj-wordcolumn-W-i)
+'''
 # vim:set foldmethod=marker:

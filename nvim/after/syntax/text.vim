@@ -19,7 +19,6 @@ endif
 
 syntax         match   gihyoRuler       "\(=\|-\|+\)\{50,120}"
 syntax         match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@A-Za-z_~]\+"
-syntax         match   gihyoTodo        '^TODO.*'
 syntax         match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
 
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
@@ -28,15 +27,16 @@ syn region  gihyoHeader2    start='^■■[^■]' end='$'
 syn region  gihyoHeader3    start='^■■■[^■]' end='$'
 syn region  gihyoHeader4    start='^■■■■[^■]' end='$'
 syn region  gihyoBullet    start='^・' end='$'
+syntax         region   gihyoTodo        start='^TODO' end='$'
 syntax         region   gihyoPoint       start='^●' end='$'
 syntax         region   gihyoHead        start='^◆' end='$'
 syntax         region   gihyoLead        start='^▲' end='$'
 
-syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/
-syntax         region  gihyoTable       start=/^▼表-----$/     end=/^\{-}-----\n/
-syntax         region  gihyoCode        start=/^▼コード-----$/ end=/^\{-}-----\n/
-syntax         region  gihyoCode        start=/\n▼リスト/      end=/\n.\{-}\n\n/
-syntax         region  gihyoCommand     start=/\n==コマンド\n/  end=/\n==.\{-}\n\n/
+syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/ contains=ALL
+syntax         region  gihyoTable       start=/^▼表-----$/     end=/^\{-}-----\n/ contains=ALL
+syntax         region  gihyoCode        start=/^▼コード-----$/ end=/^\{-}-----\n/ contains=ALL
+syntax         region  gihyoCode        start=/\n▼リスト/      end=/\n.\{-}\n\n/ contains=ALL
+syntax         region  gihyoCommand     start=/\n==コマンド\n/  end=/\n==.\{-}\n\n/ contains=ALL
 
 syntax         region  gihyoTable       start=/^▼構文-----$/   end=/^\{-}-----\n/
 
@@ -66,6 +66,7 @@ highlight      link    gihyoSStrong     PreProc
 " hi link txtDialog Constant
 hi!            link    NonText          Comment
 
+syntax sync minlines=100
 finish
 
 ==============================================================================
@@ -162,4 +163,4 @@ TODO 何々する
 
 ==============================================================================
 " vim:set et syntax=vim nowrap :
-s
+
