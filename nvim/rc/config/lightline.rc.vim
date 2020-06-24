@@ -120,23 +120,40 @@ function! s:threshold(n) abort
         \ a:n == 1 ? w > s*2/3 :
         \ a:n == 2 ? w > s/3 : w > s/4
 endfunction
+function! VimLspCacheDiagnosticsCounts()
+    let s:diagnostics_counts = exists('*lsp#get_buffer_diagnostics_counts') ? lsp#get_buffer_diagnostics_counts() : ''
+endfunction
+autocmd dein User lsp_diagnostics_updated call VimLspCacheDiagnosticsCounts() | call lightline#update()
+autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts()
 
+" vim-lsp or nvim-lsp
+let s:lsp = 'nvim-lsp'
 function! LLLspError() abort
+if s:lsp ==# 'vim-lsp'
+    let error = s:diagnostics_counts['error']
+    return error ? '' . error : ''
 " workaround
 " gopls is crashed by calling vim.lsp.buf.server_ready()
-if &filetype ==# 'go'
-    return ''
-endif
-
-if luaeval('vim.lsp.buf.server_ready()')
-    let e = luaeval("vim.lsp.util.buf_diagnostics_count(\"Error\")")
-    return e ? '' . e : ''
 else
-    return ''
+    if &filetype ==# 'go'
+        return ''
+    endif
+
+    if luaeval('vim.lsp.buf.server_ready()')
+        let e = luaeval("vim.lsp.util.buf_diagnostics_count(\"Error\")")
+        return e ? '' . e : ''
+    else
+        return ''
+    endif
 endif
 endfunction
-
 function! LLLspWarning() abort
+if s:lsp ==# 'vim-lsp'
+    let warning = s:diagnostics_counts['warning']
+    return warning ? '' . warning : ''
+" workaround
+" gopls is crashed by calling vim.lsp.buf.server_ready()
+else
 if &filetype ==# 'go'
     return ''
 endif
@@ -145,6 +162,7 @@ if luaeval('vim.lsp.buf.server_ready()')
     return  w ? '' . w : ''
 else
     return ''
+endif
 endif
 endfunction
 
@@ -203,7 +221,7 @@ function! s:ignore_window() abort
 endfunction
 
 function! LLInactiveFilename()
-    return s:ignore_window() ? expand('%:t') : &filetype is# 'denite' ? '': LLMode()
+    return !s:ignore_window() ? expand('%:t') : &filetype is# 'denite' ? '': LLMode()
 endfunction
 
 function! LLeskk() abort
@@ -217,7 +235,7 @@ function! LLeskk() abort
 endfunction
 
 function! LLfiletype() abort
-    return s:ignore_window() ? &filetype : ''
+    return !s:ignore_window() ? &filetype : ''
 endfunction
 
 function! LLruler() abort
@@ -227,7 +245,7 @@ function! LLruler() abort
         \ info['c'] < 100 ? ' ' . info['c'] : info['c']
     let l:fline = info['l'] < 10 ? ' ' . info['l'] : info['l']
 
-    if s:ignore_window()
+    if !s:ignore_window()
         return s:threshold(0) ? printf('%s:%s«%d', fcol , fline , line('$') ) :
             \  s:threshold(1) ? printf('%s:%s', fcol , fline ) : ''
     else
@@ -236,7 +254,7 @@ function! LLruler() abort
 endfunction
 
 function! LLCharcount()
-    if s:ignore_window()
+    if !s:ignore_window()
         let abbr = s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
             \ s:threshold(1) ? '' . s:llcharcount : ''
         return abbr

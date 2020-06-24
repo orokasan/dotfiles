@@ -93,6 +93,26 @@ syntax enable
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
+
+lua << EOF
+do
+  local method = "textDocument/publishDiagnostics"
+  local default_callback = vim.lsp.callbacks[method]
+  vim.lsp.callbacks[method] = function(err, method, result, client_id)
+    default_callback(err, method, result, client_id)
+    if result and result.diagnostics then
+      for _, v in ipairs(result.diagnostics) do
+        v.uri = v.uri or result.uri
+        v.bufnr = client_id
+        v.lnum = v.range.start.line + 1
+        v.col = v.range.start.character + 1
+        v.text = v.message
+      end
+      vim.lsp.util.set_qflist(result.diagnostics)
+    end
+  end
+end
+EOF
 "}}}
 
 " Visual  {{{
@@ -590,42 +610,42 @@ else
   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
 endif
 
-function! s:undo_entry()
-  let history = get(w:, 'qf_history', [])
-  if !empty(history)
-    call setqflist(remove(history, -1), 'r')
-  endif
-endfunction
+" function! s:undo_entry()
+"   let history = get(w:, 'qf_history', [])
+"   if !empty(history)
+"     call setqflist(remove(history, -1), 'r')
+"   endif
+" endfunction
 
-function! s:del_entry() range
-  let qf = getqflist()
-  let history = get(w:, 'qf_history', [])
-  call add(history, copy(qf))
-  let w:qf_history = history
-  unlet! qf[a:firstline - 1 : a:lastline - 1]
-  call setqflist(qf, 'r')
-  execute a:firstline
-endfunction
+" function! s:del_entry() range
+"   let qf = getqflist()
+"   let history = get(w:, 'qf_history', [])
+"   call add(history, copy(qf))
+"   let w:qf_history = history
+"   unlet! qf[a:firstline - 1 : a:lastline - 1]
+"   call setqflist(qf, 'r')
+"   execute a:firstline
+" endfunction
 "}}}
 
 "Quickfix {{{
-autocmd vimrc FileType qf call s:my_qf_setting()
-function! s:my_qf_setting() abort
-    " nnoremap <buffer> <CR> :<C-u>.cc<CR>
-    nnoremap <silent><buffer> q :<C-u>quit<CR>
-    nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
-    noremap <buffer> p  <CR>zz<C-w>p
-endfunction
-function! s:is_loc()
-let wi = getwininfo(win_getid())[0]
-if wi.loclist
-    return execute('.ll')
-elseif wi.quickfix
-    return execute('.cc')
-else
-    echom 'here is not quickfix and location list.'
-endif
-endfunction
+" autocmd vimrc FileType qf call s:my_qf_setting()
+" function! s:my_qf_setting() abort
+"     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
+"     nnoremap <silent><buffer> q :<C-u>quit<CR>
+"     nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
+"     noremap <buffer> p  <CR>zz<C-w>p
+" endfunction
+" function! s:is_loc()
+" let wi = getwininfo(win_getid())[0]
+" if wi.loclist
+"     return execute('.ll')
+" elseif wi.quickfix
+"     return execute('.cc')
+" else
+"     echom 'here is not quickfix and location list.'
+" endif
+" endfunction
 "}}}
 
 " +GUI {{{

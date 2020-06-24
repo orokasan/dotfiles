@@ -24,25 +24,7 @@ nvim_lsp.efm_ls.setup{}
 
 vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 
-require'nvim_lsp'.gopls.setup{
-    capabilities = {
-      textDocument = {
-        completion = {
-            completionItem = {
-            snippetSupport = true
-          }
-        }
-      }
-    },
-    init_options = {
-      usePlaceholders=true;
-      linkTarget="pkg.go.dev";
-      completionDocumentation=true;
-      completeUnimported=true;
-      deepCompletion=true;
-      fuzzyMatching=true;
-    };
-  }
+require'nvim_lsp'.gopls.setup{}
 
 require'nvim_lsp'.texlab.setup{}
     -- settings = {
@@ -61,21 +43,6 @@ require'nvim_lsp'.pyls.setup{}
 -- require'nvim_lsp'.sumneko_lua.setup{}
 -- require'nvim_lsp'.vimls.setup{}
 
-
-do
-  local method = 'textDocument/publishDiagnostics'
-  local default_callback = vim.lsp.callbacks[method]
-  vim.lsp.callbacks[method] = function(err, method, result, client_id)
-    default_callback(err, method, result, client_id)
-    if result and result.diagnostics then
-      for _, v in ipairs(result.diagnostics) do
-        v.uri = v.uri or result.uri
-      end
-      vim.lsp.util.set_loclist(result.diagnostics)
-    end
-  end
-end
-
 EOF
 
 "lsp.txtそのまま
@@ -90,6 +57,7 @@ nnoremap <silent><Leader>fmt <cmd>lua vim.lsp.buf.formatting()<CR>
 nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
 nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent> <C-k> <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 "let g:tex_flavor = "latex"
 "set updatetime=1000
 "function! s:vimenter() abort
