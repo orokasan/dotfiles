@@ -85,11 +85,11 @@ depends = ['lightline.vim']
 # [[plugins]]
 # repo = 'orokasan/vim-quack-lightline'
 
-[[plugins]]
-repo = 'Shougo/context_filetype.vim'
-hook_add = '''
-let g:context_filetype#search_offset = 100
-'''
+# [[plugins]]
+# repo = 'Shougo/context_filetype.vim'
+# hook_add = '''
+# let g:context_filetype#search_offset = 100
+#'''
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
@@ -369,24 +369,25 @@ let g:autodate_format="%Y-%m-%d[%H:%M]"
 [[plugins]]
 repo = 'rhysd/conflict-marker.vim'
 
-[[plugins]]
-repo = 'osyo-manga/vim-precious'
-hook_source = '''
-" カーソル移動時の自動切り替えを無効化
-" このオプションは filetype ごとに設定可能
-" "*" は全ての filetype に影響する
-" let g:precious_enable_switch_CursorMoved = {
-" \   "*" : 0
-" \}
-" let g:precious_enable_switch_CursorMoved_i = {
-" \   "*" : 0
-" \}
-" " insert に入った時にスイッチし、抜けた時に元に戻す
-" augroup test
-"     autocmd!
-"     autocmd InsertEnter * :PreciousSwitch
-" augroup END
-'''
+# [[plugins]]
+# depends = ['context_filetype.vim']
+# repo = 'osyo-manga/vim-precious'
+# hook_source = '''
+# " カーソル移動時の自動切り替えを無効化
+# " このオプションは filetype ごとに設定可能
+# " "*" は全ての filetype に影響する
+# " let g:precious_enable_switch_CursorMoved = {
+# " \   "*" : 0
+# " \}
+# " let g:precious_enable_switch_CursorMoved_i = {
+# " \   "*" : 0
+# " \}
+# " " insert に入った時にスイッチし、抜けた時に元に戻す
+# " augroup test
+# "     autocmd!
+# "     autocmd InsertEnter * :PreciousSwitch
+# " augroup END
+# '''
 [[plugins]]
 merged = 0
 repo =  'vim-jp/vital.vim' 

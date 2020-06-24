@@ -98,17 +98,24 @@ lua << EOF
 do
   local method = "textDocument/publishDiagnostics"
   local default_callback = vim.lsp.callbacks[method]
+        function vim.lsp.util.set_qflist(items)
+          vim.fn.setqflist({}, 'a', {
+            title = 'language server';
+            items = items;
+          })
+    end
   vim.lsp.callbacks[method] = function(err, method, result, client_id)
     default_callback(err, method, result, client_id)
     if result and result.diagnostics then
       for _, v in ipairs(result.diagnostics) do
         v.uri = v.uri or result.uri
-        v.bufnr = client_id
+        v.bufnr = vim.uri_to_bufnr(v.uri)
         v.lnum = v.range.start.line + 1
         v.col = v.range.start.character + 1
         v.text = v.message
       end
       vim.lsp.util.set_qflist(result.diagnostics)
+      vim.lsp.util.set_loclist(result.diagnostics)
     end
   end
 end
