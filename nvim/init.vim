@@ -96,6 +96,18 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() 
 
 lua << EOF
 do
+function vim.lsp.util.set_qflist(items)
+  vim.fn.setqflist({}, 'a', {
+    title = 'Language Server';
+    items = items;
+  })
+end
+function vim.lsp.util.set_loclist(items)
+  vim.fn.setloclist(0, {}, ' ', {
+    title = 'Language Server';
+    items = items;
+  })
+end
   local method = "textDocument/publishDiagnostics"
   local default_callback = vim.lsp.callbacks[method]
   vim.lsp.callbacks[method] = function(err, method, result, client_id)
@@ -103,12 +115,13 @@ do
     if result and result.diagnostics then
       for _, v in ipairs(result.diagnostics) do
         v.uri = v.uri or result.uri
-        v.bufnr = client_id
+        v.bufnr = vim.uri_to_bufnr(v.uri)
         v.lnum = v.range.start.line + 1
         v.col = v.range.start.character + 1
         v.text = v.message
       end
       vim.lsp.util.set_qflist(result.diagnostics)
+      vim.lsp.util.set_loclist(result.diagnostics)
     end
   end
 end

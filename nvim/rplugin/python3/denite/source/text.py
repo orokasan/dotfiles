@@ -33,11 +33,11 @@ class Source(Base):
                     self.syntax_name, syn['name'], syn['link']))
 
     def gather_candidates(self, context):
-        if self.vim.eval('&filetype') != 'text':
-            self.vim.call('denite#util#print_error', 'This file is not a gihyo text file.')
-            return []
-        else:
-            return [self._convert(context, header) for header in self._find_headers()]
+        # if self.vim.eval('&filetype') != 'text':
+        #     self.vim.call('denite#util#print_error', 'This file is not a gihyo text file.')
+        #     return []
+        # else:
+        return [self._convert(context, header) for header in self._find_headers()]
 
     def _convert(self, context, header):
         level = len(header['level'])

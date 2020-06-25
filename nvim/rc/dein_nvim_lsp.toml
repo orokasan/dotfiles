@@ -39,7 +39,8 @@ require'nvim_lsp'.texlab.setup{}
 -- }
 
 -- require'nvim_lsp'.pyls_ms.setup{}
-require'nvim_lsp'.pyls.setup{}
+-- require'nvim_lsp'.pyls.setup{}
+require'nvim_lsp'.jedi_language_server.setup{}
 -- require'nvim_lsp'.sumneko_lua.setup{}
 -- require'nvim_lsp'.vimls.setup{}
 
