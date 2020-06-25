@@ -93,7 +93,8 @@ syntax enable
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-
+let g:diagnostics = ''
+let g:diagnosticsafter = ''
 lua << EOF
 do
   local method = "textDocument/publishDiagnostics"
@@ -106,6 +107,7 @@ do
     end
   vim.lsp.callbacks[method] = function(err, method, result, client_id)
     default_callback(err, method, result, client_id)
+          vim.fn.nvim_set_var('diagnostics', result.diagnostics)
     if result and result.diagnostics then
       for _, v in ipairs(result.diagnostics) do
         v.uri = v.uri or result.uri
@@ -114,6 +116,7 @@ do
         v.col = v.range.start.character + 1
         v.text = v.message
       end
+          vim.fn.nvim_set_var('diagnosticsafter', result.diagnostics)
       vim.lsp.util.set_qflist(result.diagnostics)
       vim.lsp.util.set_loclist(result.diagnostics)
     end

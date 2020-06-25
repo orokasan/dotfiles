@@ -188,5 +188,5 @@ call denite#custom#action(
     \ 'defx',
     \  function('s:defx_open'))
 
-autocmd dein CursorHold * if &filetype ==# 'denite' | call denite#call_map('do_action', 'preview') | endif
+autocmd dein CursorHold * if &filetype ==# 'denite' | call denite#call_map('do_action', 'highlight') | endif
 
