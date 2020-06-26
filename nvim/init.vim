@@ -96,6 +96,18 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() 
 
 lua << EOF
 do
+function vim.lsp.util.set_qflist(items)
+  vim.fn.setqflist({}, 'a', {
+    title = 'Language Server';
+    items = items;
+  })
+end
+function vim.lsp.util.set_loclist(items)
+  vim.fn.setloclist(0, {}, ' ', {
+    title = 'Language Server';
+    items = items;
+  })
+end
   local method = "textDocument/publishDiagnostics"
   local default_callback = vim.lsp.callbacks[method]
         function vim.lsp.util.set_qflist(items)

@@ -9,6 +9,7 @@ Height = 960
 StartMaximizedWindow = false
 
 # Editor external font-family, font-size, and linespace.
+# https://github.com/rytkmt/RictyDiminished
 FontFamily = "RictyDiminished NF"
 FontSize = 12
 Linespace = 1

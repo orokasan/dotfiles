@@ -394,4 +394,17 @@ repo =  'vim-jp/vital.vim'
 
 [[plugins]]
 repo =  'haya14busa/revital.vim' 
+
+[[plugins]]
+repo = 'danilamihailov/beacon.nvim'
+hook_add = '''
+let g:beacon_fade = 1
+let g:beacon_size = 8
+let g:beacon_shrink = 1
+let g:beacon_show_jumps = 0
+let g:beacon_timeout=100
+let g:beacon_minimal_jump = 50
+let g:beacon_ignore_buffers = ['\[Command Line\]']
+au ColorScheme * highlight Beacon guibg=#e2a478 ctermbg=15
+'''
 # vim:set foldmethod=marker:

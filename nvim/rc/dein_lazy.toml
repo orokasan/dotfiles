@@ -728,7 +728,7 @@ hi link EasyMotionIncSearch Search
 repo = 'thinca/vim-quickrun'
 depends = 'vim-quickrun-neovim-job'
 on_cmd = ['QuickRun']
-on_map = { n = '<Plug>(quickrun' }
+on_map = { nx = '<Plug>(quickrun' }
 hook_add = '''
 nmap <Leader>q <Plug>(quickrun)
 xmap <Leader>q <Plug>(quickrun)
