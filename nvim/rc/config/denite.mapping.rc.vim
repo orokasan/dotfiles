@@ -76,8 +76,6 @@ nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
     \ -path=`expand('%:h')`
     \ -start-filter
     \ grep:::!<CR>
-nnoremap <silent> ,n :<C-u>silent Denite -resume -buffer-name=default -cursor-pos=+1 -immediately<CR>
-nnoremap <silent> ,p :<C-u>silent Denite -resume -buffer-name=default -cursor-pos=-1 -immediately<CR>
 " nnoremap <silent> [denite]G :<C-u>Denite
 "     \ -start-filter
 "     \ -path=`<SID>denite_gitdir()`
@@ -111,6 +109,7 @@ nnoremap <silent> [denite]j :<C-u>Denite
     \ jump <CR>
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
+    \ -buffer-name=default
     \ -resume<CR>
 nnoremap <silent> [denite]R :<C-u>Denite
     \ -buffer-name=search
@@ -136,16 +135,38 @@ nnoremap <silent> [denite]. :<C-u>Denite
     \ -cursor-pos=+1
     \ -immediately
     \ <CR>
-nnoremap <silent> [denite], :<C-u>Denite
+nnoremap <silent> [denite]c :<C-u>Denite
     \ -resume
-    \ -buffer-name=float
+    \ -refresh
+    \ -buffer-name=quickfix
+    \ quickfix<CR>
+nnoremap <silent> [denite]l :<C-u>Denite
+    \ -resume
+    \ -refresh
+    \ -buffer-name=location_list
+    \ location_list<CR>
+nnoremap <silent> ,n :<C-u>Denite
+    \ -resume
+    \ -buffer-name=quickfix
+    \ -cursor-pos=+1
+    \ -immediately
+    \ <CR>
+nnoremap <silent> ,p :<C-u>Denite
+    \ -resume
+    \ -buffer-name=quickfix
     \ -cursor-pos=-1
     \ -immediately
     \ <CR>
-nnoremap <silent> [denite]c :<C-u>Denite
-    \ -post-action=open
-    \ -buffer-name=combo
-    \ combo<CR>
+nnoremap <silent> [denite], :<C-u>Denite
+    \ -resume
+    \ -buffer-name=quickfix
+    \ -cursor-pos=-1
+    \ -immediately
+    \ <CR>
+" nnoremap <silent> [denite]c :<C-u>Denite
+"     \ -post-action=open
+"     \ -buffer-name=combo
+"     \ combo<CR>
 nnoremap <silent> [denite]t :<C-u>Denite
     \ -buffer-name=search
     \ text<CR>
