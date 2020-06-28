@@ -1,6 +1,6 @@
 [[plugins]]
-repo =  'Shougo/denite.nvim'
-# repo =  'orokasan/denite.nvim'
+# repo =  'Shougo/denite.nvim'
+repo =  'orokasan/denite.nvim'
 on_cmd = ['Denite', 'DeniteProjectDir', 'DeniteCursorWord']
 hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
 hook_source = 'source ~/dotfiles/nvim/rc/config/denite.rc.vim'
@@ -21,7 +21,7 @@ nnoremap <silent><buffer><expr> l
     \ denite#do_map('do_action')
 nnoremap <silent><buffer><expr> <2-LeftMouse>
     \ denite#do_map('do_action')
-nnoremap <silent><buffer><expr> a
+nnoremap <silent><buffer><expr> <TAB>
     \ denite#do_map('choose_action')
 nnoremap <silent><buffer><expr> <CR>
     \ denite#do_map('do_action')
@@ -46,10 +46,10 @@ nnoremap <silent><buffer><expr> q
     \ denite#do_map('quit')
 nnoremap <silent><buffer><expr> i
     \ denite#do_map('open_filter_buffer')
-nnoremap <silent><buffer><expr> t
+nnoremap <silent><buffer><expr> a
     \ denite#do_map('toggle_select').'j'
 nnoremap <silent><buffer><expr> A
-    \ denite#do_map('toggle_select_all').'j'
+    \ denite#do_map('toggle_select_all')
 nnoremap <silent><buffer><expr> r
     \ denite#do_map('toggle_matchers', 'matcher/regexp, matcher/fuzzy')
 nnoremap <silent><buffer><expr> <C-r>
@@ -122,7 +122,9 @@ call defx#custom#option('_', {
     \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename:size:space:time',
     \ 'sort': 'filename',
-    \ 'ignored_files': s:defx_ignore_files
+    \ 'ignored_files': s:defx_ignore_files,
+    \ 'root_marker': '■',
+    \ 'floating_preview': v:true
     \ })
 call defx#custom#column('filename', {
       \ 'max_width': 200,
@@ -199,7 +201,7 @@ nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open') :
 nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
 nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
 nnoremap <silent><buffer><expr> t defx#do_action('multi', ['toggle_sort','filename','redraw'])
-nnoremap <silent><buffer><expr> P defx#do_action('open', 'pedit')
+nnoremap <silent><buffer><expr> P defx#do_action('preview')
 nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N defx#do_action('new_file')
 nnoremap <silent><buffer><expr> F defx#do_action('new_multiple_files')

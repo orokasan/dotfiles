@@ -867,6 +867,7 @@ if exists('g:gonvim_running')
   augroup end
   cd ~/
   set mouse=nicr
+set scrolljump=5
 endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
@@ -875,16 +876,15 @@ autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
 function! Vimdiff_config(timer) abort
 " if &diff
   windo set wrap
-  " wincmd w
+  wincmd w
   " nnoremap q :tabclose<CR>
-" endif
+  " endif
 endfunction
 " autocmd vimrc TabLeave * silent! unmap q
-nnoremap <C-q> :tabclose<CR>
+nnoremap <silent><C-q> :tabclose<CR>
 noremap <ScrollWheelUp> <C-u>
 noremap <ScrollWheelDown> <C-d>
 " au vimrc BufEnter * set scroll=3
-set scrolljump=5
 nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
 set background=dark
@@ -897,4 +897,5 @@ vnoremap gs :<C-u>%s///g<Left><Left>
 nnoremap /  /\v
 nnoremap ?  ?\v
 set updatetime=1500
+let g:denite_text_pos = 0
 " vim:set foldmethod=marker:

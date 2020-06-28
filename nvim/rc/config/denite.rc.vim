@@ -185,8 +185,15 @@ endfunction
 "action:defxを定義
 call denite#custom#action(
     \ 'directory,file,openable,dirmark',
-    \ 'defx',
+    \ 'my_defx',
     \  function('s:defx_open'))
 
 autocmd dein CursorHold * if &filetype ==# 'denite' | call denite#call_map('do_action', 'highlight') | endif
+autocmd dein WinEnter * if &filetype ==# 'denite' && b:denite.buffer_name ==# 'text' | call g:Denite_set_cursor(context) | endif
 
+function! g:Denite_set_cursor(context) abort
+    let pos = a:context['target'][0]['__cursor']
+    echo pos 
+    return
+    " cursor(pos, 0)
+endfunction
