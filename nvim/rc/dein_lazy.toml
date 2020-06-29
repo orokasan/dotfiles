@@ -123,7 +123,6 @@ call defx#custom#option('_', {
     \ 'columns':'mark:indent:icons:filename:size:space:time',
     \ 'sort': 'filename',
     \ 'ignored_files': s:defx_ignore_files,
-    \ 'root_marker': '■',
     \ 'floating_preview': v:true
     \ })
 call defx#custom#column('filename', {
@@ -378,13 +377,13 @@ on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
 [[plugins]]
-repo =  'orokasan/eskk.vim'
+# repo =  'tyru/eskk.vim'
 on_event = ['InsertEnter', 'CmdlineEnter']
-# repo =  'orokasan/eskk.vim'
+repo =  'orokasan/eskk.vim'
 # on_map = {icrtn = '<Plug>(eskk:'}
 hook_add = '''
-let g:eskk#marker_okuri = '*'
-let g:eskk#rom_input_style = 'msime'
+"let g:eskk#marker_okuri = '*'
+let g:eskk#rom_input_style = 'skk'
 let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
 let g:eskk#tab_select_completion = 1
@@ -397,10 +396,6 @@ let g:eskk#dictionary = {
     \    'sorted': 0,
     \    'encoding': 'utf-8'
     \ }
-" let g:eskk#set_undo_point = {
-"     \ 'sticky' : 0,
-"     \ 'kakutei' : 0
-"     \ }
 let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 let g:eskk#cursor_color = {
     \   'ascii': '#b4be82',
@@ -424,9 +419,10 @@ let g:lexima_no_default_rules = 1
 " let g:lexima_enable_basic_rules = 1
 " let g:lexima_enable_space_rules = 0
 let g:lexima_ctrlh_as_backspace = 1
-" let g:lexima_map_escape = ''
+" for eskk.vim performance
+let g:lexima_map_escape = ''
 '''
-hook_post_source = '''
+hook_source = '''
 call lexima#set_default_rules()
 let s:lexima_my_rules = [
 \ {'char': 'z[', 'input': '「', 'input_after': '」'},
@@ -934,158 +930,6 @@ hook_add = '''
 nnoremap <silent><Leader>mp :PrevimOpen<CR>
 '''
 
-[[plugins]]
-repo =  'lambdalisue/gina.vim'
-on_cmd = ['Gina']
-hook_add = '''
-nnoremap <silent> <Leader><Leader> :<C-u>Gina status<CR>
-nnoremap <silent> <Leader>gA :<C-u>Gina changes HEAD<CR>
-nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
-nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
-nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
-nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
-nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
-nnoremap <silent> <Leader>gd :<C-u>nos Gina compare<CR>zz
-nnoremap <silent> <Leader>gg :<C-u>Gina diff<CR>
-nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
-nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
-nnoremap <silent> <Leader>gl :<C-u>Gina log<CR>
-nnoremap <silent> <Leader>gL :<C-u>Gina log %<CR>
-nnoremap <silent> <Leader>gf :<C-u>Gina ls<CR>
-nnoremap <silent> <Leader>gp :<C-u>Gina!! add -p<CR>
-let g:gina#core#spinner#delaytime = 10
-'''
-hook_source = '''
-call gina#custom#command#alias('branch', 'br')
-call gina#custom#command#alias('diff', 'df')
-call gina#custom#command#option('df', '--stat')
-call gina#custom#command#option(
-    \ '/\%(log\|reflog\|diff\)',
-    \ '--opener', 'vsplit'
-    \)
-call gina#custom#command#option(
-    \ '/\%(status\|branch\|ls\|grep\|changes\|tag\|df\)',
-    \ '--opener' , 'botright 10split'
-    \)
-call gina#custom#command#option('commit', '--opener' , 'split')
-call gina#custom#command#option('log', '--group', 'log-viewer')
-call gina#custom#command#option('status', '--group', 'status-viewer')
-call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
-call gina#custom#command#option('commit', '-v|--verbose')
-call gina#custom#command#option('commit', '--group', 'status-viewer')
-call gina#custom#command#option('diff', '-U0')
-call gina#custom#command#option('compare', '-R')
-call gina#custom#command#option('branch', '-v', 'v')
-call gina#custom#command#option('status', '--short')
-call gina#custom#command#option('status', '--branch')
-call gina#custom#command#option('log', '--graph')
-call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
-"call gina#custom#command#option(
-"\ '/\%(status\|changes\)',
-"\ '--ignore-submodules'
-"\)
-"call gina#custom#action#alias(
-"\ 'branch', 'track',
-"\ 'checkout:track'
-"\)
-call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
-call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
-call gina#custom#mapping#nmap(
-    \ '/.*', 'gq',
-    \ ':tabclose<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ '/.*', 'q',
-    \ ':close<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', '<C-^>',
-    \ ':<C-u>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', '<C-^>',
-    \ ':<C-u>Gina status<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', '<C-6>',
-    \ ':<C-u>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', '-',
-    \ '<Plug>(gina-index-toggle)',
-    \ { 'silent': 1, 'nowait': 1}
-    \)
-call gina#custom#mapping#vmap(
-    \ 'status', '-',
-    \ '<Plug>(gina-index-toggle)',
-    \ { 'silent': 1, 'nowait': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', 'c',
-    \ ':<C-u>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', 'C',
-    \ ':<C-u>Gina compare<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', '<C-6>',
-    \ ':<C-u>Gina status<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', 'I',
-    \ 'ggI',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'preview',
-      \ 'topleft show:commit:preview',
-      \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'preview',
-      \ 'show:commit:above',
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'p',
-      \ ':<C-u>call gina#action#call(''preview'')<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'changes',
-      \ 'topleft changes:of:preview',
-      \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'changes',
-      \ 'changes:of:preview',
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'c',
-      \ ':<C-u>call gina#action#call(''changes'')<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
-call gina#custom#execute(
-      \ '/\%(ls\|log\|reflog\|grep\)',
-      \ 'setlocal noautoread',
-      \)
-call gina#custom#execute(
-      \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
-      \ 'setlocal cursorline',
-      \)
-'''
 
 [[plugins]]
 repo =  'mattn/vim-sonictemplate' 

@@ -3,26 +3,62 @@ repo = 'neovim/nvim-lsp'
 hook_add = '''
 " can't load nvim-lsp modules when it is not merged in dein repo.
 " so set rtp manually.
+
+let g:diagnostics = ''
+let g:diagnosticsafter = ''
 lua << EOF
+do
+function vim.lsp.util.set_qflist(items)
+  vim.fn.setqflist({}, 'a', {
+    title = 'Language Server';
+    items = items;
+  })
+end
+function vim.lsp.util.set_loclist(items)
+  vim.fn.setloclist(0, {}, 'a',{
+    title = 'Language Server';
+    items = items;
+  })
+end
+  local method = "textDocument/publishDiagnostics"
+  local default_callback = vim.lsp.callbacks[method]
+  vim.lsp.callbacks[method] = function(err, method, result, client_id)
+    default_callback(err, method, result, client_id)
+    if result and result.diagnostics then
+      for _, v in ipairs(result.diagnostics) do
+        v.uri = v.uri or result.uri
+        v.bufnr = vim.uri_to_bufnr(v.uri)
+        v.lnum = v.range.start.line + 1
+        v.col = v.range.start.character + 1
+        v.text = v.message
+      end
+        local uri = result.uri
+        local bufnr = vim.uri_to_bufnr(uri)
+        vim.lsp.util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
+      vim.fn.nvim_set_var('diagnostics', result.diagnostics)
+      vim.lsp.util.set_qflist(result.diagnostics)
+      vim.lsp.util.set_loclist(result.diagnostics)
+    end
+  end
+end
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
 
 local util = require 'nvim_lsp/util'
 
-local server_name = "efm_ls"
 local bin_name = "efm-langserver"
 
-configs[server_name] = {
+configs["efm_ls"] = {
   default_config = {
-    cmd = {bin_name};
+    cmd = {"efm-langserver"};
       root_dir = function(fname)
-        return nvim_lsp.util.find_git_ancestor(fname) or vim.loop.os_homedir()
+        return vim.fn.getcwd()
       end;
   };
 }
 nvim_lsp.efm_ls.setup{}
 
-vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
+-- vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 
 require'nvim_lsp'.gopls.setup{}
 
@@ -45,7 +81,6 @@ require'nvim_lsp'.jedi_language_server.setup{}
 -- require'nvim_lsp'.vimls.setup{}
 
 EOF
-
 "lsp.txtそのまま
 "set omnifunc=v:lua.vim.lsp.omnifunc
 nnoremap <silent> <c-]>      <cmd>lua vim.lsp.buf.definition()<CR>
@@ -78,7 +113,7 @@ sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numh
 autocmd ColorScheme * highlight LspReferenceText guifg=Red
 autocmd ColorScheme * highlight LspReferenceWrite guifg=Red
 autocmd ColorScheme * highlight LspReferenceRead guifg=Red
-autocmd ColorScheme * highlight LspDiagnosticsError guifg=Red
+autocmd ColorScheme * highlight link LspDiagnosticsError Error
 autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
 autocmd ColorScheme * highlight LspDiagnosticsUnderline guifg=Magenta
 '''

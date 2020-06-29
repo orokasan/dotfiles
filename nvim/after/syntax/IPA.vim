@@ -27,20 +27,22 @@ syntax         match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
 syntax         match  gihyoUnderline '▽.\{-}▽'
 syntax         match  gihyoBlock       '★.\{-}★'
 syntax         match  gihyoItalic        '◆.\{-}◆'
-syntax         match   gihyoLead          '▲.\{-}▲'
+syntax         match   gihyoSup '▲.\{-}▲'
+syntax         match   gihyoSub       '▼.\{-}▼'
 " syntax         match   gihyoLead          '●.\{-}●'
 
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
 syn region  gihyoBullet    start='^・' end='$'
+syn region  gihyoComment    start='☆' end='$'
 syntax         region   gihyoTodo        start='^TODO' end='$'
 
 syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/ contains=ALL
-syntax         region  gihyoTable       start=/^▼表-----$/     end=/^\{-}-----\n/ contains=ALL
-syntax         region  gihyoCode        start=/^▼コード-----$/ end=/^\{-}-----\n/ contains=ALL
-syntax         region  gihyoCode        start=/\n▼リスト/      end=/\n.\{-}\n\n/ contains=ALL
+" syntax         region  gihyoTable       start=/^▼表-----$/     end=/^\{-}-----\n/ contains=ALL
+" syntax         region  gihyoCode        start=/^▼コード-----$/ end=/^\{-}-----\n/ contains=ALL
+" syntax         region  gihyoCode        start=/\n▼リスト/      end=/\n.\{-}\n\n/ contains=ALL
 syntax         region  gihyoCommand     start=/\n==コマンド\n/  end=/\n==.\{-}\n\n/ contains=ALL
 
-syntax         region  gihyoTable       start=/^▼構文-----$/   end=/^\{-}-----\n/
+" syntax         region  gihyoTable       start=/^▼構文-----$/   end=/^\{-}-----\n/
 
 " highlight link
 highlight      link    gihyoHeader1 Title
@@ -49,14 +51,17 @@ highlight      link    gihyoHeader3 Statement
 highlight      link    gihyoHeader4 Statement
 highlight      link    gihyoSubTitle    Title
 highlight      link    gihyoLead        Special
+highlight      link    gihyoSup        Number
+highlight      link    gihyoSub        Special
 highlight      link    gihyoHead        Statement
 highlight      link    gihyoList        Special
 highlight      link    gihyoTable       Special
 highlight      link    gihyoUnderline       Special
-highlight      link    gihyoBlock       Special
-highlight      link    gihyoItalic       Special
+highlight      link    gihyoBlock       Number
+highlight      link    gihyoItalic       String
 highlight      link    gihyoCode        Statement
 highlight      link    gihyoCommand     PreProc
+highlight      link    gihyoComment     Comment
 highlight      link    gihyoBullet      Identifier
 highlight      link    gihyoPoint       Identifier
 

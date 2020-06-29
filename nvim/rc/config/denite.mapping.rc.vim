@@ -48,8 +48,7 @@ nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
 "    \ file file:new<CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-    \ -buffer-name=normal
-    \ -start-filter
+    \ -buffer-name=float
     \ buffer<CR>
 " nnoremap <silent> \ :<C-u>Denite
 "     \ -winheight=5
@@ -147,13 +146,13 @@ nnoremap <silent> [denite]l :<C-u>Denite
     \ location_list<CR>
 nnoremap <silent> ,n :<C-u>Denite
     \ -resume
-    \ -buffer-name=quickfix
+    \ -buffer-name=search
     \ -cursor-pos=+1
     \ -immediately
     \ <CR>
 nnoremap <silent> ,p :<C-u>Denite
     \ -resume
-    \ -buffer-name=quickfix
+    \ -buffer-name=search
     \ -cursor-pos=-1
     \ -immediately
     \ <CR>

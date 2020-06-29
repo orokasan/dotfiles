@@ -399,12 +399,162 @@ repo =  'haya14busa/revital.vim'
 repo = 'danilamihailov/beacon.nvim'
 hook_add = '''
 let g:beacon_fade = 1
-let g:beacon_size = 8
+let g:beacon_size = 15
 let g:beacon_shrink = 1
 let g:beacon_show_jumps = 0
-let g:beacon_timeout=100
+let g:beacon_timeout=200
 let g:beacon_minimal_jump = 50
 let g:beacon_ignore_buffers = ['\[Command Line\]']
 au ColorScheme * highlight Beacon guibg=#e2a478 ctermbg=15
+'''
+
+[[plugins]]
+repo =  'lambdalisue/gina.vim'
+hook_add = '''
+nnoremap <silent> <Leader><Leader> :<C-u>Gina status<CR>
+nnoremap <silent> <Leader>gA :<C-u>Gina changes HEAD<CR>
+nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
+nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
+nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
+nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
+nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
+nnoremap <silent> <Leader>gd :<C-u>nos Gina compare<CR>zz
+nnoremap <silent> <Leader>gg :<C-u>Gina diff<CR>
+nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
+nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
+nnoremap <silent> <Leader>gl :<C-u>Gina log<CR>
+nnoremap <silent> <Leader>gL :<C-u>Gina log %<CR>
+nnoremap <silent> <Leader>gf :<C-u>Gina ls<CR>
+nnoremap <silent> <Leader>gp :<C-u>Gina!! add -p<CR>
+let g:gina#core#spinner#delaytime = 10
+call gina#custom#command#alias('branch', 'br')
+call gina#custom#command#alias('diff', 'df')
+call gina#custom#command#option('df', '--stat')
+call gina#custom#command#option(
+    \ '/\%(log\|reflog\|diff\)',
+    \ '--opener', 'vsplit'
+    \)
+call gina#custom#command#option(
+    \ '/\%(status\|branch\|ls\|grep\|changes\|tag\|df\)',
+    \ '--opener' , 'botright 10split'
+    \)
+call gina#custom#command#option('commit', '--opener' , 'split')
+call gina#custom#command#option('log', '--group', 'log-viewer')
+call gina#custom#command#option('status', '--group', 'status-viewer')
+call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
+call gina#custom#command#option('commit', '-v|--verbose')
+call gina#custom#command#option('commit', '--group', 'status-viewer')
+call gina#custom#command#option('diff', '-U0')
+call gina#custom#command#option('compare', '-R')
+call gina#custom#command#option('branch', '-v', 'v')
+call gina#custom#command#option('status', '--short')
+call gina#custom#command#option('status', '--branch')
+call gina#custom#command#option('log', '--graph')
+call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
+"call gina#custom#command#option(
+"\ '/\%(status\|changes\)',
+"\ '--ignore-submodules'
+"\)
+"call gina#custom#action#alias(
+"\ 'branch', 'track',
+"\ 'checkout:track'
+"\)
+call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
+call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
+call gina#custom#mapping#nmap(
+    \ '/.*', 'gq',
+    \ ':tabclose<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ '/.*', 'q',
+    \ ':close<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', '<C-^>',
+    \ ':<C-u>Gina commit<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'commit', '<C-^>',
+    \ ':<C-u>Gina status<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', '<C-6>',
+    \ ':<C-u>Gina commit<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', '-',
+    \ '<Plug>(gina-index-toggle)',
+    \ { 'silent': 1, 'nowait': 1}
+    \)
+call gina#custom#mapping#vmap(
+    \ 'status', '-',
+    \ '<Plug>(gina-index-toggle)',
+    \ { 'silent': 1, 'nowait': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', 'c',
+    \ ':<C-u>Gina commit<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'status', 'C',
+    \ ':<C-u>Gina compare<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'commit', '<C-6>',
+    \ ':<C-u>Gina status<CR>',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#mapping#nmap(
+    \ 'commit', 'I',
+    \ 'ggI',
+    \ {'noremap': 1, 'silent': 1}
+    \)
+call gina#custom#action#alias(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'preview',
+      \ 'topleft show:commit:preview',
+      \)
+call gina#custom#action#alias(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'preview',
+      \ 'show:commit:above',
+      \)
+call gina#custom#mapping#nmap(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'p',
+      \ ':<C-u>call gina#action#call(''preview'')<CR>',
+      \ {'noremap': 1, 'silent': 1}
+      \)
+call gina#custom#action#alias(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'changes',
+      \ 'topleft changes:of:preview',
+      \)
+call gina#custom#action#alias(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'changes',
+      \ 'changes:of:preview',
+      \)
+call gina#custom#mapping#nmap(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'c',
+      \ ':<C-u>call gina#action#call(''changes'')<CR>',
+      \ {'noremap': 1, 'silent': 1}
+      \)
+call gina#custom#execute(
+      \ '/\%(ls\|log\|reflog\|grep\)',
+      \ 'setlocal noautoread',
+      \)
+call gina#custom#execute(
+      \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
+      \ 'setlocal cursorline',
+      \)
 '''
 # vim:set foldmethod=marker:

@@ -25,13 +25,23 @@ function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
     nmap <buffer> gd <plug>(lsp-declaration)
-    if &ft !=# 'vim'
-    nmap <buffer> K <plug>(lsp-hover)
-    endif
     nmap <buffer> <C-x> <plug>(lsp-signature_help)
     nmap <buffer> ,n <plug>(lsp-next-error)
     nmap <buffer> ,p <plug>(lsp-previous-error)
     nmap <buffer> sa <plug>(lsp-document-diagnostics)
+
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> gi <plug>(lsp-implementation)
+    nmap <buffer> gt <plug>(lsp-type-definition)
+    nmap <buffer> <leader>rn <plug>(lsp-rename)
+    nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
+    nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
+    nmap <buffer> ,, <Plug>(lsp-document-diagnostics)
+    if &ft !=# 'vim'
+    nmap <buffer> K <plug>(lsp-hover)
+    endif
+    
     call lsp#enable()
 endfunction
 function! s:lsp_setup()

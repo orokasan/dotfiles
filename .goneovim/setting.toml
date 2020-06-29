@@ -42,11 +42,11 @@ ExtPopupmenu = false
 ExtTabline = false
 ExtMessages = false
 
-IndentGuide = true
+IndentGuide = false
 
-# DiffAddPattern    = 1
-# DiffDeletePattern = 1
-# DiffChangePattern = 1
+DiffAddPattern    = 1
+DiffDeletePattern = 1
+DiffChangePattern = 1
 # ClickEffect = true
 
 # [Palette]

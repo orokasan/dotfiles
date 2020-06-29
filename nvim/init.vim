@@ -94,48 +94,6 @@ syntax enable
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-let g:diagnostics = ''
-let g:diagnosticsafter = ''
-lua << EOF
-do
-function vim.lsp.util.set_qflist(items)
-  vim.fn.setqflist({}, 'a', {
-    title = 'Language Server';
-    items = items;
-  })
-end
-function vim.lsp.util.set_loclist(items)
-  vim.fn.setloclist(0, {}, ' ', {
-    title = 'Language Server';
-    items = items;
-  })
-end
-  local method = "textDocument/publishDiagnostics"
-  local default_callback = vim.lsp.callbacks[method]
-        function vim.lsp.util.set_qflist(items)
-          vim.fn.setqflist({}, 'a', {
-            title = 'language server';
-            items = items;
-          })
-    end
-  vim.lsp.callbacks[method] = function(err, method, result, client_id)
-    default_callback(err, method, result, client_id)
-          vim.fn.nvim_set_var('diagnostics', result.diagnostics)
-    if result and result.diagnostics then
-      for _, v in ipairs(result.diagnostics) do
-        v.uri = v.uri or result.uri
-        v.bufnr = vim.uri_to_bufnr(v.uri)
-        v.lnum = v.range.start.line + 1
-        v.col = v.range.start.character + 1
-        v.text = v.message
-      end
-          vim.fn.nvim_set_var('diagnosticsafter', result.diagnostics)
-      vim.lsp.util.set_qflist(result.diagnostics)
-      vim.lsp.util.set_loclist(result.diagnostics)
-    end
-  end
-end
-EOF
 "}}}
 
 " Visual  {{{
@@ -319,7 +277,7 @@ nnoremap <S-l> $
 nnoremap <S-h> ^
 vnoremap <S-l> $
 vnoremap <S-h> ^
-nnoremap G Gzz
+" nnoremap G Gzz
 nnoremap <C-f> <C-f>zz
 nnoremap <C-b> <C-b>zz
 nnoremap <C-d> <C-d>zz
@@ -352,8 +310,8 @@ inoremap jk <esc>
 " change mark keymapping
 nnoremap M m
 " cancel highlight search
-nmap<silent> <Esc><Esc> :nohlsearch<CR>
-nmap<silent> <C-c><C-c> :nohlsearch<CR>
+" nmap<silent> <Esc><Esc> :nohlsearch<CR>
+" nmap<silent> <C-c><C-c> :nohlsearch<CR>
 " make temp file
 command! OpenTempfile :edit `=tempname()`
 " open location list
@@ -426,9 +384,9 @@ cnoremap <expr><F2> strftime("%Y%m%d")
 cnoremap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<DOWN>"
 cnoremap <expr> <C-p> pumvisible() ? "\<C-p>" : "\<UP>"
 " for IME status saving
-inoremap <silent><ESC> <ESC>
-inoremap <silent><C-[> <ESC>
-inoremap <silent><C-c> <ESC>
+" inoremap <silent><ESC> <ESC>
+" inoremap <silent><C-[> <ESC>
+" inoremap <silent><C-c> <ESC>
 "}}}
 
 "Key map - terminal {{{
@@ -652,23 +610,24 @@ endif
 "}}}
 
 "Quickfix {{{
-" autocmd vimrc FileType qf call s:my_qf_setting()
-" function! s:my_qf_setting() abort
-"     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
-"     nnoremap <silent><buffer> q :<C-u>quit<CR>
-"     nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
-"     noremap <buffer> p  <CR>zz<C-w>p
-" endfunction
-" function! s:is_loc()
-" let wi = getwininfo(win_getid())[0]
-" if wi.loclist
-"     return execute('.ll')
-" elseif wi.quickfix
-"     return execute('.cc')
-" else
-"     echom 'here is not quickfix and location list.'
-" endif
-" endfunction
+ autocmd vimrc FileType qf call s:my_qf_setting()
+ function! s:my_qf_setting() abort
+     set modifiable
+     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
+     nnoremap <silent><buffer> q :<C-u>quit<CR>
+     nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
+     noremap <buffer> p  <CR>zz<C-w>p
+ endfunction
+ function! s:is_loc()
+ let wi = getwininfo(win_getid())[0]
+ if wi.loclist
+     nnoremap <silent><buffer> <CR> :.ll<CR><C-w>p
+ elseif wi.quickfix
+     nnoremap <silent><buffer> <CR> :.cc<CR><C-w>p
+ else
+     echom 'here is not quickfix and location list.'
+ endif
+ endfunction
 "}}}
 
 " +GUI {{{
@@ -868,7 +827,7 @@ if exists('g:gonvim_running')
   augroup end
   cd ~/
   set mouse=nicr
-set scrolljump=5
+" set scrolljump=5
 endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
@@ -883,8 +842,8 @@ function! Vimdiff_config(timer) abort
 endfunction
 " autocmd vimrc TabLeave * silent! unmap q
 nnoremap <silent><C-q> :tabclose<CR>
-noremap <ScrollWheelUp> <C-u>
-noremap <ScrollWheelDown> <C-d>
+" noremap <ScrollWheelUp> <C-u>
+" noremap <ScrollWheelDown> <C-d>
 " au vimrc BufEnter * set scroll=3
 nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
@@ -899,4 +858,9 @@ nnoremap /  /\v
 nnoremap ?  ?\v
 set updatetime=1500
 let g:denite_text_pos = 0
+augroup MyCursorLineGroup
+    autocmd!
+    au WinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup end
 " vim:set foldmethod=marker:
