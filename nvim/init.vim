@@ -71,6 +71,7 @@ if has('nvim')
 else
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 endif
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 
 let s:myvimrc = expand('$MYVIMRC')
 

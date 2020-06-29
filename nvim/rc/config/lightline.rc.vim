@@ -127,11 +127,10 @@ autocmd dein User lsp_diagnostics_updated call VimLspCacheDiagnosticsCounts() | 
 autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts()
 
 " vim-lsp or nvim-lsp
-let s:lsp = 'nvim-lsp'
 function! LLLspError() abort
-if s:lsp ==# 'vim-lsp'
+if exists('*lsp#get_buffer_diagnostics_counts')
     let error = s:diagnostics_counts['error']
-    return error ? '' . error : ''
+    return error ? '' . error : ''
 " workaround
 " gopls is crashed by calling vim.lsp.buf.server_ready()
 else
@@ -141,16 +140,17 @@ else
 
     if luaeval('vim.lsp.buf.server_ready()')
         let e = luaeval("vim.lsp.util.buf_diagnostics_count(\"Error\")")
-        return e ? '' . e : ''
+        return e ? '' . e : ''
     else
         return ''
     endif
 endif
 endfunction
 function! LLLspWarning() abort
-if s:lsp ==# 'vim-lsp'
+if exists('*lsp#get_buffer_diagnostics_counts')
     let warning = s:diagnostics_counts['warning']
-    return warning ? '' . warning : ''
+    " return warning ? '' . warning : ''
+    return warning ? '' . warning : ''
 " workaround
 " gopls is crashed by calling vim.lsp.buf.server_ready()
 else
@@ -297,7 +297,8 @@ endfunction
 
 function! LLReadonly()
 "    return &readonly ? '⭤' : ''
-    return &readonly ? '' : ''
+    " return &readonly ? '' : ''
+    return &readonly ? '' : ''
 endfunction
 
 function! LLtabnr() abort
@@ -309,8 +310,10 @@ function! LLgit() abort
     if s:ignore_window() 
         return ''
     else
-        return s:threshold(1) ? ' '. s:llgitbranch :
-       \ s:threshold(2) ? '' :''
+        return s:threshold(1) ? ''. s:llgitbranch :
+       \ s:threshold(2) ? '' :''
+        " return s:threshold(1) ? ' '. s:llgitbranch :
+       " \ s:threshold(2) ? '' :''
     endif
 endfunction
 
