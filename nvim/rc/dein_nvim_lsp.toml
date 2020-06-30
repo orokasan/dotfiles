@@ -4,22 +4,36 @@ hook_add = '''
 " can't load nvim-lsp modules when it is not merged in dein repo.
 " so set rtp manually.
 
-let g:diagnostics = ''
-let g:diagnosticsafter = ''
+" let g:diagnostics = ''
+" let g:diagnosticsafter = ''
+function! Nvim_lsp_result_to_quickfix() abort
+    let res = []
+    let i = bufnr('%')
+    let res = luaeval('vim.lsp.util.diagnostics_by_buf[' . i . ']')
+    for l in res[0]
+        let bufnr = l['bufnr']
+        let lnum = l['lnum']
+        let col = l['col']
+        let text = l['text']
+        call setqflist([bufnr,lnum,col,text], ' ')
+endfor
+    " let result = g:res
+    " call setqflist(result, ' ')
+endfunction
 lua << EOF
 do
-function vim.lsp.util.set_qflist(items)
-  vim.fn.setqflist({}, 'a', {
-    title = 'Language Server';
-    items = items;
-  })
-end
-function vim.lsp.util.set_loclist(items)
-  vim.fn.setloclist(0, {}, 'a',{
-    title = 'Language Server';
-    items = items;
-  })
-end
+-- function vim.lsp.util.set_qflist(items)
+--   vim.fn.setqflist({}, 'a', {
+--     title = 'Language Server';
+--     items = items;
+--   })
+-- end
+-- function vim.lsp.util.set_loclist(items)
+--   vim.fn.setloclist(0, {}, 'a',{
+--     title = 'Language Server';
+--     items = items;
+--   })
+-- end
   local method = "textDocument/publishDiagnostics"
   local default_callback = vim.lsp.callbacks[method]
   vim.lsp.callbacks[method] = function(err, method, result, client_id)
@@ -32,13 +46,13 @@ end
         v.col = v.range.start.character + 1
         v.text = v.message
       end
-        local uri = result.uri
-        local bufnr = vim.uri_to_bufnr(uri)
-        vim.lsp.util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
-      vim.fn.nvim_set_var('diagnostics', result.diagnostics)
+        -- local uri = result.uri
+        -- local bufnr = vim.uri_to_bufnr(uri)
+        -- vim.lsp.util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
+      -- vim.fn.nvim_set_var('diagnostics', result.diagnostics)
       vim.lsp.util.set_qflist(result.diagnostics)
-      vim.lsp.util.set_loclist(result.diagnostics)
     end
+    -- if vim.lsp.util.diagnostics_by_buf[vim.fn.bufnr(0)] then
   end
 end
 local nvim_lsp = require'nvim_lsp'

@@ -71,7 +71,7 @@ if has('nvim')
 else
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 endif
-    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
+    " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 
 let s:myvimrc = expand('$MYVIMRC')
 
@@ -551,8 +551,8 @@ nnoremap <C-w><C-w> <C-w>p
 nnoremap <C-w>u <C-w><C-w>
 nnoremap <C-w><C-u> <C-w><C-w>
 " change window size
-nnoremap <S-Left>  <C-w>>
-nnoremap <S-Right> <C-w><
+nnoremap <S-Left>  <C-w><
+nnoremap <S-Right> <C-w>>
 nnoremap <S-Up>    <C-w>-
 nnoremap <S-Down>  <C-w>+
 " maximize buffer window size temporally
@@ -801,6 +801,9 @@ endtry
 
 hi! link NonText Comment
 if exists('g:gonvim_running')
+    " for goneovim bug(20/06/30)�
+augroup GonvimAu
+    au! Optionset *
  augroup GonvimAuStatusline
     autocmd!
   augroup end
