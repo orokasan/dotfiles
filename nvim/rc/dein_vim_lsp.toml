@@ -1,5 +1,6 @@
 [[plugins]]
 # repo = 'orokasan/vim-lsp'
+merged = 0
 repo = 'prabirshrestha/vim-lsp'
 # lazy = 1'
 # on_ft = ['markdown', 'tex', 'python', 'go']

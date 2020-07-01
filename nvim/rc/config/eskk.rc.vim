@@ -56,9 +56,8 @@ augroup myeskk
     autocmd InsertLeave * call <SID>eskk_save_status()
     autocmd InsertEnter * call <SID>eskk_insert_status()
     " somehow eskk status is saved by default in cmdline
-    " autocmd CmdlineLeave * if exists('*eskk#enable') && eskk#is_enabled() | call eskk#disable() | endif
+    " autocmd CmdlineLeave * if exists('*eskk#enable') && eskk#is_enabled() && !pumvisible() | call eskk#disable() | endif
 augroup END
-
 " ノーマルモードでもeskkの状態を操作する
 function! s:eskk_keep_enable_toggle() abort
     if s:eskk_status || g:eskk_keep_enable

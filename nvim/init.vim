@@ -268,7 +268,7 @@ endif
 " in neovim, 'cc' overwrite unnamed register.
 "nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
 nnoremap <CR> o<ESC>
-nnoremap \ O<ESC>
+" nnoremap \ O<ESC>
 " moving visible lines by j/k
 nnoremap <silent>j gj
 nnoremap <silent>k gk
@@ -614,8 +614,8 @@ endif
  function! s:my_qf_setting() abort
      set modifiable
      " nnoremap <buffer> <CR> :<C-u>.cc<CR>
-     nnoremap <silent><buffer> q :<C-u>quit<CR>
-     nnoremap <silent><buffer> <CR> :call <SID>is_loc()<CR>
+     nnoremap <silent><buffer> q :<C-u>close<CR>
+     call <SID>is_loc()
      noremap <buffer> p  <CR>zz<C-w>p
  endfunction
  function! s:is_loc()

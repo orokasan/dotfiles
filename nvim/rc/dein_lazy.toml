@@ -42,6 +42,8 @@ else
 nnoremap <silent><buffer><expr> p
     \ denite#do_map('do_action', 'highlight')
 endif
+nnoremap <silent><buffer><expr><nowait> <Leader>
+    \ denite#do_map('do_action', 'highlight')
 nnoremap <silent><buffer><expr> q
     \ denite#do_map('quit')
 nnoremap <silent><buffer><expr> i
@@ -569,6 +571,7 @@ let g:operator#surround#blocks['-'] = [
 \   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
 \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
 \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
+\   { 'block' : ['●', '●'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['U'] },
 \ ]
 '''
 

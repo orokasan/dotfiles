@@ -66,7 +66,8 @@ class Source(Base):
             if match and not in_codeblock:
                 number += 1
                 level = match.group(1)
-                text = (len(level) - 1) * '  ' + match.group(2)
+                text = match.group(2)
+                # text = (len(level) - 1) * ' ' + match.group(2)
                 headers.append({
                     'level': level,
                     'text': text,

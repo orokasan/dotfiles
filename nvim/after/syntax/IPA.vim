@@ -25,15 +25,16 @@ syntax         match   gihyoRuler       "\(=\|-\|+\)\{50,120}"
 syntax         match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@A-Za-z_~]\+"
 syntax         match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
 syntax         match  gihyoUnderline '▽.\{-}▽'
+syntax         match  gihyoUnderlineAlt '∨.\{-}∨'
 syntax         match  gihyoBlock       '★.\{-}★'
 syntax         match  gihyoItalic        '◆.\{-}◆'
 syntax         match   gihyoSup '▲.\{-}▲'
 syntax         match   gihyoSub       '▼.\{-}▼'
-" syntax         match   gihyoLead          '●.\{-}●'
+syntax         match   gihyoRed          '●.\{-}●'
 
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
 syn region  gihyoBullet    start='^・' end='$'
-syn region  gihyoComment    start='☆' end='$'
+syn region  gihyoComment    start='^☆' end='$'
 syntax         region   gihyoTodo        start='^TODO' end='$'
 
 syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/ contains=ALL
@@ -55,6 +56,8 @@ highlight      link    gihyoSup        Number
 highlight      link    gihyoSub        Special
 highlight      link    gihyoHead        Statement
 highlight      link    gihyoList        Special
+highlight      link    gihyoRed Error
+highlight      link    gihyoUnderlineAlt Title
 highlight      link    gihyoTable       Special
 highlight      link    gihyoUnderline       Special
 highlight      link    gihyoBlock       Number

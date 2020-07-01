@@ -6,6 +6,47 @@ hook_add = '''
 
 " let g:diagnostics = ''
 " let g:diagnosticsafter = ''
+nnoremap <C-n> <cmd>call Nvim_lsp_showdiagnostics()<CR>
+nnoremap \ <cmd>lne<CR>zz
+nnoremap \| <cmd>lp<CR>zz
+let g:nvim_lsp_diagnostics = []
+function! Nvim_lsp_showdiagnostics() abort
+    call s:qf_to_loc()
+    if empty(g:nvim_lsp_diagnostics)
+        echom 'No diagnostics results found'
+    else
+        echo 'Retrieved diagnostics results'
+        botright lopen
+    endif
+endfunction
+autocmd dein User LspDiagnosticsChanged call <SID>qf_to_loc()
+function! s:qf_to_loc() abort
+    let callback = getqflist()
+    " echo callback
+    if !empty(callback)
+        let g:nvim_lsp_diagnostics = []
+        for i in callback
+        let i.col = s:to_col(i.bufnr, i.lnum, i.col)
+        " echo i
+        call add(g:nvim_lsp_diagnostics, i)
+        endfor
+        " echo list
+        call setloclist(0, g:nvim_lsp_diagnostics, ' ')
+    endif
+endfunction
+function! s:to_col(expr, lnum, char) abort
+    let l:lines = getbufline(a:expr, a:lnum)
+    if l:lines == []
+        if type(a:expr) != v:t_string || !filereadable(a:expr)
+            " invalid a:expr
+            return a:char + 1
+        endif
+        " a:expr is a file that is not yet loaded as a buffer
+        let l:lines = readfile(a:expr, '', a:lnum)
+    endif
+    let l:linestr = l:lines[-1]
+    return strlen(strcharpart(l:linestr, 0, a:char))
+endfunction
 function! Nvim_lsp_result_to_quickfix() abort
     let res = []
     let i = bufnr('%')
@@ -34,6 +75,7 @@ do
 --     items = items;
 --   })
 -- end
+  local string = require'string'
   local method = "textDocument/publishDiagnostics"
   local default_callback = vim.lsp.callbacks[method]
   vim.lsp.callbacks[method] = function(err, method, result, client_id)
