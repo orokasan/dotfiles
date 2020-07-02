@@ -704,11 +704,8 @@ hook_add = '''
 let g:EasyMotion_do_mapping = 0
 " nmap m <Plug>(easymotion-overwin-f2)
 nmap m <Plug>(easymotion-s2)
-imap <C-z> <ESC><Plug>(easymotion-s2)
 xmap m <Plug>(easymotion-s2)
 omap m <Plug>(easymotion-s2)
-map gj <Plug>(easymotion-sol-j)
-map gk <Plug>(easymotion-sol-k)
 
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
