@@ -170,9 +170,11 @@ nnoremap <silent> [denite]t :<C-u>Denite
     \ -buffer-name=search
     \ text<CR>
 nnoremap <silent> [denite]T :<C-u>Denite
-    \ -buffer-name=search
+    \ -buffer-name=default
     \ -split=vertical
     \ -winwidth=70
+    \ -post-action=remain
+    \ -default-action=highlight
     \ text<CR>
 nnoremap <silent> [denite]/ :<C-u>Denite
     \ -buffer-name=search

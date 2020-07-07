@@ -143,8 +143,7 @@ set sidescroll=1
 " add japanese matchpairs
 set showmatch       " highlight matched pairs
 set matchtime=1     " highlighting long
-set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞
-
+set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕
 set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
 set tabstop=8               " number of spaces inserted by <TAB>
@@ -187,21 +186,20 @@ set cmdwinheight=8
 " equal window size.
 set equalalways
 " for cmdwin
-" autocmd vimrc CmdwinEnter [:/?=] setlocal signcolumn=no
-" autocmd vimrc CmdwinEnter [:/?=] setlocal scrolloff=0
-" autocmd vimrc CmdwinEnter [:/?=] nnoremap <buffer>q :close<CR>
-autocmd vimrc CmdwinEnter : call <SID>cmdwin_settings()
+autocmd vimrc CmdwinEnter * call <SID>cmdwin_settings()
 function! s:cmdwin_settings() abort
     " delete useless commands
     silent g/^qa\?!\?$/d
+    silent g/^e\?!\?$/d
     silent g/^wq\?a\?!\?$/d
     " move to nice position
-    silent call feedkeys('G', 'n')
-    silent call feedkeys('$', 'n')
     " CmdwinEnter seems not to fire below commands
     setlocal signcolumn=no            
     setlocal scrolloff=0              
     nnoremap <buffer><silent>q :close<CR>     
+    silent call feedkeys('G', 'n')
+    silent call feedkeys('$', 'n')
+    silent call feedkeys('z-', 'n')
 endfunction
 
 " open .docx as .zip
@@ -314,7 +312,7 @@ nnoremap M m
 " nmap<silent> <Esc><Esc> :nohlsearch<CR>
 " nmap<silent> <C-c><C-c> :nohlsearch<CR>
 " make temp file
-command! OpenTempfile :edit `=tempname()`
+command! -nargs=? Otempfile :edit `=tempname()` | setf <args>
 " open location list
 nnoremap <Leader>f :<C-u>lopen<CR>
 " open cmdwin
@@ -862,8 +860,8 @@ vnoremap S :%s/
 nnoremap gs :%s///g<Left><Left>
 vnoremap gs :<C-u>%s///g<Left><Left>
 " /\v(①|②|③|④|⑤|⑥|⑦|⑧|⑨|⑩)/
-nnoremap /  /\v
-nnoremap ?  ?\v
+" nnoremap /  /\v
+" nnoremap ?  ?\v
 set updatetime=1500
 let g:denite_text_pos = 0
 " augroup MyCursorLineGroup
@@ -928,6 +926,7 @@ endfor
     " let result = g:res
     " call setqflist(result, ' ')
 endfunction
+if has('nvim')
 lua << EOF
 do
 -- function vim.lsp.util.set_qflist(items)
@@ -979,13 +978,15 @@ configs["efm_ls"] = {
       end;
   };
 }
-nvim_lsp.efm_ls.setup{}
+-- nvim_lsp.efm_ls.setup{}
 
 -- vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 
 require'nvim_lsp'.gopls.setup{}
-
+require'nvim_lsp'.clangd.setup{}
+require'nvim_lsp'.julials.setup{}
 require'nvim_lsp'.texlab.setup{}
+-- util.base_install_dir= '~/.cache/nvim/nvim_lsp/'
     -- settings = {
     --   latex = {
     --     build = {
@@ -1004,6 +1005,7 @@ require'nvim_lsp'.yamlls.setup{}
 require'nvim_lsp'.vimls.setup{}
 require'nvim_lsp'.tsserver.setup{}
 EOF
+endif
 "lsp.txtそのまま
 "set omnifunc=v:lua.vim.lsp.omnifunc
 nnoremap <silent> <c-]>      <cmd>lua vim.lsp.buf.definition()<CR>
@@ -1033,7 +1035,6 @@ sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning line
 sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=
 sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numhl=
 hi link  LspDiagnosticsError Error
-
 autocmd ColorScheme * highlight LspReferenceText guifg=Red
 autocmd ColorScheme * highlight LspReferenceWrite guifg=Red
 autocmd ColorScheme * highlight LspReferenceRead guifg=Red

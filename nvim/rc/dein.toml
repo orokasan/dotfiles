@@ -395,24 +395,26 @@ repo =  'vim-jp/vital.vim'
 [[plugins]]
 repo =  'haya14busa/revital.vim' 
 
-[[plugins]]
-repo = 'danilamihailov/beacon.nvim'
-hook_add = '''
-let g:beacon_fade = 1
-let g:beacon_size = 15
-let g:beacon_shrink = 1
-let g:beacon_show_jumps = 0
-let g:beacon_timeout=200
-let g:beacon_minimal_jump = 50
-let g:beacon_ignore_buffers = ['\[Command Line\]']
-au ColorScheme * highlight Beacon guibg=#e2a478 ctermbg=15
-'''
+# [[plugins]]
+# repo = 'danilamihailov/beacon.nvim'
+# merged = 0
+# hook_add = '''
+# let g:beacon_fade = 1
+# let g:beacon_size = 15
+# let g:beacon_shrink = 1
+# let g:beacon_show_jumps = 0
+# let g:beacon_timeout=200
+# let g:beacon_minimal_jump = 50
+# " let g:beacon_ignore_buffers = ['\[Command Line\]']
+# au ColorScheme * highlight Beacon guibg=#e2a478 ctermbg=15
+# '''
 
 [[plugins]]
 repo =  'lambdalisue/gina.vim'
 hook_add = '''
 nnoremap <silent> <Leader><Leader> :<C-u>Gina status<CR>
 nnoremap <silent> <Leader>gA :<C-u>Gina changes HEAD<CR>
+nnoremap <silent> <Leader>a :<C-u>Gina add %<CR>
 nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
 nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
@@ -557,4 +559,6 @@ call gina#custom#execute(
       \ 'setlocal cursorline',
       \)
 '''
+[[plugins]]
+repo =  'sheerun/vim-polyglot' 
 # vim:set foldmethod=marker:

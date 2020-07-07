@@ -1,9 +1,10 @@
 import re
 from .base import Base
+# from denite.kind.file import Kind as File
 
 HIGHLIGHT_SYNTAX = [
     {'name': 'Level1',     'link': 'Title',  're': r'■\s'},
-    {'name': 'Level2',     'link': 'Function',  're': r'■■\s'},
+    {'name': 'Level2',     'link': 'Constant',  're': r'■■\s'},
     {'name': 'Level3',     'link': 'Statement',  're': r'■■■\s'},
     {'name': 'Level4',     'link': 'Constant',  're': r'■■■■\s'},
     {'name': 'Level5',     'link': 'PreProc',  're': r'■■■■■\s'},
@@ -79,3 +80,43 @@ class Source(Base):
                 else:
                     t = 0
         return headers
+
+# class Kind(File):
+#     def __init__(self, vim):
+#         super().__init__(vim)
+
+#         self.name = 'text'
+#         self.persist_actions += [] #pylint: disable=E1101
+#         self.redraw_actions += ['move'] #pylint: disable=E1101
+#         self.default_action = 'move'
+
+#     def action_move(self, context):
+#         target = context['targets'][0]
+#         if 'action__bufnr' in target:
+#             bufnr = target['action__bufnr']
+#         else:
+#             bufnr = self.vim.call('bufnr', target['action__path'])
+#         self._jump(context, target)
+
+#     def _jump(self, context, target):
+#         if 'action__pattern' in target:
+#             self.vim.call('search', target['action__pattern'], 'w')
+
+#         line = int(target.get('action__line', 0))
+#         col = int(target.get('action__col', 0))
+
+#         try:
+#             if line > 0:
+#                 self.vim.call('cursor', [line, 0])
+#                 if 'action__col' not in target:
+#                     pos = self.vim.current.line.lower().find(
+#                         context['input'].lower())
+#                     if pos >= 0:
+#                         self.vim.call('cursor', [0, pos + 1])
+#             if col > 0:
+#                 self.vim.call('cursor', [0, col])
+#         except Exception:
+#             pass
+
+#         # Open folds
+#         self.vim.command('normal! zv')

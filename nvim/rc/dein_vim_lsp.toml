@@ -214,24 +214,5 @@ call deoplete#custom#option('sources', {
     \ })
 '''
 
-[[plugins]]
-lazy = '1'
-repo =  'Shougo/neosnippet'
-on_event = 'InsertEnter'
-on_ft = 'snippet'
-hook_source = '''
-let g:neosnippet#disable_runtime_snippets = {
-\   '_' : 1,
-\ }
-let g:neosnippet#enable_completed_snippet = 1
-let g:neosnippet#enable_complete_done = 1
-if has('conceal')
-    set conceallevel=2 concealcursor=niv
-endif
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-" imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-" \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-'''
 
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'

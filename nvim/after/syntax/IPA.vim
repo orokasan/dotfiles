@@ -17,9 +17,9 @@ endif
 " syntax match   gihyoDStrong      '\"..\{-}\"'
 " syntax match   gihyoSStrong      '\'..\{-}\''
 
-syn region  gihyoHeader3    start='^■[^■]' end='$'
+syn region  gihyoHeader1    start='^■[^■]' end='$'
 syn region  gihyoHeader2   start='^■■[^■]' end='$'
-syn region  gihyoHeader1    start='^■■■[^■]' end='$'
+syn region  gihyoHeader3    start='^■■■[^■]' end='$'
 syn region  gihyoHeader4    start='^■■■■[^■]' end='$'
 syntax         match   gihyoRuler       "\(=\|-\|+\)\{50,120}"
 syntax         match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@A-Za-z_~]\+"
@@ -33,8 +33,10 @@ syntax         match   gihyoSub       '▼.\{-}▼'
 syntax         match   gihyoRed          '●.\{-}●'
 
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
-syn region  gihyoBullet    start='^・' end='$'
-syn region  gihyoComment    start='^☆' end='$'
+syntax         match   gihyoBullet '^・.\{-}$'
+syntax         match   gihyoComment '^☆.\{-}$'
+" syn region  gihyoBullet    start='^・' end='$'
+" syn region  gihyoComment    start='^☆' end='$'
 syntax         region   gihyoTodo        start='^TODO' end='$'
 
 syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/ contains=ALL
@@ -47,7 +49,7 @@ syntax         region  gihyoCommand     start=/\n==コマンド\n/  end=/\n==.\{
 
 " highlight link
 highlight      link    gihyoHeader1 Title
-highlight      link    gihyoHeader2    Title
+highlight      link    gihyoHeader2    Constant
 highlight      link    gihyoHeader3 Statement
 highlight      link    gihyoHeader4 Statement
 highlight      link    gihyoSubTitle    Title

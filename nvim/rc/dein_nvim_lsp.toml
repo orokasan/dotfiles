@@ -8,23 +8,43 @@
 # " let g:diagnosticsafter = ''
 # '''
 
-[[plugins]]
-# lazy = '1'
-repo = 'hrsh7th/vim-vsnip'
-# on_source = ['deoplete.nvim']
-hook_add = '''
-imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-imap <expr> <Tab>   pumvisible() ? "\<C-n>" : vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-'''
+# [[plugins]]
+# # lazy = '1'
+# repo = 'hrsh7th/vim-vsnip'
+# # on_source = ['deoplete.nvim']
+# hook_add = '''
+# imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+# smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+# imap <expr> <Tab>   pumvisible() ? "\<C-n>" : vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# '''
 
 [[plugins]]
 lazy = '1'
-on_source = ['deoplete.nvim']
-repo = 'hrsh7th/vim-vsnip-integ'
+repo =  'Shougo/neosnippet'
+on_event = 'InsertEnter'
+on_ft = 'snippet'
+hook_source = '''
+let g:neosnippet#disable_runtime_snippets = {
+\   '_' : 1,
+\ }
+let g:neosnippet#enable_completed_snippet = 1
+let g:neosnippet#enable_complete_done = 1
+if has('conceal')
+    set conceallevel=2 concealcursor=niv
+endif
+imap <C-l>     <Plug>(neosnippet_expand_or_jump)
+smap <C-l>     <Plug>(neosnippet_expand_or_jump)
+imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+'''
+
+# [[plugins]]
+# lazy = '1'
+# on_source = ['deoplete.nvim']
+# repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
 repo = 'Shougo/deoplete-lsp'
