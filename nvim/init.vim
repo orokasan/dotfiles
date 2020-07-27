@@ -26,7 +26,6 @@ let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
-set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
 "---------------------------------------------------------------------
 "Python,vimproc
 if has('win64')
@@ -931,7 +930,7 @@ endfor
     " let result = g:res
     " call setqflist(result, ' ')
 endfunction
-if has('nvim')
+if has('nvim') && dein#is_sourced('nvim-lsp')
 lua << EOF
 do
 -- function vim.lsp.util.set_qflist(items)
