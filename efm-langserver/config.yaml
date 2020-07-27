@@ -1,7 +1,7 @@
 
 version: 2
 log: C:\Users\t_kuriki\output.log
-loglevel: 2
+loglevel: 0
 
 tools:
   # vim:

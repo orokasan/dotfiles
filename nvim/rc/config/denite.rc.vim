@@ -185,7 +185,7 @@ endfunction
 "action:defxを定義
 call denite#custom#action(
     \ 'directory,file,openable,dirmark',
-    \ 'my_defx',
+    \ 'defx',
     \  function('s:defx_open'))
 
 " autocmd dein CursorHold * if &filetype ==# 'denite' | call denite#call_map('do_action', 'highlight') | endif

@@ -33,10 +33,10 @@ syntax         match   gihyoSub       '▼.\{-}▼'
 syntax         match   gihyoRed          '●.\{-}●'
 
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
-syntax         match   gihyoBullet '^・.\{-}$'
-syntax         match   gihyoComment '^☆.\{-}$'
+" syntax         match   gihyoBullet '^・.\{-}$'
+" syntax         match   gihyoComment '^☆.\{-}$'
 " syn region  gihyoBullet    start='^・' end='$'
-" syn region  gihyoComment    start='^☆' end='$'
+syn region  gihyoComment    start='^☆' end='$'
 syntax         region   gihyoTodo        start='^TODO' end='$'
 
 syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/ contains=ALL

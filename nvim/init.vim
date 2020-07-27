@@ -30,7 +30,8 @@ set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
 "---------------------------------------------------------------------
 "Python,vimproc
 if has('win64')
-    let g:python3_host_prog ='python.exe'
+    " let g:python3_host_prog ='~\AppData\Local|Microsoft\WindowsApps\python3.exe'
+    set pythonthreedll=C:\Python38\python38.dll
 let g:vimproc#download_windows_dll = 1
 endif
 
@@ -114,6 +115,7 @@ set list            " show invisible character
 set listchars=tab:^-,trail:\ ,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
+set lazyredraw
 set t_Co=256
 set synmaxcol=512
 set belloff=all
@@ -134,9 +136,10 @@ set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,verti
 
 " Editing {{{
 set virtualedit=block     "move cursor to one more char than end of line
-set display=lastline
+set display+=lastline,uhex
 set wrap
 " Scroll
+" autocmd vimrc WinEnter * setlocal scroll=1
 set scrolloff=5
 set sidescrolloff=5
 set sidescroll=1
@@ -269,8 +272,8 @@ endif
 nnoremap <CR> o<ESC>
 " nnoremap \ O<ESC>
 " moving visible lines by j/k
-" nnoremap <silent>j gj
-" nnoremap <silent>k gk
+nnoremap <silent>j gj
+nnoremap <silent>k gk
 " moving tip/end of a line
 nnoremap <S-l> $
 nnoremap <S-h> ^
@@ -279,8 +282,8 @@ vnoremap <S-h> ^
 " nnoremap G Gzz
 nnoremap <C-f> <C-f>zz
 nnoremap <C-b> <C-b>zz
-nnoremap <C-d> <C-d>zz
-nnoremap <C-u> <C-u>zz
+nnoremap <C-d> <C-d>
+nnoremap <C-u> <C-u>
 nnoremap <C-o> <C-o>zz
 " moving around between buffers
 nnoremap <silent><Leader>h :bprev!<CR>
@@ -702,7 +705,7 @@ if has('nvim')
     " remove end of buffer ~~~~~~~~~
     set fillchars+=eob:\ 
     "transparent completions menu
-    set pumblend=0
+    set pumblend=15
     set inccommand=nosplit
     au TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 200)
 endif
@@ -761,8 +764,6 @@ function! ProfileCursorMove() abort
 
   for i in range(1000)
     call feedkeys('j')
-    call feedkeys('j')
-    call feedkeys('k')
   endfor
 endfunction
 "}}}
@@ -807,6 +808,8 @@ if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)�
 augroup GonvimAu
     au! Optionset *
+    au! BufEnter,FileType,VimEnter,WinEnter *
+augroup end
  augroup GonvimAuStatusline
     autocmd!
   augroup end
@@ -833,11 +836,13 @@ augroup GonvimAu
   augroup end
   cd ~/
   set mouse=nicr
+  set pumheight=10
 " set scrolljump=5
 endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
-autocmd FileType text syntax sync minlines=500
+autocmd FileType text syntax sync minlines=50
+autocmd FileType markdown syntax sync minlines=50
 autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
 function! Vimdiff_config(timer) abort
 " if &diff
@@ -973,14 +978,15 @@ local bin_name = "efm-langserver"
 configs["efm_ls"] = {
   default_config = {
     cmd = {"efm-langserver"};
-      root_dir = function(fname)
-        return vim.fn.getcwd()
-      end;
+    filetypes = {text, txt, markdown};
+    root_dir = function(fname)
+      return vim.fn.getcwd()
+    end;
   };
 }
--- nvim_lsp.efm_ls.setup{}
+require'nvim_lsp'.efm_ls.setup{}
 
--- vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
+vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 
 require'nvim_lsp'.gopls.setup{}
 require'nvim_lsp'.clangd.setup{}
@@ -1041,4 +1047,11 @@ autocmd ColorScheme * highlight LspReferenceRead guifg=Red
 autocmd ColorScheme * highlight link LspDiagnosticsError Error
 autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
 autocmd ColorScheme * highlight LspDiagnosticsUnderline guifg=Magenta
+
+vmap u 'aUgv<ESC>ll
+vmap r 'aRgv<ESC>ll
+
+	let g:previm_enable_realtime = 1
+
+	let g:previm_show_header = 0
 " vim:set foldmethod=marker:

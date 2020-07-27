@@ -172,7 +172,7 @@ nnoremap <silent> [denite]t :<C-u>Denite
 nnoremap <silent> [denite]T :<C-u>Denite
     \ -buffer-name=default
     \ -split=vertical
-    \ -winwidth=70
+    \ -winwidth=60
     \ -post-action=remain
     \ -default-action=highlight
     \ text<CR>
