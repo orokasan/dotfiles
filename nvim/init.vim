@@ -26,15 +26,13 @@ let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
-set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
 "---------------------------------------------------------------------
 "Python,vimproc
-if has('win64')
-    " let g:python3_host_prog ='~\AppData\Local|Microsoft\WindowsApps\python3.exe'
+let g:python3_host_prog ='python.exe'
+if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
 let g:vimproc#download_windows_dll = 1
 endif
-
 " Backup
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
@@ -44,7 +42,6 @@ set undodir=~/.backup/vim/undo " put together undo files
 set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup                " no more backup file
-
 let mapleader = "\<Space>"
 "}}}
 
@@ -76,7 +73,6 @@ endif
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 
 let s:myvimrc = expand('$MYVIMRC')
-
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
@@ -119,7 +115,7 @@ set lazyredraw
 set t_Co=256
 set synmaxcol=512
 set belloff=all
-set fillchars+=vert:\ ,fold:\ 
+set fillchars+=vert:\ ,fold:\ ,diff:\ 
 set hidden          " be able to open files when editing other files
 set splitright
 set noruler
@@ -268,7 +264,7 @@ endif
 "Key map - moving {{{
 " improved insert
 " in neovim, 'cc' overwrite unnamed register.
-"nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
+nnoremap <expr>i len(getline('.')) == 0 ? "_cc" : "i"
 nnoremap <CR> o<ESC>
 " nnoremap \ O<ESC>
 " moving visible lines by j/k
@@ -290,12 +286,12 @@ nnoremap <silent><Leader>h :bprev!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
 " matchit mapping
-nmap <silent> <TAB>  <Plug>(MatchitNormalForward)
-nmap <silent> g<TAB> <Plug>(MatchitNormalBackward)
-xmap <silent> <TAB>  <Plug>(MatchitVisualForward)
-xmap <silent> g<TAB> <Plug>(MatchitVisualBackward)
-omap <silent> <TAB>  <Plug>(MatchitOperationForward)
-omap <silent> g<TAB> <Plug>(MatchitOperationBackward)
+nmap <TAB>  %
+nmap g<TAB> g%
+xmap <TAB>  %
+xmap g<TAB> g%
+omap <TAB>  %
+omap g<TAB> g%
 " native <TAB> is useful
 nnoremap <C-p> <C-i>zz
 vnoremap <C-p> <C-i>
@@ -931,7 +927,7 @@ endfor
     " let result = g:res
     " call setqflist(result, ' ')
 endfunction
-if has('nvim')
+if has('nvim') && dein#is_sourced('nvim-lsp')
 lua << EOF
 do
 -- function vim.lsp.util.set_qflist(items)
@@ -970,21 +966,20 @@ do
 end
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
-
 local util = require 'nvim_lsp/util'
 
-local bin_name = "efm-langserver"
-
-configs["efm_ls"] = {
-  default_config = {
-    cmd = {"efm-langserver"};
-    filetypes = {text, txt, markdown};
-    root_dir = function(fname)
-      return vim.fn.getcwd()
-    end;
-  };
-}
-require'nvim_lsp'.efm_ls.setup{}
+-- local bin_name = "efm-langserver"
+-- 
+-- configs["efm_ls"] = {
+--   default_config = {
+--     cmd = {"efm-langserver"};
+--     filetypes = {text, txt, markdown, IPA};
+--     root_dir = function(fname)
+--       return vim.fn.getcwd()
+--     end;
+--   };
+-- }
+require'nvim_lsp'.efm.setup{}
 
 vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 
@@ -1041,17 +1036,24 @@ sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning line
 sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=
 sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numhl=
 hi link  LspDiagnosticsError Error
+highlight LspReferenceText guifg=Red
+highlight LspReferenceWrite guifg=Red
+highlight LspReferenceRead guifg=Red
+highlight link LspDiagnosticsError Error
+highlight LspDiagnosticsWarning guifg=Green
+highlight link LspDiagnosticsUnderline Underlined
 autocmd ColorScheme * highlight LspReferenceText guifg=Red
 autocmd ColorScheme * highlight LspReferenceWrite guifg=Red
 autocmd ColorScheme * highlight LspReferenceRead guifg=Red
 autocmd ColorScheme * highlight link LspDiagnosticsError Error
 autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
-autocmd ColorScheme * highlight LspDiagnosticsUnderline guifg=Magenta
+autocmd ColorScheme * highlight link LspDiagnosticsUnderline Underlined
 
 vmap u 'aUgv<ESC>ll
 vmap r 'aRgv<ESC>ll
 
 	let g:previm_enable_realtime = 1
 
+autocmd BufReadPre gina://* set noswapfile
 	let g:previm_show_header = 0
 " vim:set foldmethod=marker:

@@ -243,8 +243,11 @@ let g:gitgutter_sign_added = '++'
 let g:gitgutter_sign_modified = '~~'
 let g:gitgutter_sign_removed = '--'
 let g:gitgutter_sign_removed_first_line = '__'
-let g:gitgutter_sign_modified_removed = '~-'
+let g:gitgutter_sign_modified_removed = '+-'
 let g:gitgutter_sign_priority = 0
+let g:gitgutter_preview_win_floating = 0
+autocmd dein ColorScheme * highlight link GitGutterAdd String
+autocmd dein ColorScheme * highlight link GitGutterChange Constant
 nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
 nmap <Leader>xx <Plug>(GitGutterStageHunk)
 nmap <Leader>xu <Plug>(GitGutterUndoHunk)
@@ -388,12 +391,12 @@ repo = 'rhysd/conflict-marker.vim'
 # "     autocmd InsertEnter * :PreciousSwitch
 # " augroup END
 # '''
-[[plugins]]
-merged = 0
-repo =  'vim-jp/vital.vim' 
+# [[plugins]]
+# merged = 0
+# repo =  'vim-jp/vital.vim' 
 
-[[plugins]]
-repo =  'haya14busa/revital.vim' 
+# [[plugins]]
+# repo =  'haya14busa/revital.vim' 
 
 # [[plugins]]
 # repo = 'danilamihailov/beacon.nvim'
@@ -418,6 +421,7 @@ nnoremap <silent> <Leader>a :<C-u>Gina add %<CR>
 nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
 nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
+nnoremap <silent> <Leader>gB :<C-u>nos Gina blame<CR>
 nnoremap <silent> <Leader>gt :<C-u>Gina tag<CR>
 nnoremap <silent> <Leader>gq :<C-u>Gina qrep<CR>
 nnoremap <silent> <Leader>gd :<C-u>nos Gina compare<CR>zz
@@ -446,7 +450,7 @@ call gina#custom#command#option('status', '--group', 'status-viewer')
 call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
 call gina#custom#command#option('commit', '-v|--verbose')
 call gina#custom#command#option('commit', '--group', 'status-viewer')
-call gina#custom#command#option('diff', '-U0')
+" call gina#custom#command#option('diff', '-U0')
 call gina#custom#command#option('compare', '-R')
 call gina#custom#command#option('branch', '-v', 'v')
 call gina#custom#command#option('status', '--short')
@@ -530,8 +534,14 @@ call gina#custom#action#alias(
       \)
 call gina#custom#mapping#nmap(
       \ '/\%(blame\|log\|reflog\)',
-      \ 'p',
-      \ ':<C-u>call gina#action#call(''preview'')<CR>',
+      \ 'yy',
+      \ ':<C-u>call gina#action#call(''yank:rev'')<CR>',
+      \ {'noremap': 1}
+      \)
+call gina#custom#mapping#nmap(
+      \ '/\%(blame\|log\|reflog\)',
+      \ 'yy',
+      \ ':<C-u>call gina#action#call(''yank:rev'')<CR>',
       \ {'noremap': 1, 'silent': 1}
       \)
 call gina#custom#action#alias(
@@ -560,4 +570,8 @@ call gina#custom#execute(
       \)
 '''
 
+
+[[plugins]]
+merged = '0'
+repo = 'liuchengxu/vim-clap'
 # vim:set foldmethod=marker:

@@ -1,13 +1,18 @@
-# [[plugins]]
-# repo = 'neovim/nvim-lsp'
-# hook_add = '''
-# " can't load nvim-lsp modules when it is not merged in dein repo.
-# " so set rtp manually.
-
-# " let g:diagnostics = ''
-# " let g:diagnosticsafter = ''
-# '''
-
+[[plugins]]
+repo = 'neovim/nvim-lsp'
+merged = '0'
+hook_add = '''
+" can't load nvim-lsp modules when it is not merged in dein repo.
+" so set rtp manually.
+set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
+" let g:diagnostics = ''
+" let g:diagnosticsafter = ''
+'''
+[[plugins]]
+repo = 'nvim-lua/diagnostic-nvim'
+merged = '0'
+hook_add = '''
+'''
 # [[plugins]]
 # # lazy = '1'
 # repo = 'hrsh7th/vim-vsnip'

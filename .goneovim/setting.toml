@@ -16,7 +16,7 @@ Linespace = 1
 #
 # # Goneovim has a cached rendering feature enabled to speed up the process.
 # # If you want to disable it, set it to false
- CachedDrawing = false
+CachedDrawing = false
 # # You can specify the cache size to be used by the cache rendering feature of goneovim.
 # # The default is 320.
 #  CacheSize = 320
