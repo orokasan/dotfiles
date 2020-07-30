@@ -305,8 +305,6 @@ vmap ; :
 xmap ; :
 " Enter normal mode
 inoremap jk <esc>
-" change mark keymapping
-nnoremap M m
 " cancel highlight search
 " nmap<silent> <Esc><Esc> :nohlsearch<CR>
 " nmap<silent> <C-c><C-c> :nohlsearch<CR>
@@ -349,7 +347,6 @@ else
     nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
 "}}}
-
 "Key map - editting {{{
 " emacs like mapping on insert mode
 inoremap <C-f> <Right>
@@ -359,8 +356,10 @@ inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 " yank to end of line
 nnoremap Y y$
-xnoremap Y y$gv<ESC>
-xnoremap y ygv<ESC>
+" xnoremap Y y$gv<ESC>
+" xnoremap y ygv<ESC>
+xnoremap Y y$`]
+xnoremap y y`]
 " 'v' behave more compatible with 'y'
 " nnoremap vv V
 " nnoremap V v$
@@ -800,6 +799,11 @@ endtry
 "}}}
 
 hi! link NonText Comment
+
+" for neovide initialize hook
+if exists('neovide')
+    set guifont=:RictyDiminished\ NF:h16
+endif
 if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)�
 augroup GonvimAu

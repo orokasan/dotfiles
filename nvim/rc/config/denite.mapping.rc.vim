@@ -101,7 +101,9 @@ nnoremap <silent> [denite]m :<C-u>Denite
     \ -buffer-name=relative
     \ mark <CR>
 ":change
-nnoremap <silent> [denite]k :<C-u>Denite change<CR>
+nnoremap <silent> [denite]k :<C-u>Denite
+    \ -buffer-name=relative
+    \ change<CR>
 ":jump
 nnoremap <silent> [denite]j :<C-u>Denite
     \ -buffer-name=relative
