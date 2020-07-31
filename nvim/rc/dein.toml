@@ -570,8 +570,14 @@ call gina#custom#execute(
       \)
 '''
 
-
 [[plugins]]
 merged = '0'
 repo = 'liuchengxu/vim-clap'
+
+[[plugins]]
+merged = '0'
+repo =  'twitvim/twitvim' 
+hook_add = '''
+'''
+
 # vim:set foldmethod=marker:

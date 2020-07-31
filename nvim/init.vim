@@ -183,7 +183,7 @@ set winwidth=1
 " Set maximam maximam command line window.
 set cmdwinheight=8
 " equal window size.
-set equalalways
+" set equalalways
 " for cmdwin
 autocmd vimrc CmdwinEnter * call <SID>cmdwin_settings()
 function! s:cmdwin_settings() abort
@@ -763,14 +763,6 @@ function! ProfileCursorMove() abort
 endfunction
 "}}}
 
-" rainbowstreaming
-nnoremap <Leader>r :<C-u>call <SID>rainbowstream()<CR>
-function! s:rainbowstream()
-    split
-    terminal rainbowstream
-    resize 13
-endfunction
-
 " yank searched results
 function! s:search(pat)
 let l:cache = []
@@ -1059,5 +1051,38 @@ vmap r 'aRgv<ESC>ll
 	let g:previm_enable_realtime = 1
 
 autocmd BufReadPre gina://* set noswapfile
+autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
+autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
+autocmd FileType twitvim nnoremap <silent><buffer><expr> k line('.') =~ '\v^(1\|2\|3)$' ? 'G' : 'k'
+autocmd FileType twitvim nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg2j' : 'j'
+autocmd FileType twitvim nnoremap <silent><buffer> <C-n> :NextTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> <C-p> :PreviousTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> r :RefreshTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> <CR> :ProfileTwitter `expand('<cword>')[0:-2]`<CR>
+autocmd FileType twitvim nmap <silent><buffer> <leader>o /http<CR>:call histdel('/',-1)<CR><Plug>(openbrowser-smart-search)0
+nnoremap <silent> <F3> :FriendsTwitter<CR>
+nnoremap <silent> <Leader>r :RefreshTwitter<CR>
 	let g:previm_show_header = 0
+function! Test()
+let text = getline('.')
+let row = text / winwidth(0) + 1
+let col = - col('.')
+let buf = nvim_create_buf(v:false, v:true)
+setlocal wrap
+call nvim_buf_set_lines(buf, 0, -1, v:true, [text])
+let opts = {'relative': 'cursor', 'width': winwidth(0), 'height': row, 'col': col + 1, 'row': 0, 'anchor': 'NW', 'style': 'minimal'} 
+let win = nvim_open_win(buf, 0, opts)
+" call nvim_open_win(0, v:false, {
+"     \ 'relative': 'win',
+"     \ 'anchor': "SE",
+"     \ 'row': 0,
+"     \ 'col': 0,
+"     \ 'width': winwidth(0),
+"     \ 'height': row,
+"     \ 'focusable': v:false
+"     \})
+endfunction
+let twitvim_enable_python3 = 1
+let twitvim_timestamp_format = '%H:%M-%m/%d'
+		let twitvim_count = 15
 " vim:set foldmethod=marker:

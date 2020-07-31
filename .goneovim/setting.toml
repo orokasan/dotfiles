@@ -12,7 +12,6 @@ StartMaximizedWindow = false
 # https://github.com/rytkmt/RictyDiminished
 FontFamily = "RictyDiminished NF"
 FontSize = 12
-Linespace = 1
 #
 # # Goneovim has a cached rendering feature enabled to speed up the process.
 # # If you want to disable it, set it to false
