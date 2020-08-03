@@ -63,9 +63,14 @@ if executable('rg')
             \ 'separator': ['--'],
             \ 'final_opts': [],
             \ })
+	" call denite#custom#var('file/rec', 'command',
+	" \ ['pt', '--follow', '--nocolor', '--nogroup','--ignore=','AppData**',
+	" \  (has('win32') ? '-g:' : '-g='), ''])
     call denite#custom#var('file/rec', 'command',
-        \ ['rg', '--files', '--no-messages','--hidden',
-        \ '--glob', '!**/.git/*', '--glob','!*.tmp','-g','!AppData/*'])
+     \ ['rg', '--files',  '--hidden', '--glob', '!**/.git/*', '--color', 'never'])
+    call denite#custom#source('file/rec', 'converters', [])
+    call denite#custom#var('file/rec', 'cache_threshold', 50000)
+
 endif
 " Add custom menus
 let s:menus = {
@@ -90,18 +95,18 @@ call denite#custom#var('menu', 'menus', s:menus)
 " call denite#custom#kind('file', 'default_action', 'drop')
 " call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy', 'matcher/ignore_globs'])
 " if executable('fzf')
-" call denite#custom#source('_', 'matchers', ['matcher/fzf'])
+call denite#custom#source('_', 'matchers', ['matcher/clap'])
 " else
 " call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
 " endif
-call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
+" call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file/old', 'converters', ['converter/tail_path'])
 " Define alias
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#alias('source', 'grep/git', 'grep')
 call denite#custom#alias('source', 'grep/jv', 'grep')
 call denite#custom#var('grep/git', 'command', ['git', 'grep'])
-" call denite#custom#source('_', 'sorters', ['sorter/reverse'])
+call denite#custom#source('_', 'sorters', ['sorter/sublime'])
 call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
 
@@ -134,15 +139,18 @@ function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
     if isdirectory(dir)
-        let fdir = fnamemodify(dir, ':h:~')
+        let fdir = fnamemodify(dir, ':p:h')
     else
-        let fdir = fnamemodify(dir, ':~')
+        let fdir = fnamemodify(dir, ':p')
     endif
     " let fdir = '\"' . sdir. '\"'
     execute('Denite
         \ -path=' . fdir .
         \ ' file/rec')
 endfunction
+
+call denite#custom#filter('matcher/clap',
+  \ 'clap_path', expand('~/.cache/dein/repos/github.com/liuchengxu/vim-clap'))
 
 function! s:denite_directory_rec(context)
     let path = a:context['targets'][0]['action__path']
@@ -189,7 +197,7 @@ call denite#custom#action(
     \  function('s:defx_open'))
 
 " autocmd dein CursorHold * if &filetype ==# 'denite' | call denite#call_map('do_action', 'highlight') | endif
-autocmd dein WinEnter * if &filetype ==# 'denite' && b:denite.buffer_name ==# 'text' | call g:Denite_set_cursor(context) | endif
+" autocmd dein WinEnter * if &filetype ==# 'denite' && b:denite.buffer_name ==# 'text' | call g:Denite_set_cursor(context) | endif
 
 function! g:Denite_set_cursor(context) abort
     let pos = a:context['target'][0]['__cursor']

@@ -12,11 +12,10 @@ StartMaximizedWindow = false
 # https://github.com/rytkmt/RictyDiminished
 FontFamily = "RictyDiminished NF"
 FontSize = 12
-Linespace = 1
 #
 # # Goneovim has a cached rendering feature enabled to speed up the process.
 # # If you want to disable it, set it to false
- CachedDrawing = false
+CachedDrawing = false
 # # You can specify the cache size to be used by the cache rendering feature of goneovim.
 # # The default is 320.
 #  CacheSize = 320
@@ -35,7 +34,7 @@ DrawShadowForFloatWindow = false
 # Transparent = 0.95
 #
 # Drawing window border instead of vertical split, statusline
-# DrawBorder = false
+DrawBorder = false
 
 ExtCmdline = false
 ExtPopupmenu = false
@@ -59,13 +58,10 @@ DiffChangePattern = 1
 
 # [Message]
 # ## Specifies the opacity of the message window.
-# Transparent = 1.0
+# Transparent = 0.8
 
 [Statusline]
 Visible = false
-
-[Palette]
-Transparent = 0.8
 
 [Message]
 Transparent = 0.8
@@ -94,7 +90,7 @@ Transparent = 0.8
 # DetailWidth = 250
 
 [Tabline]
-VIsible = true
+Visible = true
 
 [Lint]
 Visible = false

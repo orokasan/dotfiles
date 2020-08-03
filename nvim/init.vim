@@ -28,12 +28,11 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 "Python,vimproc
-if has('win64')
-    " let g:python3_host_prog ='~\AppData\Local|Microsoft\WindowsApps\python3.exe'
+let g:python3_host_prog ='python.exe'
+if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
 let g:vimproc#download_windows_dll = 1
 endif
-
 " Backup
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
@@ -43,7 +42,6 @@ set undodir=~/.backup/vim/undo " put together undo files
 set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup                " no more backup file
-
 let mapleader = "\<Space>"
 "}}}
 
@@ -75,7 +73,6 @@ endif
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 
 let s:myvimrc = expand('$MYVIMRC')
-
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
@@ -118,7 +115,7 @@ set lazyredraw
 set t_Co=256
 set synmaxcol=512
 set belloff=all
-set fillchars+=vert:\ ,fold:\ 
+set fillchars+=vert:\ ,fold:\ ,diff:\ 
 set hidden          " be able to open files when editing other files
 set splitright
 set noruler
@@ -186,7 +183,7 @@ set winwidth=1
 " Set maximam maximam command line window.
 set cmdwinheight=8
 " equal window size.
-set equalalways
+" set equalalways
 " for cmdwin
 autocmd vimrc CmdwinEnter * call <SID>cmdwin_settings()
 function! s:cmdwin_settings() abort
@@ -267,7 +264,7 @@ endif
 "Key map - moving {{{
 " improved insert
 " in neovim, 'cc' overwrite unnamed register.
-"nnoremap <expr>i len(getline('.')) == 0 ? "cc" : "i"
+nnoremap <expr>i len(getline('.')) == 0 ? "_cc" : "i"
 nnoremap <CR> o<ESC>
 " nnoremap \ O<ESC>
 " moving visible lines by j/k
@@ -289,12 +286,12 @@ nnoremap <silent><Leader>h :bprev!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
 " matchit mapping
-nmap <silent> <TAB>  <Plug>(MatchitNormalForward)
-nmap <silent> g<TAB> <Plug>(MatchitNormalBackward)
-xmap <silent> <TAB>  <Plug>(MatchitVisualForward)
-xmap <silent> g<TAB> <Plug>(MatchitVisualBackward)
-omap <silent> <TAB>  <Plug>(MatchitOperationForward)
-omap <silent> g<TAB> <Plug>(MatchitOperationBackward)
+nmap <TAB>  %
+nmap g<TAB> g%
+xmap <TAB>  %
+xmap g<TAB> g%
+omap <TAB>  %
+omap g<TAB> g%
 " native <TAB> is useful
 nnoremap <C-p> <C-i>zz
 vnoremap <C-p> <C-i>
@@ -308,8 +305,6 @@ vmap ; :
 xmap ; :
 " Enter normal mode
 inoremap jk <esc>
-" change mark keymapping
-nnoremap M m
 " cancel highlight search
 " nmap<silent> <Esc><Esc> :nohlsearch<CR>
 " nmap<silent> <C-c><C-c> :nohlsearch<CR>
@@ -352,7 +347,6 @@ else
     nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
 "}}}
-
 "Key map - editting {{{
 " emacs like mapping on insert mode
 inoremap <C-f> <Right>
@@ -362,8 +356,10 @@ inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 " yank to end of line
 nnoremap Y y$
-xnoremap Y y$gv<ESC>
-xnoremap y ygv<ESC>
+" xnoremap Y y$gv<ESC>
+" xnoremap y ygv<ESC>
+xnoremap Y y$`]
+xnoremap y y`]
 " 'v' behave more compatible with 'y'
 " nnoremap vv V
 " nnoremap V v$
@@ -767,14 +763,6 @@ function! ProfileCursorMove() abort
 endfunction
 "}}}
 
-" rainbowstreaming
-nnoremap <Leader>r :<C-u>call <SID>rainbowstream()<CR>
-function! s:rainbowstream()
-    split
-    terminal rainbowstream
-    resize 13
-endfunction
-
 " yank searched results
 function! s:search(pat)
 let l:cache = []
@@ -803,6 +791,11 @@ endtry
 "}}}
 
 hi! link NonText Comment
+
+" for neovide initialize hook
+if exists('neovide')
+    set guifont=:RictyDiminished\ NF:h16
+endif
 if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)�
 augroup GonvimAu
@@ -969,21 +962,20 @@ do
 end
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
-
 local util = require 'nvim_lsp/util'
 
-local bin_name = "efm-langserver"
-
-configs["efm_ls"] = {
-  default_config = {
-    cmd = {"efm-langserver"};
-    filetypes = {text, txt, markdown};
-    root_dir = function(fname)
-      return vim.fn.getcwd()
-    end;
-  };
-}
-require'nvim_lsp'.efm_ls.setup{}
+-- local bin_name = "efm-langserver"
+-- 
+-- configs["efm_ls"] = {
+--   default_config = {
+--     cmd = {"efm-langserver"};
+--     filetypes = {text, txt, markdown, IPA};
+--     root_dir = function(fname)
+--       return vim.fn.getcwd()
+--     end;
+--   };
+-- }
+require'nvim_lsp'.efm.setup{}
 
 vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
 
@@ -1040,17 +1032,57 @@ sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning line
 sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=
 sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numhl=
 hi link  LspDiagnosticsError Error
+highlight LspReferenceText guifg=Red
+highlight LspReferenceWrite guifg=Red
+highlight LspReferenceRead guifg=Red
+highlight link LspDiagnosticsError Error
+highlight LspDiagnosticsWarning guifg=Green
+highlight link LspDiagnosticsUnderline Underlined
 autocmd ColorScheme * highlight LspReferenceText guifg=Red
 autocmd ColorScheme * highlight LspReferenceWrite guifg=Red
 autocmd ColorScheme * highlight LspReferenceRead guifg=Red
 autocmd ColorScheme * highlight link LspDiagnosticsError Error
 autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
-autocmd ColorScheme * highlight LspDiagnosticsUnderline guifg=Magenta
+autocmd ColorScheme * highlight link LspDiagnosticsUnderline Underlined
 
 vmap u 'aUgv<ESC>ll
 vmap r 'aRgv<ESC>ll
 
 	let g:previm_enable_realtime = 1
 
+autocmd BufReadPre gina://* set noswapfile
+autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
+autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
+autocmd FileType twitvim nnoremap <silent><buffer><expr> k line('.') =~ '\v^(1\|2\|3)$' ? 'G' : 'k'
+autocmd FileType twitvim nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg2j' : 'j'
+autocmd FileType twitvim nnoremap <silent><buffer> <C-n> :NextTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> <C-p> :PreviousTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> r :RefreshTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> <CR> :ProfileTwitter `expand('<cword>')[0:-2]`<CR>
+autocmd FileType twitvim nmap <silent><buffer> <leader>o /http<CR>:call histdel('/',-1)<CR><Plug>(openbrowser-smart-search)0
+nnoremap <silent> <F3> :FriendsTwitter<CR>
+nnoremap <silent> <Leader>r :RefreshTwitter<CR>
 	let g:previm_show_header = 0
+function! Test()
+let text = getline('.')
+let row = text / winwidth(0) + 1
+let col = - col('.')
+let buf = nvim_create_buf(v:false, v:true)
+setlocal wrap
+call nvim_buf_set_lines(buf, 0, -1, v:true, [text])
+let opts = {'relative': 'cursor', 'width': winwidth(0), 'height': row, 'col': col + 1, 'row': 0, 'anchor': 'NW', 'style': 'minimal'} 
+let win = nvim_open_win(buf, 0, opts)
+" call nvim_open_win(0, v:false, {
+"     \ 'relative': 'win',
+"     \ 'anchor': "SE",
+"     \ 'row': 0,
+"     \ 'col': 0,
+"     \ 'width': winwidth(0),
+"     \ 'height': row,
+"     \ 'focusable': v:false
+"     \})
+endfunction
+let twitvim_enable_python3 = 1
+let twitvim_timestamp_format = '%H:%M-%m/%d'
+		let twitvim_count = 15
 " vim:set foldmethod=marker:

@@ -192,7 +192,6 @@ nmap <silent><buffer> [denite]h <Plug>(defx):<C-u>Denite
 setlocal signcolumn=no
 " Define mappings
 nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
-nnoremap <silent><buffer><expr> S defx#async_action('drop', 'split')
 nnoremap <silent><buffer> <C-e> <C-w>p
 nnoremap <silent><buffer><expr> c defx#async_action('multi', ['copy','redraw'])
 nnoremap <silent><buffer><expr> m defx#async_action('multi', ['move','redraw'])
@@ -211,7 +210,7 @@ nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
 nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'nested', 'toggle')
 nnoremap <silent><buffer><expr> O defx#do_action('open_tree', 'recursive','nested', 'toggle')
-nnoremap <silent><buffer><expr> <MiddleMouse> defx#async_action('open_tree', 'nested', 'toggle')
+nnoremap <silent><buffer><expr> <MiddleMouse> defx#do_action('open_tree', 'recursive', 'nested', 'toggle')
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
 nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
 nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
@@ -219,26 +218,27 @@ nnoremap <silent><buffer><expr> <RightMouse> defx#do_action('cd', ['..'])
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
 nnoremap <silent><buffer><expr> i defx#do_action('toggle_select') . 'j'
+xnoremap <silent><buffer><expr> i defx#do_action('toggle_select_visual')
 nnoremap <silent><buffer><expr> e defx#async_action('toggle_select')
-nnoremap <silent><buffer><expr> I defx#do_action('clear_select_all')
-nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
+xnoremap <silent><buffer><expr> e defx#async_action('toggle_select_visual')
+nnoremap <silent><buffer><expr> I defx#do_action('toggle_select_all')
+nnoremap <silent><buffer><expr> * defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
 nnoremap <silent><buffer><expr><nowait> <C-g> defx#do_action('print')
 nnoremap <silent><buffer><expr> \ defx#do_action('change_vim_cwd','print')
 nnoremap <silent><buffer><expr> ss defx#do_action('call','Defx_to_denite_rec')
 nnoremap <silent><buffer><expr> sf defx#do_action('call','Defx_to_denite_file')
+nnoremap <silent><buffer><expr> S defx#do_action('drop', 'split')
 nnoremap <silent><buffer> sa :split<CR>:Defx -new -split=no<CR>
-xnoremap <silent><buffer><expr> i defx#do_action('toggle_select_visual')
-xnoremap <silent><buffer><expr> e defx#async_action('toggle_select_visual')
 function! s:defx_is_plaintxt()
     let file = defx#get_candidate()['action__path']
     let extension = fnamemodify(file, ':e')
     let ex = '\v(png|xlsm|jpg|docx|docs|xlsx|pdf)'
-    if ex !~# extension
-    return 1
+    if ex =~# extension
+    return 0
     else
-    return
+    return 1
     endif
 endfunction
 '''
@@ -705,9 +705,9 @@ repo = 'easymotion/vim-easymotion'
 hook_add = '''
 let g:EasyMotion_do_mapping = 0
 " nmap m <Plug>(easymotion-overwin-f2)
-nmap m <Plug>(easymotion-s2)
-xmap m <Plug>(easymotion-s2)
-omap m <Plug>(easymotion-s2)
+nmap <C-s> <Plug>(easymotion-s2)
+xmap <C-s> <Plug>(easymotion-s2)
+omap <C-s> <Plug>(easymotion-s2)
 
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
@@ -829,10 +829,6 @@ repo = 'norcalli/nvim-colorizer.lua'
 on_cmd = ['ColorizerToggle']
 
 [[plugins]]
-on_cmd = ['Clap']
-repo = 'liuchengxu/vim-clap'
-
-[[plugins]]
 repo = 'voldikss/vim-translator'
 #TODO:qitta
 on_map = { nx = '<Plug>Translate' }
@@ -950,11 +946,11 @@ hook_add = '''
 let g:sonictemplate_vim_template_dir = '~/.vim/template/'
 '''
 
-[[plugins]]
-repo = 'tpope/vim-fugitive'
-on_cmd = ['Git', 'G']
-hook_add = '''
-'''
+# [[plugins]]
+# repo = 'tpope/vim-fugitive'
+# on_cmd = ['Git', 'G']
+# hook_add = '''
+# '''
 
 [[plugins]]
 on_map = {n = '<Plug>(vigemo-'}

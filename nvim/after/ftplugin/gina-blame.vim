@@ -1,1 +1,2 @@
 set noswapfile
+echom 'hoge'
