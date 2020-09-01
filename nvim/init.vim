@@ -347,6 +347,7 @@ else
     nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
 "}}}
+
 "Key map - editting {{{
 " emacs like mapping on insert mode
 inoremap <C-f> <Right>
@@ -867,7 +868,6 @@ let g:denite_text_pos = 0
 "     au WinLeave * setlocal nocursorline
 " augroup end
 
-
 nnoremap <C-n> <cmd>call Nvim_lsp_showdiagnostics()<CR>
 nnoremap \ <cmd>lne<CR>zz
 nnoremap \| <cmd>lp<CR>zz
@@ -923,7 +923,7 @@ endfor
     " let result = g:res
     " call setqflist(result, ' ')
 endfunction
-if has('nvim') && dein#is_sourced('nvim-lsp')
+if has('nvim') && dein#is_sourced('nvim-lspconfig')
 lua << EOF
 do
 -- function vim.lsp.util.set_qflist(items)
