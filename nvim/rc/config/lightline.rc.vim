@@ -249,14 +249,11 @@ endfunction
 
 function! LLruler() abort
     let info = {'c': col('.'), 'l': line('.') }
-    let l:fcol =
-        \ info['c'] < 10 ? '  ' . info['c'] :
-        \ info['c'] < 100 ? ' ' . info['c'] : info['c']
-    let l:fline = info['l'] < 10 ? ' ' . info['l'] : info['l']
-
+    let fcol = printf("%3s", info['c'])
+    let fline = printf("%3s", info['l'])
     if !s:ignore_window()
-        return s:threshold(0) ? printf('%s:%s«%d', fcol , fline , line('$') ) :
-            \  s:threshold(1) ? printf('%s:%s', fcol , fline ) : ''
+        return s:threshold(0) ? printf('L%sC%s«%d', fline , fcol , line('$') ) :
+            \  s:threshold(1) ? printf('L%sC%s', fline, fcol  ) : ''
     else
         return ''
     endif
