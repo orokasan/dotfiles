@@ -62,6 +62,7 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_truncate_kind',
     \ 'converter_auto_delimiter'
     \ ])
+call deoplete#custom#source('eskk', 'sorters', [])
 " deoplete-lsp should not be lazy loaded
 if dein#is_sourced('deoplete-lsp')
     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex']

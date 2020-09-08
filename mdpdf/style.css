@@ -8,7 +8,7 @@
   text-size-adjust: 100%;
   color: #333;
   /* font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
-  font-family: "ヒラギノ明朝 Pro", "Hiragino Mincho Pro", "游明朝体", "Yu Mincho", YuMincho, "MS P明朝", "MS PMincho";
+  font-family: "ヒラギノ明朝 ProN", "Hiragino Mincho ProN", "游明朝", "Yu Mincho", "YuMincho", "MS P明朝", "MS PMincho";
   font-weight:normal;
   font-size: 14px;
   line-height: 1.6;
@@ -256,7 +256,8 @@
 .markdown-body h6 {
   margin-top: 1em;
   margin-bottom: 16px;
-  font-family: "游ゴシック体", "Yu Gothic", YuGothic, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, "MS Pゴシック", "MS PGothic";
+  font-family: "ヒラギノ角ゴシック", "Hiragino Kaku Gothic", "游ゴシック Medium", "Yu Gothic Medium", YuGothic,  "メイリオ", Meiryo, "MS Pゴシック", "MS PGothic";
+  font-feature-settings: "palt";
   font-weight: bold;
   line-height: 1.4;
 }

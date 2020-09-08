@@ -2,6 +2,7 @@
 " Basic setting {{{
 set encoding=utf-8
 scriptencoding utf-8,cp932
+set fileformats=unix,dos,mac
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
@@ -28,7 +29,17 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 "Python,vimproc
+<<<<<<< Updated upstream
+if has('win32')
+    let g:python3_host_prog ='python.exe'
+endif
+||||||| merged common ancestors
 let g:python3_host_prog ='python.exe'
+=======
+if has('win32')
+let g:python3_host_prog ='python.exe'
+endif
+>>>>>>> Stashed changes
 if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
 let g:vimproc#download_windows_dll = 1
@@ -77,7 +88,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    " call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -152,7 +163,7 @@ let g:vim_indent_cont = 4
 set autoindent
 set shiftwidth=4            " number of spaces inserted when auto indentation by vim
 set formatoptions+=mMjoB
-
+set iskeyword+=-
 " Searching
 set ignorecase
 set smartcase
@@ -681,7 +692,7 @@ endif
 
 " Neovim {{{
 if has('nvim')
-    " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+    set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:ver25-Cursor,r-cr:hor20-nCursor/
     " fix CTRL-V yank issue
     " set clipboard=unnamedplus
     " nnoremap y "+y
@@ -1084,5 +1095,15 @@ let win = nvim_open_win(buf, 0, opts)
 endfunction
 let twitvim_enable_python3 = 1
 let twitvim_timestamp_format = '%H:%M-%m/%d'
+<<<<<<< Updated upstream
+let twitvim_count = 15
+function! Mdpdf()
+!mdpdf --border=12.7mm --styles=Users/ork/dotfiles/mdpdf/github-markdown-css.css %
+endfunction
+||||||| merged common ancestors
 		let twitvim_count = 15
+=======
+		let twitvim_count = 15
+
+>>>>>>> Stashed changes
 " vim:set foldmethod=marker:
