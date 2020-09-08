@@ -28,7 +28,9 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 "Python,vimproc
-let g:python3_host_prog ='python.exe'
+if has('win32')
+    let g:python3_host_prog ='python.exe'
+endif
 if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
 let g:vimproc#download_windows_dll = 1
@@ -1084,5 +1086,8 @@ let win = nvim_open_win(buf, 0, opts)
 endfunction
 let twitvim_enable_python3 = 1
 let twitvim_timestamp_format = '%H:%M-%m/%d'
-		let twitvim_count = 15
+let twitvim_count = 15
+function! Mdpdf()
+!mdpdf --border=12.7mm --styles=Users/ork/dotfiles/mdpdf/github-markdown-css.css %
+endfunction
 " vim:set foldmethod=marker:
