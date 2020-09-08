@@ -803,7 +803,7 @@ if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)�
 augroup GonvimAu
     au! Optionset *
-    au! BufEnter,FileType,VimEnter,WinEnter *
+    " au! BufEnter,FileType,VimEnter,WinEnter *
 augroup end
  augroup GonvimAuStatusline
     autocmd!
@@ -823,13 +823,12 @@ augroup end
   augroup GonvimAuMinimapSync
     autocmd!
   augroup end
-  augroup GonvimAuMd
-    autocmd!
-  augroup end
-  augroup GonvimAuWorkspace
-    autocmd!
-  augroup end
-  cd ~/
+  " augroup GonvimAuMd
+  "   autocmd!
+  " augroup end
+  " augroup GonvimAuWorkspace
+  "   autocmd!
+  " augroup end
   set mouse=nicr
   set pumheight=10
 " set scrolljump=5
@@ -848,8 +847,8 @@ function! Vimdiff_config(timer) abort
 endfunction
 " autocmd vimrc TabLeave * silent! unmap q
 nnoremap <silent><C-q> :tabclose<CR>
-" noremap <ScrollWheelUp> <C-u>
-" noremap <ScrollWheelDown> <C-d>
+noremap <ScrollWheelUp> <C-u>
+noremap <ScrollWheelDown> <C-d>
 " au vimrc BufEnter * set scroll=3
 nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
@@ -1088,6 +1087,6 @@ let twitvim_enable_python3 = 1
 let twitvim_timestamp_format = '%H:%M-%m/%d'
 let twitvim_count = 15
 function! Mdpdf()
-!mdpdf --border=12.7mm --styles=Users/ork/dotfiles/mdpdf/github-markdown-css.css %
+!mdpdf --border=12.7mm %
 endfunction
 " vim:set foldmethod=marker:

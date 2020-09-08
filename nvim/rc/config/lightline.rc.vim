@@ -361,6 +361,10 @@ function! LLDeniteBuffer() abort
 endfunction
 
 function! LLDeniteMode() abort
+    if exists('g:gonvim_running')
+        return len(denite#get_status('input')) > 0 ? '# Denite: ' . denite#get_status('input') : '# Denite'
+    endif 
+
     if len(denite#get_status('input')) > 0
         return ''
     else
