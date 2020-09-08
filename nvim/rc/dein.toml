@@ -98,7 +98,8 @@ autocmd dein ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
 autocmd dein ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd dein ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd dein ColorScheme iceberg highlight clear Search
-autocmd dein ColorScheme iceberg highligh Search gui=underline
+autocmd dein ColorScheme iceberg highlight Search gui=underline
+autocmd dein ColorScheme iceberg highlight! link Conceal Title
 '''
 
 # [[plugins]]
@@ -580,4 +581,7 @@ repo =  'twitvim/twitvim'
 hook_add = '''
 '''
 
-# vim:set foldmethod=marker:
+[[plugins]]
+repo = 'mattn/vim-maketable'
+
+# vim:set foldmethod=marker:'
