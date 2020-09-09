@@ -1,6 +1,7 @@
 
 version: 2
-log: C:\Users\t_kuriki\output.log
+root-markers:
+  - .git/
 loglevel: 0
 
 tools:
