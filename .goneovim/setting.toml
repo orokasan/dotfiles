@@ -12,7 +12,7 @@ StartMaximizedWindow = false
 # https://github.com/rytkmt/RictyDiminished
 FontFamily = "RictyDiminished NF"
 FontSize = 12
-#
+Linespace = 0
 # # Goneovim has a cached rendering feature enabled to speed up the process.
 # # If you want to disable it, set it to false
 CachedDrawing = false
@@ -34,27 +34,19 @@ DrawShadowForFloatWindow = false
 # Transparent = 0.95
 #
 # Drawing window border instead of vertical split, statusline
-DrawBorder = false
+DrawBorder = true
 
-ExtCmdline = false
-ExtPopupmenu = false
+ExtCmdline = true
+ExtPopupmenu = true
 ExtTabline = false
-ExtMessages = false
+ExtMessages = true
 
-IndentGuide = false
+IndentGuide = true
 
 DiffAddPattern    = 1
 DiffDeletePattern = 1
 DiffChangePattern = 1
 # ClickEffect = true
-
-# [Palette]
-# ## Specifies the proportion of the command line palette to the height of the entire window.
-# AreaRatio = 0.5
-# ## Specifies the number of items to be displayed in the command line palette.
-# MaxNumberOfResultItems = 30
-# ## Specifies the opacity of the command line palette.
-# Transparent = 1.0
 
 # [Message]
 # ## Specifies the opacity of the message window.
@@ -66,7 +58,15 @@ Visible = false
 [Message]
 Transparent = 0.8
 
-[Popupmenu]
+# [Palette]
+## Specifies the proportion of the command line palette to the height of the entire window.
+# AreaRatio = 0.9
+## Specifies the number of items to be displayed in the command line palette.
+# MaxNumberOfResultItems = 30
+## Specifies the opacity of the command line palette.
+# Transparent = 1.0
+
+# [Popupmenu]
 ## neovim's popupmenu is made up of word, menu and info parts.
 ## Each of these parts will display the following information.
 ##   word:   the text that will be inserted, mandatory

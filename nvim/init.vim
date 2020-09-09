@@ -95,7 +95,7 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() 
 "}}}
 
 " Visual  {{{
-" language C
+language C
 set ambiwidth=double
 set shortmess+=aAcTt
 set showtabline=2   " always show tabline
@@ -923,7 +923,7 @@ endfor
     " let result = g:res
     " call setqflist(result, ' ')
 endfunction
-if has('nvim') && dein#is_sourced('nvim-lsp')
+if has('nvim') && dein#is_sourced('nvim-lspconfig')
 lua << EOF
 do
 -- function vim.lsp.util.set_qflist(items)
@@ -960,6 +960,7 @@ do
     -- if vim.lsp.util.diagnostics_by_buf[vim.fn.bufnr(0)] then
   end
 end
+
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
 local util = require 'nvim_lsp/util'
