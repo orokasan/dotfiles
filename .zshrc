@@ -4,6 +4,8 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+export MDPDF_STYLES=$HOME/dotfiles/mdpdf/style.css
+
 export TEXINPUTS='.//;'
 [[ -d ~/.rbenv  ]] && \
   export PATH=${HOME}/.rbenv/bin:${PATH} && \

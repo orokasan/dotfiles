@@ -28,7 +28,9 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 "Python,vimproc
-let g:python3_host_prog ='python.exe'
+if has('win32')
+    let g:python3_host_prog ='python.exe'
+endif
 if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
 let g:vimproc#download_windows_dll = 1
@@ -347,6 +349,7 @@ else
     nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
 "}}}
+
 "Key map - editting {{{
 " emacs like mapping on insert mode
 inoremap <C-f> <Right>
@@ -800,7 +803,7 @@ if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)�
 augroup GonvimAu
     au! Optionset *
-    au! BufEnter,FileType,VimEnter,WinEnter *
+    " au! BufEnter,FileType,VimEnter,WinEnter *
 augroup end
  augroup GonvimAuStatusline
     autocmd!
@@ -820,13 +823,12 @@ augroup end
   augroup GonvimAuMinimapSync
     autocmd!
   augroup end
-  augroup GonvimAuMd
-    autocmd!
-  augroup end
-  augroup GonvimAuWorkspace
-    autocmd!
-  augroup end
-  cd ~/
+  " augroup GonvimAuMd
+  "   autocmd!
+  " augroup end
+  " augroup GonvimAuWorkspace
+  "   autocmd!
+  " augroup end
   set mouse=nicr
   set pumheight=10
 " set scrolljump=5
@@ -845,8 +847,8 @@ function! Vimdiff_config(timer) abort
 endfunction
 " autocmd vimrc TabLeave * silent! unmap q
 nnoremap <silent><C-q> :tabclose<CR>
-" noremap <ScrollWheelUp> <C-u>
-" noremap <ScrollWheelDown> <C-d>
+noremap <ScrollWheelUp> <C-u>
+noremap <ScrollWheelDown> <C-d>
 " au vimrc BufEnter * set scroll=3
 nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
@@ -866,7 +868,6 @@ let g:denite_text_pos = 0
 "     au WinEnter * setlocal cursorline
 "     au WinLeave * setlocal nocursorline
 " augroup end
-
 
 nnoremap <C-n> <cmd>call Nvim_lsp_showdiagnostics()<CR>
 nnoremap \ <cmd>lne<CR>zz
@@ -1085,5 +1086,8 @@ let win = nvim_open_win(buf, 0, opts)
 endfunction
 let twitvim_enable_python3 = 1
 let twitvim_timestamp_format = '%H:%M-%m/%d'
-		let twitvim_count = 15
+let twitvim_count = 15
+function! Mdpdf()
+!mdpdf --border=12.7mm %
+endfunction
 " vim:set foldmethod=marker:

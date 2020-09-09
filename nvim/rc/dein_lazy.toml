@@ -1,6 +1,7 @@
 [[plugins]]
 # repo =  'Shougo/denite.nvim'
 repo =  'orokasan/denite.nvim'
+rev = 'dev'
 on_cmd = ['Denite', 'DeniteProjectDir', 'DeniteCursorWord']
 hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
 hook_source = 'source ~/dotfiles/nvim/rc/config/denite.rc.vim'
@@ -86,7 +87,6 @@ if g:my_denite_filter_winblend_config ==# 1
 else
     setlocal winblend=0
 endif
-inoremap <silent><buffer> <CR> <ESC><C-w>p
 nnoremap <silent><buffer> j  <C-w>p:call cursor(line('.')+1,0)<CR><C-w>p
 nnoremap <silent><buffer> k  <C-w>p:call cursor(line('.')-1,0)<CR><C-w>p
 inoremap <silent><buffer> <C-j>  <ESC><C-w>p:call cursor(line('.')+1,0)<CR><C-w>pA
@@ -97,13 +97,17 @@ inoremap z; ;
 inoremap <silent><buffer><expr> <S-Tab> denite#do_map('choose_action')
 imap <silent><buffer> <C-[> <Plug>(denite_filter_update)
 imap <silent><buffer> <ESC> <Plug>(denite_filter_update)
+imap <silent><buffer> <CR> <Plug>(denite_filter_update)
 imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)q
 nmap <silent><buffer> q <Plug>(denite_filter_quit)q
+if !exists('g:gonvim_running')
+inoremap <silent><buffer> <CR> <ESC><C-w>p
+endif
 '''
 
 [[plugins]]
-repo =  'orokasan/defx.nvim'
-# repo =  'Shougo/defx.nvim'
+# repo =  'orokasan/defx.nvim'
+repo =  'Shougo/defx.nvim'
 on_cmd = 'Defx'
 hook_add = '''
 nmap <C-e> <Plug>(defx)
