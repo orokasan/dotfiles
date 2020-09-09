@@ -20,6 +20,9 @@ CachedDrawing = true
 # # The default is 320.
 #  CacheSize = 320
 #
+FontSize = 15
+Linespace = 1
+
 # Copy yanked text to clipboard
 Clipboard = false
 
