@@ -168,3 +168,4 @@ endfunction
 let s:eskk_default_linenr_hi =s:gethighlight('Cursor')
 " ColorSchemeが変わった時に読み込み直す
 autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('Cursor')
+

@@ -32,8 +32,6 @@ let g:loaded_matchparen = 1
 if has('win32')
     let g:python3_host_prog ='python.exe'
 endif
-||||||| merged common ancestors
-let g:python3_host_prog ='python.exe'
 if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
 let g:vimproc#download_windows_dll = 1
