@@ -8,4 +8,7 @@ mkdir %HOMEPATH%"\.backup\vim\undo"
 mkdir %HOMEPATH%"\.backup\vim\view"
 mkdir %HOMEPATH%"\.backup\vim\backup"
 
+:: mdpdfのCSSスタイル用環境変数を設定する
+setx MDPDF_STYLES "%HOMEPATH%\dotfiles\mdpdf\style.css"
+
 exit 0
