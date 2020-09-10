@@ -45,8 +45,9 @@ class Source(Base):
 
     def _convert(self, context, header):
         level = len(header['level'])
+        abbr = '■' * level + '  ' + header['text']
         return {
-                'abbr': '■' * level + '  ' + header['text'],
+                'abbr': abbr,
                 'word': header['text'],
                 'action__path': self.vim.call('bufname', context['__bufnr']),
                 'action__line': header['lnum']
@@ -58,7 +59,7 @@ class Source(Base):
         in_codeblock = False
         context['cursor'] = 0
         number = 0
-        t = 1
+        max_level = int(context['args'][0]) if context['args'] else ''
         for i in range(1, self.vim.call('line', '$') + 1):
             line = self.vim.call('getline', i)
             if re.match(codeblock, line):
@@ -68,6 +69,8 @@ class Source(Base):
                 number += 1
                 level = match.group(1)
                 text = match.group(2)
+                if max_level and len(level) > max_level:
+                    continue
                 # text = (len(level) - 1) * ' ' + match.group(2)
                 headers.append({
                     'level': level,

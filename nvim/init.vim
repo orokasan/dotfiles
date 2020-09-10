@@ -2,6 +2,7 @@
 " Basic setting {{{
 set encoding=utf-8
 scriptencoding utf-8,cp932
+set fileformats=unix,dos,mac
 set fileencodings=utf-8,ucs-bom,iso-2022-jp-3,euc-jisx0213,euc-jp,cp932
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
@@ -79,7 +80,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    " call dein#load_toml(s:lsp_toml,  {'merged': 1})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -154,7 +155,7 @@ let g:vim_indent_cont = 4
 set autoindent
 set shiftwidth=4            " number of spaces inserted when auto indentation by vim
 set formatoptions+=mMjoB
-
+set iskeyword+=-
 " Searching
 set ignorecase
 set smartcase
@@ -683,7 +684,7 @@ endif
 
 " Neovim {{{
 if has('nvim')
-    " set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+    set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:ver25-Cursor,r-cr:hor20-nCursor/
     " fix CTRL-V yank issue
     " set clipboard=unnamedplus
     " nnoremap y "+y
