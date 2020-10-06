@@ -684,7 +684,8 @@ endif
 
 " Neovim {{{
 if has('nvim')
-    set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:ver25-Cursor,r-cr:hor20-nCursor/
+    au ColorScheme * highlight! iCursor guifg=#161821 guibg=#84a0c6
+    " set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:iCursor,r-cr:hor20
     " fix CTRL-V yank issue
     " set clipboard=unnamedplus
     " nnoremap y "+y
@@ -801,9 +802,11 @@ if exists('neovide')
     set guifont=:RictyDiminished\ NF:h16
 endif
 if exists('g:gonvim_running')
-    " for goneovim bug(20/06/30)�
+    " for goneovim bug(20/06/30)
 augroup GonvimAu
     au! Optionset *
+    " au GonvimAu OptionSet * if &ro != 1 | silent! call rpcnotify(1, "Gui", "gonvim_optionset") | endif
+    au GonvimAu OptionSet * silent! call rpcnotify(1, "Gui", "gonvim_optionset")
     " au! BufEnter,FileType,VimEnter,WinEnter *
 augroup end
  augroup GonvimAuStatusline
@@ -846,6 +849,7 @@ function! Vimdiff_config(timer) abort
   " nnoremap q :tabclose<CR>
   " endif
 endfunction
+
 " autocmd vimrc TabLeave * silent! unmap q
 nnoremap <silent><C-q> :tabclose<CR>
 noremap <ScrollWheelUp> <C-u>
@@ -921,7 +925,7 @@ function! Nvim_lsp_result_to_quickfix() abort
         let col = l['col']
         let text = l['text']
         call setqflist([bufnr,lnum,col,text], ' ')
-endfor
+    endfor
     " let result = g:res
     " call setqflist(result, ' ')
 endfunction
@@ -1052,7 +1056,6 @@ vmap u 'aUgv<ESC>ll
 vmap r 'aRgv<ESC>ll
 
 	let g:previm_enable_realtime = 1
-
 autocmd BufReadPre gina://* set noswapfile
 autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
 autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
@@ -1091,4 +1094,15 @@ let twitvim_count = 15
 function! Mdpdf()
 !mdpdf --border=12.7mm %
 endfunction
+augroup your_config_scrollbar_nvim
+    autocmd!
+    autocmd BufEnter    * silent! lua require('scrollbar').show()
+    autocmd BufLeave    * silent! lua require('scrollbar').clear()
+
+    autocmd CursorMoved * silent! lua require('scrollbar').show()
+    autocmd VimResized  * silent! lua require('scrollbar').show()
+
+    autocmd FocusGained * silent! lua require('scrollbar').show()
+    autocmd FocusLost   * silent! lua require('scrollbar').clear()
+augroup end
 " vim:set foldmethod=marker:

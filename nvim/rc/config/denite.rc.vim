@@ -95,7 +95,7 @@ call denite#custom#var('menu', 'menus', s:menus)
 " call denite#custom#kind('file', 'default_action', 'drop')
 " call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy', 'matcher/ignore_globs'])
 " if executable('fzf')
-call denite#custom#source('_', 'matchers', ['matcher/clap'])
+" call denite#custom#source('_', 'matchers', ['matcher/clap'])
 " else
 " call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
 " endif

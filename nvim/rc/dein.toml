@@ -584,4 +584,6 @@ hook_add = '''
 [[plugins]]
 repo = 'mattn/vim-maketable'
 
+[[plugins]]
+repo = 'Xuyuanp/scrollbar.nvim'
 # vim:set foldmethod=marker:'
