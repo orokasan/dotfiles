@@ -107,11 +107,6 @@ autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
 "" InsertLeaveの前に発生するイベントであることに注意する
 autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_nicely()
 
-function! s:eskk_enable_post()
-    " ハイライトを有効化
-    set guicursor=n-v-c:block-eskkCursor-blinkon0,i-ci:ver25-eskkCursor,r-cr:hor20-eskkCursor/
-endfunction
-
 function! s:eskk_restore_highlight_nicely()
     if mode() is# 'i'
         call s:eskk_restore_cursor()
@@ -154,7 +149,7 @@ let bg = synIDattr(synIDtrans(hlID(a:hi)), "bg")
 let fg = synIDattr(synIDtrans(hlID(a:hi)), "fg")
     return 'guifg=' . fg . ' guibg=' . bg
 endfunction
-highlight eskkCursor guibg=#e2a478
+highlight eskkCursor guibg=#e2a478 guifg=#161821
 
 function! s:eskk_highlight_linenr() abort
     return

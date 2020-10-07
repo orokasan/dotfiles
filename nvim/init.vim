@@ -801,7 +801,7 @@ if exists('neovide')
     set guifont=:RictyDiminished\ NF:h16
 endif
 if exists('g:gonvim_running')
-    " for goneovim bug(20/06/30)�
+    " for goneovim bug(20/06/30)
 augroup GonvimAu
     au! Optionset *
     " au! BufEnter,FileType,VimEnter,WinEnter *
@@ -1090,4 +1090,12 @@ let twitvim_count = 15
 function! Mdpdf()
 !mdpdf --border=12.7mm %
 endfunction
+let g:iris_name  = "kuriki"
+let g:iris_mail = "kuriki@gihyo.co.jp"
+let g:iris_imap_port  = 993
+let g:iris_smtp_port  = 587
+let g:iris_imap_host  ='imap.gmail.com'
+let g:iris_smtp_host = 'smtp.gmail.com'
+inoremap <C-Enter> <End>。
+inoremap <C-Enter> <End>、
 " vim:set foldmethod=marker:

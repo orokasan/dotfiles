@@ -584,4 +584,6 @@ hook_add = '''
 [[plugins]]
 repo = 'mattn/vim-maketable'
 
+[[plugins]]
+repo = 'machakann/vim-colorscheme-kemonofriends'
 # vim:set foldmethod=marker:'
