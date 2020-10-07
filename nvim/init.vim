@@ -684,7 +684,8 @@ endif
 
 " Neovim {{{
 if has('nvim')
-    set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:ver25-Cursor,r-cr:hor20-nCursor/
+    au ColorScheme * highlight! iCursor guifg=#161821 guibg=#84a0c6
+    " set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:iCursor,r-cr:hor20
     " fix CTRL-V yank issue
     " set clipboard=unnamedplus
     " nnoremap y "+y
@@ -838,7 +839,7 @@ nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
 autocmd FileType text syntax sync minlines=50
 autocmd FileType markdown syntax sync minlines=50
-autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
+" autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
 function! Vimdiff_config(timer) abort
 " if &diff
   windo set wrap
@@ -846,6 +847,7 @@ function! Vimdiff_config(timer) abort
   " nnoremap q :tabclose<CR>
   " endif
 endfunction
+
 " autocmd vimrc TabLeave * silent! unmap q
 nnoremap <silent><C-q> :tabclose<CR>
 noremap <ScrollWheelUp> <C-u>
@@ -921,7 +923,7 @@ function! Nvim_lsp_result_to_quickfix() abort
         let col = l['col']
         let text = l['text']
         call setqflist([bufnr,lnum,col,text], ' ')
-endfor
+    endfor
     " let result = g:res
     " call setqflist(result, ' ')
 endfunction
@@ -962,6 +964,7 @@ do
     -- if vim.lsp.util.diagnostics_by_buf[vim.fn.bufnr(0)] then
   end
 end
+
 local nvim_lsp = require'nvim_lsp'
 local configs = require'nvim_lsp/configs'
 local util = require 'nvim_lsp/util'
@@ -1051,7 +1054,6 @@ vmap u 'aUgv<ESC>ll
 vmap r 'aRgv<ESC>ll
 
 	let g:previm_enable_realtime = 1
-
 autocmd BufReadPre gina://* set noswapfile
 autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
 autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
@@ -1090,12 +1092,16 @@ let twitvim_count = 15
 function! Mdpdf()
 !mdpdf --border=12.7mm %
 endfunction
-let g:iris_name  = "kuriki"
-let g:iris_mail = "kuriki@gihyo.co.jp"
-let g:iris_imap_port  = 993
-let g:iris_smtp_port  = 587
-let g:iris_imap_host  ='imap.gmail.com'
-let g:iris_smtp_host = 'smtp.gmail.com'
-inoremap <C-Enter> <End>。
-inoremap <C-Enter> <End>、
+augroup your_config_scrollbar_nvim
+    autocmd!
+    autocmd BufEnter    * silent! lua require('scrollbar').show()
+    autocmd BufLeave    * silent! lua require('scrollbar').clear()
+
+    autocmd CursorMoved * silent! lua require('scrollbar').show()
+    autocmd VimResized  * silent! lua require('scrollbar').show()
+
+    autocmd FocusGained * silent! lua require('scrollbar').show()
+    autocmd FocusLost   * silent! lua require('scrollbar').clear()
+augroup end
 " vim:set foldmethod=marker:
+

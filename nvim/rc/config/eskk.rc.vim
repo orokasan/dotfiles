@@ -75,7 +75,7 @@ endfunction
 
 function! s:eskk_save_status() abort
     if g:eskk_keep_enable
-        call s:eskk_highlight_linenr()
+        call s:eskk_highlight_cursor()
         return
     endif
     " let s:eskk_status = eskk#is_enabled() ? 1 : 0
@@ -122,45 +122,26 @@ endfunction
 
 function! s:eskk_highlight_cursor()
 " guicursorのハイライトをeskkCursorに変更する
-    set guicursor=n-v-c:block-eskkCursor-blinkon0,i-ci:ver25-eskkCursor,r-cr:hor20-eskkCursor/
+" highlight Cursor guibg=#e2a478
+    set guicursor=n-v-c:eskkCursor-blinkon0,i-ci:ver25-eskkCursor,r-cr:hor20
 endfunction
 function! s:eskk_restore_cursor()
 " guicursorのハイライトを元に戻す
-    set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:ver25-Cursor,r-cr:hor20-Cursor/
+    execute('set guicursor=' . s:default_guicursor)
+    " execute('highlight Cursor ' . s:eskk_default_linenr_hi)
 endfunction
+highlight eskkCursor guibg=#e2a478
+" set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:Cursor,r-cr:hor20
 
 "もともとのhighlightを保存
 function! s:gethighlight(hi) abort
-    " redir => hl
-    " silent execute 'highlight ' . a:hi
-    " redir END
-    " let hl = substitute(hl, '\w*\ze\s\{3}', '', 'g')
-    " let hl = substitute(hl, '\(xxx\|\n\)', '', 'g')
-    " let hl = substitute(hl, 'links to .*', '', 'g')
-    " if match(hl, '\v(guibg|cuibg)') == -1
-    "     redir => bg
-    "     silent execute 'highlight CursorColumn'
-    "     redir END
-    "     let gbg = matchstr(bg, 'guibg=#\w\{6}')
-    "     let cbg = matchstr(bg, 'cuibg=#\w\{6}')
-    "     let hl = hl . ' ' . cbg . ' ' . gbg
-    " endif
 let bg = synIDattr(synIDtrans(hlID(a:hi)), "bg")
-let fg = synIDattr(synIDtrans(hlID(a:hi)), "fg")
-    return 'guifg=' . fg . ' guibg=' . bg
-endfunction
-highlight eskkCursor guibg=#e2a478 guifg=#161821
-
-function! s:eskk_highlight_linenr() abort
-    return
-    " eskkがonの時のhighlightを指定
-    " let s:eskk_hl = 'highlight SignColumn guibg=#84a0c6 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
-    " let s:eskk_hl = 'highlight SignColumn guibg=#cb4b16 cterm=bold ctermfg=0 ctermbg=11 gui=bold guifg=#eee8d5 '
-    let s:eskk_hl = 'highlight nCursor guifg=#eee8d5 guibg=#cb4b16'
-    silent execute(s:eskk_hl)
+" let fg = synIDattr(synIDtrans(hlID(a:hi)), "fg")
+    return ' guibg=' . bg
 endfunction
 " eskkのsource時に設定
 let s:eskk_default_linenr_hi =s:gethighlight('Cursor')
 " ColorSchemeが変わった時に読み込み直す
 autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('Cursor')
+
 

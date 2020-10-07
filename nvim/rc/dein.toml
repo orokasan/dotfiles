@@ -586,4 +586,7 @@ repo = 'mattn/vim-maketable'
 
 [[plugins]]
 repo = 'machakann/vim-colorscheme-kemonofriends'
+
+[[plugins]]
+repo = 'Xuyuanp/scrollbar.nvim'
 # vim:set foldmethod=marker:'
