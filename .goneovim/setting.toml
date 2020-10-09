@@ -31,7 +31,7 @@ DrawShadowForFloatWindow = false
 # Drawing window and Transparent breaks statusline and tabline.
 # Transparent window alpha
 # Note: This setting also implicitly enables the Drawborder setting
-# Transparent = 0.95
+# Transparent = 0.98
 #
 # Drawing window border instead of vertical split, statusline
 DrawBorder = false
@@ -41,7 +41,7 @@ ExtPopupmenu = false
 ExtTabline = false
 ExtMessages = false
 
-IndentGuide = true
+IndentGuide = false
 
 DiffAddPattern    = 1
 DiffDeletePattern = 1
@@ -90,7 +90,7 @@ Transparent = 0.8
 # DetailWidth = 250
 
 [Tabline]
-Visible = true
+Visible = false
 
 [Lint]
 Visible = false

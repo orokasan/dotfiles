@@ -70,7 +70,7 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ command_history<CR>
 nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
     \ -path=`expand('%:h')`
-    \ grep/jv<CR>
+    \ grep<CR>
 nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
     \ -path=`expand('%:h')`
     \ -start-filter

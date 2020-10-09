@@ -30,7 +30,7 @@ repo = 'fuenor/JpFormat.vim'
 on_if = '!has("kaoriya")'
 repo = 'deton/jasentence.vim'
 hook_add = '''
-let g:jasentence_endpat = '[、。，．？！]\+'
+let g:jasentence_endpat = '[。．？！]\+'
 '''
 
 [[plugins]]
@@ -48,9 +48,6 @@ call textobj#user#plugin('lastmofified', {
 \   },
 \ })
 endif
-function! g:Vimrc_select_a_last_modified() abort
-    return ['v', getpos("'["), getpos("']")]
-endfunction
 '''
 
 [[plugins]]
@@ -67,6 +64,39 @@ let g:jasegment#highlight = 0
 "xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
 "xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
 '''# }}} 
+
+[[plugins]]
+repo =  'cohama/lexima.vim'
+on_if = 'has("nvim")'
+on_event = 'InsertEnter'
+hook_add = '''
+let s:lexima_my_rules = [
+\ {'char': 'z[', 'input': '「', 'input_after': '」'},
+\ {'char': 'z{', 'input': '『', 'input_after': '』'},
+\ {'char': 'z\', 'input': '【', 'input_after': '】'},
+\ {'char': 'z(', 'input': '（', 'input_after': '）'},
+\ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
+\ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
+\ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
+\ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
+\ ]
+" Markdown list and todolist
+"call lexima#add_rule({'at': '^\s*\%#', 'char': '*', 'input': '*<Space>',         'filetype': 'markdown'})
+"call lexima#add_rule({'at': '^\s*\%#', 'char': '-', 'input': '-<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '^\s*\*\s.*\%#$', 'char': '<CR>', 'input': '<CR>*<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '^\s*-\s.*\%#$', 'char': '<CR>', 'input': '<CR>-<Space>',         'filetype': 'markdown'})
+call lexima#add_rule({'at': '- \%#',   'char': '[', 'input': '[<Space>]<Space>', 'filetype': 'markdown'})
+for rule in s:lexima_my_rules
+  call lexima#add_rule(rule)
+endfor
+inoremap z] 」
+inoremap z} 』
+inoremap z) ）
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function() abort "{{{
+  return lexima#expand('<CR>', 'i')
+endfunction "}}}
+'''
 
 [[plugins]]
 repo =  'mattn/webapi-vim'
@@ -181,9 +211,6 @@ repo = 'deoplete-plugins/deoplete-zsh'
 [[plugins]]
 repo =  'Shougo/neosnippet-snippets'
 
-[[plugins]]
-repo = 'N0nki/denite-markdown'
-
 # [[plugins]]
 # # repo = 'chemzqm/unite-location'
 # merged = '0'
@@ -191,9 +218,6 @@ repo = 'N0nki/denite-markdown'
 
 [[plugins]]
 repo = 'itchyny/vim-quickrun-lightline-hooks'
-
-[[plugins]]
-repo = 'orokasan/denite-anzu'
 
 [[plugins]]
 repo =  'kmnk/denite-dirmark'
@@ -208,33 +232,33 @@ let g:parenmatch_highlight = 0
 hi! link ParenMatch MatchParen
 '''
 
-[[plugins]]
-## only for incsearch-migemo.vim
-repo = 'Shougo/vimproc.vim'
-hook_post_update = '''
-  if has('win32')
-    let cmd = 'tools\\update-dll-mingw'
-  elseif has('win32unix') " for Cygwin
-    let cmd = 'make -f make_cygwin.mak'
-  elseif executable('gmake')
-    let cmd = 'gmake'
-  else
-    let cmd = 'make'
-  endif
-  let g:dein#plugin.build = cmd
-'''
+# [[plugins]]
+# ## only for incsearch-migemo.vim
+# repo = 'Shougo/vimproc.vim'
+# hook_post_update = '''
+#   if has('win32')
+#     let cmd = 'tools\\update-dll-mingw'
+#   elseif has('win32unix') " for Cygwin
+#     let cmd = 'make -f make_cygwin.mak'
+#   elseif executable('gmake')
+#     let cmd = 'gmake'
+#   else
+#     let cmd = 'make'
+#   endif
+#   let g:dein#plugin.build = cmd
+# '''
 
 [[plugins]]
 repo = 'chemzqm/denite-extra'
 
 [[plugins]]
-# repo =  'Shougo/neoyank.vim'
-repo =  'orokasan/neoyank.vim'
+repo =  'Shougo/neoyank.vim'
+# repo =  'orokasan/neoyank.vim'
 on_event = 'TextYankPost'
 on_source = ['denite.nvim']
 hook_add = '''
 let g:neoyank#save_registers = ['*']
-autocmd dein TextYankPost * call neoyank#update()
+" autocmd dein TextYankPost * call neoyank#update()
 '''
 
 [[plugins]]
@@ -571,19 +595,159 @@ call gina#custom#execute(
       \)
 '''
 
-[[plugins]]
-merged = '0'
-repo = 'liuchengxu/vim-clap'
+# [[plugins]]
+# merged = '0'
+# repo = 'liuchengxu/vim-clap'
 
-[[plugins]]
-merged = '0'
-repo =  'twitvim/twitvim' 
-hook_add = '''
-'''
+# [[plugins]]
+# merged = '0'
+# repo =  'twitvim/twitvim' 
+# hook_add = '''
+# '''
 
 [[plugins]]
 repo = 'mattn/vim-maketable'
 
 [[plugins]]
 repo = 'Xuyuanp/scrollbar.nvim'
+
+[[plugins]]
+repo = 'mg979/vim-visual-multi'
+
+[[plugins]]
+repo = 'Milly/vim-migemo'
+
+[[plugins]]
+repo =  'machakann/vim-sandwich'
+hook_add = '''
+let g:sandwich_no_default_key_mappings = 1
+
+silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+silent! nmap <unique><silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+silent! nmap <unique><silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+silent! nmap <unique><silent> 'rb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+silent! omap <unique> ib <Plug>(textobj-sandwich-auto-i)
+silent! xmap <unique> ib <Plug>(textobj-sandwich-auto-i)
+silent! omap <unique> ab <Plug>(textobj-sandwich-auto-a)
+silent! xmap <unique> ab <Plug>(textobj-sandwich-auto-a)
+
+silent! omap <unique> is <Plug>(textobj-sandwich-query-i)
+silent! xmap <unique> is <Plug>(textobj-sandwich-query-i)
+silent! omap <unique> as <Plug>(textobj-sandwich-query-a)
+silent! xmap <unique> as <Plug>(textobj-sandwich-query-a)
+
+" add
+silent! nmap <unique> 'a <Plug>(operator-sandwich-add)
+silent! xmap <unique> 'a <Plug>(operator-sandwich-add)
+silent! omap <unique> 'a <Plug>(operator-sandwich-g@)
+
+" delete
+silent! xmap <unique> 'd <Plug>(operator-sandwich-delete)
+
+" replace
+silent! xmap <unique> 'r <Plug>(operator-sandwich-replace)
+
+let g:textobj#sandwich#stimeoutlen = 100
+let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
+let g:sandwich#recipes += [{'buns' : ['「', '」']}]
+let g:sandwich#recipes += [{'buns' : ['【', '】']}]
+let g:sandwich#recipes += [{'buns' : ['（', '）']}]
+let g:sandwich#recipes += [{'buns' : ['『', '』']}]
+call operator#sandwich#set('all', 'all', 'highlight', 2)
+nmap 'dd vab'd
+nmap 'rr vab'r
+'''
+
+[[plugins]]
+repo = 'osyo-manga/vim-operator-stay-cursor'
+hook_add = '''
+" TODO: ドットリピートがうまく動かない
+map y <Plug>(operator-stay-cursor-yank)
+'''
+
+[[plugins]]
+depends = ['vim-textobj-user']
+# ae, ie
+repo = 'kana/vim-textobj-entire'
+hook_add = '''
+xmap ae <Plug>(textobj-entire-a)
+omap ae <Plug>(textobj-entire-a)
+xmap ie <Plug>(textobj-entire-i)
+omap ie <Plug>(textobj-entire-i)
+'''
+
+[[plugins]]
+depends = ['vim-textobj-user']
+# gb
+repo = 'saaguero/vim-textobj-pastedtext'
+hook_add = '''
+xmap gb <Plug>(textobj-pastedtext-text)
+omap gb <Plug>(textobj-pastedtext-text)
+'''
+
+# [[plugins]]
+# # ab, ib
+# depends = ['vim-textobj-user']
+# repo = 'rhysd/vim-textobj-anyblock'
+# hook_add = '''
+# let g:textobj#anyblock#blocks = ['(', '{', '[', '"', "'", '<' ,'●','∨','（','f`']
+# xmap ab <Plug>(textobj-anyblock-a)
+# omap ab <Plug>(textobj-anyblock-a)
+# xmap ib <Plug>(textobj-anyblock-i)
+# omap ib <Plug>(textobj-anyblock-i)
+# '''
+
+[[plugins]]
+# ay, iy
+depends = ['vim-textobj-user']
+repo = 'kana/vim-textobj-syntax'
+hook_add = '''
+xmap ay <Plug>(textobj-syntax-a)
+omap ay <Plug>(textobj-syntax-a)
+xmap iy <Plug>(textobj-syntax-i)
+omap iy <Plug>(textobj-syntax-i)
+'''
+
+[[plugins]]
+# al, il
+depends = ['vim-textobj-user']
+repo = 'kana/vim-textobj-line'
+hook_add = '''
+xmap al <Plug>(textobj-line-a)
+omap al <Plug>(textobj-line-a)
+xmap il <Plug>(textobj-line-i)
+omap il <Plug>(textobj-line-i)
+'''
+
+[[plugins]]
+# av, iv
+# aV, iV
+depends = ['vim-textobj-user']
+repo = 'rhysd/vim-textobj-word-column'
+hook_add = '''
+xmap av <Plug>(textobj-wordcolumn-w-a)
+omap av <Plug>(textobj-wordcolumn-w-a)
+xmap iv <Plug>(textobj-wordcolumn-w-i)
+omap iv <Plug>(textobj-wordcolumn-w-i)
+xmap aV <Plug>(textobj-wordcolumn-W-a)
+omap aV <Plug>(textobj-wordcolumn-W-a)
+xmap iV <Plug>(textobj-wordcolumn-W-i)
+omap iV <Plug>(textobj-wordcolumn-W-i)
+'''
+
+[[plugins]]
+repo = 'kana/vim-operator-replace'
+depends = 'vim-operator-user'
+hook_add = '''
+nmap _ <Plug>(operator-replace)
+vmap _ <Plug>(operator-replace)
+'''
+
+[[plugins]]
+repo = 'kana/vim-niceblock'
+on_map = {x = '<Plug>(niceblock-'}
+hook_add = '''
+  xmap I  <Plug>(niceblock-I)
+  xmap A  <Plug>(niceblock-A)
+'''
 # vim:set foldmethod=marker:'

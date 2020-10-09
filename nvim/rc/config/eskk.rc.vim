@@ -45,6 +45,7 @@ function! s:eskk_initial_pre() abort
     EskkMap -type=disable l
     " guicursorの値を保存
     let s:default_guicursor = &guicursor
+
 endfunction
 " eskk_keep_stateがうまく動かないので自前で設定
 nnoremap <silent><C-j> :call <SID>eskk_keep_enable_toggle()<CR>
@@ -122,13 +123,14 @@ endfunction
 
 function! s:eskk_highlight_cursor()
 " guicursorのハイライトをeskkCursorに変更する
-" highlight Cursor guibg=#e2a478
-    set guicursor=n-v-c:eskkCursor-blinkon0,i-ci:ver25-eskkCursor,r-cr:hor20
+highlight Cursor guibg=#e2a478
+    " set guicursor=n-v-c:eskkCursor-blinkon0,i-ci:ver25-eskkCursor,r-cr:hor20
 endfunction
+set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver25-Cursor,r-cr:hor20
 function! s:eskk_restore_cursor()
 " guicursorのハイライトを元に戻す
-    execute('set guicursor=' . s:default_guicursor)
-    " execute('highlight Cursor ' . s:eskk_default_linenr_hi)
+    " execute('set guicursor=' . s:default_guicursor)
+    execute('highlight Cursor ' . s:eskk_default_linenr_hi)
 endfunction
 highlight eskkCursor guibg=#e2a478
 " set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:Cursor,r-cr:hor20
