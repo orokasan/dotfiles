@@ -234,7 +234,6 @@ on_event = 'TextYankPost'
 on_source = ['denite.nvim']
 hook_add = '''
 let g:neoyank#save_registers = ['*']
-autocmd dein TextYankPost * call neoyank#update()
 '''
 
 [[plugins]]
@@ -589,4 +588,7 @@ repo = 'machakann/vim-colorscheme-kemonofriends'
 
 [[plugins]]
 repo = 'Xuyuanp/scrollbar.nvim'
+
+[[plugins]]
+repo = 'vim-pandoc/vim-pandoc'
 # vim:set foldmethod=marker:'

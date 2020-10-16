@@ -486,23 +486,18 @@ repo = 'glidenote/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn  :MemoNew<CR>
-nnoremap <silent><Leader>mL  :<C-u>Denite 
+nnoremap <silent><Leader>ml  :<C-u>Denite 
     \ -buffer-name=normal
     \ -sorters=sorter/word,sorter/reverse
     \ file/rec:~/GoogleDrive/memo<CR>
-nnoremap <silent><Leader>ml  :<C-u>Denite 
-    \ -buffer-name=default
-    \ -cursor-pos=+1
-    \ -sorters=sorter/word,sorter/reverse
-    \ file/rec:~/Dropbox/memo<CR>
 nnoremap <silent><Leader>mg  :<C-u>Denite 
     \ -buffer-name=default
-    \ grep:~/Dropbox/memo::<CR>
+    \ grep:~/GoogleDrive/memo::<CR>
 " use denite (default 0)
 let g:memolist_denite = 1
 let g:memolist_memo_suffix = 'md'
-let g:memolist_path = "~/Dropbox/memo"
-let g:memolist_template_dir_path = "~/Dropbox/memo/template"
+let g:memolist_path = "~/GoogleDrive/memo"
+let g:memolist_template_dir_path = "~/.vim/template/memolist"
 let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
  let g:memolist_filename_date = "%y%m%d_"
 
