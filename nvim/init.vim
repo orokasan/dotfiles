@@ -16,7 +16,7 @@ let g:loaded_tarPlugin         = 1
 " let g:loaded_zip               = 1
 " let g:loaded_zipPlugin         = 1
 let g:loaded_rrhelper          = 1
-" let g:loaded_2html_plugin      = 1
+let g:loaded_2html_plugin      = 1
 let g:loaded_vimball           = 1
 let g:loaded_vimballPlugin     = 1
 let g:loaded_getscript         = 1
@@ -34,8 +34,8 @@ if has('win32')
 endif
 if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
-let g:vimproc#download_windows_dll = 1
 endif
+" let g:vimproc#download_windows_dll = 1
 " Backup
 " set autochdir               " set current directory to editing file dir automatically
 set swapfile
@@ -265,9 +265,6 @@ endif
 ""}}}
 
 "Key map - moving {{{
-" improved insert
-" in neovim, 'cc' overwrite unnamed register.
-nnoremap <expr>i len(getline('.')) == 0 ? "_cc" : "i"
 nnoremap <CR> o<ESC>
 " nnoremap \ O<ESC>
 " moving visible lines by j/k
@@ -300,7 +297,6 @@ nnoremap <C-p> <C-i>zz
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
 "}}}
-
 "Key map - shortcuts {{{
 " Convenience key for getting to command mode
 nmap ; :
@@ -350,7 +346,6 @@ else
     nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
 "}}}
-
 "Key map - editting {{{
 " emacs like mapping on insert mode
 inoremap <C-f> <Right>
@@ -707,7 +702,8 @@ if has('nvim')
     "transparent completions menu
     set pumblend=15
     set inccommand=nosplit
-    au TextYankPost * silent! lua require'vim.highlight'.on_yank("IncSearch", 200)
+    au TextYankPost * silent! lua vim.highlight.on_yank()
+    " au TextYankPost * lua require'vim.highlight'.on_yank("IncSearch", 200)
 endif
 "}}}
 
@@ -803,10 +799,12 @@ if exists('neovide')
 endif
 if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)
-augroup GonvimAu
-    au! Optionset *
-    " au! BufEnter,FileType,VimEnter,WinEnter *
-augroup end
+" augroup GonvimAu
+"     " au! Optionset *
+"     " au GonvimAu OptionSet * if &ro != 1 | silent! call rpcnotify(1, "Gui", "gonvim_optionset") | endif
+"     au GonvimAu OptionSet * silent! call rpcnotify(1, "Gui", "gonvim_optionset") | redraw
+"     " au! BufEnter,FileType,VimEnter,WinEnter *
+" augroup end
  augroup GonvimAuStatusline
     autocmd!
   augroup end
@@ -828,12 +826,13 @@ augroup end
   " augroup GonvimAuMd
   "   autocmd!
   " augroup end
-  " augroup GonvimAuWorkspace
-  "   autocmd!
-  " augroup end
+  augroup GonvimAuWorkspace
+    autocmd!
+  augroup end
   set mouse=nicr
   set pumheight=10
 " set scrolljump=5
+  cd ~/
 endif
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
@@ -895,7 +894,7 @@ function! s:qf_to_loc() abort
         let i.col = s:to_col(i.bufnr, i.lnum, i.col)
         " echo i
         call add(g:nvim_lsp_diagnostics, i)
-        endfor
+        endfor  
         " echo list
         call setloclist(0, g:nvim_lsp_diagnostics, ' ')
     endif
@@ -1055,7 +1054,7 @@ vmap r 'aRgv<ESC>ll
 
 	let g:previm_enable_realtime = 1
 autocmd BufReadPre gina://* set noswapfile
-autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
+" autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
 autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
 autocmd FileType twitvim nnoremap <silent><buffer><expr> k line('.') =~ '\v^(1\|2\|3)$' ? 'G' : 'k'
 autocmd FileType twitvim nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg2j' : 'j'
@@ -1103,5 +1102,10 @@ augroup your_config_scrollbar_nvim
     autocmd FocusGained * silent! lua require('scrollbar').show()
     autocmd FocusLost   * silent! lua require('scrollbar').clear()
 augroup end
+
+function! g:Vimrc_select_a_last_modified() abort
+    return ['v', getpos("'["), getpos("']")]
+endfunction
+vnoremap y ygv<ESC>
 " vim:set foldmethod=marker:
 

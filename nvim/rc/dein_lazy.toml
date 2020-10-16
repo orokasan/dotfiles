@@ -418,59 +418,6 @@ cmap <C-j> <Plug>(eskk:toggle)
 hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
 
 [[plugins]]
-repo =  'cohama/lexima.vim'
-on_if = 'has("nvim")'
-on_event = 'InsertEnter'
-hook_add = '''
-let g:lexima_no_default_rules = 1
-" let g:lexima_no_default_rules = 1
-" let g:lexima_enable_basic_rules = 1
-" let g:lexima_enable_space_rules = 0
-let g:lexima_ctrlh_as_backspace = 1
-" for eskk.vim performance
-let g:lexima_map_escape = ''
-'''
-hook_source = '''
-call lexima#set_default_rules()
-let s:lexima_my_rules = [
-\ {'char': 'z[', 'input': '「', 'input_after': '」'},
-\ {'char': 'z{', 'input': '『', 'input_after': '』'},
-\ {'char': 'z\', 'input': '【', 'input_after': '】'},
-\ {'char': 'z(', 'input': '（', 'input_after': '）'},
-\ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
-\ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
-\ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
-\ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
-\ ]
-" Markdown list and todolist
-"call lexima#add_rule({'at': '^\s*\%#', 'char': '*', 'input': '*<Space>',         'filetype': 'markdown'})
-"call lexima#add_rule({'at': '^\s*\%#', 'char': '-', 'input': '-<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '^\s*\*\s.*\%#$', 'char': '<CR>', 'input': '<CR>*<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '^\s*-\s.*\%#$', 'char': '<CR>', 'input': '<CR>-<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '- \%#',   'char': '[', 'input': '[<Space>]<Space>', 'filetype': 'markdown'})
-for rule in s:lexima_my_rules
-  call lexima#add_rule(rule)
-endfor
-inoremap z] 」
-inoremap z} 』
-inoremap z) ）
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-
-function! s:my_cr_function() abort "{{{
-  return lexima#expand('<CR>', 'i')
-endfunction "}}}
-'''
-
-[[plugins]]
-repo = 'kana/vim-operator-replace'
-depends = 'vim-operator-user'
-on_map = {nv = '<Plug>(operator-replace'}
-hook_add = '''
-nmap _ <Plug>(operator-replace)
-vmap _ <Plug>(operator-replace)
-'''
-
-[[plugins]]
 repo =  'nathanaelkane/vim-indent-guides'
 on_cmd = 'IndentGuideToggle'
 hook_add = '''
@@ -551,31 +498,31 @@ let g:choosewin_label = 'HJKLADFG'
 let g:choosewin_blink_on_land = 0
 '''
 
-[[plugins]]
-repo =  'rhysd/vim-operator-surround'
-depends = 'vim-operator-user'
-on_map = {nv= '<Plug>'}
-hook_add = '''
-map <silent>'a <Plug>(operator-surround-append)
-map <silent>'d <Plug>(operator-surround-delete)
-map <silent>'r <Plug>(operator-surround-replace)
-" if you use vim-textobj-anyblock
-nmap <silent>'dd <Plug>(operator-surround-delete)<Plug>(textobj-anyblock-a)
-nmap <silent>'rr <Plug>(operator-surround-replace)<Plug>(textobj-anyblock-a)
-'''
-hook_source = '''
-" let g:operator#surround#recognizes_both_ends_as_surround = v:false
-" let g:operator#surround#uses_input_if_no_block = v:false
-"2バイト括弧を追加
-let g:operator#surround#blocks = {}
-let g:operator#surround#blocks['-'] = [
-\   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
-\   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
-\   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
-\   { 'block' : ['●', '●'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['R'] },
-\   { 'block' : ['∨', '∨'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['U'] },
-\ ]
-'''
+# [[plugins]]
+# repo =  'rhysd/vim-operator-surround'
+# depends = 'vim-operator-user'
+# on_map = {nv= '<Plug>'}
+# hook_add = '''
+# map <silent>'a <Plug>(operator-surround-append)
+# map <silent>'d <Plug>(operator-surround-delete)
+# map <silent>'r <Plug>(operator-surround-replace)
+# " if you use vim-textobj-anyblock
+# nmap <silent>'dd <Plug>(operator-surround-delete)<Plug>(textobj-anyblock-a)
+# nmap <silent>'rr <Plug>(operator-surround-replace)<Plug>(textobj-anyblock-a)
+# '''
+# hook_source = '''
+# " let g:operator#surround#recognizes_both_ends_as_surround = v:false
+# " let g:operator#surround#uses_input_if_no_block = v:false
+# "2バイト括弧を追加
+# let g:operator#surround#blocks = {}
+# let g:operator#surround#blocks['-'] = [
+# \   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
+# \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
+# \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
+# \   { 'block' : ['●', '●'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['R'] },
+# \   { 'block' : ['∨', '∨'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['U'] },
+# \ ]
+# '''
 
 # [[plugins]]
 # repo = 'thinca/vim-ambicmd'
@@ -655,6 +602,7 @@ xmap <Leader>o <Plug>(openbrowser-smart-search)
 
 [[plugins]]
 repo = 'orokasan/clever-f.vim'
+# repo = 'rhysd/clever-f.vim'
 on_map = { nxo = '<Plug>(clever-f' }
 hook_add = '''
 "mapping for lazy load
@@ -670,17 +618,14 @@ omap t <Plug>(clever-f-t)
 nmap T <Plug>(clever-f-T)
 xmap T <Plug>(clever-f-T)
 omap T <Plug>(clever-f-T)
-
-let g:clever_f_show_prompt = 1
-let g:clever_f_mark_cursor = 1
-let g:clever_f_mark_char_color = "Underlined"
+" let g:clever_f_show_prompt = 1
+let g:clever_f_mark_cursor = 0
+let g:clever_f_mark_char = 0
+" let g:clever_f_mark_char_color = "Underlined"
 let g:clever_f_hide_cursor_on_cmdline = 1
 let g:clever_f_smart_case = 1
 let g:clever_f_across_no_line = 1
-let g:clever_f_chars_match_any_signs = ':;'
 let g:clever_f_use_migemo = 1
-let g:clever_f_sings_match_any_signs =
-    \ '\[!"#$%&''()=~|\-^\\@`[\]{};:+*<>,.?_/、。「」（）『』！？]'
 '''
 
 [[plugins]]
@@ -708,7 +653,6 @@ let g:EasyMotion_do_mapping = 0
 nmap <C-s> <Plug>(easymotion-s2)
 xmap <C-s> <Plug>(easymotion-s2)
 omap <C-s> <Plug>(easymotion-s2)
-
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
@@ -869,14 +813,6 @@ let g:translator_window_borderchars = v:null
 # '''
 
 [[plugins]]
-repo = 'kana/vim-niceblock'
-on_map = {x = '<Plug>(niceblock-'}
-hook_add = '''
-  xmap I  <Plug>(niceblock-I)
-  xmap A  <Plug>(niceblock-A)
-'''
-
-[[plugins]]
 repo = 'liuchengxu/vista.vim'
 on_cmd = ['Vista']
 hook_add ='''
@@ -952,87 +888,4 @@ let g:sonictemplate_vim_template_dir = '~/.vim/template/'
 # hook_add = '''
 # '''
 
-[[plugins]]
-on_map = {n = '<Plug>(vigemo-'}
-repo =  'orokasan/vim-vigemo' 
-hook_add = '''
-nmap g/ <Plug>(vigemo-search)
-nmap g? <Plug>(vigemo-search)
-'''
-
-[[plugins]]
-on_map = {xo = '<Plug>(textobj-'}
-depends = ['vim-textobj-user']
-# ae, ie
-repo = 'kana/vim-textobj-entire'
-hook_add = '''
-xmap ae <Plug>(textobj-entire-a)
-omap ae <Plug>(textobj-entire-a)
-xmap ie <Plug>(textobj-entire-i)
-omap ie <Plug>(textobj-entire-i)
-'''
-
-[[plugins]]
-on_map = {xo = '<Plug>(textobj-pastedtext'}
-depends = ['vim-textobj-user']
-# gb
-repo = 'saaguero/vim-textobj-pastedtext'
-hook_add = '''
-xmap gb <Plug>(textobj-pastedtext-text)
-omap gb <Plug>(textobj-pastedtext-text)
-'''
-
-[[plugins]]
-# ab, ib
-on_map = {xo = '<Plug>(textobj-anyblock'}
-depends = ['vim-textobj-user']
-repo = 'rhysd/vim-textobj-anyblock'
-hook_add = '''
-let g:textobj#anyblock#blocks = ['(', '{', '[', '"', "'", '<' ,'●','∨','（','f`']
-xmap ab <Plug>(textobj-anyblock-a)
-omap ab <Plug>(textobj-anyblock-a)
-xmap ib <Plug>(textobj-anyblock-i)
-omap ib <Plug>(textobj-anyblock-i)
-'''
-
-[[plugins]]
-# ay, iy
-on_map = {xo = '<Plug>(textobj-syntax'}
-depends = ['vim-textobj-user']
-repo = 'kana/vim-textobj-syntax'
-hook_add = '''
-xmap ay <Plug>(textobj-syntax-a)
-omap ay <Plug>(textobj-syntax-a)
-xmap iy <Plug>(textobj-syntax-i)
-omap iy <Plug>(textobj-syntax-i)
-'''
-
-[[plugins]]
-# al, il
-depends = ['vim-textobj-user']
-on_map = {xo = '<Plug>(textobj-line'}
-repo = 'kana/vim-textobj-line'
-hook_add = '''
-xmap al <Plug>(textobj-line-a)
-omap al <Plug>(textobj-line-a)
-xmap il <Plug>(textobj-line-i)
-omap il <Plug>(textobj-line-i)
-'''
-
-[[plugins]]
-# av, iv
-# aV, iV
-depends = ['vim-textobj-user']
-on_map = {xo = '<Plug>(textobj-wordcolumn'}
-repo = 'rhysd/vim-textobj-word-column'
-hook_add = '''
-xmap av <Plug>(textobj-wordcolumn-w-a)
-omap av <Plug>(textobj-wordcolumn-w-a)
-xmap iv <Plug>(textobj-wordcolumn-w-i)
-omap iv <Plug>(textobj-wordcolumn-w-i)
-xmap aV <Plug>(textobj-wordcolumn-W-a)
-omap aV <Plug>(textobj-wordcolumn-W-a)
-xmap iV <Plug>(textobj-wordcolumn-W-i)
-omap iV <Plug>(textobj-wordcolumn-W-i)
-'''
 # vim:set foldmethod=marker:

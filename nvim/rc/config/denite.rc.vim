@@ -34,7 +34,7 @@ call denite#custom#option('float',{
     \ 'winrow' : &lines - 12
     \ })
 call denite#custom#option('relative',{
-    \ 'split': 'floating_relative',
+    \ 'split': 'floating_relative_cursor',
     \ 'auto_resize': v:true,
     \ 'wincol': &columns * 1/3,
     \ 'winwidth': &columns*2/3,
@@ -44,16 +44,6 @@ call denite#custom#option('relative',{
 
 ""need rg for grep/file-rec
 " call denite#custom#source('grep', 'args', ['', '', '!'])
-if executable('jvgrep')
-    call denite#custom#var('grep/jv', {
-            \ 'command': ['jvgrep'],
-            \ 'default_opts': ['-i', '--no-color', '-r', '-I'],
-            \ 'recursive_opts': ['-R'],
-            \ 'pattern_opt': [],
-            \ 'separator': [],
-            \ 'final_opts': [],
-            \ })
-endif
 if executable('rg')
     call denite#custom#var('grep', {
             \ 'command': ['rg'],
@@ -70,7 +60,16 @@ if executable('rg')
      \ ['rg', '--files',  '--hidden', '--glob', '!**/.git/*', '--color', 'never'])
     call denite#custom#source('file/rec', 'converters', [])
     call denite#custom#var('file/rec', 'cache_threshold', 50000)
-
+endif
+if executable('jvgrep')
+    call denite#custom#var('grep', {
+            \ 'command': ['jvgrep'],
+            \ 'default_opts': ['-i', '--no-color', '-r', '-I'],
+            \ 'recursive_opts': ['-R'],
+            \ 'pattern_opt': [],
+            \ 'separator': [],
+            \ 'final_opts': [],
+            \ })
 endif
 " Add custom menus
 let s:menus = {
