@@ -650,9 +650,9 @@ repo = 'easymotion/vim-easymotion'
 hook_add = '''
 let g:EasyMotion_do_mapping = 0
 " nmap m <Plug>(easymotion-overwin-f2)
-nmap <C-s> <Plug>(easymotion-s2)
-xmap <C-s> <Plug>(easymotion-s2)
-omap <C-s> <Plug>(easymotion-s2)
+"nmap <C-s> <Plug>(easymotion-s2)
+"xmap <C-s> <Plug>(easymotion-s2)
+"omap <C-s> <Plug>(easymotion-s2)
 " Jump to first match with enter & space
 let g:EasyMotion_use_upper = 1
 let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'

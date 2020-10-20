@@ -576,6 +576,44 @@ function! s:toggle_window_zoom() abort
 endfunction  "}}}
 "}}}
 
+" if exists('g:started_by_firenvim')
+"   set showtabline=0
+"     set laststatus=0
+"   set signcolumn=no
+"   set number
+" finish
+" endif
+function! s:IsFirenvimActive(event) abort
+  if !exists('*nvim_get_chan_info')
+    return 0
+  endif
+  let l:ui = nvim_get_chan_info(a:event.chan)
+  return has_key(l:ui, 'client') && has_key(l:ui.client, 'name') &&
+      \ l:ui.client.name =~? 'Firenvim'
+endfunction
+
+function! OnUIEnter(event) abort
+  if s:IsFirenvimActive(a:event)
+    set laststatus=0
+   set showtabline=0
+   set signcolumn=no
+   " set number
+  endif
+endfunction
+autocmd UIEnter * call OnUIEnter(deepcopy(v:event))
+let g:firenvim_config = { 
+    \ 'globalSettings': {
+        \ 'alt': 'all',
+    \  },
+    \ 'localSettings': {
+        \ '.*': {
+            \ 'cmdline': 'firenvim',
+            \ 'priority': 0,
+            \ 'selector': 'textarea',
+            \ 'takeover': 'never',
+        \ },
+    \ }
+\ }
 " Terminal {{{
 if has('nvim')
     autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
@@ -790,7 +828,6 @@ endtry
 " set shellxquote=
 " endif
 "}}}
-
 hi! link NonText Comment
 
 " for neovide initialize hook
@@ -799,12 +836,6 @@ if exists('neovide')
 endif
 if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)
-" augroup GonvimAu
-"     " au! Optionset *
-"     " au GonvimAu OptionSet * if &ro != 1 | silent! call rpcnotify(1, "Gui", "gonvim_optionset") | endif
-"     au GonvimAu OptionSet * silent! call rpcnotify(1, "Gui", "gonvim_optionset") | redraw
-"     " au! BufEnter,FileType,VimEnter,WinEnter *
-" augroup end
  augroup GonvimAuStatusline
     autocmd!
   augroup end
@@ -834,6 +865,7 @@ if exists('g:gonvim_running')
 " set scrolljump=5
   cd ~/
 endif
+
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
 autocmd FileType text syntax sync minlines=50
@@ -865,12 +897,32 @@ vnoremap gs :<C-u>%s///g<Left><Left>
 " nnoremap ?  ?\v
 set updatetime=1500
 let g:denite_text_pos = 0
+vnoremap y ygv<ESC>
+
+" function! s:IsFirenvimActive(event) abort
+"   if !exists('*nvim_get_chan_info')
+"     return 0
+"   endif
+"   let l:ui = nvim_get_chan_info(a:event.chan)
+"   return has_key(l:ui, 'client') && has_key(l:ui.client, 'name') &&
+"       \ l:ui.client.name =~? 'Firenvim'
+" endfunction
+
+" function! OnUIEnter(event) abort
+"   if s:IsFirenvimActive(a:event)
+"   set signcolumn=no
+"   set number
+"   set showtabline=0
+"   endif
+" endfunction
+" autocmd UIEnter * call OnUIEnter(deepcopy(v:event))
+	let g:previm_enable_realtime = 1
+autocmd BufReadPre gina://* set noswapfile
 " augroup MyCursorLineGroup
 "     autocmd!
 "     au WinEnter * setlocal cursorline
 "     au WinLeave * setlocal nocursorline
 " augroup end
-finish
 nnoremap <C-n> <cmd>call Nvim_lsp_showdiagnostics()<CR>
 nnoremap \ <cmd>lne<CR>zz
 nnoremap \| <cmd>lp<CR>zz
@@ -1049,11 +1101,6 @@ autocmd ColorScheme * highlight link LspDiagnosticsError Error
 autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
 autocmd ColorScheme * highlight link LspDiagnosticsUnderline Underlined
 
-vmap u 'aUgv<ESC>ll
-vmap r 'aRgv<ESC>ll
-
-	let g:previm_enable_realtime = 1
-autocmd BufReadPre gina://* set noswapfile
 " autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
 autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
 autocmd FileType twitvim nnoremap <silent><buffer><expr> k line('.') =~ '\v^(1\|2\|3)$' ? 'G' : 'k'
@@ -1106,6 +1153,6 @@ augroup end
 function! g:Vimrc_select_a_last_modified() abort
     return ['v', getpos("'["), getpos("']")]
 endfunction
-vnoremap y ygv<ESC>
+
 " vim:set foldmethod=marker:
 

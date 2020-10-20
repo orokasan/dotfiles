@@ -104,6 +104,7 @@ call denite#custom#var('menu', 'menus', s:menus)
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#alias('source', 'grep/git', 'grep')
 call denite#custom#alias('source', 'grep/jv', 'grep')
+call denite#custom#alias('source', 'grep/junk', 'grep')
 call denite#custom#var('grep/git', 'command', ['git', 'grep'])
 call denite#custom#source('_', 'sorters', ['sorter/sublime'])
 call denite#custom#var('file/rec/git', 'command',
