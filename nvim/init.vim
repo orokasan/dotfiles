@@ -1153,5 +1153,6 @@ augroup end
 function! g:Vimrc_select_a_last_modified() abort
     return ['v', getpos("'["), getpos("']")]
 endfunction
+
 " vim:set foldmethod=marker:
 
