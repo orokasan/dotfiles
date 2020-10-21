@@ -1106,5 +1106,9 @@ augroup end
 function! g:Vimrc_select_a_last_modified() abort
     return ['v', getpos("'["), getpos("']")]
 endfunction
+" au vimrc TextYankPost * v:event.visual
+" nnoremap v mvv
+" au vimrc TextYankPost * if !v:event.visual && v:event.operator == 'y' | call timer_start(0, 'Move_prev_pos') | endif
 vnoremap y ygv<ESC>
+" g/\W*\ze \/\//s/^\(\W*\) \/\zs\ze\//\=jautil#convert(submatch(1),'hiragana')
 " vim:set foldmethod=marker:

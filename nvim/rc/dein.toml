@@ -750,4 +750,6 @@ hook_add = '''
   xmap I  <Plug>(niceblock-I)
   xmap A  <Plug>(niceblock-A)
 '''
+[[plugins]]
+repo =  "thinca/vim-jautil"
 # vim:set foldmethod=marker:'
