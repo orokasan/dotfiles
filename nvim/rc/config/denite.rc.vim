@@ -119,7 +119,16 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ '.hg/', '.git/*', '.bzr/', '.svn/',
     \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
     \ 'tags', 'tags-*'])
-
+call denite#custom#alias('filter', 'matcher/only_plaintxt', 'matcher/ignore_globs')
+call denite#custom#filter('matcher/only_plaintxt', 'ignore_globs',
+    \ [ '.git/', '.ropeproject/', '__pycache__/',
+    \ 'venv/', 'images/','img/', 'fonts/',
+    \ '*~', '*.o', '*.exe', '*.bak',
+    \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
+    \ '.hg/', '.git/*', '.bzr/', '.svn/',
+    \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
+    \ '*.pdf', '*.docx', '*.docs',
+    \ 'tags', 'tags-*'])
 " 現在いるDeniteDirでgrep
 function! s:candidate_grep(context) abort
     let path = a:context['targets'][0]['action__path']
