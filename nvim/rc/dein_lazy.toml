@@ -433,10 +433,16 @@ repo = 'glidenote/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn  :MemoNew<CR>
-nnoremap <silent><Leader>ml  :<C-u>Denite 
+nnoremap <silent><Leader>mL  :<C-u>Denite 
     \ -buffer-name=normal
     \ -sorters=sorter/word,sorter/reverse
-    \ file/rec:~/GoogleDrive/memo<CR>
+    \ file/rec:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
+nnoremap <silent><Leader>ml  :<C-u>Denite 
+    \ -buffer-name=default
+    \ -cursor-pos=+1
+    \ -sorters=sorter/word,sorter/reverse
+    \ -matchers=['only_plaintxt']
+    \ file/rec:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
 nnoremap <silent><Leader>mg  :<C-u>Denite 
     \ -buffer-name=default
     \ grep:~/GoogleDrive/memo::<CR>

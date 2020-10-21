@@ -278,9 +278,9 @@ nmap <Leader>xx <Plug>(GitGutterStageHunk)
 nmap <Leader>xu <Plug>(GitGutterUndoHunk)
 '''
 
-[[plugins]]
-repo = 'glacambre/firenvim'
-on_if = 'has("nvim")'
+# [[plugins]]
+# repo = 'glacambre/firenvim'
+# on_if = 'has("nvim")'
 # hook_post_update = 'call firenvim#install(0)'
 hook_add = '''
 "if exists('g:started_by_firenvim')
