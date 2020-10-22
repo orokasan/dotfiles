@@ -75,31 +75,37 @@ let s:lexima_my_rules = [
 \ {'char': 'z{', 'input': '『', 'input_after': '』'},
 \ {'char': 'z\', 'input': '【', 'input_after': '】'},
 \ {'char': 'z(', 'input': '（', 'input_after': '）'},
-\ {'char': '<BS>', 'at': '「\%#」', 'delete' : 1},
-\ {'char': '<BS>', 'at': '『\%#』', 'delete' : 1},
-\ {'char': '<BS>', 'at': '【\%#】', 'delete' : 1},
-\ {'char': '<BS>', 'at': '（\%#）', 'delete' : 1},
+\ {'char': '<BS>', 'at': '「\%#」','input': '<BS>', 'delete' : 1},
+\ {'char': '<BS>', 'at': '『\%#』','input': '<BS>', 'delete' : 1},
+\ {'char': '<BS>', 'at': '【\%#】','input': '<BS>', 'delete' : 1},
+\ {'char': '<BS>', 'at': '（\%#）','input': '<BS>', 'delete' : 1},
+\ {'at': '^\s*\%#', 'char': '*', 'input': '*<Space>', 'filetype': 'markdown'},
+\ {'at': '^\s*\%#', 'char': '-', 'input': '-<Space>', 'filetype': 'markdown'},
+\ {'at': '^\s*\%#', 'char': '*', 'input': '*<Space>', 'filetype': 'markdown'},
+\ {'at': '^\s*\*\s.*\%#$', 'char': '<CR>', 'input': '<CR>*<Space>', 'filetype': 'markdown'},
+\ {'at': '^\s*-\s.*\%#$', 'char': '<CR>', 'input': '<CR>-<Space>', 'filetype': 'markdown'},
+\ {'at': '^\s*\*\s\%#$', 'char': '<BS>', 'input': '<C-U>', 'filetype': 'markdown'},
+\ {'at': '^\s*-\s\%#$', 'char': '<BS>', 'input': '<C-U>', 'filetype': 'markdown'},
 \ ]
-" Markdown list and todolist
-"call lexima#add_rule({'at': '^\s*\%#', 'char': '*', 'input': '*<Space>',         'filetype': 'markdown'})
-"call lexima#add_rule({'at': '^\s*\%#', 'char': '-', 'input': '-<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '^\s*\*\s.*\%#$', 'char': '<CR>', 'input': '<CR>*<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '^\s*-\s.*\%#$', 'char': '<CR>', 'input': '<CR>-<Space>',         'filetype': 'markdown'})
-call lexima#add_rule({'at': '- \%#',   'char': '[', 'input': '[<Space>]<Space>', 'filetype': 'markdown'})
 for rule in s:lexima_my_rules
   call lexima#add_rule(rule)
 endfor
 inoremap z] 」
 inoremap z} 』
 inoremap z) ）
+let g:lexima_map_escape = '<C-[>'
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 function! s:my_cr_function() abort "{{{
   return lexima#expand('<CR>', 'i')
 endfunction "}}}
+inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
+function! s:my_bs_function() abort "{{{
+  return lexima#expand('<BS>', 'i')
+endfunction "}}}
 '''
 
-[[plugins]]
-repo =  'mattn/webapi-vim'
+# [[plugins]]
+# repo =  'mattn/webapi-vim'
 
 [[plugins]]
 repo = 'cespare/vim-toml'
@@ -278,29 +284,29 @@ nmap <Leader>xx <Plug>(GitGutterStageHunk)
 nmap <Leader>xu <Plug>(GitGutterUndoHunk)
 '''
 
-[[plugins]]
-repo = 'glacambre/firenvim'
-on_if = 'has("nvim")'
-# hook_post_update = 'call firenvim#install(0)'
-hook_add = '''
-"if exists('g:started_by_firenvim')
-"  set showtabline=0
-"  set laststatus=0
-  " call lightline#disable()
-"augroup Firenvim
-"    au BufEnter * call Set_Font(g:firenvim_font)
-"    au BufEnter *     colorscheme iceberg
-"    au BufEnter github.com_*.txt set filetype=markdown
-"  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
-"  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
-"  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
-"augroup END
-"endif
-"let g:firenvim_font = 'Cica'
-"function! Set_Font(font) abort
-"  execute 'set guifont=' . a:font . ':h10'
-"endfunction
-'''
+# [[plugins]]
+# repo = 'glacambre/firenvim'
+# on_if = 'has("nvim")'
+# # hook_post_update = 'call firenvim#install(0)'
+# hook_add = '''
+# "if exists('g:started_by_firenvim')
+# "  set showtabline=0
+# "  set laststatus=0
+#   " call lightline#disable()
+# "augroup Firenvim
+# "    au BufEnter * call Set_Font(g:firenvim_font)
+# "    au BufEnter *     colorscheme iceberg
+# "    au BufEnter github.com_*.txt set filetype=markdown
+# "  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
+# "  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
+# "  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
+# "augroup END
+# "endif
+# "let g:firenvim_font = 'Cica'
+# "function! Set_Font(font) abort
+# "  execute 'set guifont=' . a:font . ':h10'
+# "endfunction
+# '''
 
 [[plugins]]
 # colorscheme seagull
@@ -595,9 +601,9 @@ call gina#custom#execute(
       \)
 '''
 
-# [[plugins]]
-# merged = '0'
-# repo = 'liuchengxu/vim-clap'
+[[plugins]]
+merged = '0'
+repo = 'liuchengxu/vim-clap'
 
 # [[plugins]]
 # merged = '0'
@@ -608,8 +614,8 @@ call gina#custom#execute(
 [[plugins]]
 repo = 'mattn/vim-maketable'
 
-[[plugins]]
-repo = 'Xuyuanp/scrollbar.nvim'
+# [[plugins]]
+# repo = 'Xuyuanp/scrollbar.nvim'
 
 [[plugins]]
 repo = 'mg979/vim-visual-multi'
@@ -750,13 +756,13 @@ hook_add = '''
   xmap I  <Plug>(niceblock-I)
   xmap A  <Plug>(niceblock-A)
 '''
-[[plugins]]
-repo = 'raghur/vim-ghost'
+# [[plugins]]
+# repo = 'raghur/vim-ghost'
 
 [[plugins]]
 repo='Shougo/junkfile.vim'
 hook_add = '''
-nnoremap <C-S> :JunkfileOpen txt<CR>
+nnoremap <C-S> :tabnew<bar>JunkfileOpen txt<CR>
 nnoremap <silent> [denite]<space> :Denite -path=~/.cache/junkfile file/rec<CR>
 nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.cache/junkfile::<CR>
 '''

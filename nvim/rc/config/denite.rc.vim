@@ -4,7 +4,7 @@ call denite#custom#option('_', {
     \ 'prompt': ' #',
     \ 'highlight_matched_char': 'Title',
     \ 'highlight_preview_line': 'Underlined',
-    \ 'max_dynamic_update_candidates': 50000,
+    \ 'max_dynamic_update_candidates': 100000,
     \ 'vertical_preview': v:true,
     \ 'source_names': 'short',
     \ 'statusline': v:false,
@@ -42,6 +42,10 @@ call denite#custom#option('relative',{
     \ 'winrow' : &lines *1/3,
     \ })
 
+call denite#custom#kind('openable', 'default_action', 'switch')
+call denite#custom#kind('file', 'default_action', 'switch')
+call denite#custom#kind('buffer', 'default_action', 'switch')
+call denite#custom#source('file/old', 'default_action', 'switch')
 ""need rg for grep/file-rec
 " call denite#custom#source('grep', 'args', ['', '', '!'])
 if executable('rg')
@@ -94,9 +98,9 @@ call denite#custom#var('menu', 'menus', s:menus)
 " call denite#custom#kind('file', 'default_action', 'drop')
 " call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy', 'matcher/ignore_globs'])
 " if executable('fzf')
-" call denite#custom#source('_', 'matchers', ['matcher/clap'])
+" call denite#custom#source('_', 'matchers', ['matcher/regexp'])
 " else
-" call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
+call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
 " endif
 " call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file/old', 'converters', ['converter/tail_path'])

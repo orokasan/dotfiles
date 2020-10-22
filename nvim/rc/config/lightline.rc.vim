@@ -4,7 +4,7 @@ let g:lightline = {
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount'],
-            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'filetype', 'denitebuffer', 'IMEstatus']
+            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'denitebuffer', 'IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
@@ -12,8 +12,8 @@ let g:lightline = {
         \ 'right': [[ 'percent' ], [], ['filetype','denitefilter']]
     \ },
     \ 'tabline' : {
-        \ 'left': [['buffers'], ['tabdenitesource']],
-        \ 'right': [['tab'], ['fileencoding', 'fileformat'] ]
+        \ 'left': [['tab']],
+        \ 'right': [['filetype'], ['fileencoding', 'fileformat'] ]
     \ },
     \ 'component':{
         \ 'lineinfo':'%{LLruler()}%<'
@@ -27,7 +27,7 @@ let g:lightline = {
         \ 'mode': 'LLMode',
         \ 'charcount':'LLCharcount',
         \ 'eskk': 'LLeskk',
-        \ 'tab': 'LLtabnr',
+        \ 'tabnr': 'LLtabnr',
         \ 'git':'LLgit',
         \ 'denitebuffer' : 'LLDeniteBuffer',
         \ 'denitefilter' : 'LLDeniteFilter',
@@ -35,11 +35,13 @@ let g:lightline = {
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
+        \ 'tab': 'lightline#tabs',
         \ 'linter_warnings': 'LLLspWarning',
         \ 'linter_errors': 'LLLspError',
     \ },
    \ 'component_type' : {
         \ 'buffers': 'tabsel',
+        \ 'tab': 'tabsel',
         \ 'linter_warnings': 'warning',
         \ 'linter_errors': 'error',
     \ }
@@ -248,12 +250,11 @@ function! LLfiletype() abort
 endfunction
 
 function! LLruler() abort
-    let info = {'c': col('.'), 'l': line('.') }
-    let fcol = printf("%3s", info['c'])
-    let fline = printf("%3s", info['l'])
+    let col = printf("%3s", col('.'))
+    let line = printf("%3s", line('.'))
     if !s:ignore_window()
-        return s:threshold(0) ? printf('L%sC%s«%d', fline , fcol , line('$') ) :
-            \  s:threshold(1) ? printf('L%sC%s', fline, fcol  ) : ''
+        return s:threshold(0) ? printf('%s:%s«%d', line , col , line('$') ) :
+            \  s:threshold(1) ? printf('%s:%s', line, col  ) : ''
     else
         return ''
     endif

@@ -8,16 +8,16 @@ endfunction "}}}
 "       \ pumvisible() ? "\<C-n>" :
 "       \ <SID>check_back_space() ? "\<TAB>" :
 "       \ deoplete#manual_complete()
-inoremap <silent><expr> <C-n>
-    \ pumvisible() ? "\<C-n>" :
-    \ deoplete#manual_complete()
-inoremap <silent><expr> <C-n>
-    \ pumvisible() ? "\<C-n>" :
-    \ deoplete#manual_complete()
-inoremap <silent><expr><C-h>
-    \ deoplete#smart_close_popup()."\<C-h>"
-inoremap <silent><expr><BS>
-    \ deoplete#smart_close_popup()."\<C-h>"
+" inoremap <silent><expr> <C-n>
+"     \ pumvisible() ? "\<C-n>" :
+"     \ deoplete#manual_complete()
+" inoremap <silent><expr> <C-n>
+"     \ pumvisible() ? "\<C-n>" :
+"     \ deoplete#manual_complete()
+" inoremap <silent><expr><C-h>
+"     \ deoplete#smart_close_popup()."\<C-h>"
+" inoremap <silent><expr><BS>
+"     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><C-l>
     \ deoplete#complete_common_string()
 " inoremap <expr><silent> <C-g> deoplete#undo_completion()
@@ -60,7 +60,6 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_truncate_abbr',
     \ 'converter_truncate_menu',
     \ 'converter_truncate_kind',
-    \ 'converter_auto_delimiter'
     \ ])
 call deoplete#custom#source('eskk', 'sorters', [])
 " deoplete-lsp should not be lazy loaded

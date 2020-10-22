@@ -26,6 +26,8 @@ nnoremap <silent><buffer><expr> <TAB>
     \ denite#do_map('choose_action')
 nnoremap <silent><buffer><expr> <CR>
     \ denite#do_map('do_action')
+nnoremap <silent><buffer><expr><nowait> t
+    \ denite#do_map('do_action', 'tabswitch')
 nnoremap <silent><buffer><expr><nowait> s
     \ denite#do_map('do_action', 'splitswitch')
 nnoremap <silent><buffer><expr> v
@@ -34,8 +36,6 @@ nnoremap <silent><buffer><expr> h
     \ denite#do_map('move_up_path')
 nnoremap <silent><buffer><expr><nowait> d
     \ denite#do_map('do_action', 'delete')
-nnoremap <silent><buffer><expr> l
-    \ denite#do_map('do_action')
 if g:my_denite_filter_winblend_config
 nnoremap <silent><buffer><expr> p
     \ denite#do_map('do_action', 'preview')
@@ -88,8 +88,12 @@ else
     setlocal winblend=0
 endif
 imap <buffer> <C-l> <Plug>(eskk:toggle)
-inoremap <silent><buffer><expr> ; denite#do_map('do_action')
 inoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
+" imap <silent><buffer><nowait> <C-t> <Plug>(denite_filter_update)ri
+inoremap <silent><buffer> <C-t> <Esc>
+  \:call denite#move_to_parent()<CR>
+  \:call denite#call_map('toggle_matchers', 'matcher/regexp', 'matcher/fuzzy')<CR>
+  \:call denite#move_to_filter()<CR>A
 inoremap z; ;
 inoremap <silent><buffer><expr> <Tab> denite#do_map('choose_action')
 imap <silent><buffer> <C-o> <Plug>(denite_filter_update)
@@ -113,10 +117,8 @@ on_cmd = 'Defx'
 hook_add = '''
 nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
-nmap <Leader>E <Plug>(defxprojectdir)
 nnoremap <silent> <Plug>(defx) :<C-u>Defx -resume<CR>
-nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')`<CR>
-nnoremap <silent> <Plug>(defxprojectdir) :<C-u>Defx ~/<CR>
+nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx `expand('%:p:h')` -search=`expand('%:p')` -search=`expand('%:p')`<CR>
 '''
 hook_source = '''
 let s:defx_ignore_files =
@@ -240,7 +242,7 @@ function! s:defx_is_plaintxt()
     let file = defx#get_candidate()['action__path']
     let extension = fnamemodify(file, ':e')
     let ex = '\v(png|xlsm|jpg|docx|docs|xlsx|pdf)'
-    if ex =~# extension
+    if ex && ex =~# extension
     return 0
     else
     return 1
@@ -385,39 +387,6 @@ on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
 [[plugins]]
-# repo =  'tyru/eskk.vim'
-on_event = ['InsertEnter', 'CmdlineEnter']
-repo =  'orokasan/eskk.vim'
-# on_map = {icrtn = '<Plug>(eskk:'}
-hook_add = '''
-"let g:eskk#marker_okuri = '*'
-let g:eskk#rom_input_style = 'msime'
-let g:eskk#egg_like_newline = 1
-let g:eskk#egg_like_newline_completion = 1
-let g:eskk#tab_select_completion = 1
-let g:eskk#start_completion_length = 2
-let g:eskk#revert_henkan_style = 'okuri'
-" backspaceで確定
-let g:eskk#delete_implies_kakutei = 1
-let g:eskk#dictionary = {
-    \    'path': "~/.skk-jisyo",
-    \    'sorted': 0,
-    \    'encoding': 'utf-8'
-    \ }
-let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
-"let g:eskk#cursor_color = {
-"    \   'ascii': '#b4be82',
-"    \   'hira': '#e28878',
-"    \   'kata': '#84a0c6',
-"    \   'abbrev': '#4169e1',
-"    \   'zenei': '#ffd700',
-"    \}
-imap <C-j> <Plug>(eskk:toggle)
-cmap <C-j> <Plug>(eskk:toggle)
-'''
-hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
-
-[[plugins]]
 repo =  'nathanaelkane/vim-indent-guides'
 on_cmd = 'IndentGuideToggle'
 hook_add = '''
@@ -457,6 +426,40 @@ let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
 " categories prompt (default 0)
 " let g:memolist_prompt_categories = 1
 '''
+
+[[plugins]]
+# repo =  'tyru/eskk.vim'
+on_event = ['InsertEnter', 'CmdlineEnter']
+repo =  'orokasan/eskk.vim'
+# on_map = {icrtn = '<Plug>(eskk:'}
+hook_add = '''
+"let g:eskk#marker_okuri = '*'
+let g:eskk#rom_input_style = 'msime'
+let g:eskk#egg_like_newline = 1
+let g:eskk#egg_like_newline_completion = 1
+let g:eskk#tab_select_completion = 1
+let g:eskk#start_completion_length = 2
+let g:eskk#revert_henkan_style = 'okuri'
+" backspaceで確定
+let g:eskk#delete_implies_kakutei = 1
+let g:eskk#dictionary = {
+    \    'path': "~/.skk-jisyo",
+    \    'sorted': 0,
+    \    'encoding': 'utf-8'
+    \ }
+let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.LL', 'sorted': 1, 'encoding': 'euc-jp', }
+"let g:eskk#cursor_color = {
+"    \   'ascii': '#b4be82',
+"    \   'hira': '#e28878',
+"    \   'kata': '#84a0c6',
+"    \   'abbrev': '#4169e1',
+"    \   'zenei': '#ffd700',
+"    \}
+imap <C-j> <Plug>(eskk:toggle)
+cmap <C-j> <Plug>(eskk:toggle)
+'''
+hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
+
 
 [[plugins]]
 repo =  't9md/vim-choosewin'

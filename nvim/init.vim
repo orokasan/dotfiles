@@ -281,10 +281,23 @@ nnoremap <C-b> <C-b>zz
 nnoremap <C-d> <C-d>
 nnoremap <C-u> <C-u>
 nnoremap <C-o> <C-o>zz
-" moving around between buffers
+" moving around buffers
 nnoremap <silent><Leader>h :bprev!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
+" moving around tabpages
+nnoremap <silent> <C-T> :tabnew<CR>
+nnoremap <silent> <C-L> :tabnext<CR>
+nnoremap <silent> <C-H> :tabprevious<CR>
+nnoremap <silent>gt :<C-u>call <SID>improved_gt()<CR>
+function! s:improved_gt() abort
+    if tabpagenr('$') == 1
+        execute 'tabnew'
+    else
+        normal! gt
+    endif
+endfunction
+
 " matchit mapping
 nmap <TAB>  %
 nmap g<TAB> g%
@@ -297,6 +310,7 @@ nnoremap <C-p> <C-i>zz
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
 "}}}
+
 "Key map - shortcuts {{{
 " Convenience key for getting to command mode
 nmap ; :
@@ -346,11 +360,11 @@ else
     nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
 "}}}
+
 "Key map - editting {{{
 " emacs like mapping on insert mode
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
-inoremap <C-h> <BS>
 inoremap <C-a> <HOME>
 inoremap <C-e> <END>
 " yank to end of line
@@ -417,9 +431,9 @@ endif
 
 "Key map - folding {{{
 " open folding
-nnoremap <silent><C-l> zo
+nnoremap <silent>gl zo
 " smart folding closer
-nnoremap <silent><C-h> :silent! call <SID>smart_foldcloser()<CR>
+nnoremap <silent>gh :silent! call <SID>smart_foldcloser()<CR>
 function! s:smart_foldcloser() "{{{
     if foldlevel('.') == 0
     norm! zM
@@ -525,15 +539,6 @@ xnoremap <silent> Q :<C-u>Bclose<CR>
  endfunction "}}}
 "}}}
 " autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
-" open tab by gt if no tab
-nnoremap <silent>gt :<C-u>call <SID>improved_gt()<CR>
-function! s:improved_gt() abort
-    if tabpagenr('$') == 1
-        execute 'tabnew'
-    else
-        normal! gt
-    endif
-endfunction
 
 " spliting windows
 nnoremap <leader>ws :sp<CR>:bprev<CR>
@@ -575,7 +580,6 @@ function! s:toggle_window_zoom() abort
     endif
 endfunction  "}}}
 "}}}
-
 " if exists('g:started_by_firenvim')
 "   set showtabline=0
 "     set laststatus=0

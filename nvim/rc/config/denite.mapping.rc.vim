@@ -29,10 +29,6 @@ endfunction
 nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
     \ -start-filter
     \  file file:new<CR>
-"プロジェクトディレクトリ下のファイル一覧。
-nnoremap <silent> [denite]t :<C-u>DeniteProjectDir
-    \ -start-filter
-    \ file/rec file:new<CR>
 nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
     \ -start-filter
     \ file file:new<CR>
@@ -70,6 +66,7 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ command_history<CR>
 nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
     \ -path=`expand('%:h')`
+    \ -no-empty
     \ grep<CR>
 nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
     \ -path=`expand('%:h')`
