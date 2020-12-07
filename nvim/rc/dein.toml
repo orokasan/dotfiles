@@ -94,10 +94,11 @@ inoremap z] 」
 inoremap z} 』
 inoremap z) ）
 let g:lexima_map_escape = '<C-[>'
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function() abort "{{{
-  return lexima#expand('<CR>', 'i')
-endfunction "}}}
+"inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+"function! s:my_cr_function() abort "{{{
+"  return pumvisible ? "\<CR>": lexima#expand('<CR>', 'i')
+inoremap <expr> <CR> pumvisible() ? "\<CR>" : lexima#expand('<CR>', 'i')
+"endfunction "}}}
 inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
 function! s:my_bs_function() abort "{{{
   return lexima#expand('<BS>', 'i')

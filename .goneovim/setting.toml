@@ -96,7 +96,7 @@ Visible = false
 Visible = false
 
 [ScrollBar]
-Visible = false
+Visible = true
 
 [MiniMap]
 Visible = false

@@ -65,6 +65,8 @@ highlight      link    gihyoSStrong     PreProc
 " syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
 " hi link txtDialog Constant
 hi!            link    NonText          Comment
+syn match  PageNumber "\t\zs\d\+$"
+highlight      link    PageNumber Title
 
 syntax sync minlines=100
 finish

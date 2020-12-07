@@ -402,15 +402,13 @@ repo = 'glidenote/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn  :MemoNew<CR>
-nnoremap <silent><Leader>ml  :<C-u>Denite 
-    \ -buffer-name=normal
-    \ -sorters=sorter/word,sorter/reverse
-    \ file/rec:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
+" nnoremap <silent><Leader>ml  :<C-u>Denite 
+"     \ -buffer-name=normal
+"     \ -sorters=sorter/word,sorter/reverse
+"     \ file/rec:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
 nnoremap <silent><Leader>ml  :<C-u>Denite 
     \ -buffer-name=default
     \ -cursor-pos=+1
-    \ -sorters=sorter/word,sorter/reverse
-    \ -matchers=['only_plaintxt']
     \ file/rec:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
 nnoremap <silent><Leader>mg  :<C-u>Denite 
     \ -buffer-name=default
@@ -428,9 +426,9 @@ let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
 '''
 
 [[plugins]]
-# repo =  'tyru/eskk.vim'
+repo =  'tyru/eskk.vim'
 on_event = ['InsertEnter', 'CmdlineEnter']
-repo =  'orokasan/eskk.vim'
+# repo =  'orokasan/eskk.vim'
 # on_map = {icrtn = '<Plug>(eskk:'}
 hook_add = '''
 "let g:eskk#marker_okuri = '*'
@@ -447,7 +445,7 @@ let g:eskk#dictionary = {
     \    'sorted': 0,
     \    'encoding': 'utf-8'
     \ }
-let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.LL', 'sorted': 1, 'encoding': 'euc-jp', }
+let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
 "let g:eskk#cursor_color = {
 "    \   'ascii': '#b4be82',
 "    \   'hira': '#e28878',

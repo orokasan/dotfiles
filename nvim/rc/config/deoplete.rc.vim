@@ -47,11 +47,10 @@ call deoplete#custom#option('sources', {
 call deoplete#custom#option({ 'refresh_always': v:false})
 
 call deoplete#custom#option({
-    \ 'auto_refresh_delay': 10,
+    \ 'auto_refresh_delay': 0,
     \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'filter',
-    \ 'num_process': 0
     \ })
 
 call deoplete#custom#source('_', 'converters', [
@@ -61,7 +60,6 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_truncate_menu',
     \ 'converter_truncate_kind',
     \ ])
-call deoplete#custom#source('eskk', 'sorters', [])
 " deoplete-lsp should not be lazy loaded
 if dein#is_sourced('deoplete-lsp')
     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex']

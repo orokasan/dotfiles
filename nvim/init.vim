@@ -68,11 +68,11 @@ let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 
-if has('nvim')
-    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
-else
-    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
-endif
+" if has('nvim')
+"     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
+" else
+    " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
+" endif
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 
 let s:myvimrc = expand('$MYVIMRC')
@@ -80,7 +80,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    " call dein#load_toml(s:lsp_toml,  {'merged': 1})
+    " call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -927,183 +927,183 @@ autocmd BufReadPre gina://* set noswapfile
 "     au WinEnter * setlocal cursorline
 "     au WinLeave * setlocal nocursorline
 " augroup end
-nnoremap <C-n> <cmd>call Nvim_lsp_showdiagnostics()<CR>
-nnoremap \ <cmd>lne<CR>zz
-nnoremap \| <cmd>lp<CR>zz
-let g:nvim_lsp_diagnostics = []
-function! Nvim_lsp_showdiagnostics() abort
-    call s:qf_to_loc()
-    if empty(g:nvim_lsp_diagnostics)
-        echom 'No diagnostics results found'
-    else
-        echo 'Retrieved diagnostics results'
-        botright lopen
-    endif
-endfunction
-autocmd dein User LspDiagnosticsChanged call <SID>qf_to_loc()
-function! s:qf_to_loc() abort
-    let callback = getqflist()
-    " echo callback
-    if !empty(callback)
-        let g:nvim_lsp_diagnostics = []
-        for i in callback
-        let i.col = s:to_col(i.bufnr, i.lnum, i.col)
-        " echo i
-        call add(g:nvim_lsp_diagnostics, i)
-        endfor  
-        " echo list
-        call setloclist(0, g:nvim_lsp_diagnostics, ' ')
-    endif
-endfunction
-function! s:to_col(expr, lnum, char) abort
-    let l:lines = getbufline(a:expr, a:lnum)
-    if l:lines == []
-        if type(a:expr) != v:t_string || !filereadable(a:expr)
-            " invalid a:expr
-            return a:char + 1
-        endif
-        " a:expr is a file that is not yet loaded as a buffer
-        let l:lines = readfile(a:expr, '', a:lnum)
-    endif
-    let l:linestr = l:lines[-1]
-    return strlen(strcharpart(l:linestr, 0, a:char))
-endfunction
-function! Nvim_lsp_result_to_quickfix() abort
-    let res = []
-    let i = bufnr('%')
-    let res = luaeval('vim.lsp.util.diagnostics_by_buf[' . i . ']')
-    for l in res[0]
-        let bufnr = l['bufnr']
-        let lnum = l['lnum']
-        let col = l['col']
-        let text = l['text']
-        call setqflist([bufnr,lnum,col,text], ' ')
-    endfor
-    " let result = g:res
-    " call setqflist(result, ' ')
-endfunction
-if has('nvim') && dein#is_sourced('nvim-lspconfig')
-lua << EOF
-do
--- function vim.lsp.util.set_qflist(items)
---   vim.fn.setqflist({}, 'a', {
---     title = 'Language Server';
---     items = items;
---   })
--- end
--- function vim.lsp.util.set_loclist(items)
---   vim.fn.setloclist(0, {}, 'a',{
---     title = 'Language Server';
---     items = items;
---   })
--- end
-  local string = require'string'
-  local method = "textDocument/publishDiagnostics"
-  local default_callback = vim.lsp.callbacks[method]
-  vim.lsp.callbacks[method] = function(err, method, result, client_id)
-    default_callback(err, method, result, client_id)
-    if result and result.diagnostics then
-      for _, v in ipairs(result.diagnostics) do
-        v.uri = v.uri or result.uri
-        v.bufnr = vim.uri_to_bufnr(v.uri)
-        v.lnum = v.range.start.line + 1
-        v.col = v.range.start.character + 1
-        v.text = v.message
-      end
-        -- local uri = result.uri
-        -- local bufnr = vim.uri_to_bufnr(uri)
-        -- vim.lsp.util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
-      -- vim.fn.nvim_set_var('diagnostics', result.diagnostics)
-      vim.lsp.util.set_qflist(result.diagnostics)
-    end
-    -- if vim.lsp.util.diagnostics_by_buf[vim.fn.bufnr(0)] then
-  end
-end
-
-local nvim_lsp = require'nvim_lsp'
-local configs = require'nvim_lsp/configs'
-local util = require 'nvim_lsp/util'
-
--- local bin_name = "efm-langserver"
--- 
--- configs["efm_ls"] = {
---   default_config = {
---     cmd = {"efm-langserver"};
---     filetypes = {text, txt, markdown, IPA};
---     root_dir = function(fname)
---       return vim.fn.getcwd()
---     end;
---   };
--- }
-require'nvim_lsp'.efm.setup{}
-
-vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
-
-require'nvim_lsp'.gopls.setup{}
-require'nvim_lsp'.clangd.setup{}
-require'nvim_lsp'.julials.setup{}
-require'nvim_lsp'.texlab.setup{}
--- util.base_install_dir= '~/.cache/nvim/nvim_lsp/'
-    -- settings = {
-    --   latex = {
-    --     build = {
-    --       executable = "latexmk";
-    --       args = {"uplatex", "-kanji=utf-8", "-halt-on-error", "-synctex=1", "-interaction=nonstopmode", "-file-line-error"};
-    --       onSave = false;
-    --         };
-    --     };
-    -- };
--- }
--- require'nvim_lsp'.pyls_ms.setup{}
--- require'nvim_lsp'.pyls.setup{}
-require'nvim_lsp'.jedi_language_server.setup{}
-require'nvim_lsp'.yamlls.setup{}
--- require'nvim_lsp'.sumneko_lua.setup{}
-require'nvim_lsp'.vimls.setup{}
-require'nvim_lsp'.tsserver.setup{}
-EOF
-endif
-"lsp.txtそのまま
-"set omnifunc=v:lua.vim.lsp.omnifunc
-nnoremap <silent> <c-]>      <cmd>lua vim.lsp.buf.definition()<CR>
-" nnoremap <silent> <c-k>      <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> <c-k>          <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> gd         <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> gD         <cmd>lua vim.lsp.buf.implementation()<CR>
-nnoremap <silent> 1gD        <cmd>lua vim.lsp.buf.type_definition()<CR>
-nnoremap <silent><Leader>fmt <cmd>lua vim.lsp.buf.formatting()<CR>
-nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-nnoremap <silent> <C-k> <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
-nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-"let g:tex_flavor = "latex"
-"set updatetime=1000
-"function! s:vimenter() abort
-""augroup nvim_lsp
-"au!
-"autocmd CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
-"autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
-"autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
-"autocmd CursorMovedI <buffer> lua vim.lsp.util.show_line_diagnostics()
+"nnoremap <C-n> <cmd>call Nvim_lsp_showdiagnostics()<CR>
+"nnoremap \ <cmd>lne<CR>zz
+"nnoremap \| <cmd>lp<CR>zz
+"let g:nvim_lsp_diagnostics = []
+"function! Nvim_lsp_showdiagnostics() abort
+"    call s:qf_to_loc()
+"    if empty(g:nvim_lsp_diagnostics)
+"        echom 'No diagnostics results found'
+"    else
+"        echo 'Retrieved diagnostics results'
+"        botright lopen
+"    endif
 "endfunction
-"autocmd dein BufEnter * call s:vimenter()
-sign define LspDiagnosticsErrorSign text= texthl=LspDiagnosticsError linehl= numhl=
-sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning linehl= numhl=
-sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=
-sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numhl=
-hi link  LspDiagnosticsError Error
-highlight LspReferenceText guifg=Red
-highlight LspReferenceWrite guifg=Red
-highlight LspReferenceRead guifg=Red
-highlight link LspDiagnosticsError Error
-highlight LspDiagnosticsWarning guifg=Green
-highlight link LspDiagnosticsUnderline Underlined
-autocmd ColorScheme * highlight LspReferenceText guifg=Red
-autocmd ColorScheme * highlight LspReferenceWrite guifg=Red
-autocmd ColorScheme * highlight LspReferenceRead guifg=Red
-autocmd ColorScheme * highlight link LspDiagnosticsError Error
-autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
-autocmd ColorScheme * highlight link LspDiagnosticsUnderline Underlined
+"autocmd dein User LspDiagnosticsChanged call <SID>qf_to_loc()
+"function! s:qf_to_loc() abort
+"    let callback = getqflist()
+"    " echo callback
+"    if !empty(callback)
+"        let g:nvim_lsp_diagnostics = []
+"        for i in callback
+"        let i.col = s:to_col(i.bufnr, i.lnum, i.col)
+"        " echo i
+"        call add(g:nvim_lsp_diagnostics, i)
+"        endfor  
+"        " echo list
+"        call setloclist(0, g:nvim_lsp_diagnostics, ' ')
+"    endif
+"endfunction
+"function! s:to_col(expr, lnum, char) abort
+"    let l:lines = getbufline(a:expr, a:lnum)
+"    if l:lines == []
+"        if type(a:expr) != v:t_string || !filereadable(a:expr)
+"            " invalid a:expr
+"            return a:char + 1
+"        endif
+"        " a:expr is a file that is not yet loaded as a buffer
+"        let l:lines = readfile(a:expr, '', a:lnum)
+"    endif
+"    let l:linestr = l:lines[-1]
+"    return strlen(strcharpart(l:linestr, 0, a:char))
+"endfunction
+"function! Nvim_lsp_result_to_quickfix() abort
+"    let res = []
+"    let i = bufnr('%')
+"    let res = luaeval('vim.lsp.util.diagnostics_by_buf[' . i . ']')
+"    for l in res[0]
+"        let bufnr = l['bufnr']
+"        let lnum = l['lnum']
+"        let col = l['col']
+"        let text = l['text']
+"        call setqflist([bufnr,lnum,col,text], ' ')
+"    endfor
+"    " let result = g:res
+"    " call setqflist(result, ' ')
+"endfunction
+"if has('nvim') && dein#is_sourced('nvim-lspconfig')
+"lua << EOF
+"do
+"-- function vim.lsp.util.set_qflist(items)
+"--   vim.fn.setqflist({}, 'a', {
+"--     title = 'Language Server';
+"--     items = items;
+"--   })
+"-- end
+"-- function vim.lsp.util.set_loclist(items)
+"--   vim.fn.setloclist(0, {}, 'a',{
+"--     title = 'Language Server';
+"--     items = items;
+"--   })
+"-- end
+"  local string = require'string'
+"  local method = "textDocument/publishDiagnostics"
+"  local default_callback = vim.lsp.callbacks[method]
+"  vim.lsp.callbacks[method] = function(err, method, result, client_id)
+"    default_callback(err, method, result, client_id)
+"    if result and result.diagnostics then
+"      for _, v in ipairs(result.diagnostics) do
+"        v.uri = v.uri or result.uri
+"        v.bufnr = vim.uri_to_bufnr(v.uri)
+"        v.lnum = v.range.start.line + 1
+"        v.col = v.range.start.character + 1
+"        v.text = v.message
+"      end
+"        -- local uri = result.uri
+"        -- local bufnr = vim.uri_to_bufnr(uri)
+"        -- vim.lsp.util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
+"      -- vim.fn.nvim_set_var('diagnostics', result.diagnostics)
+"      vim.lsp.util.set_qflist(result.diagnostics)
+"    end
+"    -- if vim.lsp.util.diagnostics_by_buf[vim.fn.bufnr(0)] then
+"  end
+"end
+
+"local nvim_lsp = require'nvim_lsp'
+"local configs = require'nvim_lsp/configs'
+"local util = require 'nvim_lsp/util'
+
+"-- local bin_name = "efm-langserver"
+"-- 
+"-- configs["efm_ls"] = {
+"--   default_config = {
+"--     cmd = {"efm-langserver"};
+"--     filetypes = {text, txt, markdown, IPA};
+"--     root_dir = function(fname)
+"--       return vim.fn.getcwd()
+"--     end;
+"--   };
+"-- }
+"require'nvim_lsp'.efm.setup{}
+
+"vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
+
+"require'nvim_lsp'.gopls.setup{}
+"require'nvim_lsp'.clangd.setup{}
+"require'nvim_lsp'.julials.setup{}
+"require'nvim_lsp'.texlab.setup{}
+"-- util.base_install_dir= '~/.cache/nvim/nvim_lsp/'
+"    -- settings = {
+"    --   latex = {
+"    --     build = {
+"    --       executable = "latexmk";
+"    --       args = {"uplatex", "-kanji=utf-8", "-halt-on-error", "-synctex=1", "-interaction=nonstopmode", "-file-line-error"};
+"    --       onSave = false;
+"    --         };
+"    --     };
+"    -- };
+"-- }
+"-- require'nvim_lsp'.pyls_ms.setup{}
+"-- require'nvim_lsp'.pyls.setup{}
+"require'nvim_lsp'.jedi_language_server.setup{}
+"require'nvim_lsp'.yamlls.setup{}
+"-- require'nvim_lsp'.sumneko_lua.setup{}
+"require'nvim_lsp'.vimls.setup{}
+"require'nvim_lsp'.tsserver.setup{}
+"EOF
+"endif
+""lsp.txtそのまま
+""set omnifunc=v:lua.vim.lsp.omnifunc
+"nnoremap <silent> <c-]>      <cmd>lua vim.lsp.buf.definition()<CR>
+"" nnoremap <silent> <c-k>      <cmd>lua vim.lsp.buf.signature_help()<CR>
+"nnoremap <silent> <c-k>          <cmd>lua vim.lsp.buf.hover()<CR>
+"nnoremap <silent> gd         <cmd>lua vim.lsp.buf.declaration()<CR>
+"nnoremap <silent> gD         <cmd>lua vim.lsp.buf.implementation()<CR>
+"nnoremap <silent> 1gD        <cmd>lua vim.lsp.buf.type_definition()<CR>
+"nnoremap <silent><Leader>fmt <cmd>lua vim.lsp.buf.formatting()<CR>
+"nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+"nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+"nnoremap <silent> <C-k> <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+"nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+""let g:tex_flavor = "latex"
+""set updatetime=1000
+""function! s:vimenter() abort
+"""augroup nvim_lsp
+""au!
+""autocmd CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
+""autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
+""autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
+""autocmd CursorMovedI <buffer> lua vim.lsp.util.show_line_diagnostics()
+""endfunction
+""autocmd dein BufEnter * call s:vimenter()
+"sign define LspDiagnosticsErrorSign text= texthl=LspDiagnosticsError linehl= numhl=
+"sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning linehl= numhl=
+"sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=
+"sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numhl=
+"hi link  LspDiagnosticsError Error
+"highlight LspReferenceText guifg=Red
+"highlight LspReferenceWrite guifg=Red
+"highlight LspReferenceRead guifg=Red
+"highlight link LspDiagnosticsError Error
+"highlight LspDiagnosticsWarning guifg=Green
+"highlight link LspDiagnosticsUnderline Underlined
+"autocmd ColorScheme * highlight LspReferenceText guifg=Red
+"autocmd ColorScheme * highlight LspReferenceWrite guifg=Red
+"autocmd ColorScheme * highlight LspReferenceRead guifg=Red
+"autocmd ColorScheme * highlight link LspDiagnosticsError Error
+"autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
+"autocmd ColorScheme * highlight link LspDiagnosticsUnderline Underlined
 
 " autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
 autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>

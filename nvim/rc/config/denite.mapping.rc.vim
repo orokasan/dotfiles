@@ -26,9 +26,9 @@ function! s:denite_gitdir() abort
 endif
 
 endfunction
-nnoremap <silent> [denite]F :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
     \ -start-filter
-    \  file file:new<CR>
+    \  file/rec file:new<CR>
 nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
     \ -start-filter
     \ file file:new<CR>

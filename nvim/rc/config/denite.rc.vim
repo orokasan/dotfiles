@@ -151,6 +151,7 @@ endfunction
 function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
+    let dir = substitute(dir, ' ', '\\ ', 'g')
     if isdirectory(dir)
         let fdir = fnamemodify(dir, ':p:h')
     else
@@ -168,6 +169,7 @@ call denite#custom#filter('matcher/clap',
 function! s:denite_directory_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
+    let dir = substitute(dir, ' ', '\\ ', 'g')
         let sdir = fnamemodify(dir, ':~:h')
     " execute('Denite directory_rec:' . sdir)
     let fdir = '\"' . sdir. '\"'
@@ -195,6 +197,7 @@ function! s:defx_open(context)
     let file = fnamemodify(path, ':p')
     let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
     let dir = denite#util#path2directory(path)
+    let dir = substitute(dir, ' ', '\\ ', 'g')
     if &filetype ==# 'defx'
       call defx#call_action('cd', [dir])
       call defx#call_action('search', [path])
