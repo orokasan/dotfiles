@@ -113,7 +113,6 @@ call denite#custom#var('grep/git', 'command', ['git', 'grep'])
 call denite#custom#source('_', 'sorters', ['sorter/sublime'])
 call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
-
 "Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ [ '.git/', '.ropeproject/', '__pycache__/',

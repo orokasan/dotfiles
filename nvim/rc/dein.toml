@@ -767,4 +767,6 @@ nnoremap <C-S> :tabnew<bar>JunkfileOpen txt<CR>
 nnoremap <silent> [denite]<space> :Denite -path=~/.cache/junkfile file/rec<CR>
 nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.cache/junkfile::<CR>
 '''
+[[plugins]]
+repo =  'nekowasabi/denite-migemo' 
 # vim:set foldmethod=marker:'

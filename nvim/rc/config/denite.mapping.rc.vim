@@ -124,7 +124,9 @@ nnoremap <silent> [denite]o :<C-u>Denite
 nnoremap <silent> [denite]d :<C-u>Denite
     \ dirmark<CR>
 "bookmark by "add"action
-nnoremap <silent> [denite]D :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]D :<C-u>Denite
+    \ -path=`expand('%:p:h:h')`
+    \ -default_action=add
     \ dirmark/add<CR>
 " move next candidate
 nnoremap <silent> [denite]. :<C-u>Denite

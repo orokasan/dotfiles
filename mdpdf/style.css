@@ -416,6 +416,7 @@
 
 .markdown-body table {
   display: block;
+  font-size: 12px;
   width: 100%;
   overflow: auto;
   word-break: normal;

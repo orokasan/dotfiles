@@ -29,9 +29,9 @@ nnoremap <silent><buffer><expr> <CR>
 nnoremap <silent><buffer><expr><nowait> t
     \ denite#do_map('do_action', 'tabswitch')
 nnoremap <silent><buffer><expr><nowait> s
-    \ denite#do_map('do_action', 'splitswitch')
+    \ denite#do_map('do_action', 'split')
 nnoremap <silent><buffer><expr> v
-    \ denite#do_map('do_action', 'vsplitswitch')
+    \ denite#do_map('do_action', 'vsplit')
 nnoremap <silent><buffer><expr> h
     \ denite#do_map('move_up_path')
 nnoremap <silent><buffer><expr><nowait> d
@@ -461,11 +461,10 @@ hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
 
 [[plugins]]
 repo =  't9md/vim-choosewin'
-#TODO:qitta
-on_map = {n = '<Plug>(choosewin'}
+on_cmd = 'ChooseWin'
 hook_add = '''
-nmap - <Plug>(choosewin)
-nmap - <C-\><C-n><Plug>(choosewin)
+nmap - :ChooseWin<CR>
+" tmap - <C-\><C-n><Plug>(choosewin)
 " let g:choosewin_overlay_font_size = 'small'
 " let g:choosewin_overlay_clear_multibyte = 1
 " let g:choosewin_overlay_enable = 1
@@ -475,19 +474,37 @@ nmap - <C-\><C-n><Plug>(choosewin)
 " let g:choosewin_color_overlay_current = {
 "    \ 'gui': ['#859900']
 "    \ }
+'''
+hook_source = '''
+function! s:gethighlight(hi, which) abort
+    let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
+    return bg
+endfunction
+function! s:set_choosewin_color() abort
 let g:choosewin_color_label_current = {
-      \ 'gui': ['#859900' , '#002b36', 'bold']
+    \ 'gui': [ s:gethighlight('Title', 'fg'), s:gethighlight('Normal', 'bg'), 'bold']
       \ }
 let g:choosewin_color_label = {
-      \ 'gui': [ '#073642', '#fdf6e3', 'bold']
+    \ 'gui': [ s:gethighlight('StatusLine', 'fg'), s:gethighlight('StatusLine', 'bg'), 'bold']
       \ }
+" let g:choosewin_color_other = {
+"       \ 'gui': [s:gethighlight('LightlineLeft_command_0', 'bg'), s:gethighlight('LightlineLeft_command_1', 'bg')]
+"       \ }
 let g:choosewin_color_other = {
-      \ 'gui': ['#002b36', '#657b83']
+      \ 'gui': [ s:gethighlight('Normal', 'bg'), s:gethighlight('Normal', 'fg'),],
+      \ 'cterm': [ 40, 40 ] 
       \ }
-let g:choosewin_tabline_replace = 0
+let g:choosewin_color_land = {
+      \ 'gui': [ s:gethighlight('Title', 'fg'), s:gethighlight('Title', 'bg'),],
+      \ 'cterm': [ 40, 40 ] 
+      \ }
+endfunction
+" let g:choosewin_label_fill = 1
+let g:choosewin_tabline_replace = 1
 let g:choosewin_statusline_replace = 1
-let g:choosewin_label_padding = 8
-let g:choosewin_return_on_single_win = 1
+"let g:choosewin_label_padding = 8
+" let g:choosewin_color_land = 1
+" let g:choosewin_return_on_single_win = 1
 let s:keymap = {
       \ '0':     'tab_first',
       \ '[':     'tab_prev',
@@ -502,7 +519,8 @@ let s:keymap = {
       \ }
 let g:choosewin_keymap = s:keymap
 let g:choosewin_label = 'HJKLADFG'
-let g:choosewin_blink_on_land = 0
+let g:choosewin_blink_on_land = 1
+call s:set_choosewin_color()
 '''
 
 # [[plugins]]

@@ -68,6 +68,8 @@ hi!            link    NonText          Comment
 syn match  PageNumber "\t\zs\d\+$"
 highlight      link    PageNumber Title
 
+syn match  PageNumber "\t\zs\d\+$"
+highlight      link    PageNumber Title
 syntax sync minlines=100
 finish
 

@@ -10,18 +10,18 @@ set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
 " let g:diagnosticsafter = ''
 '''
 
-[[plugins]]
-# lazy = '1'
-repo = 'hrsh7th/vim-vsnip'
-# on_source = ['deoplete.nvim']
-hook_add = '''
-imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-imap <expr> <Tab>   pumvisible() ? "\<C-n>" : vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-'''
+# [[plugins]]
+# # lazy = '1'
+# repo = 'hrsh7th/vim-vsnip'
+# # on_source = ['deoplete.nvim']
+# hook_add = '''
+# imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+# smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+# imap <expr> <Tab>   pumvisible() ? "\<C-n>" : vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# '''
 
 [[plugins]]
 lazy = '1'
