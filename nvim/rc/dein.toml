@@ -135,10 +135,10 @@ autocmd dein ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
 autocmd dein ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd dein ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd dein ColorScheme iceberg highlight clear Search
-autocmd dein ColorScheme iceberg highlight Search gui=underline
+autocmd dein ColorScheme iceberg highlight link Search Underlined
 autocmd dein ColorScheme iceberg highlight! link Conceal Title
+autocmd dein ColorScheme iceberg highlight! Underlined cterm=underline ctermfg=110 gui=underline guifg=#c6c8d1 guisp=#84a0c6
 '''
-
 # [[plugins]]
 # repo = 'lifepillar/vim-solarized8'
 # hook_add =''' " {{{
@@ -763,7 +763,8 @@ hook_add = '''
 [[plugins]]
 repo='Shougo/junkfile.vim'
 hook_add = '''
-nnoremap <C-S> :tabnew<bar>JunkfileOpen txt<CR>
+nnoremap <silent> <C-T> :tabnew<bar>JunkfileOpen txt<CR>
+nnoremap <C-S> :JunkfileOpen<CR>
 nnoremap <silent> [denite]<space> :Denite -path=~/.cache/junkfile file/rec<CR>
 nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.cache/junkfile::<CR>
 '''

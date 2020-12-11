@@ -1,51 +1,3 @@
-# version: 2
-# root-markers:
-#   - .git/
-# loglevel: 0
-
-# tools:
-#   # vim:
-#   #   lint-command: 'vint -'
-#   #   lint-stdin: true
-#   #   lint-formats:
-#   #     - '%f:%l:%c: %m'
-
-# #   markdown:
-# #     lint-command: 'npx textlint -f unix --stdin'
-# #     # textlintがmarkdownを考慮しないので
-# #     # がんばって設定したけど動かなかったが
-# #     # lint-command: 'npx textlint -f unix --stdin --stdin-filename foo.md | sed -e "s/markdown/text/g"'
-# #     # lint-stdin:false で解決
-# #     lint-stdin: false
-# #     lint-formats:
-# #         - '%f:%l:%c: %m'
-
-
-#   textlint: &textlint
-#     lint-command: 'npx textlint --format unix '
-#     lint-stdin: false
-#     lint-formats:
-#       - '%f:%l:%c: %m'
-
-#   # tex:
-#   #   lint-command: 'chktex -v0 -q'
-#   #   lint-stdin: true
-#   #   lint-formats:
-#   #       - '%f:%l:%c:%n:%m'
-
-#   yaml-yamllint: &yaml-yamllint
-#     lint-command: 'yamllint -f parsable -'
-#     lint-stdin: true
-
-# languages:
-#   txt:
-#     - <<: *textlint
-
-#   markdown:
-#     - <<: *textlint
-
-#   yaml:
-#     - <<: *yaml-yamllint
 version: 2
 root-markers:
   - .git/
@@ -68,20 +20,30 @@ tools:
     lint-formats:
       - '%f:%l:%c: %m'
 
+  textlint: &textlint
+    lint-command: 'npx --no-install textlint -f unix --stdin --stdin-filename ${INPUT}'
+    lint-ignore-exit-code: true
+    lint-stdin: true
+    lint-formats:
+      - '%f:%l:%c: %m [%trror/%r]'
+    root-markers:
+      - .textlintrc
+    format-command: 'npx textlint --fix '
+
   make-checkmake: &make-checkmake
     lint-command: 'checkmake'
     lint-stdin: true
 
-  markdown-markdownlint: &markdown-markdownlint
-    lint-command: 'markdownlint -s -c %USERPROFILE%\.markdownlintrc'
-    lint-stdin: true
-    lint-formats:
-      - '%f:%l %m'
-      - '%f:%l:%c %m'
-      - '%f: %l: %m'
+  # markdown-markdownlint: &markdown-markdownlint
+  #   lint-command: 'markdownlint -s -c %USERPROFILE%\.markdownlintrc'
+  #   lint-stdin: true
+  #   lint-formats:
+  #     - '%f:%l %m'
+  #     - '%f:%l:%c %m'
+  #     - '%f: %l: %m'
 
-  markdown-pandoc: &markdown-pandoc
-    format-command: 'pandoc -f markdown -t gfm -sp --tab-stop=2'
+  # markdown-pandoc: &markdown-pandoc
+  #   format-command: 'pandoc -f markdown -t gfm -sp --tab-stop=2'
 
   rst-pandoc: &rst-pandoc
     format-command: 'pandoc -f rst -t rst -s --columns=79'
@@ -182,6 +144,8 @@ tools:
     hover-stdin: true
 
 languages:
+  text:
+    - <<: *textlint
   eruby:
     - <<: *eruby-erb
 
@@ -192,19 +156,18 @@ languages:
     - <<: *make-checkmake
 
   markdown:
-    - <<: *markdown-markdownlint
-    - <<: *markdown-pandoc
+    - <<: *textlint
 
   rst:
     - <<: *rst-lint
     - <<: *rst-pandoc
 
-  yaml:
-    - <<: *yaml-yamllint
+  # yaml:
+  #   - <<: *yaml-yamllint
 
-  python:
-    - <<: *python-flake8
-    - <<: *python-mypy
+  # python:
+  #   - <<: *python-flake8
+  #   - <<: *python-mypy
 
   dockerfile:
     - <<: *dockerfile-hadolint

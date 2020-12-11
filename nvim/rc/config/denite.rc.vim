@@ -100,7 +100,8 @@ call denite#custom#var('menu', 'menus', s:menus)
 " if executable('fzf')
 " call denite#custom#source('_', 'matchers', ['matcher/regexp'])
 " else
-call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
+" call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
+call denite#custom#source('_', 'matchers', ['matcher/substring'])
 " endif
 " call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file/old', 'converters', ['converter/tail_path'])

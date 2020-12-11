@@ -1,8 +1,6 @@
 scriptencoding utf-8
 
-if             version <                700
-  syntax       clear
-elseif         exists('b:current_syntax')
+if exists('b:current_syntax')
   finish
 endif
 

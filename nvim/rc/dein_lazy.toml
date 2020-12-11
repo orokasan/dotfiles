@@ -1,6 +1,6 @@
 [[plugins]]
-# repo =  'Shougo/denite.nvim'
-repo =  'orokasan/denite.nvim'
+repo =  'Shougo/denite.nvim'
+# repo =  'orokasan/denite.nvim'
 rev = 'dev'
 on_cmd = ['Denite', 'DeniteProjectDir', 'DeniteCursorWord']
 hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
@@ -26,6 +26,8 @@ nnoremap <silent><buffer><expr> <TAB>
     \ denite#do_map('choose_action')
 nnoremap <silent><buffer><expr> <CR>
     \ denite#do_map('do_action')
+nnoremap <silent><buffer><expr> o
+    \ denite#do_map('do_action', 'open')
 nnoremap <silent><buffer><expr><nowait> t
     \ denite#do_map('do_action', 'tabswitch')
 nnoremap <silent><buffer><expr><nowait> s

@@ -71,7 +71,7 @@ let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 " if has('nvim')
 "     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 " else
-    " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 " endif
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 
@@ -80,7 +80,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    " call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -286,7 +286,6 @@ nnoremap <silent><Leader>h :bprev!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
 nnoremap <silent><Leader>l :bnext!<CR>
 " moving around tabpages
-nnoremap <silent> <C-T> :tabnew<CR>
 nnoremap <silent> <C-L> :tabnext<CR>
 nnoremap <silent> <C-H> :tabprevious<CR>
 nnoremap <silent>gt :<C-u>call <SID>improved_gt()<CR>
@@ -833,10 +832,19 @@ endtry
 " endif
 "}}}
 hi! link NonText Comment
-
 " for neovide initialize hook
 if exists('neovide')
-    set guifont=:RictyDiminished\ NF:h16
+    " set guifont=:RictyDiminished\ NF:h16
+    " set guifont=:Cica:h16
+    set guifont:HackGenNerd:h15
+    let g:neovide_refresh_rate=100
+set linespace=10
+let g:neovide_cursor_trail_length=0
+let g:neovide_cursor_animation_length=0
+let g:neovide_cursor_antialiasing=v:true
+let g:neovide_cursor_vfx_mode = "wireframe"
+  cd ~/
+    let g:neovide_extra_buffer_frames=4
 endif
 if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)
@@ -1117,25 +1125,6 @@ autocmd FileType twitvim nmap <silent><buffer> <leader>o /http<CR>:call histdel(
 nnoremap <silent> <F3> :FriendsTwitter<CR>
 nnoremap <silent> <Leader>r :RefreshTwitter<CR>
 	let g:previm_show_header = 0
-function! Test()
-let text = getline('.')
-let row = text / winwidth(0) + 1
-let col = - col('.')
-let buf = nvim_create_buf(v:false, v:true)
-setlocal wrap
-call nvim_buf_set_lines(buf, 0, -1, v:true, [text])
-let opts = {'relative': 'cursor', 'width': winwidth(0), 'height': row, 'col': col + 1, 'row': 0, 'anchor': 'NW', 'style': 'minimal'} 
-let win = nvim_open_win(buf, 0, opts)
-" call nvim_open_win(0, v:false, {
-"     \ 'relative': 'win',
-"     \ 'anchor': "SE",
-"     \ 'row': 0,
-"     \ 'col': 0,
-"     \ 'width': winwidth(0),
-"     \ 'height': row,
-"     \ 'focusable': v:false
-"     \})
-endfunction
 let twitvim_enable_python3 = 1
 let twitvim_timestamp_format = '%H:%M-%m/%d'
 let twitvim_count = 15
