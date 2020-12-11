@@ -100,7 +100,7 @@ command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() 
 " Visual  {{{
 " language C
 set ambiwidth=double
-set shortmess+=aAcTt
+set shortmess+=aAcTtI
 set showtabline=2   " always show tabline
 set nonumber          " show line number
 set signcolumn=yes  " show signcolumn
@@ -824,6 +824,10 @@ catch /^Vim\%((\a\+)\)\=:E185:/
     exe 'colorscheme peachpuff'
 endtry
 " if has('win32')
+"     if executable('wsl')
+"         set wsl
+"     endif
+" endif
 " set shell=\"C:\msys64\usr\bin\bash.exe\"\ -f
 " set shellcmdflag=-c
 " set shellquote=\"

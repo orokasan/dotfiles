@@ -292,3 +292,5 @@ open -a /Applications/Firefox\ Nightly.app \
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
+export PATH=$PATH:/home/linuxbrew/.linuxbrew/bin
+alias nvim='neovide.exe'

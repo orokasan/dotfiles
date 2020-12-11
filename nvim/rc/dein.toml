@@ -770,4 +770,10 @@ nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.ca
 '''
 [[plugins]]
 repo =  'nekowasabi/denite-migemo' 
+
+[[plugins]]
+repo =  'Shougo/deol.nvim' 
+hook_add = '''
+let g:deol#prompt_pattern = '% \|%$'
+'''
 # vim:set foldmethod=marker:'
