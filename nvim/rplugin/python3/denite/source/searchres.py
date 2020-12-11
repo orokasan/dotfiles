@@ -7,6 +7,7 @@ LINE_NUMBER_SYNTAX = (
     'contained containedin=')
 LINE_NUMBER_HIGHLIGHT = 'highlight default link deniteSource_lineNumber Constant'
 
+
 class Source(Base):
 
     def __init__(self, vim):

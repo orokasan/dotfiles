@@ -6,22 +6,9 @@ repo = 'prabirshrestha/vim-lsp'
 # on_ft = ['markdown', 'tex', 'python', 'go']
 hook_add = '''
 let g:lsp_highlight_references_enabled = 1
-" let lsp_log_verbose = 1
-" let lsp_log_file = 'C:\Users\t_kuriki\temp\lsp.log'
 let g:lsp_auto_enable = 0
-let s:pyls_config = {'pyls': {'plugins': {
-    \   'pycodestyle': {'enabled': v:true},
-    \   'pydocstyle': {'enabled': v:false},
-    \   'pylint': {'enabled': v:false},
-    \   'flake8': {'enabled': v:true},
-    \   'jedi_definition': {
-    \     'follow_imports': v:true,
-    \     'follow_builtin_imports': v:true,
-    \   },
-    \ }
-    \ }
-    \}
-autocmd dein BufAdd * call lsp#enable()
+" autocmd dein BufAdd * call lsp#enable()
+let g:lsp_log_file = expand('~/vim-lsp.log')
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
@@ -42,13 +29,13 @@ function! s:lsp_local_setting()
     if &ft !=# 'vim'
     nmap <buffer> K <plug>(lsp-hover)
     endif
-    
     call lsp#enable()
 endfunction
+
 function! s:lsp_setup()
     let g:lsp_auto_enable = 1
     let g:lsp_insert_text_enabled = 1
-    let g:lsp_virtual_text_enabled = 1
+    let g:lsp_virtual_text_enabled = 0
     let g:lsp_diagnostics_enabled = 1
     let g:lsp_highlights_enabled = 1
     let g:lsp_diagnostics_echo_cursor = 1
@@ -59,77 +46,76 @@ function! s:lsp_setup()
     let g:lsp_signs_warning = {'text': ''}
     let g:lsp_signs_information = {'text': '!'}
     let g:lsp_signs_hint = {'text': '?'}
-    let g:lsp_virtual_text_prefix = "■ "
+    let g:lsp_virtual_text_prefix = "■"
 endfunction
 
-" let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
-" " let s:efm_config_path = '-c=' .. expand('~\AppData\Roaming\efm-langserver\config.yaml')
-" let s:efm_log_path = '-log=' .. expand('~/efmlog')
-" augroup VimLsp
-"     au!
-"     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-"     autocmd User lsp_buffer_enabled call s:lsp_local_setting()
-"     autocmd User lsp_setup call s:lsp_setup()
-"     " if executable('pyls')
-"     "     " pip install python-language-server
-"     "     au User lsp_setup call lsp#register_server({
-"     "         \ 'name': 'pyls',
-"     "         \ 'cmd': {server_info->['pyls']},
-"     "         \ 'whitelist': ['python'],
-"     "         \ 'workspace_config': {}
-"     "         \ })
-"         " autocmd vimrc BufWrite *.py call execute('LspDocumentFormatSync', 'silent')
-"     if executable('jedi-language-server')
-"         " pip install python-language-server
-"         au User lsp_setup call lsp#register_server({
-"             \ 'name': 'jedi-language-server',
-"             \ 'cmd': {server_info->['jedi-language-server']},
-"             \ 'whitelist': ['python'],
-"             \ 'workspace_config': {}
-"             \ })
-"     endif
-"     if executable('vim-language-server')
-"         au User lsp_setup call lsp#register_server({
-"             \ 'name': 'vimls',
-"             \ 'cmd': {server_info->['npx','vim-language-server','--stdio']},
-"             \ 'whitelist': ['vim'],
-"             \ 'initialization_options': { 'vimruntime': $VIMRUNTIME, 'runtimepath': &rtp },
-"             \ })
-"     endif
-"     if executable('texlab')
-"        au User lsp_setup call lsp#register_server({
-"           \ 'name': 'texlab',
-"           \ 'cmd': {server_info->['texlab']},
-"           \ 'whitelist': ['tex', 'bib', 'sty'],
-"           \ 'workspace_config': { 'texlab':{
-"           \ 'trace':{ 'server':'verbose' }
-"           \ }},
-"           \ })
-"     endif
-"     if executable('gopls')
-"         autocmd User lsp_setup call lsp#register_server({
-"             \ 'name': 'go-lang',
-"             \ 'cmd': {server_info->['gopls']},
-"             \ 'whitelist': ['go'],
-"             \ 'workspace_config': {'gopls': {
-"             \     'watchFileChanges': v:true,
-"             \     'completeUnimported': v:true,
-"             \     'caseSensitiveCompletion': v:true,
-"             \     'hoverKind': 'SynopsisDocumentation',
-"             \     'usePlaceholders': v:true,
-"             \     'deepCompletion': v:true,
-"             \     'completionDocumentation': v:true,
-"             \   }},
-"             \ })
-"     endif
-"     if executable('efm-langserver')
-"     autocmd User lsp_setup call lsp#register_server({
-"       \ 'name': 'efm-langserver',
-"       \ 'cmd': {server_info->['efm-langserver']},
-"       \ 'whitelist': ['tex','eruby', 'markdown', 'yaml', 'text'],
-"       \ })
-"     endif
-" augroup END
+let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
+" let s:efm_config_path = '-c=' .. expand('~\AppData\Roaming\efm-langserver\config.yaml')
+let s:efm_log_path = '-log=' .. expand('~/efmlog')
+augroup VimLsp
+    au!
+    autocmd User lsp_buffer_enabled call s:lsp_local_setting()
+    autocmd User lsp_setup call s:lsp_setup()
+    " " if executable('pyls')
+    " "     " pip install python-language-server
+    " "     au User lsp_setup call lsp#register_server({
+    " "         \ 'name': 'pyls',
+    " "         \ 'cmd': {server_info->['pyls']},
+    " "         \ 'whitelist': ['python'],
+    " "         \ 'workspace_config': {}
+    " "         \ })
+    "     " autocmd vimrc BufWrite *.py call execute('LspDocumentFormatSync', 'silent')
+    " if executable('jedi-language-server')
+    "     " pip install python-language-server
+    "     au User lsp_setup call lsp#register_server({
+    "         \ 'name': 'jedi-language-server',
+    "         \ 'cmd': {server_info->['jedi-language-server']},
+    "         \ 'whitelist': ['python'],
+    "         \ 'workspace_config': {}
+    "         \ })
+    " endif
+    " if executable('vim-language-server')
+    "     au User lsp_setup call lsp#register_server({
+    "         \ 'name': 'vimls',
+    "         \ 'cmd': {server_info->['npx','vim-language-server','--stdio']},
+    "         \ 'whitelist': ['vim'],
+    "         \ 'initialization_options': { 'vimruntime': $VIMRUNTIME, 'runtimepath': &rtp },
+    "         \ })
+    " endif
+    " if executable('texlab')
+    "    au User lsp_setup call lsp#register_server({
+    "       \ 'name': 'texlab',
+    "       \ 'cmd': {server_info->['texlab']},
+    "       \ 'whitelist': ['tex', 'bib', 'sty'],
+    "       \ 'workspace_config': { 'texlab':{
+    "       \ 'trace':{ 'server':'verbose' }
+    "       \ }},
+    "       \ })
+    " endif
+    " if executable('gopls')
+    "     autocmd User lsp_setup call lsp#register_server({
+    "         \ 'name': 'go-lang',
+    "         \ 'cmd': {server_info->['gopls']},
+    "         \ 'whitelist': ['go'],
+    "         \ 'workspace_config': {'gopls': {
+    "         \     'watchFileChanges': v:true,
+    "         \     'completeUnimported': v:true,
+    "         \     'caseSensitiveCompletion': v:true,
+    "         \     'hoverKind': 'SynopsisDocumentation',
+    "         \     'usePlaceholders': v:true,
+    "         \     'deepCompletion': v:true,
+    "         \     'completionDocumentation': v:true,
+    "         \   }},
+    "         \ })
+    " endif
+    " if executable('efm-langserver')
+    " autocmd User lsp_setup call lsp#register_server({
+    "   \ 'name': 'efm-langserver',
+    "   \ 'cmd': {server_info->['efm-langserver']},
+    "   \ 'whitelist': ['tex','eruby', 'markdown', 'yaml', 'text'],
+    "   \ })
+    " endif
+augroup END
 
 autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 	augroup lsp_float_colours
@@ -186,11 +172,6 @@ autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 [[plugins]]
 lazy = 1'
 on_source = ['deoplete.nvim']
-repo = 'thomasfaingnaert/vim-lsp-snippets'
-
-[[plugins]]
-lazy = 1'
-on_source = ['deoplete.nvim']
 repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
 # [[plugins]]
@@ -202,16 +183,22 @@ merged = '0'
 repo = 'mattn/vim-lsp-settings'
 hook_add = '''
 let g:lsp_settings = {
-\  'efm-langserver': {
-\    'blocklist': ['', 'twitvim'],
-\    'disabled': 0,
-\   }
-\}
-
+      \ 'efm-langserver': {
+      \   'disabled': 0,
+      \   'allowlist': ['markdown','text','json','*'],
+     \    'initialization_options': {
+            \"documentFormatting": v:true,
+            \"hover": v:true,
+            \"documentSymbol": v:true,
+            \"codeAction": v:true,
+            \"completion": v:true
+    \}
+      \  }
+      \ }
 '''
-[[plugins]]
-merged = '0'
-repo = 'tsuyoshicho/vim-efm-langserver-settings' 
+# [[plugins]]
+# merged = '0'
+# repo = 'tsuyoshicho/vim-efm-langserver-settings' 
 
 [[plugins]]
 lazy = '1'

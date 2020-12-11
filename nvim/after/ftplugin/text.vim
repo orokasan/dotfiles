@@ -1,1 +1,2 @@
-set conceallevel=0
+setlocal conceallevel=0
+setlocal noexpandtab

@@ -53,12 +53,14 @@ nnoremap <silent><C-j> :call <SID>eskk_keep_enable_toggle()<CR>
 let g:eskk_keep_enable = 0
 let s:eskk_status = 0
 "TODO :qitta
+
 augroup myeskk
     autocmd!
     autocmd InsertLeave * call <SID>eskk_save_status()
     autocmd InsertEnter * call <SID>eskk_insert_status()
     " somehow eskk status is saved by default in cmdline
-    autocmd CmdlineLeave [:/?] if exists('*eskk#enable') && eskk#is_enabled() && !pumvisible() | call eskk#disable() | endif
+    autocmd CmdlineLeave [:/?] if exists('*eskk#enable') && eskk#is_enabled() | call eskk#disable() | endif
+    autocmd CmdlineLeave [:/?] call s:eskk_restore_cursor()
 augroup END
 " ノーマルモードでもeskkの状態を操作する
 function! s:eskk_keep_enable_toggle() abort
@@ -109,7 +111,10 @@ autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
 autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_nicely()
 
 function! s:eskk_restore_highlight_nicely()
-    if mode() is# 'i'
+    if g:neovide
+        return
+    endif
+    if mode() is# 'ic'
         call s:eskk_restore_cursor()
     else
         " statusが1のときは戻さない
@@ -122,6 +127,9 @@ function! s:eskk_restore_highlight_nicely()
 endfunction
 
 function! s:eskk_highlight_cursor()
+    if g:neovide
+        return
+    endif
 " guicursorのハイライトをeskkCursorに変更する
 highlight Cursor guibg=#e2a478
     " set guicursor=n-v-c:eskkCursor-blinkon0,i-ci:ver25-eskkCursor,r-cr:hor20

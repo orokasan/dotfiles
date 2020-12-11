@@ -44,7 +44,7 @@ nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
 "    \ file file:new<CR>
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
-    \ -buffer-name=float
+    \ -buffer-name=default
     \ buffer<CR>
 " nnoremap <silent> \ :<C-u>Denite
 "     \ -winheight=5
