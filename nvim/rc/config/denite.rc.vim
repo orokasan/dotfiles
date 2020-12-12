@@ -4,7 +4,7 @@ call denite#custom#option('_', {
     \ 'prompt': ' #',
     \ 'highlight_matched_char': 'Title',
     \ 'highlight_preview_line': 'Underlined',
-    \ 'max_dynamic_update_candidates': 100000,
+    \ 'max_dynamic_update_candidates': 300000,
     \ 'vertical_preview': v:true,
     \ 'source_names': 'short',
     \ 'statusline': v:false,
@@ -18,6 +18,10 @@ call denite#custom#option('_', {
         \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
         \ }
     \ })
+call denite#custom#option('default', {
+    \ 'post_action' : 'open'
+    \ })
+
 if has('nvim')
     call denite#custom#option('_',{ 'filter_split_direction' : 'floating' })
 else
@@ -46,6 +50,8 @@ call denite#custom#kind('openable', 'default_action', 'switch')
 call denite#custom#kind('file', 'default_action', 'switch')
 call denite#custom#kind('buffer', 'default_action', 'switch')
 call denite#custom#source('file/old', 'default_action', 'switch')
+call denite#custom#var('buffer', 'date_format', '%Y/%m/%d %H:%M:%S')
+call denite#custom#filter('matcher/migemo', 'dict_path', 'C:\tools\cmigemo\dict\utf-8\migemo-dict')
 ""need rg for grep/file-rec
 " call denite#custom#source('grep', 'args', ['', '', '!'])
 if executable('rg')
@@ -61,7 +67,8 @@ if executable('rg')
 	" \ ['pt', '--follow', '--nocolor', '--nogroup','--ignore=','AppData**',
 	" \  (has('win32') ? '-g:' : '-g='), ''])
     call denite#custom#var('file/rec', 'command',
-     \ ['rg', '--files',  '--hidden', '--glob', '!**/.git/*', '--color', 'never'])
+     \ ['rg', '--files', '--hidden', '--glob', '!.git"', '--color', 'never'])
+
     call denite#custom#source('file/rec', 'converters', [])
     call denite#custom#var('file/rec', 'cache_threshold', 50000)
 endif
@@ -122,7 +129,7 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
     \ '.hg/', '.git/*', '.bzr/', '.svn/',
     \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
-    \ 'tags', 'tags-*'])
+    \ 'tags', 'tags-*', 'junkfile/'])
 call denite#custom#alias('filter', 'matcher/only_plaintxt', 'matcher/ignore_globs')
 call denite#custom#filter('matcher/only_plaintxt', 'ignore_globs',
     \ [ '.git/', '.ropeproject/', '__pycache__/',
@@ -221,3 +228,58 @@ function! g:Denite_set_cursor(context) abort
     return
     " cursor(pos, 0)
 endfunction
+
+" this snippet is from Shougo/defx.nvim
+let s:is_windows = has('win32') || has('win64')
+let s:is_mac = !s:is_windows && !has('win32unix')
+  \ && (has('mac') || has('macunix') || has('gui_macvim') ||
+  \   (!isdirectory('/proc') && executable('sw_vers')))
+
+function! s:denite_execute(context)
+    let path = a:context['targets'][0]['action__path']
+  let filename = fnamemodify(path, ':p')
+  " Detect desktop environment.
+  if s:is_windows
+    " For URI only.
+    " Note:
+    "   # and % required to be escaped (:help cmdline-special)
+    silent execute printf(
+          \ '!start rundll32 url.dll,FileProtocolHandler %s',
+          \ escape(filename, '#%'),
+          \)
+  elseif has('win32unix')
+    " Cygwin.
+    call system(printf('%s %s', 'cygstart',
+          \ shellescape(filename)))
+  elseif executable('xdg-open')
+    " Linux.
+    call system(printf('%s %s &', 'xdg-open',
+          \ shellescape(filename)))
+  elseif exists('$KDE_FULL_SESSION') && $KDE_FULL_SESSION ==# 'true'
+    " KDE.
+    call system(printf('%s %s &', 'kioclient exec',
+          \ shellescape(filename)))
+  elseif exists('$GNOME_DESKTOP_SESSION_ID')
+    " GNOME.
+    call system(printf('%s %s &', 'gnome-open',
+          \ shellescape(filename)))
+  elseif executable('exo-open')
+    " Xfce.
+    call system(printf('%s %s &', 'exo-open',
+          \ shellescape(filename)))
+  elseif s:is_mac && executable('open')
+    " Mac OS.
+    call system(printf('%s %s &', 'open',
+          \ shellescape(filename)))
+  else
+    " Give up.
+    call defx#util#print_error('Not supported.')
+  endif
+endfunction
+
+call denite#custom#action(
+    \ 'directory,file,openable,dirmark',
+    \ 'execute',
+    \  function('s:denite_execute'))
+" call denite#custom#source('file/rec', 'matchers', ['matcher/migemo'])
+" call denite#custom#source('line', 'matchers', ['matcher/migemo'])

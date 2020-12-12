@@ -114,7 +114,7 @@ set list            " show invisible character
 set listchars=tab:^-,trail:\ ,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
-set lazyredraw
+" set lazyredraw
 set t_Co=256
 set synmaxcol=512
 set belloff=all
@@ -843,6 +843,7 @@ if exists('neovide')
     set guifont:HackGenNerd:h15
     let g:neovide_refresh_rate=100
 set linespace=10
+let g:neovide_transparency=0.96
 let g:neovide_cursor_trail_length=0
 let g:neovide_cursor_animation_length=0
 let g:neovide_cursor_antialiasing=v:true

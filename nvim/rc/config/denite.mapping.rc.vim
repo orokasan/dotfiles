@@ -3,13 +3,10 @@ nnoremap [denite] <Nop>
 nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
     \ -start-filter
     \  source<CR>
-nnoremap <silent> [denite]s :<C-u>Denite
-    \ -start-filter
-    \ -path=`expand('%:h')`
-    \  file/rec file:new<CR>
 "現在開いているファイルのgit配下のファイルを開く
 nnoremap <silent> [denite]f :<C-u>Denite
     \ -start-filter
+    \ -post-action=open
     \ -path=`<SID>denite_gitdir()`
     \ file/rec file:new<CR>
 function! s:denite_gitdir() abort
@@ -26,12 +23,17 @@ function! s:denite_gitdir() abort
 endif
 
 endfunction
+nnoremap <silent> [denite]<Space> :<C-u>DeniteProjectDir
+    \ -start-filter
+    \ -post-action=open
+    \  file/rec file:new<CR>
+nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
+    \ -start-filter
+    \ -post-action=open
+    \ file file:new<CR>
 nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
     \ -start-filter
-    \  file/rec file:new<CR>
-nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
-    \ -start-filter
-    \ file file:new<CR>
+    \  file file:new<CR>
 ""ホームディレクトリ下のファイル一覧。
 "nnoremap <silent> [denite]t :<C-u>Denite
 "    \ -start-filter
@@ -45,6 +47,7 @@ nnoremap <silent> [denite]T :<C-u>DeniteProjectDir
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
     \ -buffer-name=default
+    \ -post-action=open
     \ buffer<CR>
 " nnoremap <silent> \ :<C-u>Denite
 "     \ -winheight=5
@@ -85,11 +88,13 @@ nnoremap <silent> [denite]u :<C-u>Denite
 nnoremap <silent> [denite]h :<C-u>Denite
     \ -buffer-name=search
     \ -start-filter
+    \ -post-action=quit
     \ help<CR>
 " MRU
 nnoremap <silent> [denite]n :<C-u>Denite
     \ -buffer-name=normal
-    \ file/old<CR>
+    \ -post-action=quit
+    \ file_mru<CR>
 nnoremap <silent> <RightMouse> :<C-u>Denite
     \ -buffer-name=normal
     \ file/old<CR>

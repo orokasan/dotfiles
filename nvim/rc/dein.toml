@@ -765,7 +765,7 @@ repo='Shougo/junkfile.vim'
 hook_add = '''
 nnoremap <silent> <C-T> :tabnew<bar>JunkfileOpen txt<CR>
 nnoremap <C-S> :JunkfileOpen<CR>
-nnoremap <silent> [denite]<space> :Denite -path=~/.cache/junkfile file/rec<CR>
+nnoremap <silent> [denite]V :Denite -path=~/.cache/junkfile file/rec<CR>
 nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.cache/junkfile::<CR>
 '''
 [[plugins]]
@@ -775,5 +775,21 @@ repo =  'nekowasabi/denite-migemo'
 repo =  'Shougo/deol.nvim' 
 hook_add = '''
 let g:deol#prompt_pattern = '% \|%$'
+'''
+[[plugins]]
+repo = 'junegunn/fzf.vim'
+[[plugins]]
+merged = 0
+repo = 'junegunn/fzf'
+
+[[plugins]]
+repo =  'hrsh7th/denite-converter-prioritize-basename' 
+
+[[plugins]]
+repo = 'nekowasabi/denite-migemo'
+
+[[plugins]]
+repo = 'Shougo/neomru.vim'
+hook_add = '''
 '''
 # vim:set foldmethod=marker:'
