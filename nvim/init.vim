@@ -49,6 +49,9 @@ let mapleader = "\<Space>"
 "}}}
 
 " dein.vim {{{
+let g:dein#lazy_rplugins=1
+" let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
+
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 if &runtimepath !~# '/dein.vim'
@@ -96,7 +99,6 @@ command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
-
 " Visual  {{{
 " language C
 set ambiwidth=double
@@ -376,7 +378,7 @@ xnoremap y y`]
 " nnoremap vv V
 " nnoremap V v$
 " shoot chars deleted by x to blackhole register
-nnoremap x "_x
+" nnoremap x "_x
 " Create a blank line above/below current line
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
@@ -397,7 +399,6 @@ cnoremap <expr> <C-p> pumvisible() ? "\<C-p>" : "\<UP>"
 " inoremap <silent><C-[> <ESC>
 " inoremap <silent><C-c> <ESC>
 "}}}
-
 "Key map - terminal {{{
 "terminal
 " if using iTerm2, map option key to Meta

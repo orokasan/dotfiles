@@ -30,7 +30,6 @@ repo = 'fuenor/JpFormat.vim'
 on_if = '!has("kaoriya")'
 repo = 'deton/jasentence.vim'
 hook_add = '''
-let g:jasentence_endpat = '[。．？！]\+'
 '''
 
 [[plugins]]
@@ -53,17 +52,17 @@ endif
 [[plugins]]
 repo = 'AndrewRadev/switch.vim'
 
-[[plugins]]
-repo =  'deton/jasegment.vim'
-#TODO:qitta
-hook_add = ''' "{{{
-let g:jasegment#model='knbc_bunsetu'
-let g:jasegment#highlight = 0
-"omap <silent><buffer> aW <Plug>JaSegmentTextObjA
-"omap <silent><buffer> iW <Plug>JaSegmentTextObjI
-"xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
-"xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
-'''# }}} 
+#[[plugins]]
+#repo =  'deton/jasegment.vim'
+##TODO:qitta
+#hook_add = ''' "{{{
+#let g:jasegment#model='knbc_bunsetu'
+#let g:jasegment#highlight = 0
+#"omap <silent><buffer> aW <Plug>JaSegmentTextObjA
+#"omap <silent><buffer> iW <Plug>JaSegmentTextObjI
+#"xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
+#"xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
+#'''# }}} 
 
 [[plugins]]
 repo =  'cohama/lexima.vim'
@@ -261,8 +260,8 @@ repo = 'chemzqm/denite-extra'
 [[plugins]]
 repo =  'Shougo/neoyank.vim'
 # repo =  'orokasan/neoyank.vim'
-on_event = 'TextYankPost'
-on_source = ['denite.nvim']
+# on_event = 'TextYankPost'
+# on_source = ['denite.nvim']
 hook_add = '''
 let g:neoyank#save_registers = ['*']
 " autocmd dein TextYankPost * call neoyank#update()
@@ -619,9 +618,6 @@ repo = 'mattn/vim-maketable'
 # repo = 'Xuyuanp/scrollbar.nvim'
 
 [[plugins]]
-repo = 'mg979/vim-visual-multi'
-
-[[plugins]]
 repo = 'Milly/vim-migemo'
 
 [[plugins]]
@@ -638,10 +634,10 @@ silent! xmap <unique> ib <Plug>(textobj-sandwich-auto-i)
 silent! omap <unique> ab <Plug>(textobj-sandwich-auto-a)
 silent! xmap <unique> ab <Plug>(textobj-sandwich-auto-a)
 
-silent! omap <unique> is <Plug>(textobj-sandwich-query-i)
-silent! xmap <unique> is <Plug>(textobj-sandwich-query-i)
-silent! omap <unique> as <Plug>(textobj-sandwich-query-a)
-silent! xmap <unique> as <Plug>(textobj-sandwich-query-a)
+silent! omap <unique> i' <Plug>(textobj-sandwich-query-i)
+silent! xmap <unique> i' <Plug>(textobj-sandwich-query-i)
+silent! omap <unique> a' <Plug>(textobj-sandwich-query-a)
+silent! xmap <unique> a' <Plug>(textobj-sandwich-query-a)
 
 " add
 silent! nmap <unique> 'a <Plug>(operator-sandwich-add)
@@ -656,10 +652,10 @@ silent! xmap <unique> 'r <Plug>(operator-sandwich-replace)
 
 let g:textobj#sandwich#stimeoutlen = 100
 let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
-let g:sandwich#recipes += [{'buns' : ['「', '」']}]
-let g:sandwich#recipes += [{'buns' : ['【', '】']}]
-let g:sandwich#recipes += [{'buns' : ['（', '）']}]
-let g:sandwich#recipes += [{'buns' : ['『', '』']}]
+let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}]
+let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
+let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
+let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
 call operator#sandwich#set('all', 'all', 'highlight', 2)
 nmap 'dd vab'd
 nmap 'rr vab'r
@@ -768,19 +764,12 @@ nnoremap <C-S> :JunkfileOpen<CR>
 nnoremap <silent> [denite]V :Denite -path=~/.cache/junkfile file/rec<CR>
 nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.cache/junkfile::<CR>
 '''
-[[plugins]]
-repo =  'nekowasabi/denite-migemo' 
 
-[[plugins]]
-repo =  'Shougo/deol.nvim' 
-hook_add = '''
-let g:deol#prompt_pattern = '% \|%$'
-'''
-[[plugins]]
-repo = 'junegunn/fzf.vim'
-[[plugins]]
-merged = 0
-repo = 'junegunn/fzf'
+# [[plugins]]
+# repo = 'junegunn/fzf.vim'
+# [[plugins]]
+# merged = 0
+# repo = 'junegunn/fzf'
 
 [[plugins]]
 repo =  'hrsh7th/denite-converter-prioritize-basename' 

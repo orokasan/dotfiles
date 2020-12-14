@@ -423,7 +423,7 @@ nnoremap <silent><Leader>mg  :<C-u>Denite
 " use denite (default 0)
 let g:memolist_denite = 1
 let g:memolist_memo_suffix = 'md'
-let g:memolist_path = "~/GoogleDrive/memo"
+let g:memolist_path = "~/Google ドライブ/memo"
 let g:memolist_template_dir_path = "~/.vim/template/memolist"
 let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
  let g:memolist_filename_date = "%y%m%d_"
@@ -804,26 +804,26 @@ on_cmd = ['Tagbar']
 repo = 'norcalli/nvim-colorizer.lua'
 on_cmd = ['ColorizerToggle']
 
-[[plugins]]
-repo = 'voldikss/vim-translator'
-#TODO:qitta
-on_map = { nx = '<Plug>Translate' }
-on_cmd = ['Translate', 'TranslateV']
-hook_add = '''
-" コマンドが-rangeに対応してないため<Plug>側で:Translate!を実装
-nmap <silent> <Plug>TranslateB   :call translator#translate('-w ' . expand('<cword>'), 'echo', v:false, '!')<CR>
-vmap <silent> <Plug>TranslateBV  :<C-U>call translator#translate('', 'echo', v:true, '!')<CR>
-nmap <silent> <Leader>t <Plug>Translate
-vmap <silent> <Leader>t <Plug>TranslateV
-nmap <silent> <Leader>T <Plug>TranslateB
-vmap <silent> <Leader>T <Plug>TranslateBV
-" nmap <silent> <Leader>T :Translate -tl 'en'<CR>
-" vmap <silent> <Leader>T :TranslateV -tl 'en'<CR>
-let g:translator_target_lang = 'ja'
-let g:translator_source_lang = 'auto'
-let g:translator_default_engines = ['google']
-let g:translator_window_borderchars = v:null
-'''
+#[[plugins]]
+#repo = 'voldikss/vim-translator'
+##TODO:qitta
+#on_map = { nx = '<Plug>Translate' }
+#on_cmd = ['Translate', 'TranslateV']
+#hook_add = '''
+#" コマンドが-rangeに対応してないため<Plug>側で:Translate!を実装
+#nmap <silent> <Plug>TranslateB   :call translator#translate('-w ' . expand('<cword>'), 'echo', v:false, '!')<CR>
+#vmap <silent> <Plug>TranslateBV  :<C-U>call translator#translate('', 'echo', v:true, '!')<CR>
+#nmap <silent> <Leader>t <Plug>Translate
+#vmap <silent> <Leader>t <Plug>TranslateV
+#nmap <silent> <Leader>T <Plug>TranslateB
+#vmap <silent> <Leader>T <Plug>TranslateBV
+#" nmap <silent> <Leader>T :Translate -tl 'en'<CR>
+#" vmap <silent> <Leader>T :TranslateV -tl 'en'<CR>
+#let g:translator_target_lang = 'ja'
+#let g:translator_source_lang = 'auto'
+#let g:translator_default_engines = ['google']
+#let g:translator_window_borderchars = v:null
+#'''
 
 # [[plugins]]
 # repo = 'lervag/vimtex'
@@ -914,6 +914,13 @@ hook_add = '''
 let g:sonictemplate_vim_template_dir = '~/.vim/template/'
 '''
 
+[[plugins]]
+repo =  'Shougo/deol.nvim' 
+on_cmd = ['Deol']
+hook_add = '''
+nnoremap <Space>t <cmd> Deol -command=wsl -split<CR>
+let g:deol#prompt_pattern = '% \|%$'
+'''
 # [[plugins]]
 # repo = 'tpope/vim-fugitive'
 # on_cmd = ['Git', 'G']
