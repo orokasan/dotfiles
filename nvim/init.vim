@@ -113,7 +113,7 @@ set noshowmode      " don't let show current mode on commandline
 set cursorline      " highlight cursorline
 " autocmd vimrc ColorScheme *  hi clear CursorLine
 set list            " show invisible character
-set listchars=tab:^-,trail:\ ,extends:»,precedes:«,nbsp:%
+set listchars=tab:^-,trail:-,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
 " set lazyredraw
@@ -151,11 +151,11 @@ set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕
 set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
 set tabstop=8               " number of spaces inserted by <TAB>
-set expandtab
-set softtabstop=4
+set noexpandtab
+set softtabstop=-1
 let g:vim_indent_cont = 4
 set autoindent
-set shiftwidth=4            " number of spaces inserted when auto indentation by vim
+set shiftwidth=0
 set formatoptions+=mMjoB
 set iskeyword+=-
 " Searching
@@ -836,12 +836,12 @@ endtry
 " set shellxquote=
 " endif
 "}}}
-hi! link NonText Comment
+" hi! link NonText Comment
 " for neovide initialize hook
 if exists('neovide')
     " set guifont=:RictyDiminished\ NF:h16
-    " set guifont=:Cica:h16
-    set guifont:HackGenNerd:h15
+    set guifont=:Cica:h16
+    " set guifont:HackGenNerd:h15
     let g:neovide_refresh_rate=100
 set linespace=10
 let g:neovide_transparency=0.96
@@ -1157,5 +1157,10 @@ vnoremap y ygv<ESC>
 " nnoremap v mvv
 " au vimrc TextYankPost * if !v:event.visual && v:event.operator == 'y' | call timer_start(0, 'Move_prev_pos') | endif
 " g/\W*\ze \/\//s/^\(\W*\) \/\zs\ze\//\=jautil#convert(submatch(1),'hiragana')
+set smartindent
+syntax match JISX0208Space "　" display containedin=ALL
+highlight link JISX0208Space Underlined
+set conceallevel=2
+set concealcursor=n
 " vim:set foldmethod=marker:
 
