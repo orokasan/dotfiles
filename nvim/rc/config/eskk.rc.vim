@@ -111,7 +111,7 @@ autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
 autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_nicely()
 
 function! s:eskk_restore_highlight_nicely()
-    if g:neovide
+    if exists('g:neovide')
         return
     endif
     if mode() is# 'ic'
@@ -127,7 +127,7 @@ function! s:eskk_restore_highlight_nicely()
 endfunction
 
 function! s:eskk_highlight_cursor()
-    if g:neovide
+    if exists('g:neovide')
         return
     endif
 " guicursorのハイライトをeskkCursorに変更する

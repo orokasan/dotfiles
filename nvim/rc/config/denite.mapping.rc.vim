@@ -6,7 +6,6 @@ nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
 "現在開いているファイルのgit配下のファイルを開く
 nnoremap <silent> [denite]f :<C-u>Denite
     \ -start-filter
-    \ -post-action=open
     \ -path=`<SID>denite_gitdir()`
     \ file/rec file:new<CR>
 function! s:denite_gitdir() abort
@@ -25,11 +24,9 @@ endif
 endfunction
 nnoremap <silent> [denite]<Space> :<C-u>DeniteProjectDir
     \ -start-filter
-    \ -post-action=open
     \  file/rec file:new<CR>
 nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
     \ -start-filter
-    \ -post-action=open
     \ file file:new<CR>
 nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
     \ -start-filter
@@ -47,7 +44,6 @@ nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
 "バッファ一覧
 nnoremap <silent> [denite]b :<C-u>Denite
     \ -buffer-name=default
-    \ -post-action=open
     \ buffer<CR>
 " nnoremap <silent> \ :<C-u>Denite
 "     \ -winheight=5
@@ -88,12 +84,10 @@ nnoremap <silent> [denite]u :<C-u>Denite
 nnoremap <silent> [denite]h :<C-u>Denite
     \ -buffer-name=search
     \ -start-filter
-    \ -post-action=quit
     \ help<CR>
 " MRU
 nnoremap <silent> [denite]n :<C-u>Denite
     \ -buffer-name=normal
-    \ -post-action=quit
     \ file_mru<CR>
 nnoremap <silent> <RightMouse> :<C-u>Denite
     \ -buffer-name=normal
@@ -169,7 +163,6 @@ nnoremap <silent> [denite], :<C-u>Denite
     \ -immediately
     \ <CR>
 " nnoremap <silent> [denite]c :<C-u>Denite
-"     \ -post-action=open
 "     \ -buffer-name=combo
 "     \ combo<CR>
 nnoremap <silent> [denite]t :<C-u>Denite

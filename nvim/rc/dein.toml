@@ -110,9 +110,9 @@ endfunction "}}}
 [[plugins]]
 repo = 'cespare/vim-toml'
 
-[[plugins]]
-repo =  'mengelbrecht/lightline-bufferline'
-depends = ['lightline.vim']
+# [[plugins]]
+# repo =  'mengelbrecht/lightline-bufferline'
+# depends = ['lightline.vim']
 
 [[plugins]]
 repo =  'itchyny/vim-gitbranch'
@@ -290,23 +290,24 @@ nmap <Leader>xu <Plug>(GitGutterUndoHunk)
 # on_if = 'has("nvim")'
 # # hook_post_update = 'call firenvim#install(0)'
 # hook_add = '''
-# "if exists('g:started_by_firenvim')
-# "  set showtabline=0
-# "  set laststatus=0
-#   " call lightline#disable()
-# "augroup Firenvim
-# "    au BufEnter * call Set_Font(g:firenvim_font)
-# "    au BufEnter *     colorscheme iceberg
-# "    au BufEnter github.com_*.txt set filetype=markdown
-# "  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
-# "  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
-# "  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
-# "augroup END
-# "endif
-# "let g:firenvim_font = 'Cica'
-# "function! Set_Font(font) abort
-# "  execute 'set guifont=' . a:font . ':h10'
-# "endfunction
+# if exists('g:started_by_firenvim')
+#   set showtabline=0
+#   set laststatus=0
+#    call lightline#disable()
+# let g:firenvim_config = {'globalSettings': {},'localSettings': {'.*': {'takeover': 'never'},},}
+# augroup Firenvim
+#     au BufEnter * call Set_Font(g:firenvim_font)
+#     au BufEnter *     colorscheme iceberg
+#     au BufEnter github.com_*.txt set filetype=markdown
+#   au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
+#   au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
+#   au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
+# augroup END
+# endif
+# let g:firenvim_font = 'Cica'
+# function! Set_Font(font) abort
+#   execute 'set guifont=' . a:font . ':h10'
+# endfunction
 # '''
 
 [[plugins]]
@@ -341,9 +342,9 @@ repo = 'thinca/vim-qfreplace'
 # [[plugins]]
 # repo = 'tpope/vim-sleuth'
 
-[[plugins]]
-merged = '0'
-repo ='eikendev/denite-fzf'
+# [[plugins]]
+# merged = '0'
+# repo ='eikendev/denite-fzf'
 
 [[plugins]]
 repo = 'vim-scripts/autodate.vim'
@@ -602,9 +603,9 @@ call gina#custom#execute(
       \)
 '''
 
-[[plugins]]
-merged = '0'
-repo = 'liuchengxu/vim-clap'
+# [[plugins]]
+# merged = '0'
+# repo = 'liuchengxu/vim-clap'
 
 # [[plugins]]
 # merged = '0'
@@ -657,6 +658,7 @@ let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}
 let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
+let g:sandwich#recipes += [{'buns' : ['▽', '▽'], 'nesting':1, 'input':['S']}]
 call operator#sandwich#set('all', 'all', 'highlight', 2)
 nmap 'dd vab'd
 nmap 'rr vab'r
@@ -754,6 +756,7 @@ hook_add = '''
   xmap I  <Plug>(niceblock-I)
   xmap A  <Plug>(niceblock-A)
 '''
+
 # [[plugins]]
 # repo = 'raghur/vim-ghost'
 
@@ -772,11 +775,11 @@ nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.ca
 # merged = 0
 # repo = 'junegunn/fzf'
 
-[[plugins]]
-repo =  'hrsh7th/denite-converter-prioritize-basename' 
+# [[plugins]]
+# repo =  'hrsh7th/denite-converter-prioritize-basename' 
 
-[[plugins]]
-repo = 'nekowasabi/denite-migemo'
+# [[plugins]]
+# repo = 'nekowasabi/denite-migemo'
 
 [[plugins]]
 repo = 'Shougo/neomru.vim'

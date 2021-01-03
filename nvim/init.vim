@@ -29,6 +29,7 @@ let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
 "---------------------------------------------------------------------
 "Python,vimproc
+let s:is_windows = has('win32') || has('win64')
 if has('win32')
     let g:python3_host_prog ='python.exe'
 endif
@@ -131,7 +132,7 @@ set previewheight=10 " Adjust window size of preview
 set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
-set pumheight=15 " default
+set pumheight=12 " default
 set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,vertical
 "}}}
 
@@ -587,37 +588,37 @@ endfunction  "}}}
 "   set number
 " finish
 " endif
-function! s:IsFirenvimActive(event) abort
-  if !exists('*nvim_get_chan_info')
-    return 0
-  endif
-  let l:ui = nvim_get_chan_info(a:event.chan)
-  return has_key(l:ui, 'client') && has_key(l:ui.client, 'name') &&
-      \ l:ui.client.name =~? 'Firenvim'
-endfunction
+" function! s:IsFirenvimActive(event) abort
+"   if !exists('*nvim_get_chan_info')
+"     return 0
+"   endif
+"   let l:ui = nvim_get_chan_info(a:event.chan)
+"   return has_key(l:ui, 'client') && has_key(l:ui.client, 'name') &&
+"       \ l:ui.client.name =~? 'Firenvim'
+" endfunction
 
-function! OnUIEnter(event) abort
-  if s:IsFirenvimActive(a:event)
-    set laststatus=0
-   set showtabline=0
-   set signcolumn=no
-   " set number
-  endif
-endfunction
-autocmd UIEnter * call OnUIEnter(deepcopy(v:event))
-let g:firenvim_config = { 
-    \ 'globalSettings': {
-        \ 'alt': 'all',
-    \  },
-    \ 'localSettings': {
-        \ '.*': {
-            \ 'cmdline': 'firenvim',
-            \ 'priority': 0,
-            \ 'selector': 'textarea',
-            \ 'takeover': 'never',
-        \ },
-    \ }
-\ }
+" function! OnUIEnter(event) abort
+"   if s:IsFirenvimActive(a:event)
+"     set laststatus=0
+"    set showtabline=0
+"    set signcolumn=no
+"    " set number
+"   endif
+" endfunction
+" autocmd UIEnter * call OnUIEnter(deepcopy(v:event))
+" let g:firenvim_config = { 
+"     \ 'globalSettings': {
+"         \ 'alt': 'all',
+"     \  },
+"     \ 'localSettings': {
+"         \ '.*': {
+"             \ 'cmdline': 'firenvim',
+"             \ 'priority': 0,
+"             \ 'selector': 'textarea',
+"             \ 'takeover': 'never',
+"         \ },
+"     \ }
+" \ }
 " Terminal {{{
 if has('nvim')
     autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
@@ -840,15 +841,15 @@ endtry
 " for neovide initialize hook
 if exists('neovide')
     " set guifont=:RictyDiminished\ NF:h16
-    set guifont=:Cica:h16
-    " set guifont:HackGenNerd:h15
+    " set guifont=:Cica:h16
+    set guifont:HackGenNerd:h15
     let g:neovide_refresh_rate=100
 set linespace=10
 let g:neovide_transparency=0.96
 let g:neovide_cursor_trail_length=0
 let g:neovide_cursor_animation_length=0
 let g:neovide_cursor_antialiasing=v:true
-let g:neovide_cursor_vfx_mode = "wireframe"
+" let g:neovide_cursor_vfx_mode = "wireframe"
   cd ~/
     let g:neovide_extra_buffer_frames=4
 endif
@@ -1134,9 +1135,19 @@ nnoremap <silent> <Leader>r :RefreshTwitter<CR>
 let twitvim_enable_python3 = 1
 let twitvim_timestamp_format = '%H:%M-%m/%d'
 let twitvim_count = 15
+
 function! Mdpdf()
-!mdpdf --border=12.7mm %
+ " !mdpdf --border=12.7mm "%"
+" if s:is_windows
+let path = expand('%:p')
+" let path = substitute(path, ' ', '\\ ', 'g')
+let path = shellescape(path, 1)
+" endif
+let cmd = 'mdpdf --border=12.7mm ' . path
+" call system(cmd)
+execute "!" . cmd
 endfunction
+
 augroup your_config_scrollbar_nvim
     autocmd!
     autocmd BufEnter    * silent! lua require('scrollbar').show()
@@ -1162,5 +1173,63 @@ syntax match JISX0208Space "　" display containedin=ALL
 highlight link JISX0208Space Underlined
 set conceallevel=2
 set concealcursor=n
+
+let s:macromode = 0
+function! MacroModeOn() abort
+if s:macromode ==# 1
+    return
+endif
+    nmap q @q
+    nmap w @w
+    nmap e @e
+    nmap r @r
+let s:macromode = 1
+endfunction
+
+function! MacroModeOff() abort
+if s:macromode ==# 0
+    return
+endif
+    unmap q
+    unmap w
+    unmap e
+    unmap r
+let s:macromode = 0
+endfunction
+
+if exists('g:started_by_firenvim')
+  set showtabline=0
+  " set laststatus=0
+   " call lightline#disable()
+let g:firenvim_config = { 
+    \ 'globalSettings': {
+        \ 'alt': 'all',
+    \  },
+    \ 'localSettings': {
+        \ '.*': {
+            \ 'cmdline': 'neovim',
+            \ 'content': 'text',
+            \ 'priority': 0,
+            \ 'selector': 'textarea',
+            \ 'takeover': 'never',
+        \ },
+    \ }
+\ }
+augroup Firenvim
+    au BufEnter * call Set_Font(g:firenvim_font)
+    au BufEnter *     colorscheme iceberg
+    au BufEnter *     set background=light
+    au BufEnter github.com_*.txt set filetype=markdown
+  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
+  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
+  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
+augroup END
+endif
+let g:firenvim_font = 'HackGenNerd'
+function! Set_Font(font) abort
+  execute 'set guifont=' . a:font . ':h10'
+endfunction
+
+"!powershell start-process notepad c:\windows\system32\drivers\etc\hosts -verb runas
 " vim:set foldmethod=marker:
 

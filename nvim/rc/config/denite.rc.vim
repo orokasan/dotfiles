@@ -18,9 +18,9 @@ call denite#custom#option('_', {
         \   'q' : 8, 'w' : 9, 'e' : 10, 'r' : 11, 't' : 12,
         \ }
     \ })
-call denite#custom#option('default', {
-    \ 'post_action' : 'open'
-    \ })
+" call denite#custom#option('default', {
+"     \ 'post_action' : 'open'
+"     \ })
 
 if has('nvim')
     call denite#custom#option('_',{ 'filter_split_direction' : 'floating' })

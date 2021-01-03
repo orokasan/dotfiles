@@ -124,7 +124,7 @@ on_cmd = 'Defx'
 hook_add = '''
 nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
-nnoremap <silent> <Plug>(defx) :<C-u>Defx -resume<CR>
+nnoremap <silent> <Plug>(defx) :<C-u>Defx -buffer-name=`'defx' . tabpagenr()` -resume<CR>
 nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx  `expand('%:p:h')` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
 '''
 hook_source = '''
@@ -444,6 +444,7 @@ let g:eskk#rom_input_style = 'msime'
 let g:eskk#egg_like_newline = 1
 let g:eskk#egg_like_newline_completion = 1
 let g:eskk#tab_select_completion = 1
+let g:eskk#max_candidates = 20
 let g:eskk#start_completion_length = 2
 let g:eskk#revert_henkan_style = 'okuri'
 " backspaceで確定

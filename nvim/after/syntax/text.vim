@@ -29,6 +29,7 @@ syntax         region   gihyoTodo        start='^TODO' end='$'
 syntax         region   gihyoPoint       start='^●' end='$'
 syntax         region   gihyoHead        start='^◆' end='$'
 syntax         region   gihyoLead        start='^▲' end='$'
+syntax         match  gihyoUnderline '▽.\{-}▽'
 
 syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/ contains=ALL
 syntax         region  gihyoTable       start=/^▼表-----$/     end=/^\{-}-----\n/ contains=ALL
@@ -52,7 +53,7 @@ highlight      link    gihyoCode        Statement
 highlight      link    gihyoCommand     PreProc
 highlight      link    gihyoBullet      Identifier
 highlight      link    gihyoPoint       Identifier
-
+highlight      link    gihyoUnderline       Identifier
 highlight      link    gihyoRuler       Special
 highlight      link    gihyoURL         Underlined
 highlight      link    gihyoTodo        Todo
