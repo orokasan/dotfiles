@@ -7,16 +7,15 @@ augroup END
 '''
 
 [[plugins]]
-repo =  'roxma/nvim-yarp'
 on_if = '!has("nvim")'
+repo =  'roxma/nvim-yarp'
 
 [[plugins]]
-repo =  'roxma/vim-hug-neovim-rpc'
 on_if = '!has("nvim")'
+repo =  'roxma/vim-hug-neovim-rpc'
 
 [[plugins]]
 repo =  'itchyny/lightline.vim'
-depends = ['lightline-bufferline']
 hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 
 # [[plugins]]
@@ -67,7 +66,7 @@ repo = 'AndrewRadev/switch.vim'
 [[plugins]]
 repo =  'cohama/lexima.vim'
 on_if = 'has("nvim")'
-on_event = 'InsertEnter'
+# on_event = 'InsertEnter'
 hook_add = '''
 let s:lexima_my_rules = [
 \ {'char': 'z[', 'input': '「', 'input_after': '」'},
@@ -135,10 +134,12 @@ autocmd dein ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=
 autocmd dein ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 autocmd dein ColorScheme iceberg highlight clear Search
 autocmd dein ColorScheme iceberg highlight link Search Underlined
-autocmd dein ColorScheme iceberg highlight! link Conceal Title
-autocmd dein ColorScheme iceberg highlight! Underlined cterm=underline ctermfg=110 gui=underline guifg=#c6c8d1 guisp=#84a0c6
-autocmd dein ColorScheme iceberg highlight! link WhiteSpace Comment
+autocmd dein ColorScheme iceberg highlight link Conceal Title
+autocmd dein ColorScheme iceberg highlight Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
+autocmd dein ColorScheme iceberg highlight link WhiteSpace Comment
+autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
 '''
+
 # [[plugins]]
 # repo = 'lifepillar/vim-solarized8'
 # hook_add =''' " {{{
@@ -230,6 +231,7 @@ repo = 'itchyny/vim-quickrun-lightline-hooks'
 repo =  'kmnk/denite-dirmark'
 
 [[plugins]]
+on_if = 'has("nvim")'
 repo = 'lambdalisue/vim-quickrun-neovim-job'
 
 [[plugins]]
@@ -602,10 +604,6 @@ call gina#custom#execute(
       \ 'setlocal cursorline',
       \)
 '''
-
-# [[plugins]]
-# merged = '0'
-# repo = 'liuchengxu/vim-clap'
 
 # [[plugins]]
 # merged = '0'

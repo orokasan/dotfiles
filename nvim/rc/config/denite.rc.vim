@@ -2,7 +2,6 @@ call denite#custom#option('_', {
     \ 'winheight': 15,
     \ 'short_source_names': v:true,
     \ 'prompt': ' #',
-    \ 'highlight_matched_char': 'Title',
     \ 'highlight_preview_line': 'Underlined',
     \ 'max_dynamic_update_candidates': 300000,
     \ 'vertical_preview': v:true,
@@ -11,7 +10,8 @@ call denite#custom#option('_', {
     \ 'direction': 'botright',
     \ 'preview_width': &columns/2,
     \ 'match_highlight': v:true,
-    \ 'highlight_matched_range' : 'NONE',
+    \ 'smartcase': v:true,
+    \ 'highlight_matched_range' : 'Title',
     \ 'quick_move_table': {
         \   'a' : 0, 's' : 1, 'd' : 2, 'f' : 3, 'g' : 4,
         \   'h' : 5, 'l' : 6, ';' : 7,
@@ -67,8 +67,7 @@ if executable('rg')
 	" \ ['pt', '--follow', '--nocolor', '--nogroup','--ignore=','AppData**',
 	" \  (has('win32') ? '-g:' : '-g='), ''])
     call denite#custom#var('file/rec', 'command',
-     \ ['rg', '--files', '--hidden', '--glob', '!.git"', '--color', 'never'])
-
+     \ ['rg', '--files', '--glob', '!.git"', '--color', 'never'])
     call denite#custom#source('file/rec', 'converters', [])
     call denite#custom#var('file/rec', 'cache_threshold', 50000)
 endif
@@ -92,13 +91,20 @@ let s:menus.dein.command_candidates = []
 for v in range(len(s:dein_commands))
     let s:menus.dein.command_candidates += [[s:dein_commands[v], s:dein_commands[v]]]
 endfor
-let s:menus.string = {'description': 'string utilities.'}
-let s:menus.string.command_candidates = [
-      \ ['format: reverse lines', 'g/^/m0'],
-      \ ['format: remove ^M', '%s///g'],
-      \ ['format: querystring', 'silent! %s/&amp;/\&/g | silent! %s/&/\r&/g | silent! %s/=/\r=/g'],
-      \ ['format: to smb', 'silent! %s/\\/\//g | silent! %s/^\(smb:\/\/\|\/\/\)\?/smb:\/\//g']
-      \ ]
+
+let s:shortcut_commands = [
+    \ 'LspDocumentDiagnostics',
+    \ 'JunkfileOpen txt',
+    \]
+" function! s:denite_add_shortcut(arg) abort
+"     let s:menus.shortcut.command_candidates += [[a:arg, a:arg]]
+" endfunction
+" command! -nargs=? -complete=command ShortcutAdd call s:denite_add_shortcut(<q-args>)
+let s:menus.shortcut = {'description': 'shortcut to vim command' }
+let s:menus.shortcut.command_candidates = []
+for v in range(len(s:shortcut_commands))
+    let s:menus.shortcut.command_candidates += [[s:shortcut_commands[v], s:shortcut_commands[v]]]
+endfor
 
 call denite#custom#var('menu', 'menus', s:menus)
 
@@ -108,7 +114,6 @@ call denite#custom#var('menu', 'menus', s:menus)
 " call denite#custom#source('_', 'matchers', ['matcher/regexp'])
 " else
 " call denite#custom#source('_', 'matchers', ['matcher/fuzzy'])
-call denite#custom#source('_', 'matchers', ['matcher/substring'])
 " endif
 " call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file/old', 'converters', ['converter/tail_path'])
@@ -118,7 +123,7 @@ call denite#custom#alias('source', 'grep/git', 'grep')
 call denite#custom#alias('source', 'grep/jv', 'grep')
 call denite#custom#alias('source', 'grep/junk', 'grep')
 call denite#custom#var('grep/git', 'command', ['git', 'grep'])
-call denite#custom#source('_', 'sorters', ['sorter/sublime'])
+" call denite#custom#source('_', 'sorters', ['sorter/sublime'])
 call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
 "Change ignore_globs
@@ -130,16 +135,16 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ '.hg/', '.git/*', '.bzr/', '.svn/',
     \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
     \ 'tags', 'tags-*', 'junkfile/'])
-call denite#custom#alias('filter', 'matcher/only_plaintxt', 'matcher/ignore_globs')
-call denite#custom#filter('matcher/only_plaintxt', 'ignore_globs',
-    \ [ '.git/', '.ropeproject/', '__pycache__/',
-    \ 'venv/', 'images/','img/', 'fonts/',
-    \ '*~', '*.o', '*.exe', '*.bak',
-    \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
-    \ '.hg/', '.git/*', '.bzr/', '.svn/',
-    \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
-    \ '*.pdf', '*.docx', '*.docs',
-    \ 'tags', 'tags-*'])
+" call denite#custom#alias('filter', 'matcher/only_plaintxt', 'matcher/ignore_globs')
+" " call denite#custom#filter('matcher/only_plaintxt', 'ignore_globs',
+"     \ [ '.git/', '.ropeproject/', '__pycache__/',
+"     \ 'venv/', 'images/','img/', 'fonts/',
+"     \ '*~', '*.o', '*.exe', '*.bak',
+"     \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
+"     \ '.hg/', '.git/*', '.bzr/', '.svn/',
+"     \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
+"     \ '*.pdf', '*.docx', '*.docs',
+"     \ 'tags', 'tags-*'])
 " 現在いるDeniteDirでgrep
 function! s:candidate_grep(context) abort
     let path = a:context['targets'][0]['action__path']
@@ -172,6 +177,10 @@ endfunction
 
 call denite#custom#filter('matcher/clap',
   \ 'clap_path', expand('~/.cache/dein/repos/github.com/liuchengxu/vim-clap'))
+" call denite#custom#source('_', 'matchers', ['matcher/substring'])
+" call denite#custom#source('_', 'matchers', ['matcher/regexp'])
+" call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
+" call denite#custom#source('file_mru', 'matchers', ['matcher/regexp'])
 
 function! s:denite_directory_rec(context)
     let path = a:context['targets'][0]['action__path']
@@ -189,6 +198,17 @@ call denite#custom#action(
     \ 'buffer,directory,file,openable,dirmark', 'directory/rec',
     \ function('s:denite_directory_rec')
     \ )
+function! s:denite_my_cd(context)
+let path = a:context['targets'][0]['action__path']
+if isdirectory(path)
+let path = fnamemodify(path, ':p')
+else
+let path = fnamemodify(path, ':p:h')
+endif
+call denite#util#cd(path)
+echo 'current directory is changed to ' . getcwd()
+endfunction
+call denite#custom#action('directory,file,openable', 'cd', function('s:denite_my_cd'))
 call denite#custom#action(
     \ 'buffer,directory,file,openable,dirmark', 'grep',
     \ function('s:candidate_grep')

@@ -45,13 +45,11 @@ nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
 nnoremap <silent> [denite]b :<C-u>Denite
     \ -buffer-name=default
     \ buffer<CR>
-" nnoremap <silent> \ :<C-u>Denite
-"     \ -winheight=5
-"     \ -start-filter
-"     \ -buffer-name=command
-"     \ command command_history<CR>
+nnoremap <silent> s; :<C-u>Denite
+    \ -winheight=10
+    \ -start-filter
+    \ menu:shortcut command_history<CR>
 nnoremap <silent> [denite]/ :<C-u>Denite
-    \ -buffer-name=search
     \ line
 "neoyank
 nnoremap <silent> [denite]y :<C-u>Denite
@@ -64,13 +62,12 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -start-filter
     \ command_history<CR>
 nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
-    \ -path=`expand('%:h')`
     \ -no-empty
     \ grep<CR>
 nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
     \ -path=`expand('%:h')`
-    \ -start-filter
-    \ grep:::!<CR>
+    \ -no-empty
+    \ grep<CR>
 " nnoremap <silent> [denite]G :<C-u>Denite
 "     \ -start-filter
 "     \ -path=`<SID>denite_gitdir()`
@@ -82,19 +79,18 @@ nnoremap <silent> [denite]u :<C-u>Denite
     \ menu<CR>
 "ヘルプ
 nnoremap <silent> [denite]h :<C-u>Denite
-    \ -buffer-name=search
     \ -start-filter
     \ help<CR>
 " MRU
-nnoremap <silent> [denite]n :<C-u>Denite
+nnoremap <silent> [denite]n :<C-u>DeniteProjectDir
     \ -buffer-name=normal
-    \ file_mru<CR>
+    \ file/old<CR>
 nnoremap <silent> <RightMouse> :<C-u>Denite
     \ -buffer-name=normal
     \ file/old<CR>
 "mark一覧
 nnoremap <silent> [denite]m :<C-u>Denite
-    \ -buffer-name=relative
+    \ -auto-action=highlight
     \ mark <CR>
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite
@@ -102,18 +98,14 @@ nnoremap <silent> [denite]k :<C-u>Denite
     \ change<CR>
 ":jump
 nnoremap <silent> [denite]j :<C-u>Denite
-    \ -buffer-name=relative
+    \ -auto-action=highlight
     \ jump <CR>
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
     \ -buffer-name=default
     \ -resume<CR>
-nnoremap <silent> [denite]R :<C-u>Denite
-    \ -buffer-name=search
-    \ -resume<CR>
 "コマンド結果をdeniteに出力
 nnoremap [denite]p :<C-u>Denite
-    \ -buffer-name=search
     \ output:
 " markdown TOC
 nnoremap <silent> [denite]o :<C-u>Denite
@@ -146,13 +138,11 @@ nnoremap <silent> [denite]l :<C-u>Denite
     \ location_list<CR>
 nnoremap <silent> ,n :<C-u>Denite
     \ -resume
-    \ -buffer-name=search
     \ -cursor-pos=+1
     \ -immediately
     \ <CR>
 nnoremap <silent> ,p :<C-u>Denite
     \ -resume
-    \ -buffer-name=search
     \ -cursor-pos=-1
     \ -immediately
     \ <CR>
@@ -166,7 +156,6 @@ nnoremap <silent> [denite], :<C-u>Denite
 "     \ -buffer-name=combo
 "     \ combo<CR>
 nnoremap <silent> [denite]t :<C-u>Denite
-    \ -buffer-name=search
     \ text<CR>
 nnoremap <silent> [denite]T :<C-u>Denite
     \ -buffer-name=default
@@ -176,7 +165,6 @@ nnoremap <silent> [denite]T :<C-u>Denite
     \ -default-action=highlight
     \ text<CR>
 nnoremap <silent> [denite]/ :<C-u>Denite
-    \ -buffer-name=search
     \ -no-empty
     \ searchres<CR>
 function! s:denite_lsp_diagnostics() abort

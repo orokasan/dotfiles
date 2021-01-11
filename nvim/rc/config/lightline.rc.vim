@@ -199,7 +199,13 @@ function! LLMode()
 endfunction
 
 function! LLMyFilepath()
-    if &filetype =~# s:ignore_filetype
+    if &filetype =~# 'denite'
+        if len(denite#get_status('input')) > 0
+            return '#' . denite#get_status('input')
+        else
+            return '# '
+        endif
+    elseif &filetype =~# s:ignore_filetype
         return ''
     " elseif exists('*anzu#search_status') && strwidth(s:llanzu())
     "     return s:llanzu()
@@ -362,12 +368,12 @@ function! LLDeniteMode() abort
     " if exists('g:gonvim_running')
     "     return len(denite#get_status('input')) > 0 ? 'Denite: ' . denite#get_status('input') : 'Denite'
     " endif 
-
-    if len(denite#get_status('input')) > 0
-        return '#' . denite#get_status('input')
-    else
-        return 'Denite'
-    endif
+	return ''
+    " if len(denite#get_status('input')) > 0
+    "     return '#' . denite#get_status('input')
+    " else
+    "     return ''
+    " endif
 endfunction
 
 function! s:denite_statusline() abort

@@ -8,6 +8,12 @@ function! s:eskk_initial_pre() abort
     call t.add_map('vu', 'ゔ')
     call t.add_map('ve', 'ゔぇ')
     call t.add_map('vo', 'ゔぉ')
+    call t.add_map('ca', 'か')
+    call t.add_map('ci', 'し')
+    call t.add_map('cu', 'く')
+    call t.add_map('ce', 'せ')
+    call t.add_map('co', 'こ')
+    call t.add_map('xn', 'ん')
     call t.add_map('z ', '　')
     call t.add_map('~', '〜')
     call t.add_map('zc', '©')
@@ -48,7 +54,7 @@ function! s:eskk_initial_pre() abort
 
 endfunction
 " eskk_keep_stateがうまく動かないので自前で設定
-nnoremap <silent><C-j> :call <SID>eskk_keep_enable_toggle()<CR>
+nnoremap <silent><M-j> :call <SID>eskk_keep_enable_toggle()<CR>
 
 let g:eskk_keep_enable = 0
 let s:eskk_status = 0

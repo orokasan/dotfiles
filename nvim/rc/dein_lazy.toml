@@ -50,6 +50,8 @@ nnoremap <silent><buffer><expr> q
     \ denite#do_map('quit')
 nnoremap <silent><buffer><expr> i
     \ denite#do_map('open_filter_buffer')
+nnoremap <silent><buffer><expr><nowait> c
+    \ denite#do_map('do_action', 'cd')
 nnoremap <silent><buffer><expr> a
     \ denite#do_map('toggle_select').'j'
 nnoremap <silent><buffer><expr> A
@@ -205,12 +207,18 @@ nmap <silent><buffer> [denite]h <Plug>(defx):<C-u>Denite
     \ defx/history<CR>
 setlocal signcolumn=no
 " Define mappings
-nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
+" nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
+nnoremap <silent><buffer><expr> <CR>
+\ defx#is_directory() ? defx#do_action('open') :
+\ defx#is_binary() ?
+\ defx#do_action('execute_system') :
+\ defx#do_action('drop')
 nnoremap <silent><buffer> <C-e> <C-w>p
 nnoremap <silent><buffer><expr> c defx#async_action('multi', ['copy','redraw'])
 nnoremap <silent><buffer><expr> m defx#async_action('multi', ['move','redraw'])
 nnoremap <silent><buffer><expr> p defx#async_action('paste')
 nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
+nnoremap <silent><buffer><expr><nowait> d defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
 nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
 nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
 nnoremap <silent><buffer><expr> t defx#do_action('open', 'tabnew')
@@ -220,15 +228,16 @@ nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N defx#do_action('new_file')
 nnoremap <silent><buffer><expr> F defx#do_action('new_multiple_files')
 "need 'pip install Send2Trash'
-nnoremap <silent><buffer><expr><nowait> d defx#async_action('remove_trash')
+nnoremap <silent><buffer><expr><nowait> D defx#async_action('remove_trash')
 nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
 nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'toggle')
-nnoremap <silent><buffer><expr> O defx#do_action('open_tree', 'recursive', 'toggle')
+nnoremap <silent><buffer><expr> O defx#do_action('open_tree', 'recursive')
 nnoremap <silent><buffer><expr> <MiddleMouse> defx#do_action('open_tree', 'recursive', 'toggle')
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
 nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
 nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
+nnoremap <silent><buffer><expr> a defx#do_action('cd', ['..'])
 nnoremap <silent><buffer><expr> <RightMouse> defx#do_action('cd', ['..'])
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
@@ -240,6 +249,8 @@ nnoremap <silent><buffer><expr> I defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> * defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+nnoremap <silent><buffer><expr> w line('.') == line('$') ? 'gg' : 'j'
+nnoremap <silent><buffer><expr> s line('.') == 1 ? 'G' : 'k'
 nnoremap <silent><buffer><expr><nowait> <C-g> defx#do_action('print')
 nnoremap <silent><buffer><expr> \ defx#do_action('change_vim_cwd','print')
 nnoremap <silent><buffer><expr> ss defx#do_action('call','Defx_to_denite_rec')
@@ -668,10 +679,6 @@ on_map = { nx = '<Plug>(asterisk'}
 depends = 'is.vim'
 hook_add = '''
 "let g:asterisk#keeppos = 1
-"map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
-"map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
-"map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
-"map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1):<C-u>silent AnzuUpdateSearchStatus<CR>
 map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
 map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
 map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
@@ -910,14 +917,14 @@ nnoremap <silent><Leader>mp :PrevimOpen<CR>
 
 
 [[plugins]]
-repo =  'mattn/vim-sonictemplate' 
+repo =  'mattn/vim-sonictemplate'
 on_cmd = ['Template']
 hook_add = '''
 let g:sonictemplate_vim_template_dir = '~/.vim/template/'
 '''
 
 [[plugins]]
-repo =  'Shougo/deol.nvim' 
+repo =  'Shougo/deol.nvim'
 on_cmd = ['Deol']
 hook_add = '''
 nnoremap <Space>t <cmd> Deol -command=wsl -split<CR>
@@ -928,5 +935,8 @@ let g:deol#prompt_pattern = '% \|%$'
 # on_cmd = ['Git', 'G']
 # hook_add = '''
 # '''
+
+# [[plugins]]
+# repo = 'liuchengxu/vim-clap'
 
 # vim:set foldmethod=marker:
