@@ -8,7 +8,7 @@ hook_add = '''
 let g:lsp_highlight_references_enabled = 1
 let g:lsp_auto_enable = 0
 " autocmd dein BufAdd * call lsp#enable()
-let g:lsp_log_file = expand('~/vim-lsp.log')
+" let g:lsp_log_file = expand('~/vim-lsp.log')
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)

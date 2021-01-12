@@ -31,7 +31,7 @@ let g:loaded_matchparen = 1
 "Python,vimproc
 let s:is_windows = has('win32') || has('win64')
 if has('win32')
-    let g:python3_host_prog ='python.exe'
+    let g:python3_host_prog ='C:\Python38\python.exe'
 endif
 if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
@@ -82,7 +82,7 @@ let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
-    call dein#load_toml(s:toml,      {'lazy': 0})
+   call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#end()
@@ -100,6 +100,7 @@ command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
+
 " Visual  {{{
 " language C
 set ambiwidth=double
@@ -138,7 +139,7 @@ set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,verti
 
 " Editing {{{
 set virtualedit=block     "move cursor to one more char than end of line
-set display+=lastline,uhex
+set display+=lastline,msgsep
 set wrap
 " Scroll
 " autocmd vimrc WinEnter * setlocal scroll=1
@@ -299,7 +300,7 @@ function! s:improved_gt() abort
         normal! gt
     endif
 endfunction
-
+nmap <C-j> <NOP>
 " matchit mapping
 nmap <TAB>  %
 nmap g<TAB> g%
@@ -400,12 +401,14 @@ cnoremap <expr> <C-p> pumvisible() ? "\<C-p>" : "\<UP>"
 " inoremap <silent><C-[> <ESC>
 " inoremap <silent><C-c> <ESC>
 "}}}
+
 "Key map - terminal {{{
 "terminal
 " if using iTerm2, map option key to Meta
 " Preference -> Profile -> Keys
 tnoremap <C-[> <C-\><C-n>
 tnoremap <Esc> <C-\><C-n>
+tnoremap <nowait> <C-f> <C-f>
 if has('mac')
     " can't map A- on Mac
     " ref. https://qiita.com/delphinus/items/aea16e82de2145d2a6b7
@@ -476,6 +479,7 @@ endfunction
 " nnoremap <silent> q :close<CR>
 " escape 'q'
 " escape 'gq'
+nnoremap <silent> \ :cd %:h<Bar>echo 'current directory is changed to ' . getcwd()<CR>
 " nnoremap gQ gq
 autocmd FileType help nnoremap <buffer> q <C-w>c
 " don't close window when closing buffer
@@ -846,6 +850,7 @@ if exists('neovide')
     let g:neovide_refresh_rate=100
 set linespace=10
 let g:neovide_transparency=0.96
+let g:neovide_transparency=0.90
 let g:neovide_cursor_trail_length=0
 let g:neovide_cursor_animation_length=0
 let g:neovide_cursor_antialiasing=v:true
@@ -1230,6 +1235,20 @@ function! Set_Font(font) abort
   execute 'set guifont=' . a:font . ':h10'
 endfunction
 
+function! s:change_lf_dos() abort
+execute('edit ++ff=dos %')
+write
+endfunction
+
+function! s:change_lf_unix() abort
+execute('edit ++ff=unix %')
+execute('%substitute/$//')
+write
+endfunction
+
+command! -nargs=0 -complete=command LFdos call s:change_lf_dos()
+command! -nargs=0 -complete=command LFunix call s:change_lf_unix()
 "!powershell start-process notepad c:\windows\system32\drivers\etc\hosts -verb runas
+
 " vim:set foldmethod=marker:
 
