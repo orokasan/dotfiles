@@ -85,6 +85,7 @@ if b:denite.buffer_name ==# 'combo'
 endif
 '''
 denite-filter = '''
+call lightline#update()
 if g:my_denite_filter_winblend_config ==# 1
     setlocal winblend=100
 else

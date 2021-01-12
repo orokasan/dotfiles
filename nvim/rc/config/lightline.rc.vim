@@ -364,7 +364,8 @@ function! LLDeniteMode() abort
     " endif 
 
     if len(denite#get_status('input')) > 0
-        return '#' . denite#get_status('input')
+        return ''
+        " return '#' . denite#get_status('input')
     else
         return 'Denite'
     endif

@@ -211,7 +211,7 @@ endfunction
 au vimrc BufReadCmd *.docx,*.doc,*.pages,*.xlsm,*.xlsx  call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
 au vimrc BufRead .textlintrc set ft=json
-set completeopt+=menuone
+set completeopt+=menuone,longest
 set completeopt-=preview
 " nicely folding
 "{{{
