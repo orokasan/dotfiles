@@ -137,7 +137,7 @@ autocmd dein ColorScheme iceberg highlight link Search Underlined
 autocmd dein ColorScheme iceberg highlight link Conceal Title
 autocmd dein ColorScheme iceberg highlight Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 autocmd dein ColorScheme iceberg highlight link WhiteSpace Comment
-autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
+" autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
 '''
 
 # [[plugins]]
@@ -775,8 +775,8 @@ nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.ca
 # [[plugins]]
 # repo =  'hrsh7th/denite-converter-prioritize-basename' 
 
-# [[plugins]]
-# repo = 'nekowasabi/denite-migemo'
+[[plugins]]
+repo = 'nekowasabi/denite-migemo'
 
 [[plugins]]
 repo = 'Shougo/neomru.vim'

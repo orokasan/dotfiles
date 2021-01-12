@@ -104,6 +104,10 @@ inoremap <silent><buffer> <C-t> <Esc>
   \:call denite#move_to_parent()<CR>
   \:call denite#call_map('toggle_matchers', 'matcher/regexp', 'matcher/fuzzy')<CR>
   \:call denite#move_to_filter()<CR>A
+inoremap <silent><buffer> <C-d> <Esc>
+  \:call denite#move_to_parent()<CR>
+  \:call denite#call_map('toggle_matchers', 'matcher/migemo', 'matcher/fuzzy')<CR>
+  \:call denite#move_to_filter()<CR>A
 inoremap z; ;
 inoremap <silent><buffer><expr> <C-a> denite#do_map('choose_action')
 imap <silent><buffer> <C-o> <Plug>(denite_filter_update)

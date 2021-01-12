@@ -52,6 +52,7 @@ call denite#custom#kind('buffer', 'default_action', 'switch')
 call denite#custom#source('file/old', 'default_action', 'switch')
 call denite#custom#var('buffer', 'date_format', '%Y/%m/%d %H:%M:%S')
 call denite#custom#filter('matcher/migemo', 'dict_path', 'C:\tools\cmigemo\dict\utf-8\migemo-dict')
+" call denite#custom#source('_', 'matchers', ['matcher/migemo'])
 ""need rg for grep/file-rec
 " call denite#custom#source('grep', 'args', ['', '', '!'])
 if executable('rg')
