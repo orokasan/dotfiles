@@ -73,9 +73,9 @@ let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 
 " if has('nvim')
-"     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
+    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 " else
-    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
+    " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 " endif
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 
@@ -941,7 +941,7 @@ vnoremap y ygv<ESC>
 " endfunction
 " autocmd UIEnter * call OnUIEnter(deepcopy(v:event))
 	let g:previm_enable_realtime = 1
-autocmd BufReadPre gina://* set noswapfile
+" autocmd BufReadPre gina://* set noswapfile
 " augroup MyCursorLineGroup
 "     autocmd!
 "     au WinEnter * setlocal cursorline
@@ -1002,129 +1002,74 @@ autocmd BufReadPre gina://* set noswapfile
 "    " let result = g:res
 "    " call setqflist(result, ' ')
 "endfunction
-"if has('nvim') && dein#is_sourced('nvim-lspconfig')
-"lua << EOF
-"do
-"-- function vim.lsp.util.set_qflist(items)
-"--   vim.fn.setqflist({}, 'a', {
-"--     title = 'Language Server';
-"--     items = items;
-"--   })
-"-- end
-"-- function vim.lsp.util.set_loclist(items)
-"--   vim.fn.setloclist(0, {}, 'a',{
-"--     title = 'Language Server';
-"--     items = items;
-"--   })
-"-- end
-"  local string = require'string'
-"  local method = "textDocument/publishDiagnostics"
-"  local default_callback = vim.lsp.callbacks[method]
-"  vim.lsp.callbacks[method] = function(err, method, result, client_id)
-"    default_callback(err, method, result, client_id)
-"    if result and result.diagnostics then
-"      for _, v in ipairs(result.diagnostics) do
-"        v.uri = v.uri or result.uri
-"        v.bufnr = vim.uri_to_bufnr(v.uri)
-"        v.lnum = v.range.start.line + 1
-"        v.col = v.range.start.character + 1
-"        v.text = v.message
-"      end
-"        -- local uri = result.uri
-"        -- local bufnr = vim.uri_to_bufnr(uri)
-"        -- vim.lsp.util.buf_diagnostics_save_positions(bufnr, result.diagnostics)
-"      -- vim.fn.nvim_set_var('diagnostics', result.diagnostics)
-"      vim.lsp.util.set_qflist(result.diagnostics)
-"    end
-"    -- if vim.lsp.util.diagnostics_by_buf[vim.fn.bufnr(0)] then
-"  end
-"end
+lua << EOF 
+require'lspconfig'.pyright.setup{}
+require "lspconfig".efm.setup {
+    init_options = {documentFormatting = true},
+    settings = {
+        rootMarkers = {".git/"},
+        languages = {
+            lua = {
+                {formatCommand = "lua-format -i", formatStdin = true}
+            }
+        }
+    }
+}
+require'lspconfig'.vimls.setup{}
+require'lspconfig'.gopls.setup{}
+EOF 
+lua << EOF
+local nvim_lsp = require('lspconfig')
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-"local nvim_lsp = require'nvim_lsp'
-"local configs = require'nvim_lsp/configs'
-"local util = require 'nvim_lsp/util'
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gI', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<space>we', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>wl', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
-"-- local bin_name = "efm-langserver"
-"-- 
-"-- configs["efm_ls"] = {
-"--   default_config = {
-"--     cmd = {"efm-langserver"};
-"--     filetypes = {text, txt, markdown, IPA};
-"--     root_dir = function(fname)
-"--       return vim.fn.getcwd()
-"--     end;
-"--   };
-"-- }
-"require'nvim_lsp'.efm.setup{}
+  -- Set some keybinds conditional on server capabilities
+  if client.resolved_capabilities.document_formatting then
+    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  elseif client.resolved_capabilities.document_range_formatting then
+    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  end
+  
+  -- Set autocommands conditional on server_capabilities
+  if client.resolved_capabilities.document_highlight then
+    require('lspconfig').util.nvim_multiline_command [[
+      :hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
+      :hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
+      :hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+      augroup lsp_document_highlight
+        autocmd!
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+      augroup END
+    ]]
+  end
+end
 
-"vim.api.nvim_set_var("enable_nvim_lsp_diagnostics", true)
-
-"require'nvim_lsp'.gopls.setup{}
-"require'nvim_lsp'.clangd.setup{}
-"require'nvim_lsp'.julials.setup{}
-"require'nvim_lsp'.texlab.setup{}
-"-- util.base_install_dir= '~/.cache/nvim/nvim_lsp/'
-"    -- settings = {
-"    --   latex = {
-"    --     build = {
-"    --       executable = "latexmk";
-"    --       args = {"uplatex", "-kanji=utf-8", "-halt-on-error", "-synctex=1", "-interaction=nonstopmode", "-file-line-error"};
-"    --       onSave = false;
-"    --         };
-"    --     };
-"    -- };
-"-- }
-"-- require'nvim_lsp'.pyls_ms.setup{}
-"-- require'nvim_lsp'.pyls.setup{}
-"require'nvim_lsp'.jedi_language_server.setup{}
-"require'nvim_lsp'.yamlls.setup{}
-"-- require'nvim_lsp'.sumneko_lua.setup{}
-"require'nvim_lsp'.vimls.setup{}
-"require'nvim_lsp'.tsserver.setup{}
-"EOF
-"endif
-""lsp.txtそのまま
-""set omnifunc=v:lua.vim.lsp.omnifunc
-"nnoremap <silent> <c-]>      <cmd>lua vim.lsp.buf.definition()<CR>
-"" nnoremap <silent> <c-k>      <cmd>lua vim.lsp.buf.signature_help()<CR>
-"nnoremap <silent> <c-k>          <cmd>lua vim.lsp.buf.hover()<CR>
-"nnoremap <silent> gd         <cmd>lua vim.lsp.buf.declaration()<CR>
-"nnoremap <silent> gD         <cmd>lua vim.lsp.buf.implementation()<CR>
-"nnoremap <silent> 1gD        <cmd>lua vim.lsp.buf.type_definition()<CR>
-"nnoremap <silent><Leader>fmt <cmd>lua vim.lsp.buf.formatting()<CR>
-"nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
-"nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-"nnoremap <silent> <C-k> <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
-"nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-""let g:tex_flavor = "latex"
-""set updatetime=1000
-""function! s:vimenter() abort
-"""augroup nvim_lsp
-""au!
-""autocmd CursorHold <buffer> lua vim.lsp.util.show_line_diagnostics()
-""autocmd CursorHoldI <buffer> lua vim.lsp.util.show_line_diagnostics()
-""autocmd CursorMoved <buffer> lua vim.lsp.util.show_line_diagnostics()
-""autocmd CursorMovedI <buffer> lua vim.lsp.util.show_line_diagnostics()
-""endfunction
-""autocmd dein BufEnter * call s:vimenter()
-"sign define LspDiagnosticsErrorSign text= texthl=LspDiagnosticsError linehl= numhl=
-"sign define LspDiagnosticsWarningSign text= texthl=LspDiagnosticsWarning linehl= numhl=
-"sign define LspDiagnosticsInformationSign text=! texthl=LspDiagnosticsInformation linehl= numhl=
-"sign define LspDiagnosticsHintSign text=? texthl=LspDiagnosticsHint linehl= numhl=
-"hi link  LspDiagnosticsError Error
-"highlight LspReferenceText guifg=Red
-"highlight LspReferenceWrite guifg=Red
-"highlight LspReferenceRead guifg=Red
-"highlight link LspDiagnosticsError Error
-"highlight LspDiagnosticsWarning guifg=Green
-"highlight link LspDiagnosticsUnderline Underlined
-"autocmd ColorScheme * highlight LspReferenceText guifg=Red
-"autocmd ColorScheme * highlight LspReferenceWrite guifg=Red
-"autocmd ColorScheme * highlight LspReferenceRead guifg=Red
-"autocmd ColorScheme * highlight link LspDiagnosticsError Error
-"autocmd ColorScheme * highlight LspDiagnosticsWarning guifg=Green
-"autocmd ColorScheme * highlight link LspDiagnosticsUnderline Underlined
-
+-- Use a loop to conveniently both setup defined servers 
+-- and map buffer local keybindings when the language server attaches
+local servers = { "pyright", "rust_analyzer", "tsserver" ,'vimls','efm'}
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup { on_attach = on_attach }
+end
+EOF
 " autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
 autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
 autocmd FileType twitvim nnoremap <silent><buffer><expr> k line('.') =~ '\v^(1\|2\|3)$' ? 'G' : 'k'
@@ -1188,7 +1133,6 @@ endif
     nmap e @e
 let s:macromode = 1
 endfunction
-
 function! MacroModeOff() abort
 if s:macromode ==# 0
     return
@@ -1243,10 +1187,16 @@ execute('edit ++ff=unix %')
 execute('%substitute/$//')
 write
 endfunction
-
 command! -nargs=0 -complete=command LFdos call s:change_lf_dos()
 command! -nargs=0 -complete=command LFunix call s:change_lf_unix()
 "!powershell start-process notepad c:\windows\system32\drivers\etc\hosts -verb runas
-
+nnoremap <C-6> <C-^>
+augroup lsp_setup
+au!
+augroup END
+    hi link LspDiagnosticsVirtualTextError Error
+    hi link LspDiagnosticsVirtualTextWarning Question
+    sign define LspDiagnosticsSignError text= texthl=LspDiagnosticsVirtualTextError linehl= numhl=
+    sign define LspDiagnosticsSignWarning text= texthl=LspDiagnosticsVirtualTextWarning linehl= numhl=
 " vim:set foldmethod=marker:
 

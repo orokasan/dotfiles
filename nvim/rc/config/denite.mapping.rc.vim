@@ -77,6 +77,10 @@ nnoremap <silent> [denite]u :<C-u>Denite
     \ -buffer_name=relative
     \ -winheight=5
     \ menu<CR>
+nnoremap <silent> [denite]a :<C-u>Denite
+    \ -buffer_name=normal
+    \ -winheight=5
+    \ menu:gina<CR>
 "ヘルプ
 nnoremap <silent> [denite]h :<C-u>Denite
     \ -start-filter
@@ -84,10 +88,8 @@ nnoremap <silent> [denite]h :<C-u>Denite
 " MRU
 nnoremap <silent> [denite]n :<C-u>DeniteProjectDir
     \ -buffer-name=normal
-    \ file/old<CR>
-nnoremap <silent> <RightMouse> :<C-u>Denite
-    \ -buffer-name=normal
-    \ file/old<CR>
+    \ -unique
+    \ file/old file<CR>
 "mark一覧
 nnoremap <silent> [denite]m :<C-u>Denite
     \ -auto-action=highlight
@@ -184,4 +186,4 @@ endfunction
 nnoremap <silent> sl :<C-u>call <SID>denite_lsp_diagnostics()<CR>
 
 " some other options
-au dein BufEnter * if &ft !~# '\v(denite|denite-filter)' | setlocal scroll=3 | endif
+" au dein BufEnter * if &ft !~# '\v(denite|denite-filter)' | setlocal scroll=3 | endif

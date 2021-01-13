@@ -50,6 +50,8 @@ call denite#custom#kind('openable', 'default_action', 'switch')
 call denite#custom#kind('file', 'default_action', 'switch')
 call denite#custom#kind('buffer', 'default_action', 'switch')
 call denite#custom#source('file/old', 'default_action', 'switch')
+call denite#custom#source('file/old', 'converters', ['converter/relative_abbr'])
+" call denite#custom#source('file', 'converters', ['converter/relative_abbr'])
 call denite#custom#var('buffer', 'date_format', '%Y/%m/%d %H:%M:%S')
 call denite#custom#filter('matcher/migemo', 'dict_path', 'C:\tools\cmigemo\dict\utf-8\migemo-dict')
 " call denite#custom#source('_', 'matchers', ['matcher/migemo'])
@@ -70,6 +72,7 @@ if executable('rg')
     call denite#custom#var('file/rec', 'command',
      \ ['rg', '--files', '--glob', '!.git"', '--color', 'never'])
     call denite#custom#source('file/rec', 'converters', [])
+    " call denite#custom#source('file/rec', 'converters', ['converter/tail_path'])
     call denite#custom#var('file/rec', 'cache_threshold', 50000)
 endif
 if executable('jvgrep')
@@ -105,6 +108,16 @@ let s:menus.shortcut = {'description': 'shortcut to vim command' }
 let s:menus.shortcut.command_candidates = []
 for v in range(len(s:shortcut_commands))
     let s:menus.shortcut.command_candidates += [[s:shortcut_commands[v], s:shortcut_commands[v]]]
+endfor
+
+let s:gina_commands = [
+    \ 'Gina add %',
+    \ 'Gina commit -m "wip"',
+    \]
+let s:menus.gina = {'description': 'git command list' }
+let s:menus.gina.command_candidates = []
+for v in range(len(s:gina_commands))
+    let s:menus.gina.command_candidates += [[s:gina_commands[v], s:gina_commands[v]]]
 endfor
 
 call denite#custom#var('menu', 'menus', s:menus)

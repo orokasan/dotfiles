@@ -77,13 +77,6 @@ let s:lexima_my_rules = [
 \ {'char': '<BS>', 'at': '『\%#』','input': '<BS>', 'delete' : 1},
 \ {'char': '<BS>', 'at': '【\%#】','input': '<BS>', 'delete' : 1},
 \ {'char': '<BS>', 'at': '（\%#）','input': '<BS>', 'delete' : 1},
-\ {'at': '^\s*\%#', 'char': '*', 'input': '*<Space>', 'filetype': 'markdown'},
-\ {'at': '^\s*\%#', 'char': '-', 'input': '-<Space>', 'filetype': 'markdown'},
-\ {'at': '^\s*\%#', 'char': '*', 'input': '*<Space>', 'filetype': 'markdown'},
-\ {'at': '^\s*\*\s.*\%#$', 'char': '<CR>', 'input': '<CR>*<Space>', 'filetype': 'markdown'},
-\ {'at': '^\s*-\s.*\%#$', 'char': '<CR>', 'input': '<CR>-<Space>', 'filetype': 'markdown'},
-\ {'at': '^\s*\*\s\%#$', 'char': '<BS>', 'input': '<C-U>', 'filetype': 'markdown'},
-\ {'at': '^\s*-\s\%#$', 'char': '<BS>', 'input': '<C-U>', 'filetype': 'markdown'},
 \ ]
 for rule in s:lexima_my_rules
   call lexima#add_rule(rule)
@@ -449,9 +442,9 @@ repo = 'rhysd/conflict-marker.vim'
 [[plugins]]
 repo =  'lambdalisue/gina.vim'
 hook_add = '''
-nnoremap <silent> <Leader><Leader> :<C-u>Gina status<CR>
+let g:gina#command#status#use_default_mappings=0
+nnoremap <silent> g<Leader> :<C-u>Gina status<CR>
 nnoremap <silent> <Leader>gA :<C-u>Gina changes HEAD<CR>
-nnoremap <silent> <Leader>a :<C-u>Gina add %<CR>
 nnoremap <silent> <Leader>gc :<C-u>Gina commit<CR>
 nnoremap <silent> <Leader>gC :<C-u>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb :<C-u>Gina branch -av<CR>
@@ -464,6 +457,7 @@ nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
 nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
 nnoremap <silent> <Leader>gl :<C-u>Gina log<CR>
 nnoremap <silent> <Leader>gL :<C-u>Gina log %<CR>
+nnoremap <silent> <Leader>gr :<C-u>Gina reflog<CR>
 nnoremap <silent> <Leader>gf :<C-u>Gina ls<CR>
 nnoremap <silent> <Leader>gp :<C-u>Gina!! add -p<CR>
 let g:gina#core#spinner#delaytime = 10
@@ -480,6 +474,7 @@ call gina#custom#command#option(
     \)
 call gina#custom#command#option('commit', '--opener' , 'split')
 call gina#custom#command#option('log', '--group', 'log-viewer')
+call gina#custom#command#option('diff', '--group', 'log-viewer')
 call gina#custom#command#option('status', '--group', 'status-viewer')
 call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
 call gina#custom#command#option('commit', '-v|--verbose')
@@ -502,13 +497,13 @@ call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
 call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
 call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
 call gina#custom#mapping#nmap(
-    \ '/.*', 'gq',
-    \ ':tabclose<CR>',
+    \ '/.*', 'q',
+    \ ':close<CR>',
     \ {'noremap': 1, 'silent': 1}
     \)
 call gina#custom#mapping#nmap(
-    \ '/.*', 'q',
-    \ ':close<CR>',
+    \ '/.*', '<TAB>',
+      \ ':call gina#action#call(''builtin:choice'')<CR>',
     \ {'noremap': 1, 'silent': 1}
     \)
 call gina#custom#mapping#nmap(
@@ -527,24 +522,19 @@ call gina#custom#mapping#nmap(
     \ {'noremap': 1, 'silent': 1}
     \)
 call gina#custom#mapping#nmap(
-    \ 'status', '-',
-    \ '<Plug>(gina-index-toggle)',
-    \ { 'silent': 1, 'nowait': 1}
-    \)
+      \ 'status', 'a',
+      \ ':call gina#action#call(''toggle'')<CR>',
+      \ {'noremap': 1, 'silent': 1},
+      \)
 call gina#custom#mapping#vmap(
     \ 'status', '-',
-    \ '<Plug>(gina-index-toggle)',
-    \ { 'silent': 1, 'nowait': 1}
+      \ ':call gina#action#call(''toggle'')<CR>',
+    \ { 'noremap':1, 'silent': 1, 'nowait': 1}
     \)
 call gina#custom#mapping#nmap(
     \ 'status', 'c',
     \ ':<C-u>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', 'C',
-    \ ':<C-u>Gina compare<CR>',
-    \ {'noremap': 1, 'silent': 1}
+    \ {'noremap': 1, 'silent': 1, 'nowait':1}
     \)
 call gina#custom#mapping#nmap(
     \ 'commit', '<C-6>',
@@ -623,7 +613,7 @@ repo = 'Milly/vim-migemo'
 repo =  'machakann/vim-sandwich'
 hook_add = '''
 let g:sandwich_no_default_key_mappings = 1
-
+let g:operator_sandwich_no_default_key_mappings = 1
 silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
 silent! nmap <unique><silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
 silent! nmap <unique><silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
@@ -777,6 +767,10 @@ nnoremap <silent> [denite]v :Denite -no-empty -path=~/.cache/junkfile grep:~/.ca
 
 [[plugins]]
 repo = 'nekowasabi/denite-migemo'
+
+[[plugins]]
+merged = 0
+repo = 'neoclide/denite-git'
 
 [[plugins]]
 repo = 'Shougo/neomru.vim'

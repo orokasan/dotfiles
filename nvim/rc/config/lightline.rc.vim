@@ -150,7 +150,7 @@ else
     endif
 
     if luaeval('vim.lsp.buf.server_ready()')
-        let e = luaeval("vim.lsp.util.buf_diagnostics_count(\"Error\")")
+        let e = luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
         return e ? '' . e : ''
     else
         return ''

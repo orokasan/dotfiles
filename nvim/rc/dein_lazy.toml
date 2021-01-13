@@ -440,8 +440,8 @@ nnoremap <silent><Leader>mg  :<C-u>Denite
 " use denite (default 0)
 let g:memolist_denite = 1
 let g:memolist_memo_suffix = 'md'
-let g:memolist_path = "~/Google ドライブ/memo"
-let g:memolist_template_dir_path = "~/.vim/template/memolist"
+let g:memolist_path = "~/GoogleDrive/memo"
+let g:memolist_template_dir_path = "~/GoogleDrive/template/memolist"
 let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
  let g:memolist_filename_date = "%y%m%d_"
 
@@ -466,7 +466,7 @@ let g:eskk#revert_henkan_style = 'okuri'
 " backspaceで確定
 let g:eskk#delete_implies_kakutei = 1
 let g:eskk#dictionary = {
-    \    'path': "~/.skk-jisyo",
+    \    'path': "~/.skk/.skk-jisyo",
     \    'sorted': 0,
     \    'encoding': 'utf-8'
     \ }
@@ -925,7 +925,7 @@ nnoremap <silent><Leader>mp :PrevimOpen<CR>
 repo =  'mattn/vim-sonictemplate'
 on_cmd = ['Template']
 hook_add = '''
-let g:sonictemplate_vim_template_dir = '~/.vim/template/'
+let g:sonictemplate_vim_template_dir = '~/GoogleDrive/template/'
 '''
 
 [[plugins]]

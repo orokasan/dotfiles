@@ -4,10 +4,7 @@ merged = '0'
 hook_add = '''
 " can't load nvim-lsp modules when it is not merged in dein repo.
 " so set rtp manually.
-set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
-
-" let g:diagnostics = ''
-" let g:diagnosticsafter = ''
+set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lspconfig/
 '''
 
 # [[plugins]]
@@ -23,6 +20,16 @@ set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lsp/
 # smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 # '''
 
+# [[plugins]]
+# repo =  'Shougo/deoppet.nvim'
+# hook_add = '''
+
+# imap <C-k>  <Plug>(deoppet_expand)
+# imap <C-f>  <Plug>(deoppet_jump_forward)
+# imap <C-b>  <Plug>(deoppet_jump_backward)
+# smap <C-f>  <Plug>(deoppet_jump_forward)
+# smap <C-b>  <Plug>(deoppet_jump_backward)
+# '''
 [[plugins]]
 lazy = '1'
 repo =  'Shougo/neosnippet'
@@ -49,6 +56,36 @@ imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
 # repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
+merged = 0
 repo = 'Shougo/deoplete-lsp'
 hook_add = '''
 '''
+
+# [[plugins]]
+# # repo = 'orokasan/vim-lsp'
+# merged = 1
+# repo = 'prabirshrestha/vim-lsp'
+# hook_add = '''
+# let g:lsp_auto_enable = 0
+# '''
+
+# [[plugins]]
+# # on_if = 'has("windows")'
+# merged = 1
+# repo = 'mattn/vim-lsp-settings'
+# hook_add = '''
+# let g:lsp_settings_enable_suggestions = 1
+# "let g:lsp_settings = {
+# "      \ 'efm-langserver': {
+# "      \   'disabled': 0,
+# "      \   'allowlist': ['markdown','text','json','*'],
+# "     \    'initialization_options': {
+# "            \"documentFormatting": v:true,
+# "            \"hover": v:true,
+# "            \"documentSymbol": v:true,
+# "            \"codeAction": v:true,
+# "            \"completion": v:true
+# "    \}
+# "      \  }
+# "      \ }
+# '''
