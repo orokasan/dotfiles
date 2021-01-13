@@ -1184,10 +1184,8 @@ function! MacroModeOn() abort
 if s:macromode ==# 1
     return
 endif
-    nmap q @q
     nmap w @w
     nmap e @e
-    nmap r @r
 let s:macromode = 1
 endfunction
 
