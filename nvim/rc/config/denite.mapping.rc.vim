@@ -88,8 +88,8 @@ nnoremap <silent> [denite]h :<C-u>Denite
 " MRU
 nnoremap <silent> [denite]n :<C-u>DeniteProjectDir
     \ -buffer-name=normal
-    \ -unique
     \ file/old file<CR>
+    " \ -unique
 "mark一覧
 nnoremap <silent> [denite]m :<C-u>Denite
     \ -auto-action=highlight

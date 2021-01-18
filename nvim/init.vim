@@ -941,7 +941,7 @@ vnoremap y ygv<ESC>
 " endfunction
 " autocmd UIEnter * call OnUIEnter(deepcopy(v:event))
 	let g:previm_enable_realtime = 1
-" autocmd BufReadPre gina://* set noswapfile
+autocmd BufReadPre gina://* set noswapfile
 " augroup MyCursorLineGroup
 "     autocmd!
 "     au WinEnter * setlocal cursorline
@@ -1040,7 +1040,6 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>wl', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-
   -- Set some keybinds conditional on server capabilities
   if client.resolved_capabilities.document_formatting then
     buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
@@ -1198,5 +1197,45 @@ augroup END
     hi link LspDiagnosticsVirtualTextWarning Question
     sign define LspDiagnosticsSignError text= texthl=LspDiagnosticsVirtualTextError linehl= numhl=
     sign define LspDiagnosticsSignWarning text= texthl=LspDiagnosticsVirtualTextWarning linehl= numhl=
+
+let s:highlight_id = v:false
+function! s:gethighlight(hi, which) abort
+    let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
+    return bg
+endfunction
+call execute('hi HighlightDict gui=bold guifg=' .. s:gethighlight('Error', 'fg'))
+call execute('hi UnderlineSpace gui=underline guisp=' .. s:gethighlight('Error', 'fg'))
+function! Highlight_dict() abort
+if s:highlight_id
+    call clearmatches()
+    let s:highlight_id = v:false
+    return
+endif
+let s:filename="dict.txt"
+let s:dict = expand('%:p:h') .. '\dict.txt'
+if !filereadable(s:dict)
+    let s:dict = expand('~/') .. '\dict.txt'
+    if !filereadable(s:dict)
+        echom 'dict file is not found'
+	return
+    endif
+endif
+let s:dict = substitute(s:dict, '\\', '\/', 'g')
+if filereadable(s:dict)
+    let s:lines=readfile(s:dict,1000)
+    for line in s:lines
+	if line !=# ''
+        let word = split(line)
+        call matchadd('HighlightDict',word[0])
+	endif
+    endfor
+    call matchadd('UnderlineSpace', ' ')
+    call matchadd('UnderlineSpace', '　')
+    let s:highlight_id = v:true
+endif
+endfunction
+nnoremap <F1> <cmd>call Highlight_dict()<CR>
+
+nnoremap  <Space>wc <cmd>lua vim.lsp.diagnostic.clear(0)<CR>
 " vim:set foldmethod=marker:
 

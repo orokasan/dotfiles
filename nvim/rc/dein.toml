@@ -584,10 +584,10 @@ call gina#custom#mapping#nmap(
       \ ':<C-u>call gina#action#call(''changes'')<CR>',
       \ {'noremap': 1, 'silent': 1}
       \)
-call gina#custom#execute(
-      \ '/\%(ls\|log\|reflog\|grep\)',
-      \ 'setlocal noautoread',
-      \)
+"call gina#custom#execute(
+"      \ '/\%(ls\|log\|reflog\|grep\)',
+"      \ 'setlocal noautoread',
+"      \)
 call gina#custom#execute(
       \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
       \ 'setlocal cursorline',

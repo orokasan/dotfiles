@@ -1,1 +1,1 @@
-set noswapfile
+setlocal noswapfile
