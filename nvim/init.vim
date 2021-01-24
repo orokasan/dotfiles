@@ -152,8 +152,8 @@ set matchtime=1     " highlighting long
 set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕
 set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
-set tabstop=8               " number of spaces inserted by <TAB>
-set noexpandtab
+set tabstop=4               " number of spaces inserted by <TAB>
+set expandtab
 set softtabstop=-1
 let g:vim_indent_cont = 4
 set autoindent
@@ -1017,6 +1017,48 @@ require "lspconfig".efm.setup {
 }
 require'lspconfig'.vimls.setup{}
 require'lspconfig'.gopls.setup{}
+require'lspconfig'.pyls.setup{}
+require'lspconfig'.tsserver.setup{}
+require'lspconfig'.sumneko_lua.setup{}
+local system_name
+if vim.fn.has("mac") == 1 then
+  system_name = "macOS"
+elseif vim.fn.has("unix") == 1 then
+  system_name = "Linux"
+elseif vim.fn.has('win32') == 1 then
+  system_name = "Windows"
+else
+  print("Unsupported system for sumneko")
+end
+
+-- set the path to the sumneko installation; if you previously installed via the now deprecated :LspInstall, use
+local sumneko_root_path = vim.fn.expand('~/') ..'/AppData/Local/vim-lsp-settings/servers/sumneko-lua-language-server'
+local sumneko_binary = sumneko_root_path.."/extension/server/bin/"..system_name.."/lua-language-server.exe"
+
+require'lspconfig'.sumneko_lua.setup {
+  cmd = {sumneko_binary, "-E", sumneko_root_path .. "/extension/server/main.lua"};
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+        -- Setup your lua path
+        path = vim.split(package.path, ';'),
+      },
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = {'vim'},
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = {
+          [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+          [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+        },
+      },
+    },
+  },
+}
 EOF 
 lua << EOF
 local nvim_lsp = require('lspconfig')
@@ -1050,9 +1092,9 @@ local on_attach = function(client, bufnr)
   -- Set autocommands conditional on server_capabilities
   if client.resolved_capabilities.document_highlight then
     require('lspconfig').util.nvim_multiline_command [[
-      :hi LspReferenceRead cterm=bold ctermbg=red guibg=LightYellow
-      :hi LspReferenceText cterm=bold ctermbg=red guibg=LightYellow
-      :hi LspReferenceWrite cterm=bold ctermbg=red guibg=LightYellow
+      :hi LspReferenceRead gui=bold
+      :hi LspReferenceText gui=bold
+      :hi LspReferenceWrite gui=bold
       augroup lsp_document_highlight
         autocmd!
         autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
@@ -1096,18 +1138,6 @@ let cmd = 'mdpdf --border=12.7mm ' . path
 " call system(cmd)
 execute "!" . cmd
 endfunction
-
-augroup your_config_scrollbar_nvim
-    autocmd!
-    autocmd BufEnter    * silent! lua require('scrollbar').show()
-    autocmd BufLeave    * silent! lua require('scrollbar').clear()
-
-    autocmd CursorMoved * silent! lua require('scrollbar').show()
-    autocmd VimResized  * silent! lua require('scrollbar').show()
-
-    autocmd FocusGained * silent! lua require('scrollbar').show()
-    autocmd FocusLost   * silent! lua require('scrollbar').clear()
-augroup end
 
 function! g:Vimrc_select_a_last_modified() abort
     return ['v', getpos("'["), getpos("']")]
@@ -1235,6 +1265,22 @@ if filereadable(s:dict)
 endif
 endfunction
 nnoremap <F1> <cmd>call Highlight_dict()<CR>
+
+function! Get_diagnostics()
+lua <<EOF
+tbl = vim.lsp.diagnostic.get_all()
+for key, val in pairs(tbl) do
+for ke, va in pairs(val) do
+print(ke,va)
+for k,v in pairs(va.range.start) do
+	print(k,v)
+end
+end
+end
+EOF
+" let result = luaeval('vim.lsp.diagnostic.get_all()')
+" echo result
+endfunction
 
 nnoremap  <Space>wc <cmd>lua vim.lsp.diagnostic.clear(0)<CR>
 " vim:set foldmethod=marker:

@@ -432,8 +432,12 @@ nnoremap <Leader>mn  :MemoNew<CR>
 "     \ file/rec:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
 nnoremap <silent><Leader>ml  :<C-u>Denite 
     \ -buffer-name=default
-    \ -cursor-pos=+1
-    \ file/rec:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
+    \ -sorters=sorter/reverse
+    \ file/rec:~/GoogleDrive/memo<CR>
+nnoremap <silent> sl  :<C-u>Denite 
+    \ -buffer-name=default
+    \ -sorters=sorter/reverse
+    \ file/rec:~/GoogleDrive/memo<CR>
 nnoremap <silent><Leader>mg  :<C-u>Denite 
     \ -buffer-name=default
     \ grep:~/GoogleDrive/memo::<CR>

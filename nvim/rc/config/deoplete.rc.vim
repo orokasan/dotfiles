@@ -2,7 +2,6 @@ function! s:check_back_space() abort "{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
-
 " imap <silent><expr> <TAB>
 "       \ neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" :
 "       \ pumvisible() ? "\<C-n>" :
