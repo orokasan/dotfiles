@@ -772,9 +772,10 @@ repo = 'nekowasabi/denite-migemo'
 merged = 0
 repo = 'neoclide/denite-git'
 
-[[plugins]]
-merged = 0
-repo = 'nvim-treesitter/nvim-treesitter'
+# [[plugins]]
+# merged = 0
+# on_if = 'executable("gcc")'
+# repo = 'nvim-treesitter/nvim-treesitter'
 
 [[plugins]]
 repo = 'Shougo/neomru.vim'

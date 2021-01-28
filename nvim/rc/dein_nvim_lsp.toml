@@ -1,10 +1,9 @@
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
-merged = '0'
+# merged = '1'
+# on_lua = ['lspconfig']
+# lazy = '1'
 hook_add = '''
-" can't load nvim-lsp modules when it is not merged in dein repo.
-" so set rtp manually.
-set rtp+=~/.cache/dein/repos/github.com/neovim/nvim-lspconfig/
 '''
 
 # [[plugins]]
