@@ -277,7 +277,7 @@ nnoremap <silent>k gk
 " moving tip/end of a line
 nnoremap <S-l> $
 nnoremap <S-h> ^
-vnoremap <S-l> $
+vnoremap <S-l> g_
 vnoremap <S-h> ^
 " nnoremap G Gzz
 nnoremap <C-f> <C-f>zz
