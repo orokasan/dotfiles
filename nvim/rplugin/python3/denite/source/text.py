@@ -48,16 +48,17 @@ class Source(Base):
 
     def _find_headers(self, context):
         headers = []
-        codeblock = r'^`{3,}.*$'
+        # codeblock = r'^`{3,}.*$'
         in_codeblock = False
         max_level = 0
         limit_level = int(context['args'][0]) if context['args'] else 0
-        for i in range(1, self.vim.call('line', '$') + 1):
-            line = self.vim.call('getline', i)
-            if re.match(codeblock, line):
-                in_codeblock = not in_codeblock
+        for [i, x] in enumerate(self.vim.call('getbufline', context['bufnr'], 1, '$')):
+            line = x
+            # if re.match(codeblock, line):
+            #     in_codeblock = not in_codeblock
             match = re.match(r'^(■+)\s*(.+)$', line)
-            if match and not in_codeblock:
+            # if match and not in_codeblock:
+            if match:
                 level = len(match.group(1))
                 if max_level < level:
                     max_level = level 
