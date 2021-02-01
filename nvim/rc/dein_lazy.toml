@@ -48,6 +48,8 @@ nnoremap <silent><buffer><expr><nowait> <Leader>
     \ denite#do_map('do_action', 'highlight')
 nnoremap <silent><buffer><expr> q
     \ denite#do_map('quit')
+nnoremap <silent><buffer><expr> r
+    \ denite#do_map('redraw')
 nnoremap <silent><buffer><expr> i
     \ denite#do_map('open_filter_buffer')
 nnoremap <silent><buffer><expr><nowait> c
@@ -59,7 +61,7 @@ nnoremap <silent><buffer><expr> A
 nnoremap <silent><buffer><expr> r
     \ denite#do_map('toggle_matchers', 'matcher/regexp, matcher/fuzzy')
 nnoremap <silent><buffer><expr> <C-r>
-    \ denite#do_map('do_action','file/rec')
+    \ denite#do_map('do_action','candidate_file_rec')
 nnoremap <silent><buffer><expr> <C-e>
     \ denite#do_map('do_action','defx')
 nnoremap <silent><buffer><expr> <C-d>

@@ -177,7 +177,7 @@ endfunction
 function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
-    let dir = substitute(dir, ' ', '\\ ', 'g')
+    " let dir = substitute(dir, ' ', '\\ ', 'g')
     if isdirectory(dir)
         let fdir = fnamemodify(dir, ':p:h')
     else
@@ -187,6 +187,10 @@ function! s:denite_rec(context)
     execute('Denite
         \ -path=' . fdir .
         \ ' file/rec')
+	  " let sources_queue = a:context['sources_queue'] + [[
+	  "       \ {'name': 'file/rec', 'args': fdir},
+	  "       \ ]]
+	  " return {'sources_queue': sources_queue}
 endfunction
 
 call denite#custom#filter('matcher/clap',
@@ -195,6 +199,15 @@ call denite#custom#filter('matcher/clap',
 " call denite#custom#source('_', 'matchers', ['matcher/regexp'])
 " call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file_mru', 'matchers', ['matcher/regexp'])
+
+function! s:denite_debug(context)
+let path = a:context['targets'][0]['action__path']
+echo path
+endfunction
+call denite#custom#action(
+    \ 'file', 'mydebug',
+    \ function('s:denite_debug')
+    \ )
 
 function! s:denite_directory_rec(context)
     let path = a:context['targets'][0]['action__path']
@@ -263,6 +276,17 @@ function! g:Denite_set_cursor(context) abort
     " cursor(pos, 0)
 endfunction
 
+	function! s:candidate_file_rec(context)
+	  let path = a:context['targets'][0]['action__path']
+	  let narrow_dir = denite#util#path2directory(path)
+	  let sources_queue = a:context['sources_queue'] + [[
+	        \ {'name': 'file/rec', 'args': [narrow_dir]},
+	        \ ]]
+	  return {'sources_queue': sources_queue}
+	endfunction
+	call denite#custom#action('buffer,directory,file,openable,dirmark',
+	        \ 'candidate_file_rec', function('s:candidate_file_rec'))
+
 " this snippet is from Shougo/defx.nvim
 let s:is_windows = has('win32') || has('win64')
 let s:is_mac = !s:is_windows && !has('win32unix')
@@ -310,6 +334,7 @@ function! s:denite_execute(context)
     call defx#util#print_error('Not supported.')
   endif
 endfunction
+
 
 call denite#custom#action(
     \ 'directory,file,openable,dirmark',

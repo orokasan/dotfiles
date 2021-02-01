@@ -158,14 +158,20 @@ nnoremap <silent> [denite], :<C-u>Denite
 "     \ -buffer-name=combo
 "     \ combo<CR>
 nnoremap <silent> [denite]t :<C-u>Denite
+    \ -buffer-name=text`bufnr()`
+    \ -refresh
+    \ -resume
     \ text<CR>
 nnoremap <silent> [denite]T :<C-u>Denite
-    \ -buffer-name=default
+    \ -buffer-name=vtext`bufnr()`
+    \ -refresh
+    \ -resume
     \ -split=vertical
+    \ -direction=topleft
     \ -winwidth=60
     \ -post-action=remain
     \ -default-action=highlight
-    \ text<CR>
+    \ text:1<CR>
 nnoremap <silent> [denite]/ :<C-u>Denite
     \ -no-empty
     \ searchres<CR>
