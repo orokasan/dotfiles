@@ -89,3 +89,8 @@ let g:lsp_settings_enable_suggestions = 1
 "      \  }
 "      \ }
 '''
+
+[[plugins]]
+merged = 0
+repo = 'nvim-treesitter/nvim-treesitter'
+

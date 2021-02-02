@@ -1,11 +1,11 @@
 version: 2
 root-markers:
   - .git/
-commands:
-  - command: notepad
-    arguments:
-      - ${INPUT}
-    title: メモ帳
+# commands:
+#   - command: notepad
+#     arguments:
+#       - ${INPUT}
+#     title: メモ帳
 
 tools:
   eruby-erb: &eruby-erb

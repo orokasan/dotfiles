@@ -48,8 +48,6 @@ nnoremap <silent><buffer><expr><nowait> <Leader>
     \ denite#do_map('do_action', 'highlight')
 nnoremap <silent><buffer><expr> q
     \ denite#do_map('quit')
-nnoremap <silent><buffer><expr> r
-    \ denite#do_map('redraw')
 nnoremap <silent><buffer><expr> i
     \ denite#do_map('open_filter_buffer')
 nnoremap <silent><buffer><expr><nowait> c
@@ -58,11 +56,13 @@ nnoremap <silent><buffer><expr> a
     \ denite#do_map('toggle_select').'j'
 nnoremap <silent><buffer><expr> A
     \ denite#do_map('toggle_select_all')
-nnoremap <silent><buffer><expr> r
-    \ denite#do_map('toggle_matchers', 'matcher/regexp, matcher/fuzzy')
 nnoremap <silent><buffer><expr> <C-r>
+    \ denite#do_map('toggle_matchers', 'matcher/regexp, matcher/fuzzy')
+nnoremap <silent><buffer><expr> r
     \ denite#do_map('do_action','candidate_file_rec')
-nnoremap <silent><buffer><expr> <C-e>
+nnoremap <silent><buffer><expr> R
+    \ denite#do_map('do_action','file/rec/txt')
+nnoremap <silent><buffer><expr> e
     \ denite#do_map('do_action','defx')
 nnoremap <silent><buffer><expr> <C-d>
     \ denite#do_map('do_action','directory/rec')
@@ -431,15 +431,15 @@ nnoremap <Leader>mn  :MemoNew<CR>
 " nnoremap <silent><Leader>ml  :<C-u>Denite 
 "     \ -buffer-name=normal
 "     \ -sorters=sorter/word,sorter/reverse
-"     \ file/rec:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
+"     \ file/rec/txt:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
 nnoremap <silent><Leader>ml  :<C-u>Denite 
     \ -buffer-name=default
     \ -sorters=sorter/reverse
-    \ file/rec:~/GoogleDrive/memo<CR>
+    \ file/rec/txt:~/GoogleDrive/memo<CR>
 nnoremap <silent> sl  :<C-u>Denite 
     \ -buffer-name=default
     \ -sorters=sorter/reverse
-    \ file/rec:~/GoogleDrive/memo<CR>
+    \ file/rec/txt:~/GoogleDrive/memo<CR>
 nnoremap <silent><Leader>mg  :<C-u>Denite 
     \ -buffer-name=default
     \ grep:~/GoogleDrive/memo::<CR>
@@ -938,7 +938,8 @@ let g:sonictemplate_vim_template_dir = '~/GoogleDrive/template/'
 repo =  'Shougo/deol.nvim'
 on_cmd = ['Deol']
 hook_add = '''
-nnoremap <Space>t <cmd> Deol -command=wsl -split<CR>
+nnoremap <Space>t <cmd> Deol -command=cmd.exe -split<CR>
+nnoremap <Space>T <cmd> Deol -command=wsl.exe -split<CR>
 let g:deol#prompt_pattern = '% \|%$'
 '''
 # [[plugins]]

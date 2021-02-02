@@ -82,9 +82,9 @@ let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
-   call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lazy_toml, {'lazy': 1})
+    call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lazy_toml, {'lazy': 1})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -841,6 +841,9 @@ endtry
 " set shellxquote=
 " endif
 "}}}
+if !has('nvim')
+    finish
+endif
 " hi! link NonText Comment
 " for neovide initialize hook
 if exists('neovide')
@@ -1002,8 +1005,9 @@ autocmd BufReadPre gina://* set noswapfile
 "    " let result = g:res
 "    " call setqflist(result, ' ')
 "endfunction
+if has('nvim')
 lua << EOF 
-require'lspconfig'.pyright.setup{}
+-- require'lspconfig'.pyright.setup{}
 require "lspconfig".efm.setup {
     init_options = {documentFormatting = true},
     settings = {
@@ -1015,11 +1019,6 @@ require "lspconfig".efm.setup {
         }
     }
 }
-require'lspconfig'.vimls.setup{}
-require'lspconfig'.gopls.setup{}
-require'lspconfig'.pyls.setup{}
-require'lspconfig'.tsserver.setup{}
-require'lspconfig'.sumneko_lua.setup{}
 local system_name
 if vim.fn.has("mac") == 1 then
   system_name = "macOS"
@@ -1091,27 +1090,28 @@ local on_attach = function(client, bufnr)
   end
   
   -- Set autocommands conditional on server_capabilities
-  if client.resolved_capabilities.document_highlight then
-    require('lspconfig').util.nvim_multiline_command [[
-      :hi LspReferenceRead gui=bold
-      :hi LspReferenceText gui=bold
-      :hi LspReferenceWrite gui=bold
-      augroup lsp_document_highlight
-        autocmd!
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]]
-  end
+  --if client.resolved_capabilities.document_highlight then
+    -- require('lspconfig').util.nvim_multiline_command [[
+    --   :hi LspReferenceRead gui=bold
+    --   :hi LspReferenceText gui=bold
+    --   :hi LspReferenceWrite gui=bold
+    --   augroup lsp_document_highlight
+    --     autocmd!
+    --     autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+    --     autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+    --   augroup END
+   -- ]]
+  --end
 end
 
 -- Use a loop to conveniently both setup defined servers 
 -- and map buffer local keybindings when the language server attaches
-local servers = { "pyright", "rust_analyzer", "tsserver" ,'vimls','efm'}
+local servers = { "rust_analyzer", "tsserver" ,'vimls','efm', 'jedi_language_server', 'gopls','sumneko_lua'}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 EOF
+endif
 " autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
 autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
 autocmd FileType twitvim nnoremap <silent><buffer><expr> k line('.') =~ '\v^(1\|2\|3)$' ? 'G' : 'k'
@@ -1268,21 +1268,42 @@ endfunction
 nnoremap <F1> <cmd>call Highlight_dict()<CR>
 
 function! Get_diagnostics()
-lua <<EOF
-tbl = vim.lsp.diagnostic.get_all()
-for key, val in pairs(tbl) do
-for ke, va in pairs(val) do
-print(ke,va)
-for k,v in pairs(va.range.start) do
-	print(k,v)
-end
-end
-end
-EOF
+let tbl = luaeval('vim.lsp.diagnostic.get(0)')
+echo tbl
+" for key, val in pairs(tbl) do
+" print(val.range.start.line)
+" print(val.message)
+" end
+" EOF
 " let result = luaeval('vim.lsp.diagnostic.get_all()')
 " echo result
 endfunction
 
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    disable = { "c", "rust" },  -- list of language that will be disabled
+  },
+}
+EOF
 nnoremap  <Space>wc <cmd>lua vim.lsp.diagnostic.clear(0)<CR>
+command! VimShowHlItem echo synIDattr(synID(line("."), col("."), 1), "name")
+command! VimShowHlGroup echo synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+" hi link TSPunctSpecial Title
+hi link TSFunction Title
+hi link TSConstant Constant
+" hi link TSConstBuiltin Define
+" hi link TSFuncBuiltin Define
+" hi link TSConstBuiltin Define
+hi link TSConstructor Define
+hi link TSLavel Number
+hi link TSLabel Number
+hi link TSNamespace Number
+hi link TSOperator Number
+hi link TSKeyword Keyword
+hi link TSType Define
+hi link LspDiagnosticsUnderlineError Error
+hi link LspDiagnosticsUnderlineWarning Warning
 " vim:set foldmethod=marker:
 

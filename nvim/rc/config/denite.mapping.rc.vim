@@ -61,10 +61,10 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -winheight=5
     \ -start-filter
     \ command_history<CR>
-nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
     \ -no-empty
     \ grep<CR>
-nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
     \ -path=`expand('%:h')`
     \ -no-empty
     \ grep<CR>
@@ -96,10 +96,10 @@ nnoremap <silent> [denite]m :<C-u>Denite
     \ mark <CR>
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite
-    \ -buffer-name=relative
-    \ change<CR>
+    \ -no-empty
+    \ lsp/diagnostic<CR>
 ":jump
-nnoremap <silent> [denite]j :<C-u>Denite
+nnoremap <silent> [denite]d :<C-u>Denite
     \ -auto-action=highlight
     \ jump <CR>
 "resumeして開く
@@ -114,10 +114,10 @@ nnoremap <silent> [denite]o :<C-u>Denite
     \ -buffer-name=float
     \ outline<CR>
     " \ markdown<CR>
-nnoremap <silent> [denite]d :<C-u>Denite
+nnoremap <silent> [denite]j :<C-u>Denite
     \ dirmark<CR>
 "bookmark by "add"action
-nnoremap <silent> [denite]D :<C-u>Denite
+nnoremap <silent> [denite]J :<C-u>Denite
     \ -path=`expand('%:p:h:h')`
     \ -default_action=add
     \ dirmark/add<CR>
@@ -133,11 +133,6 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -refresh
     \ -buffer-name=quickfix
     \ quickfix<CR>
-nnoremap <silent> [denite]l :<C-u>Denite
-    \ -resume
-    \ -refresh
-    \ -buffer-name=location_list
-    \ location_list<CR>
 nnoremap <silent> ,n :<C-u>Denite
     \ -resume
     \ -cursor-pos=+1
