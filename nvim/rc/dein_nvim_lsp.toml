@@ -94,3 +94,10 @@ let g:lsp_settings_enable_suggestions = 1
 merged = 0
 repo = 'nvim-treesitter/nvim-treesitter'
 
+# [[plugins]]
+# lazy = '1'
+# on_source = ['deoplete.nvim']
+# depends = ['vim-lsp']
+# repo = 'lighttiger2505/deoplete-vim-lsp'
+# hook_source ='''
+# '''

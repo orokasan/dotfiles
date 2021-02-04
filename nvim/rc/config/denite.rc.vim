@@ -4,6 +4,8 @@ call denite#custom#option('_', {
     \ 'prompt': ' #',
     \ 'highlight_preview_line': 'Underlined',
     \ 'max_dynamic_update_candidates': 300000,
+    \ 'winwidth': &columns,
+    \ 'max_candidate_width': &columns,
     \ 'vertical_preview': v:true,
     \ 'source_names': 'short',
     \ 'statusline': v:false,
@@ -374,4 +376,5 @@ function! s:myDeniteReplace(context)
     call denite#custom#action('file', 'qfreplace', function('s:myDeniteReplace'))
 " call denite#custom#source('file/rec', 'matchers', ['matcher/migemo'])
 " call denite#custom#source('line', 'matchers', ['matcher/migemo'])
-    call denite#custom#source('file,file/rec,buffer,file/old', 'converters', ['devicons_denite_converter'])
+    " call denite#custom#source('file,file/rec,buffer,file/old', 'converters', ['devicons_denite_converter', 'truncate_abbr'])
+    " call denite#custom#source('_', 'converters', ['converter/truncate_abbr'])

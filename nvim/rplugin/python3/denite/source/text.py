@@ -45,7 +45,9 @@ class Source(Base):
                 'abbr': abbr,
                 'word': header['text'],
                 'action__path': self.vim.call('bufname', context['__bufnr']),
-                'action__line': header['lnum']
+                'action__line': header['lnum'],
+                'action__text': header['line'],
+                'action__col': 1
                 }
 
 
@@ -79,6 +81,7 @@ class Source(Base):
                 if limit_level and level > limit_level:
                     continue
                 headers.append({
+                    'line':x,
                     'level': level,
                     'text': text,
                     'lnum': i + 1,

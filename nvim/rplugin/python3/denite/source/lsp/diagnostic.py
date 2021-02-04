@@ -1,9 +1,9 @@
 from denite.base.source import Base
 import unicodedata
-from denite.util import debug, clear_cmdline
+from denite.util import debug, clear_cmdline, strwidth
 
 HIGHLIGHT_SYNTAX = [
-    {'name': 'lnum',     'link': 'LineNr',  're': r'\d\+\s*:\d\+'},
+    {'name': 'lnum',     'link': 'Comment',  're': r'\d\+\s*:\d\+\s'},
     {'name': 'error',     'link': 'Error',  're': r'\[error\]'},
     {'name': 'warning',     'link': 'Warning',  're': r'\[warning\]'},
     {'name': 'line',     'link': 'Comment',  're': r'|.*'},
@@ -55,7 +55,8 @@ class Source(Base):
                 'abbr': '{}:{} [{}] {} {} | {}'.format(str(lnum).ljust(3),str(col).ljust(3), mes, word, source, line),
                 'action__path': self.vim.call('bufname', context['__bufnr']),
                 'action__line': lnum,
-                'action__col': col
+                'action__col': r_col,
+                'action__text': line
                 })
         return candidates
 

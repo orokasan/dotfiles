@@ -30,6 +30,9 @@ nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
     \ file file:new<CR>
 nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
     \ -start-filter
+    \  file/rec file:new<CR>
+nnoremap <silent> [denite]S :<C-u>DeniteProjectDir
+    \ -start-filter
     \  file file:new<CR>
 ""ホームディレクトリ下のファイル一覧。
 "nnoremap <silent> [denite]t :<C-u>Denite
@@ -100,7 +103,7 @@ nnoremap <silent> [denite]k :<C-u>Denite
     \ lsp/diagnostic<CR>
 ":jump
 nnoremap <silent> [denite]d :<C-u>Denite
-    \ -auto-action=highlight
+    \ -auto-action=preview
     \ jump <CR>
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
