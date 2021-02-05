@@ -88,7 +88,7 @@ let g:lexima_map_escape = '<C-[>'
 "inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 "function! s:my_cr_function() abort "{{{
 "  return pumvisible ? "\<CR>": lexima#expand('<CR>', 'i')
-inoremap <expr> <CR> pumvisible() ? "\<CR>" : lexima#expand('<CR>', 'i')
+inoremap <silent><expr> <CR> pumvisible() ? "\<CR>" : lexima#expand('<LT>CR>', 'i')
 "endfunction "}}}
 inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
 function! s:my_bs_function() abort "{{{
@@ -280,29 +280,29 @@ nmap <Leader>xx <Plug>(GitGutterStageHunk)
 nmap <Leader>xu <Plug>(GitGutterUndoHunk)
 '''
 
-[[plugins]]
-repo = 'glacambre/firenvim'
-on_if = 'has("nvim")'
-# hook_post_update = 'call firenvim#install(0)'
-hook_add = '''
-"if exists('g:started_by_firenvim')
-"  set showtabline=0
-"  set laststatus=0
-  " call lightline#disable()
-"augroup Firenvim
-"    au BufEnter * call Set_Font(g:firenvim_font)
-"    au BufEnter *     colorscheme iceberg
-"    au BufEnter github.com_*.txt set filetype=markdown
-"  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
-"  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
-"  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
-"augroup END
-"endif
-"let g:firenvim_font = 'Cica'
-"function! Set_Font(font) abort
-"  execute 'set guifont=' . a:font . ':h10'
-"endfunction
-'''
+# [[plugins]]
+# repo = 'glacambre/firenvim'
+# on_if = 'has("nvim")'
+# # hook_post_update = 'call firenvim#install(0)'
+# hook_add = '''
+# "if exists('g:started_by_firenvim')
+# "  set showtabline=0
+# "  set laststatus=0
+#   " call lightline#disable()
+# "augroup Firenvim
+# "    au BufEnter * call Set_Font(g:firenvim_font)
+# "    au BufEnter *     colorscheme iceberg
+# "    au BufEnter github.com_*.txt set filetype=markdown
+# "  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
+# "  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
+# "  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
+# "augroup END
+# "endif
+# "let g:firenvim_font = 'Cica'
+# "function! Set_Font(font) abort
+# "  execute 'set guifont=' . a:font . ':h10'
+# "endfunction
+# '''
 
 [[plugins]]
 # colorscheme seagull
@@ -772,13 +772,29 @@ repo = 'nekowasabi/denite-migemo'
 merged = 0
 repo = 'neoclide/denite-git'
 
-# [[plugins]]
-# merged = 0
-# on_if = 'executable("gcc")'
-# repo = 'nvim-treesitter/nvim-treesitter'
+[[plugins]]
+merged = 0
+on_if = 'executable("gcc")'
+repo = 'nvim-treesitter/nvim-treesitter'
 
 [[plugins]]
 repo = 'Shougo/neomru.vim'
 hook_add = '''
 '''
+[[plugins]]
+ repo = 'bluz71/vim-nightfly-guicolors' 
+
+# [[plugins]]
+#  repo = 'sainnhe/sonokai'
+# [[plugins]]
+#  repo = 'Th3Whit3Wolf/onebuddy' 
+# [[plugins]]
+# repo = 'tjdevries/colorbuddy.vim'
+# [[plugins]]
+#  repo = 'lambdalisue/edita.vim' 
+# [[plugins]]
+# repo = 'ryanoasis/vim-devicons' 
+
+[[plugins]]
+repo = 'wfxr/minimap.vim'
 # vim:set foldmethod=marker:'

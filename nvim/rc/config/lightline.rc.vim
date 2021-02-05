@@ -13,13 +13,14 @@ let g:lightline = {
     \ },
     \ 'tabline' : {
         \ 'left': [['tab']],
-        \ 'right': [['filetype'], ['fileencoding', 'fileformat'] ]
+        \ 'right': [['filetype'], ['fileencoding', 'fileformat'], ['cd'] ]
     \ },
     \ 'component':{
         \ 'lineinfo':'%{LLruler()}%<'
     \},
     \ 'component_function': {
         \ 'percent' : 'LLpercent',
+        \ 'cd': 'LLcd',
         \ 'readonly':'LLReadonly',
         \ 'filetype':'LLfiletype',
         \ 'inactivefn':'LLInactiveFilename',
@@ -216,11 +217,11 @@ function! LLMyFilepath()
             let icon = ''
         endif
 
-        let l:filepath = expand('%:~')
+        let l:filepath = expand('%:~:.')
         let l:filename = expand('%:t')
         if s:threshold(0)
-            let l:fn =  strwidth(l:filepath) < s:threshold/2 ? l:filepath :
-            \ l:filename
+            " let l:fn =  strwidth(l:filepath) < s:threshold*2/3 ? l:filepath : l:filename
+            let l:fn =   l:filepath
         elseif s:threshold(2)
             let l:fn = l:filename
         else
@@ -405,4 +406,9 @@ function! s:denitesource()
     let l:path =  '[' . l:path . ']'
     let l:sources = substitute(l:sources, "\:\\[.*\\]", '','g')
     return l:sources . l:path
+endfunction
+
+function! LLcd() abort
+    let cwd = getcwd()
+    return fnamemodify(cwd, ':~')
 endfunction

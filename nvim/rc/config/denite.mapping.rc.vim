@@ -30,6 +30,9 @@ nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
     \ file file:new<CR>
 nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
     \ -start-filter
+    \  file/rec file:new<CR>
+nnoremap <silent> [denite]S :<C-u>DeniteProjectDir
+    \ -start-filter
     \  file file:new<CR>
 ""ホームディレクトリ下のファイル一覧。
 "nnoremap <silent> [denite]t :<C-u>Denite
@@ -61,10 +64,10 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -winheight=5
     \ -start-filter
     \ command_history<CR>
-nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
     \ -no-empty
     \ grep<CR>
-nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
     \ -path=`expand('%:h')`
     \ -no-empty
     \ grep<CR>
@@ -96,11 +99,11 @@ nnoremap <silent> [denite]m :<C-u>Denite
     \ mark <CR>
 ":change
 nnoremap <silent> [denite]k :<C-u>Denite
-    \ -buffer-name=relative
-    \ change<CR>
+    \ -no-empty
+    \ lsp/diagnostic<CR>
 ":jump
-nnoremap <silent> [denite]j :<C-u>Denite
-    \ -auto-action=highlight
+nnoremap <silent> [denite]d :<C-u>Denite
+    \ -auto-action=preview
     \ jump <CR>
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite
@@ -114,10 +117,10 @@ nnoremap <silent> [denite]o :<C-u>Denite
     \ -buffer-name=float
     \ outline<CR>
     " \ markdown<CR>
-nnoremap <silent> [denite]d :<C-u>Denite
+nnoremap <silent> [denite]j :<C-u>Denite
     \ dirmark<CR>
 "bookmark by "add"action
-nnoremap <silent> [denite]D :<C-u>Denite
+nnoremap <silent> [denite]J :<C-u>Denite
     \ -path=`expand('%:p:h:h')`
     \ -default_action=add
     \ dirmark/add<CR>
@@ -133,11 +136,6 @@ nnoremap <silent> [denite]c :<C-u>Denite
     \ -refresh
     \ -buffer-name=quickfix
     \ quickfix<CR>
-nnoremap <silent> [denite]l :<C-u>Denite
-    \ -resume
-    \ -refresh
-    \ -buffer-name=location_list
-    \ location_list<CR>
 nnoremap <silent> ,n :<C-u>Denite
     \ -resume
     \ -cursor-pos=+1
@@ -158,14 +156,20 @@ nnoremap <silent> [denite], :<C-u>Denite
 "     \ -buffer-name=combo
 "     \ combo<CR>
 nnoremap <silent> [denite]t :<C-u>Denite
+    \ -buffer-name=text`bufnr()`
+    \ -refresh
+    \ -resume
     \ text<CR>
 nnoremap <silent> [denite]T :<C-u>Denite
-    \ -buffer-name=default
+    \ -buffer-name=vtext`bufnr()`
+    \ -refresh
+    \ -resume
     \ -split=vertical
+    \ -direction=topleft
     \ -winwidth=60
     \ -post-action=remain
     \ -default-action=highlight
-    \ text<CR>
+    \ text:1<CR>
 nnoremap <silent> [denite]/ :<C-u>Denite
     \ -no-empty
     \ searchres<CR>

@@ -4,6 +4,8 @@ call denite#custom#option('_', {
     \ 'prompt': ' #',
     \ 'highlight_preview_line': 'Underlined',
     \ 'max_dynamic_update_candidates': 300000,
+    \ 'winwidth': &columns,
+    \ 'max_candidate_width': &columns,
     \ 'vertical_preview': v:true,
     \ 'source_names': 'short',
     \ 'statusline': v:false,
@@ -70,8 +72,7 @@ if executable('rg')
 	" \ ['pt', '--follow', '--nocolor', '--nogroup','--ignore=','AppData**',
 	" \  (has('win32') ? '-g:' : '-g='), ''])
     call denite#custom#var('file/rec', 'command',
-     \ ['rg', '--files', '--glob', '!.git"', '--color', 'never'])
-    call denite#custom#source('file/rec', 'converters', [])
+     \ ['rg', '--files', '--color', 'never'])
     " call denite#custom#source('file/rec', 'converters', ['converter/tail_path'])
     call denite#custom#var('file/rec', 'cache_threshold', 50000)
 endif
@@ -132,6 +133,11 @@ call denite#custom#var('menu', 'menus', s:menus)
 " call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file/old', 'converters', ['converter/tail_path'])
 " Define alias
+call denite#custom#alias('source', 'file/rec/txt', 'file/rec')
+    call denite#custom#var('file/rec/txt', 'command',
+     \ ['rg', '--files',
+     \'-g', '*.txt', '-g', '*.markdown', '-g', '*.md',
+     \ '--color', 'never'])
 call denite#custom#alias('source', 'file/rec/git', 'file/rec')
 call denite#custom#alias('source', 'grep/git', 'grep')
 call denite#custom#alias('source', 'grep/jv', 'grep')
@@ -177,7 +183,7 @@ endfunction
 function! s:denite_rec(context)
     let path = a:context['targets'][0]['action__path']
     let dir = denite#util#substitute_path_separator(path)
-    let dir = substitute(dir, ' ', '\\ ', 'g')
+    " let dir = substitute(dir, ' ', '\\ ', 'g')
     if isdirectory(dir)
         let fdir = fnamemodify(dir, ':p:h')
     else
@@ -187,6 +193,10 @@ function! s:denite_rec(context)
     execute('Denite
         \ -path=' . fdir .
         \ ' file/rec')
+	  " let sources_queue = a:context['sources_queue'] + [[
+	  "       \ {'name': 'file/rec', 'args': fdir},
+	  "       \ ]]
+	  " return {'sources_queue': sources_queue}
 endfunction
 
 call denite#custom#filter('matcher/clap',
@@ -195,6 +205,15 @@ call denite#custom#filter('matcher/clap',
 " call denite#custom#source('_', 'matchers', ['matcher/regexp'])
 " call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file_mru', 'matchers', ['matcher/regexp'])
+
+function! s:denite_debug(context)
+let path = a:context['targets'][0]['action__path']
+echo path
+endfunction
+call denite#custom#action(
+    \ 'file', 'mydebug',
+    \ function('s:denite_debug')
+    \ )
 
 function! s:denite_directory_rec(context)
     let path = a:context['targets'][0]['action__path']
@@ -263,6 +282,27 @@ function! g:Denite_set_cursor(context) abort
     " cursor(pos, 0)
 endfunction
 
+	function! s:candidate_file_rec(context)
+	  let path = a:context['targets'][0]['action__path']
+	  let narrow_dir = denite#util#path2directory(path)
+	  let sources_queue = a:context['sources_queue'] + [[
+	        \ {'name': 'file/rec', 'args': [narrow_dir]},
+	        \ ]]
+	  return {'sources_queue': sources_queue}
+	endfunction
+	call denite#custom#action('buffer,directory,file,openable,dirmark',
+	        \ 'candidate_file_rec', function('s:candidate_file_rec'))
+	function! s:candidate_file_rec_txt(context)
+	  let path = a:context['targets'][0]['action__path']
+	  let narrow_dir = denite#util#path2directory(path)
+	  let sources_queue = a:context['sources_queue'] + [[
+	        \ {'name': 'file/rec/txt', 'args': [narrow_dir]},
+	        \ ]]
+	  return {'sources_queue': sources_queue}
+	endfunction
+	call denite#custom#action('buffer,directory,file,openable,dirmark',
+	        \ 'file/rec/txt', function('s:candidate_file_rec_txt'))
+
 " this snippet is from Shougo/defx.nvim
 let s:is_windows = has('win32') || has('win64')
 let s:is_mac = !s:is_windows && !has('win32unix')
@@ -311,6 +351,7 @@ function! s:denite_execute(context)
   endif
 endfunction
 
+
 call denite#custom#action(
     \ 'directory,file,openable,dirmark',
     \ 'execute',
@@ -335,3 +376,5 @@ function! s:myDeniteReplace(context)
     call denite#custom#action('file', 'qfreplace', function('s:myDeniteReplace'))
 " call denite#custom#source('file/rec', 'matchers', ['matcher/migemo'])
 " call denite#custom#source('line', 'matchers', ['matcher/migemo'])
+    " call denite#custom#source('file,file/rec,buffer,file/old', 'converters', ['devicons_denite_converter', 'truncate_abbr'])
+    " call denite#custom#source('_', 'converters', ['converter/truncate_abbr'])
