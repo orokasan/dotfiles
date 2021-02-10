@@ -1006,7 +1006,7 @@ autocmd BufReadPre gina://* set noswapfile
 "    " call setqflist(result, ' ')
 "endfunction
 if has('nvim')
-source ~/dotfiles/nvim/lsp_settings.lua
+    lua require('dotfiles/nvim/lsp_settings')
 endif
 " autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
 autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>

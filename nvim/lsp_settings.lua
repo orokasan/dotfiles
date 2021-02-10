@@ -1,4 +1,3 @@
-lua << EOF
 local vim = vim
 local nvim_lsp = require('lspconfig')
 local on_attach = function(client, bufnr)
@@ -75,4 +74,3 @@ end
 nvim_lsp['efm'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver')}, on_attach = on_attach };
 nvim_lsp['sumneko_lua'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('sumneko-lua-language-server')}, on_attach = on_attach };
 
-EOF
