@@ -797,4 +797,8 @@ hook_add = '''
 
 [[plugins]]
 repo = 'wfxr/minimap.vim'
+# [[plugins]]
+# repo = 'RishabhRD/popfix'
+# [[plugins]]
+# repo = 'RishabhRD/nvim-lsputils'
 # vim:set foldmethod=marker:'
