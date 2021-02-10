@@ -1,9 +1,11 @@
+lua << EOF
 local vim = vim
-
 local nvim_lsp = require('lspconfig')
 local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+ buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
@@ -30,22 +32,19 @@ local on_attach = function(client, bufnr)
   end
 
   -- Set autocommands conditional on server_capabilities
-  --if client.resolved_capabilities.document_highlight then
-    -- require('lspconfig').util.nvim_multiline_command [[
-    --   :hi LspReferenceRead gui=bold
-    --   :hi LspReferenceText gui=bold
-    --   :hi LspReferenceWrite gui=bold
-    --   augroup lsp_document_highlight
-    --     autocmd!
-    --     autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-    --     autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-    --   augroup END
-   -- ]]
-  --end
+vim.api.nvim_exec([[
+      hi link LspReferenceRead Underlined
+      hi link LspReferenceText Underlined
+      hi link LspReferenceWrite Underlined
+      augroup lsp_document_highlight
+        autocmd!
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+      augroup END
+    ]], false)
 end
 
--- Use a loop to conveniently both setup defined servers
--- and map buffer local keybindings when the language server attaches
+
 local servers = {
     "rust_analyzer",
     "tsserver" ,
@@ -61,14 +60,19 @@ for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
       on_attach = on_attach
     };
+-- settings for language server binary installed by `vim-lsp-settings`
     local flsp = string.gsub(lsp, "_", "-")
     local exe = vim.fn['lsp_settings#exec_path'](flsp)
     if exe ~= '' then
     nvim_lsp[lsp].setup {
+        on_attach = on_attach,
         cmd = { exe }
     };
     end
 end
-nvim_lsp['efm'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver')} };
-nvim_lsp['sumneko_lua'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('sumneko-lua-language-server')} };
--- }
+--
+-- some server names are different with vim-lsp's from nvim-lspconfig's
+nvim_lsp['efm'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver')}, on_attach = on_attach };
+nvim_lsp['sumneko_lua'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('sumneko-lua-language-server')}, on_attach = on_attach };
+
+EOF
