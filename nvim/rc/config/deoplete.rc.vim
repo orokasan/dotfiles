@@ -60,14 +60,14 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_truncate_kind',
     \ ])
 " deoplete-lsp should not be lazy loaded
-if dein#is_sourced('deoplete-lsp')
-    let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex']
-    let ignore_source = ['around', 'look', 'member', 'buffer', 'syntax']
-    let config = {}
-    for ft in lsp_enabled_filetype
-        let config[ft] = ignore_source
-    endfor
-    call deoplete#custom#option({'ignore_sources': config})
-endif
+" if dein#is_sourced('deoplete-lsp')
+"     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex', '']
+"     let ignore_source = ['around', 'look', 'member', 'buffer', 'syntax']
+"     let config = {}
+"     for ft in lsp_enabled_filetype
+"         let config[ft] = ignore_source
+"     endfor
+"     call deoplete#custom#option({'ignore_sources': config})
+" endif
 
 call deoplete#enable()

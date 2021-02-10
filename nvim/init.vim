@@ -1104,12 +1104,17 @@ local on_attach = function(client, bufnr)
   --end
 end
 
+
 -- Use a loop to conveniently both setup defined servers 
 -- and map buffer local keybindings when the language server attaches
 local servers = { "rust_analyzer", "tsserver" ,'vimls','efm', 'jedi_language_server', 'gopls','sumneko_lua', 'jdtls'}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
+local rust_cmd = vim.fn.expand('~/') ..'/AppData/Local/vim-lsp-settings/servers/rust-analyzer/rust-analyzer.exe'
+require'lspconfig'.rust_analyzer.setup{
+    cmd = { rust_cmd };
+}
 EOF
 endif
 " autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
@@ -1305,5 +1310,6 @@ hi link TSKeyword Keyword
 hi link TSType Define
 hi link LspDiagnosticsUnderlineError Error
 hi link LspDiagnosticsUnderlineWarning Warning
+cabbrev <expr> gi (getcmdtype() ==# ":" && getcmdline() ==# "gi") ? "Gina" : "gi"
 " vim:set foldmethod=marker:
 
