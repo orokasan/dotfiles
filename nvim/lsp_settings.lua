@@ -73,4 +73,3 @@ end
 -- some server names are different with vim-lsp's from nvim-lspconfig's
 nvim_lsp['efm'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver')}, on_attach = on_attach };
 nvim_lsp['sumneko_lua'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('sumneko-lua-language-server')}, on_attach = on_attach };
-
