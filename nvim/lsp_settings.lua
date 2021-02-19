@@ -31,16 +31,16 @@ local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
   end
 
   -- Set autocommands conditional on server_capabilities
-vim.api.nvim_exec([[
-      hi link LspReferenceRead Underlined
-      hi link LspReferenceText Underlined
-      hi link LspReferenceWrite Underlined
-      augroup lsp_document_highlight
-        autocmd!
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]], false)
+-- vim.api.nvim_exec([[
+--       hi link LspReferenceRead Underlined
+--       hi link LspReferenceText Underlined
+--       hi link LspReferenceWrite Underlined
+--       augroup lsp_document_highlight
+--         autocmd!
+--         autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+--         autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+--       augroup END
+--     ]], false)
 end
 
 
@@ -49,10 +49,8 @@ local servers = {
     "tsserver" ,
     "pyright" ,
     'vimls',
-    'efm',
     'jedi_language_server',
     'gopls',
-    'sumneko_lua',
     'jdtls',
 }
 for _, lsp in ipairs(servers) do

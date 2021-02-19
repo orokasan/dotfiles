@@ -50,7 +50,7 @@ let g:lightline = {
 
 " workaround for nvim bug
 " https://github.com/neovim/neovim/issues/8796
-autocmd dein User LspDiagnosticsChanged if mode() is# 'n' | call lightline#update() | endif
+autocmd dein User LspDiagnosticsChanged if mode() is# 'n' | call VimLspCacheDiagnosticsCounts() | call lightline#update() | endif
 
 autocmd dein ColorScheme,VimEnter * call <SID>lightline_set_colorscheme()
 function! s:lightline_set_colorscheme() abort
@@ -133,7 +133,12 @@ function! s:threshold(n) abort
         \ a:n == 2 ? w > s/3 : w > s/4
 endfunction
 function! VimLspCacheDiagnosticsCounts()
+    let s:diagnostics_counts = ''
     let s:diagnostics_counts = exists('*lsp#get_buffer_diagnostics_counts') ? lsp#get_buffer_diagnostics_counts() : ''
+      if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+        let s:diagnostics_counts['error'] = luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
+        let s:diagnostics_counts['warning'] = luaeval("vim.lsp.diagnostic.get_count(0, [[Warning]])")
+      endif
 endfunction
 autocmd dein User lsp_diagnostics_updated call VimLspCacheDiagnosticsCounts() | call lightline#update()
 autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts()
@@ -146,10 +151,9 @@ if exists('*lsp#get_buffer_diagnostics_counts')
 " workaround
 " gopls is crashed by calling vim.lsp.buf.server_ready()
 else
-    if &filetype ==# 'go'
-        return ''
-    endif
-
+    " if &filetype ==# 'go'
+    "     return ''
+    " endif
     if luaeval('vim.lsp.buf.server_ready()')
         let e = luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
         return e ? '' . e : ''
