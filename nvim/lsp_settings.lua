@@ -35,14 +35,14 @@ local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 --       hi link LspReferenceRead Underlined
 --       hi link LspReferenceText Underlined
 --       hi link LspReferenceWrite Underlined
---       augroup lsp_document_highlight
---         autocmd!
---         autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
---         autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
---       augroup END
 --     ]], false)
 end
-
+      -- augroup lsp_document_highlight
+      --   autocmd!
+      --   autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+      --   autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+      -- augroup END
+-- some server names are different with vim-lsp's from nvim-lspconfig's
 
 local servers = {
     "rust_analyzer",
@@ -50,9 +50,9 @@ local servers = {
     "pyright" ,
     'vimls',
     'jedi_language_server',
-    'gopls',
-    'jdtls',
+    'gopls'
 }
+
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
       on_attach = on_attach
@@ -68,6 +68,9 @@ for _, lsp in ipairs(servers) do
     end
 end
 --
--- some server names are different with vim-lsp's from nvim-lspconfig's
 nvim_lsp['efm'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver')}, on_attach = on_attach };
 nvim_lsp['sumneko_lua'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('sumneko-lua-language-server')}, on_attach = on_attach };
+nvim_lsp['jdtls'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('eclipse-jdt-ls')}, on_attach = on_attach };
+-- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+--     vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
+-- )

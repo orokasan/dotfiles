@@ -84,7 +84,7 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
    call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    " call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -1203,5 +1203,6 @@ hi link LspDiagnosticsUnderlineError Error
 hi link LspDiagnosticsUnderlineWarning Warning
 cabbrev <expr> gi (getcmdtype() ==# ":" && getcmdline() ==# "gi") ? "Gina" : "gi"
 cabbrev <expr> gc (getcmdtype() ==# ":" && getcmdline() ==# "gc") ? "Gina! commit -am" : "gc"
+" let g:vimsyn_embed='lPr'
 " vim:set foldmethod=marker:
 

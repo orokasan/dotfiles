@@ -202,7 +202,7 @@ function! s:open_defx_if_directory()
     silent! execute "Defx `expand('%:p')` | bd " . expand('%:p')
   endif
 endfunction
-autocmd dein BufEnter * call s:open_defx_if_directory()
+"autocmd dein BufEnter * call s:open_defx_if_directory()
 '''
 [plugins.ftplugin]
 defx = '''
@@ -549,7 +549,7 @@ let s:keymap = {
       \ "\<CR>": 'win_land',
       \ }
 let g:choosewin_keymap = s:keymap
-let g:choosewin_label = 'HJKLADFG'
+let g:choosewin_label = 'ASDFGHJKL'
 let g:choosewin_blink_on_land = 1
 call s:set_choosewin_color()
 '''

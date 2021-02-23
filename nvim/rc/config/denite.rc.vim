@@ -50,6 +50,7 @@ call denite#custom#option('relative',{
 
 call denite#custom#kind('openable', 'default_action', 'switch')
 call denite#custom#kind('file', 'default_action', 'switch')
+call denite#custom#source('help', 'default_action', 'split')
 call denite#custom#kind('buffer', 'default_action', 'switch')
 call denite#custom#source('file/old', 'default_action', 'switch')
 call denite#custom#source('file/old', 'converters', ['converter/relative_abbr'])
@@ -155,6 +156,8 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ '.hg/', '.git/*', '.bzr/', '.svn/',
     \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
     \ 'tags', 'tags-*', 'junkfile/'])
+call denite#custom#alias('source', 'buffer/project', 'buffer')
+call denite#custom#source('buffer/project', 'matchers', ['matcher/fuzzy','matcher/project_files'])
 " call denite#custom#alias('filter', 'matcher/only_plaintxt', 'matcher/ignore_globs')
 " " call denite#custom#filter('matcher/only_plaintxt', 'ignore_globs',
 "     \ [ '.git/', '.ropeproject/', '__pycache__/',

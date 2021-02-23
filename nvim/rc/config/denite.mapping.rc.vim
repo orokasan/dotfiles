@@ -45,6 +45,9 @@ nnoremap <silent> [denite]S :<C-u>DeniteProjectDir
 "    \ -path=$HOME
 "    \ file file:new<CR>
 "バッファ一覧
+nnoremap <silent> [denite]B :<C-u>DeniteProjectDir
+    \ -buffer-name=default
+    \ buffer<CR>
 nnoremap <silent> [denite]b :<C-u>Denite
     \ -buffer-name=default
     \ buffer<CR>
