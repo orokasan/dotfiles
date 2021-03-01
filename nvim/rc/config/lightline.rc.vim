@@ -132,9 +132,9 @@ function! s:threshold(n) abort
         \ a:n == 1 ? w > s*2/3 :
         \ a:n == 2 ? w > s/3 : w > s/4
 endfunction
+let s:diagnostics_counts = {}
 function! VimLspCacheDiagnosticsCounts()
-    let s:diagnostics_counts = ''
-    let s:diagnostics_counts = exists('*lsp#get_buffer_diagnostics_counts') ? lsp#get_buffer_diagnostics_counts() : ''
+    " let s:diagnostics_counts = exists('*lsp#get_buffer_diagnostics_counts') ? lsp#get_buffer_diagnostics_counts() : ''
       if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
         let s:diagnostics_counts['error'] = luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
         let s:diagnostics_counts['warning'] = luaeval("vim.lsp.diagnostic.get_count(0, [[Warning]])")

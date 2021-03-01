@@ -801,4 +801,8 @@ repo = 'wfxr/minimap.vim'
 # repo = 'RishabhRD/popfix'
 # [[plugins]]
 # repo = 'RishabhRD/nvim-lsputils'
+[[plugins]]
+repo = 'syusui-s/vim-quickrun-neovim-terminal' 
+[[plugins]]
+repo = 'Yggdroot/indentLine'
 # vim:set foldmethod=marker:'

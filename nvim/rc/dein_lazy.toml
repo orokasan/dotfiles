@@ -762,18 +762,27 @@ let g:quickrun_config['python'] = {
   let g:quickrun_config['cpp'] = {'type': 'cpp/clang++zz'}
 " if has('nvim')
 "   " Use 'neovim_job' in Neovim
-"   let g:quickrun_config._.runner = 'neovim_job'
 " elseif exists('*ch_close_in')
 "   " Use 'job' in Vim which support job feature
 "   let g:quickrun_config._.runner = 'job'
 " endif
 let g:quickrun_config['tex'] = {
-            \   'command' : 'latexmk',
+            \   'command' : 'lualatex',
             \   'outputter' : 'error',
             \   'outputter/error/error' : 'quickfix',
             \   'cmdopt': '',
             \   'exec': ['%c %o %s']
             \ }
+let g:quickrun_config['markdown'] = {
+            \   'command' : 'pandoc',
+            \   'outputter' : 'error',
+            \   'outputter/error/error' : 'quickfix',
+            \   'cmdopt': '--pdf-engine=lualatex',
+            \   'exec': ['%c %o %s -o %s:p:r.pdf']
+            \ }
+let g:quickrun_config._ = {
+  \ 'runner': 'neovim_job',
+  \ }
 let g:quickrun_config['text'] = {
             \   'command' : 'npx',
             \   'outputter' : 'message',
@@ -944,7 +953,7 @@ let g:sonictemplate_vim_template_dir = '~/GoogleDrive/template/'
 repo =  'Shougo/deol.nvim'
 on_cmd = ['Deol']
 hook_add = '''
-nnoremap <Space>t <cmd> Deol -command=cmd.exe -split<CR>
+nnoremap <Space>t <cmd> Deol -command=cmd.exe -split -edit<CR>
 nnoremap <Space>T <cmd> Deol -command=wsl.exe -split<CR>
 let g:deol#prompt_pattern = '% \|%$'
 '''

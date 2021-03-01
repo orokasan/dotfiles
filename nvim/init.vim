@@ -1203,6 +1203,6 @@ hi link LspDiagnosticsUnderlineError Error
 hi link LspDiagnosticsUnderlineWarning Warning
 cabbrev <expr> gi (getcmdtype() ==# ":" && getcmdline() ==# "gi") ? "Gina" : "gi"
 cabbrev <expr> gc (getcmdtype() ==# ":" && getcmdline() ==# "gc") ? "Gina! commit -am" : "gc"
-" let g:vimsyn_embed='lPr'
+let g:vimsyn_embed='lPr'
 " vim:set foldmethod=marker:
 

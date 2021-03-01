@@ -50,7 +50,8 @@ local servers = {
     "pyright" ,
     'vimls',
     'jedi_language_server',
-    'gopls'
+    'gopls',
+    'texlab'
 }
 
 for _, lsp in ipairs(servers) do
