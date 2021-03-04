@@ -122,14 +122,14 @@ depends = ['lightline.vim']
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
 hook_add = '''
-autocmd dein ColorScheme iceberg highlight PmenuSel ctermbg=236 guibg=#3d425b
-autocmd dein ColorScheme iceberg highlight Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd dein ColorScheme iceberg highlight NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd dein ColorScheme iceberg highlight clear Search
-autocmd dein ColorScheme iceberg highlight link Search Underlined
-autocmd dein ColorScheme iceberg highlight link Conceal Title
-autocmd dein ColorScheme iceberg highlight Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
-autocmd dein ColorScheme iceberg highlight link WhiteSpace Comment
+autocmd dein ColorScheme iceberg highlight! PmenuSel ctermbg=236 guibg=#3d425b
+autocmd dein ColorScheme iceberg highlight! Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd dein ColorScheme iceberg highlight! NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+autocmd dein ColorScheme iceberg highlight! clear Search
+autocmd dein ColorScheme iceberg highlight! link Search Underlined
+autocmd dein ColorScheme iceberg highlight! link Conceal Title
+autocmd dein ColorScheme iceberg highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
+autocmd dein ColorScheme iceberg highlight! link WhiteSpace Comment
 " autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
 '''
 
@@ -456,7 +456,7 @@ nnoremap <silent> <Leader>gg :<C-u>Gina diff<CR>
 nnoremap <silent> <Leader>gs :<C-u>Gina df<CR>
 nnoremap <silent> <Leader>gD :<C-u>Gina changes origin/HEAD...<CR>
 nnoremap <silent> <Leader>gl :<C-u>Gina log<CR>
-nnoremap <silent> <Leader>gL :<C-u>Gina log %<CR>
+nnoremap <silent> <Leader>gL :<C-u>Gina log :<CR>
 nnoremap <silent> <Leader>gr :<C-u>Gina reflog<CR>
 nnoremap <silent> <Leader>gf :<C-u>Gina ls<CR>
 nnoremap <silent> <Leader>gp :<C-u>Gina!! add -p<CR>
@@ -791,7 +791,7 @@ hook_add = '''
 # [[plugins]]
 # repo = 'tjdevries/colorbuddy.vim'
 # [[plugins]]
-#  repo = 'lambdalisue/edita.vim' 
+#  repo = 'lambdalisue/edita.vim'
 # [[plugins]]
 # repo = 'ryanoasis/vim-devicons' 
 
@@ -805,4 +805,9 @@ repo = 'wfxr/minimap.vim'
 repo = 'syusui-s/vim-quickrun-neovim-terminal' 
 [[plugins]]
 repo = 'Yggdroot/indentLine'
+[[plugins]]
+repo = 'kassio/neoterm'
+[[plugins]]
+repo = 'thinca/vim-themis'
+
 # vim:set foldmethod=marker:'

@@ -33,14 +33,22 @@ syntax         match  gihyoUnderlineAlt '∨.\{-}∨'
 
 syntax         match   textUnderline    '　'
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
+syntax         match   gihyoSubTitle    '^◎[^◎]*$'
 " syntax         match   gihyoBullet '^・.\{-}$'
 syntax         match   gihyoComment '^☆.\{-}$'
-syntax         match  gihyoComment       '^★.\{-}$'
+" syntax         match  gihyoComment       '^★.\{-}$'
+syntax         match  gihyoHeader1       '^★[^★].\{-}$'
+syn region  gihyoBold    start='◇' end='◇'
 " syn region  gihyoBullet    start='^・' end='$'
+syn region  gihyoBullet    start='^●' end='$'
 syn region  gihyoComment    start='^☆' end='$'
+syn region  gihyoComment    start='＠＠' end='＠＠'
+syntax         match  gihyoComment       '^★★.\{-}$'
 syntax         region   gihyoTodo        start='^TODO' end='$'
 
 syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/ contains=ALL
+syntax         region  gihyoTable        start=/^▼表/    end=/$/ contains=ALL
+syntax         region  gihyoFigure        start=/^▼図/    end=/$/ contains=ALL
 " syntax         region  gihyoTable       start=/^▼表-----$/     end=/^\{-}-----\n/ contains=ALL
 " syntax         region  gihyoCode        start=/^▼コード-----$/ end=/^\{-}-----\n/ contains=ALL
 " syntax         region  gihyoCode        start=/\n▼リスト/      end=/\n.\{-}\n\n/ contains=ALL
@@ -62,6 +70,7 @@ highlight      link    gihyoList        Special
 highlight      link    gihyoRed Error
 highlight      link    gihyoUnderlineAlt Title
 highlight      link    gihyoTable       Special
+highlight      link    gihyoFigure       Special
 highlight      link    gihyoUnderline       Special
 highlight      link    gihyoBlock       Number
 highlight      link    gihyoItalic       String
@@ -82,6 +91,8 @@ function! s:gethighlight(hi, which) abort
     let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
     return bg
 endfunction
+syntax match gihyoZw '　' conceal cchar=□
+highlight link gihyoZw Comment
 call execute('hi textUnderline gui=underline guisp=' .. s:gethighlight('Comment', 'fg'))
 " syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
 " hi link txtDialog Constant

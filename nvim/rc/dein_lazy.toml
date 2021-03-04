@@ -732,6 +732,8 @@ xmap <Leader>q <Plug>(quickrun)
 let g:quickrun_config = {'_': {}}
 let g:quickrun_config = {
     \ "_" : {
+        \ 'outputter' : 'error',
+        \ 'outputter/error/error' : 'quickfix',
         \ "hook/close_unite_quickfix/enable_hook_loaded" : 1,
         \ "hook/unite_quickfix/enable_failure" : 1,
         \ "hook/close_quickfix/enable_exit" : 1,
@@ -953,9 +955,23 @@ let g:sonictemplate_vim_template_dir = '~/GoogleDrive/template/'
 repo =  'Shougo/deol.nvim'
 on_cmd = ['Deol']
 hook_add = '''
-nnoremap <Space>t <cmd> Deol -command=cmd.exe -split -edit<CR>
-nnoremap <Space>T <cmd> Deol -command=wsl.exe -split<CR>
+nnoremap <Space>t <cmd> Deol -command=cmd.exe -winheight=30 -split<CR>
+nnoremap <Space>T <cmd> Deol -command=wsl.exe -winheight=30 -split<CR>
+let g:deol#shell_history_path = expand('~/.cache/deol/history')
 let g:deol#prompt_pattern = '% \|%$'
+		let g:deol#custom_map = {
+			\ 'edit': 'e',
+			\ 'start_insert': 'i',
+			\ 'start_insert_first': 'I',
+			\ 'start_append': 'a',
+			\ 'start_append_last': 'A',
+			\ 'execute_line': '<CR>',
+			\ 'previous_prompt': '<C-p>',
+			\ 'next_prompt': '<C-n>',
+			\ 'paste_prompt': '<C-y>',
+			\ 'bg': '<C-z>',
+			\ 'quit': 'q',
+			\ }
 '''
 # [[plugins]]
 # repo = 'tpope/vim-fugitive'

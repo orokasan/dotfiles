@@ -908,8 +908,8 @@ endfunction
 
 " autocmd vimrc TabLeave * silent! unmap q
 nnoremap <silent><C-q> :tabclose<CR>
-noremap <ScrollWheelUp> <C-u>
-noremap <ScrollWheelDown> <C-d>
+" noremap <ScrollWheelUp> <C-u>
+" noremap <ScrollWheelDown> <C-d>
 " au vimrc BufEnter * set scroll=3
 nnoremap <MiddleMouse> :close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
@@ -1045,8 +1045,8 @@ vnoremap y ygv<ESC>
 " au vimrc TextYankPost * if !v:event.visual && v:event.operator == 'y' | call timer_start(0, 'Move_prev_pos') | endif
 " g/\W*\ze \/\//s/^\(\W*\) \/\zs\ze\//\=jautil#convert(submatch(1),'hiragana')
 set smartindent
-syntax match JISX0208Space "　" display containedin=ALL
-highlight link JISX0208Space Underlined
+" syntax match JISX0208Space "　" display containedin=ALL
+" highlight link JISX0208Space Underlined
 set conceallevel=2
 set concealcursor=n
 
@@ -1201,8 +1201,36 @@ hi link TSKeyword Keyword
 hi link TSType Define
 hi link LspDiagnosticsUnderlineError Error
 hi link LspDiagnosticsUnderlineWarning Warning
-cabbrev <expr> gi (getcmdtype() ==# ":" && getcmdline() ==# "gi") ? "Gina" : "gi"
-cabbrev <expr> gc (getcmdtype() ==# ":" && getcmdline() ==# "gc") ? "Gina! commit -am" : "gc"
-let g:vimsyn_embed='lPr'
-" vim:set foldmethod=marker:
 
+" abbrev の自動生成を行う
+" ref:https://zenn.dev/monaqa/articles/2020-12-22-vim-abbrev
+function! s:make_abbrev_rule(rules)
+  let keys = uniq(sort(map(copy(a:rules), "v:val['from']")))
+  for key in keys
+    let rules_with_key = filter(copy(a:rules), "v:val['from'] ==# '" .. key .. "'")
+    let dict = {}
+    for val in rules_with_key
+      if has_key(val, 'prepose')
+        let dict[val['prepose'] .. ' ' .. key] = (val['to'])
+      else
+        let dict[key] = val['to']
+      endif
+    endfor
+    exec 'cnoreabbrev <expr> ' .. key .. ' '
+    \ .. '(getcmdtype() !=# ":")? "' .. key .. '" : '
+    \ .. 'get(' .. string(dict) .. ', getcmdline(), "' .. key .. '")'
+  endfor
+endfunction
+call s:make_abbrev_rule([
+\   {'from': 'g', 'to': 'Gina'},
+\   {'from': 'gc', 'to': 'Gina! commit -am'},
+\   {'from': 'gf', 'to': 'Gina! commit --fixup HEAD'},
+\   {'from': 'gp', 'to': 'Gina push'},
+\   {'prepose': 'Gina commit', 'from': 'a', 'to': '--amend'},
+\ ])
+
+" cabbrev <expr> gi (getcmdtype() ==# ":" && getcmdline() ==# "gi") ? "Gina" : "gi"
+" cabbrev <expr> gc (getcmdtype() ==# ":" && getcmdline() ==# "gc") ? "Gina! commit -am" : "gc"
+let g:vimsyn_embed='lPr'
+tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+" vim:set foldmethod=marker:
