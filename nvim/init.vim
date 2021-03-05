@@ -1233,4 +1233,20 @@ call s:make_abbrev_rule([
 " cabbrev <expr> gc (getcmdtype() ==# ":" && getcmdline() ==# "gc") ? "Gina! commit -am" : "gc"
 let g:vimsyn_embed='lPr'
 tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+
+function! NumCheckZen()
+g/\v(１|２|３|４|５|６|７|８|９|０)/
+endfunction
+function! NumZentohan() abort
+%s/１/1/eg
+%s/２/2/eg
+%s/３/3/eg
+%s/４/4/eg
+%s/５/5/eg
+%s/６/6/eg
+%s/７/7/eg
+%s/８/8/eg
+%s/９/9/eg
+%s/０/0/eg
+endfunction
 " vim:set foldmethod=marker:

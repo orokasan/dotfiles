@@ -75,6 +75,7 @@ highlight      link    gihyoUnderline       Special
 highlight      link    gihyoBlock       Number
 highlight      link    gihyoItalic       String
 highlight      link    gihyoCode        Statement
+highlight       link gihyoBold Statement
 highlight      link    gihyoCommand     PreProc
 highlight      link    gihyoComment     Comment
 highlight      link    gihyoBullet      Identifier

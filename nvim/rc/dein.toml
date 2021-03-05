@@ -571,12 +571,7 @@ call gina#custom#mapping#nmap(
 call gina#custom#action#alias(
       \ '/\%(blame\|log\|reflog\)',
       \ 'changes',
-      \ 'topleft changes:of:preview',
-      \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'changes',
-      \ 'changes:of:preview',
+      \ 'changes:of:split',
       \)
 call gina#custom#mapping#nmap(
       \ '/\%(blame\|log\|reflog\)',
@@ -645,7 +640,7 @@ let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}
 let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
-let g:sandwich#recipes += [{'buns' : ['▽', '▽'], 'nesting':1, 'input':['S']}]
+let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['S']}]
 call operator#sandwich#set('all', 'all', 'highlight', 2)
 nmap 'dd vab'd
 nmap 'rr vab'r
