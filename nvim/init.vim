@@ -120,7 +120,7 @@ set modelines=5
 set termguicolors
 " set lazyredraw
 set t_Co=256
-set synmaxcol=512
+set synmaxcol=1500
 set belloff=all
 set fillchars+=vert:\ ,fold:\ ,diff:\ 
 set hidden          " be able to open files when editing other files
@@ -134,7 +134,21 @@ set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
 set pumheight=12 " default
-set diffopt=internal,context:3,filler,algorithm:histogram,indent-heuristic,vertical
+set diffopt=internal,context:3,algorithm:histogram,filler,indent-heuristic,vertical,followwrap
+" set diffexpr=MyDiff()
+" function! MyDiff() abort
+"    let opt = ""
+"    " if &diffopt =~ "icase"
+"    "   let opt = opt . "-i "
+"    " endif
+"    " if &diffopt =~ "iwhite"
+"    "   let opt = opt . "-b "
+"    " endif
+"    " silent execute "!docdiff --manued " . opt . v:fname_in . " " . v:fname_new .
+"     \  " > " . v:fname_out
+"    silent execute "!git diff --word-diff "  v:fname_in . " " . v:fname_new .
+"     \  " > " . v:fname_out
+"  endfunction
 "}}}
 
 " Editing {{{
@@ -1249,4 +1263,6 @@ function! NumZentohan() abort
 %s/９/9/eg
 %s/０/0/eg
 endfunction
+set packpath=
+noremap J $jF　"_xkgJ
 " vim:set foldmethod=marker:
