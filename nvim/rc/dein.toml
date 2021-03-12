@@ -800,6 +800,9 @@ repo = 'wfxr/minimap.vim'
 repo = 'syusui-s/vim-quickrun-neovim-terminal' 
 [[plugins]]
 repo = 'Yggdroot/indentLine'
+hook_add = '''
+let g:indentLine_fileTypeExclude = ['defx']
+'''
 [[plugins]]
 repo = 'kassio/neoterm'
 [[plugins]]

@@ -494,6 +494,7 @@ endfunction
 " escape 'q'
 " escape 'gq'
 nnoremap <silent> \ :cd %:h<Bar>echo 'current directory is changed to ' . getcwd()<CR>
+nnoremap <silent> \| :cd ..<Bar>echo 'current directory is changed to ' . getcwd()<CR>
 " nnoremap gQ gq
 autocmd FileType help nnoremap <buffer> q <C-w>c
 " don't close window when closing buffer
@@ -908,7 +909,7 @@ if exists('g:gonvim_running')
 endif
 
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
-set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
+set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap
 autocmd FileType text syntax sync minlines=50
 autocmd FileType markdown syntax sync minlines=50
 " autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
@@ -1264,5 +1265,5 @@ function! NumZentohan() abort
 %s/０/0/eg
 endfunction
 set packpath=
-noremap J $jF　"_xkgJ
+nnoremap J $jF　"_xkgJ
 " vim:set foldmethod=marker:

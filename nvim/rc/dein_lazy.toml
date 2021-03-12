@@ -134,7 +134,12 @@ hook_add = '''
 nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
 nnoremap <silent> <Plug>(defx) :<C-u>Defx -buffer-name=`'defx' . tabpagenr()` -resume<CR>
-nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx  `expand('%:p:h')` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
+nnoremap <silent> <Plug>(defxbufferdir) :<C-u>Defx  `getcwd()` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
+nnoremap <space>E <cmd>call <SID>defx_auto_open()<CR>
+function! s:defx_auto_open() abort
+autocmd BufNewFile,BufRead,DirChanged * if filereadable(expand('%')) | execute("Defx `getcwd()` -no-focus -resume -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`") | endif
+Defx `getcwd()` -no-focus -resume -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`
+endfunction
 '''
 hook_source = '''
 let s:defx_ignore_files =
@@ -250,8 +255,6 @@ nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
 nnoremap <silent><buffer><expr> i defx#do_action('toggle_select') . 'j'
 xnoremap <silent><buffer><expr> i defx#do_action('toggle_select_visual')
-nnoremap <silent><buffer><expr> e defx#async_action('toggle_select')
-xnoremap <silent><buffer><expr> e defx#async_action('toggle_select_visual')
 nnoremap <silent><buffer><expr> I defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> * defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
@@ -259,11 +262,15 @@ nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
 nnoremap <silent><buffer><expr><nowait> w line('.') == 1 ? 'G' : 'k'
 nnoremap <silent><buffer><expr><nowait> s line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr><nowait> <C-g> defx#do_action('print')
-nnoremap <silent><buffer><expr> \ defx#do_action('change_vim_cwd','print')
-"nnoremap <silent><buffer><expr> ss defx#do_action('call','Defx_to_denite_rec')
-"nnoremap <silent><buffer><expr> sf defx#do_action('call','Defx_to_denite_file')
-"nnoremap <silent><buffer><expr> S defx#do_action('drop', 'split')
-"nnoremap <silent><buffer> sa :split<CR>:Defx -new -split=no<CR>
+nnoremap <silent><buffer><expr> \ defx#do_action('multi',['change_vim_cwd','print'])
+nnoremap <silent><buffer> <C-j> j:call cursor(search('\v(\|)'), 1)<CR>
+nnoremap <silent><buffer> <C-k> :call cursor(search('\v(\|)', 'b'), 1)<CR>
+" nnoremap <silent><buffer><expr> <C-K> defx#get_candidate().level > 0 ? defx#get_candidate().is_directory ? defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':p:h:h')) : defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':p:h')) : 'k'
+nnoremap <silent><buffer><expr> b defx#get_candidate().level > 0 ? defx#get_candidate().is_directory ? defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':p:h:h')) : defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':p:h')) : 'k'
+nnoremap <silent><buffer><expr> e defx#do_action('call','Defx_to_denite_rec')
+nnoremap <silent><buffer><expr> <space>e defx#do_action('call','Defx_to_denite_file')
+" nnoremap <silent><buffer><expr> S defx#do_action('drop', 'split')
+nnoremap <silent><buffer> sa :split<CR>:Defx -new -split=no<CR>
 function! s:defx_is_plaintxt()
     let file = defx#get_candidate()['action__path']
     let extension = fnamemodify(file, ':e')
@@ -411,16 +418,6 @@ hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 repo =  'Shougo/neco-vim'
 on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
-
-[[plugins]]
-repo =  'nathanaelkane/vim-indent-guides'
-on_cmd = 'IndentGuideToggle'
-hook_add = '''
-nnoremap <silent><Leader>ig :IndentGuidesToggle<CR>
-'''
-hook_source ='''
-let g:indent_guides_exclude_filetypes = ['help', 'defx']
-'''
 
 [[plugins]]
 repo = 'glidenote/memolist.vim'
