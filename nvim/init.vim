@@ -134,7 +134,6 @@ set helpheight=15 "and help.
 set ttyfast
 " max candidate of completion menu
 set pumheight=12 " default
-set diffopt=internal,context:3,algorithm:histogram,filler,indent-heuristic,vertical,followwrap
 " set diffexpr=MyDiff()
 " function! MyDiff() abort
 "    let opt = ""
@@ -909,7 +908,7 @@ if exists('g:gonvim_running')
 endif
 
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
-set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap
+set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
 autocmd FileType text syntax sync minlines=50
 autocmd FileType markdown syntax sync minlines=50
 " autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')

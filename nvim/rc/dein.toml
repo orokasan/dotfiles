@@ -797,7 +797,7 @@ repo = 'wfxr/minimap.vim'
 # [[plugins]]
 # repo = 'RishabhRD/nvim-lsputils'
 [[plugins]]
-repo = 'syusui-s/vim-quickrun-neovim-terminal' 
+repo = 'syusui-s/vim-quickrun-neovim-terminal'
 [[plugins]]
 repo = 'Yggdroot/indentLine'
 hook_add = '''
