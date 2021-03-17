@@ -47,7 +47,7 @@ end
 local servers = {
     "rust_analyzer",
     "tsserver" ,
-    "pyright" ,
+    -- "pyright" ,
     'vimls',
     'jedi_language_server',
     'gopls',

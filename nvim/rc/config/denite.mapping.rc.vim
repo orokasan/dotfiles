@@ -106,7 +106,6 @@ nnoremap <silent> [denite]k :<C-u>Denite
     \ lsp/diagnostic<CR>
 ":jump
 nnoremap <silent> [denite]d :<C-u>Denite
-    \ -auto-action=preview
     \ jump <CR>
 "resumeして開く
 nnoremap <silent> [denite]r :<C-u>Denite

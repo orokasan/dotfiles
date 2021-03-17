@@ -114,8 +114,8 @@ inoremap z; ;
 inoremap <silent><buffer><expr> <C-a> denite#do_map('choose_action')
 imap <silent><buffer> <C-o> <Plug>(denite_filter_update)
 imap <silent><buffer> <ESC> <Plug>(denite_filter_update)
-imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)q
-nmap <silent><buffer> q <Plug>(denite_filter_quit)q
+imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)
+nmap <silent><buffer> q <Plug>(denite_filter_quit)
 inoremap <silent><buffer><expr> <C-j>
     \ denite#increment_parent_cursor(1)
 inoremap <silent><buffer><expr> <C-k>
