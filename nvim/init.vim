@@ -908,7 +908,7 @@ if exists('g:gonvim_running')
 endif
 
 nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
-set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff
+set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap
 autocmd FileType text syntax sync minlines=50
 autocmd FileType markdown syntax sync minlines=50
 " autocmd vimrc DiffUpdated * call timer_start(0, 'Vimdiff_config')
@@ -1247,7 +1247,7 @@ call s:make_abbrev_rule([
 " cabbrev <expr> gc (getcmdtype() ==# ":" && getcmdline() ==# "gc") ? "Gina! commit -am" : "gc"
 let g:vimsyn_embed='lPr'
 tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
-
+" hi dcDIffErase cterm=bold,underline,nocombine ctermfg=159 ctermbg=23 gui=bold,underline,nocombine guifg=#b3c3cc guibg=#384851 guisp=#e27878
 function! NumCheckZen()
 g/\v(１|２|３|４|５|６|７|８|９|０)/
 endfunction
