@@ -124,7 +124,7 @@ nmap <Leader>c7 <Plug>lightline#bufferline#delete(7)
 nmap <Leader>c8 <Plug>lightline#bufferline#delete(8)
 nmap <Leader>c9 <Plug>lightline#bufferline#delete(9)
 nmap <Leader>c0 <Plug>lightline#bufferline#delete(10)
-let s:threshold = 120
+let s:threshold = 130
 function! s:threshold(n) abort
     let s = s:threshold
     let w = winwidth(0)
@@ -273,9 +273,10 @@ endfunction
 
 function! LLCharcount()
     if !s:ignore_window()
-        let abbr = s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
-            \ s:threshold(1) ? '' . s:llcharcount : ''
-        return abbr
+        " let abbr = s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
+        "     \ s:threshold(1) ? '' . s:llcharcount : ''
+        " return abbr
+        return '' . printf('%3S', strchars(getline('.'))) . '|' . s:llcharallcount
     else
         return ''
     endif
@@ -284,7 +285,7 @@ endfunction
 " lightlineに渡す変数の設定
 augroup CharCounter
     autocmd!
-    autocmd BufNew,BufEnter,TextChanged,CursorMoved,CursorMovedI * call <SID>llvarCharCount()
+    " autocmd BufNew,BufEnter,TextChanged,CursorMoved,CursorMovedI * call <SID>llvarCharCount()
     autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>llvarCharAllCount()
 augroup END
 
@@ -296,9 +297,7 @@ function! s:llvarCharAllCount()
     for l in range(0, line('$'))
         let l:count += strchars(getline(l))
     endfor
-    let s:llcharallcount = l:count <10 ? '   ' . l:count :
-        \ l:count <100 ? '  ' . l:count :
-        \ l:count <1000 ? ' ' . l:count : l:count
+    let s:llcharallcount = printf('%4S', l:count)
 endfunction
 
 function! s:llvarCharCount()
@@ -325,7 +324,7 @@ endfunction
 
 call get(s:, 'llgitbranch', '')
 function! LLgit() abort
-    if s:ignore_window() 
+    if s:ignore_window()
         return ''
     else
         return s:threshold(1) ? ''. s:llgitbranch :
@@ -336,6 +335,7 @@ function! LLgit() abort
 endfunction
 
 "重いのでキャッシュする
+"本当は重くないはず…
 autocmd dein BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
 autocmd dein SourcePost $MYVIMRC call <SID>llgitcache()
 function! s:llgitcache() abort

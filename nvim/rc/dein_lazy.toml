@@ -654,8 +654,8 @@ xmap <Leader>o <Plug>(openbrowser-smart-search)
 '''
 
 [[plugins]]
-repo = 'orokasan/clever-f.vim'
-# repo = 'rhysd/clever-f.vim'
+# repo = 'orokasan/clever-f.vim'
+repo = 'rhysd/clever-f.vim'
 on_map = { nxo = '<Plug>(clever-f' }
 hook_add = '''
 "mapping for lazy load
