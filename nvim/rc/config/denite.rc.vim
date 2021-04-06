@@ -50,13 +50,13 @@ call denite#custom#option('relative',{
 
 call denite#custom#kind('openable', 'default_action', 'switch')
 call denite#custom#kind('file', 'default_action', 'switch')
-call denite#custom#source('help', 'default_action', 'split')
+call denite#custom#source('help', 'default_action', 'default')
 call denite#custom#kind('buffer', 'default_action', 'switch')
 call denite#custom#source('file/old', 'default_action', 'switch')
 call denite#custom#source('file/old', 'converters', ['converter/relative_abbr'])
 " call denite#custom#source('file', 'converters', ['converter/relative_abbr'])
 call denite#custom#var('buffer', 'date_format', '%Y/%m/%d %H:%M:%S')
-call denite#custom#filter('matcher/migemo', 'dict_path', 'C:\tools\cmigemo\dict\utf-8\migemo-dict')
+call denite#custom#filter('matcher/migemo', 'dict_path', g:migemodict)
 " call denite#custom#source('_', 'matchers', ['matcher/migemo'])
 ""need rg for grep/file-rec
 " call denite#custom#source('grep', 'args', ['', '', '!'])
@@ -158,7 +158,11 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ 'tags', 'tags-*', 'junkfile/'])
 call denite#custom#alias('source', 'buffer/project', 'buffer')
 call denite#custom#source('buffer/project', 'matchers', ['matcher/fuzzy','matcher/project_files'])
-" call denite#custom#alias('filter', 'matcher/only_plaintxt', 'matcher/ignore_globs')
+" call denite#custom#alias('filter', 'matcher/ignore_for_oldfiles', 'matcher/ignore_globs')
+call denite#custom#filter('matcher/only_plaintxt', 'ignore_globs',
+    \ [ 'doc/*.txt', '.cache/junkfile'
+    \])
+call denite#custom#alias('filter', 'matcher/only_plaintxt', 'matcher/ignore_globs')
 " " call denite#custom#filter('matcher/only_plaintxt', 'ignore_globs',
 "     \ [ '.git/', '.ropeproject/', '__pycache__/',
 "     \ 'venv/', 'images/','img/', 'fonts/',

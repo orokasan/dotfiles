@@ -213,12 +213,10 @@ function! s:cmdwin_settings() abort
     silent g/^wq\?a\?!\?$/d
     " move to nice position
     " CmdwinEnter seems not to fire below commands
-    setlocal signcolumn=no            
-    setlocal scrolloff=0              
-    nnoremap <buffer><silent>q :close<CR>     
-    silent call feedkeys('G', 'n')
-    silent call feedkeys('$', 'n')
-    silent call feedkeys('z-', 'n')
+    setlocal signcolumn=no
+    setlocal scrolloff=0
+    nnoremap <buffer><silent>q :close<CR>
+    norm $
 endfunction
 
 " open .docx as .zip
@@ -341,8 +339,6 @@ inoremap jk <esc>
 command! -nargs=? Otempfile :edit `=tempname()` | setf <args>
 " open location list
 nnoremap <Leader>f :<C-u>lopen<CR>
-" open cmdwin
-nnoremap <C-y> q:"_dd
 autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR>
 " open vimrc quickly
 nnoremap <silent> <leader>v :e $MYVIMRC<CR>
@@ -1264,43 +1260,42 @@ function! NumZentohan() abort
 %s/０/0/eg
 endfunction
 set packpath=
-nnoremap J $jF　"_xkgJ
 " ++once supported in Nvim 0.4+ and Vim 8.1+
 
-function! s:wilder_init() abort
-call wilder#enable_cmdline_enter()
-set wildcharm=<Tab>
-cmap <expr> <Tab> wilder#in_context() ? wilder#next() : "\<Tab>"
-cmap <expr> <S-Tab> wilder#in_context() ? wilder#previous() : "\<S-Tab>"
-cmap <expr> <C-n> wilder#in_context() ? wilder#next() : "\<Down>"
-cmap <expr> <C-p> wilder#in_context() ? wilder#previous() : "\<Up>"
+" function! s:wilder_init() abort
+" call wilder#enable_cmdline_enter()
+" set wildcharm=<Tab>
+" cmap <expr> <Tab> wilder#in_context() ? wilder#next() : "\<Tab>"
+" cmap <expr> <S-Tab> wilder#in_context() ? wilder#previous() : "\<S-Tab>"
+" cmap <expr> <C-n> wilder#in_context() ? wilder#next() : "\<Down>"
+" cmap <expr> <C-p> wilder#in_context() ? wilder#previous() : "\<Up>"
 
-" only / and ? are enabled by default
-call wilder#set_option('modes', [ ':'])
-call wilder#set_option('renderer', wilder#popupmenu_renderer({
-     \ 'highlighter': wilder#basic_highlighter(),
-     \ 'highlights': {'accent': 'Title', 'selected_accent': 'Title'},
-     \ 'right': [],
-     \ 'max_height': 12
-     \ }))
-call wilder#set_option('pipeline', [
-     \   wilder#branch(
-     \     [
-     \       wilder#check({_, x -> empty(x)}),
-     \       wilder#history(100),
-     \     ],
-     \     wilder#cmdline_pipeline({
-     \       'language': 'python',
-     \       'fuzzy': 1,
-     \     }),
-     \     wilder#python_search_pipeline({
-     \       'fuzzy': 1,
-     \     }),
-     \   wilder#search_pipeline(),
-     \   ),
-     \ ])
-endfunction
-autocmd CmdlineEnter * ++once call s:wilder_init()
+" " only / and ? are enabled by default
+" call wilder#set_option('modes', [ ':'])
+" call wilder#set_option('renderer', wilder#popupmenu_renderer({
+"      \ 'highlighter': wilder#basic_highlighter(),
+"      \ 'highlights': {'accent': 'Title', 'selected_accent': 'Title'},
+"      \ 'right': [],
+"      \ 'max_height': 12
+"      \ }))
+" call wilder#set_option('pipeline', [
+"      \   wilder#branch(
+"      \     [
+"      \       wilder#check({_, x -> empty(x)}),
+"      \       wilder#history(100),
+"      \     ],
+"      \     wilder#cmdline_pipeline({
+"      \       'language': 'python',
+"      \       'fuzzy': 1,
+"      \     }),
+"      \     wilder#python_search_pipeline({
+"      \       'fuzzy': 1,
+"      \     }),
+"      \   wilder#search_pipeline(),
+"      \   ),
+"      \ ])
+" endfunction
+" autocmd CmdlineEnter * ++once call s:wilder_init()
 
 " lua <<EOF
 " require('chowcho').setup {
@@ -1308,14 +1303,18 @@ autocmd CmdlineEnter * ++once call s:wilder_init()
 " }
 " EOF
 set indentexpr=
-let g:neoscroll_time_step_move_cursor=3
-let g:neoscroll_time_step_no_move_cursor=6
-let g:neoscroll_no_mappings = 1
-    nnoremap <silent> <C-u> :lua require('neoscroll').scroll(-vim.wo.scroll, true)<CR>
-    nnoremap <silent> <C-d> :lua require('neoscroll').scroll(vim.wo.scroll, true)<CR>
-    xnoremap <silent> <C-u> <cmd>lua require('neoscroll').scroll(-vim.wo.scroll, true)<CR>
-    xnoremap <silent> <C-d> <cmd>lua require('neoscroll').scroll(vim.wo.scroll, true)<CR>
-    nnoremap <silent> <C-b> :lua require('neoscroll').scroll(-vim.api.nvim_win_get_height(0), true)<CR>
-    nnoremap <silent> <C-f> :lua require('neoscroll').scroll(vim.api.nvim_win_get_height(0), true)<CR>
-    xnoremap <silent> <C-b> <cmd>lua require('neoscroll').scroll(-vim.api.nvim_win_get_height(0), true)<CR>
+" let g:neoscroll_time_step_move_cursor=3
+" let g:neoscroll_time_step_no_move_cursor=6
+" let g:neoscroll_no_mappings = 1
+"     nnoremap <silent> <C-u> :lua require('neoscroll').scroll(-vim.wo.scroll, true)<CR>
+"     nnoremap <silent> <C-d> :lua require('neoscroll').scroll(vim.wo.scroll, true)<CR>
+"     xnoremap <silent> <C-u> <cmd>lua require('neoscroll').scroll(-vim.wo.scroll, true)<CR>
+"     xnoremap <silent> <C-d> <cmd>lua require('neoscroll').scroll(vim.wo.scroll, true)<CR>
+"     nnoremap <silent> <C-b> :lua require('neoscroll').scroll(-vim.api.nvim_win_get_height(0), true)<CR>
+"     nnoremap <silent> <C-f> :lua require('neoscroll').scroll(vim.api.nvim_win_get_height(0), true)<CR>
+"     xnoremap <silent> <C-b> <cmd>lua require('neoscroll').scroll(-vim.api.nvim_win_get_height(0), true)<CR>
+" let g:neoscroll_cursor_scroll = 1
+if has('win32')
+let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
+endif
 " vim:set foldmethod=marker:

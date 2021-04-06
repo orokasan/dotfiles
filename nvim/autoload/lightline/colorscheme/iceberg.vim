@@ -33,7 +33,7 @@ if exists('g:lightline')
   let s:p.normal.middle   = [ [ s:green, s:normal_bg ] ]
 
 
-  let s:p.inactive.left   = [ [ s:normal_fg, s:normal_bg ], [ s:normal_fg, s:normal_bg ] ]
+  let s:p.inactive.left   = [ [ s:grey, s:normal_bg ], [ s:normal_fg, s:normal_bg ] ]
   let s:p.inactive.right  = [ [ s:normal_fg, s:normal_bg ], [ s:normal_fg, s:normal_bg ] ]
   let s:p.inactive.middle = [ [ s:normal_fg, s:normal_bg ] ]
 

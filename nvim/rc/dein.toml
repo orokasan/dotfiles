@@ -22,8 +22,10 @@ hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 # on_if = '!has("kaoriya")'
 # repo = 'vim-jp/vimdoc-ja'
 
-[[plugins]]
-repo = 'fuenor/JpFormat.vim'
+# [[plugins]]
+# repo = 'fuenor/JpFormat.vim'
+# hook_add = '''
+# '''
 
 [[plugins]]
 on_if = '!has("kaoriya")'
@@ -280,29 +282,29 @@ nmap <Leader>xx <Plug>(GitGutterStageHunk)
 nmap <Leader>xu <Plug>(GitGutterUndoHunk)
 '''
 
-# [[plugins]]
-# repo = 'glacambre/firenvim'
+[[plugins]]
+repo = 'glacambre/firenvim'
 # on_if = 'has("nvim")'
-# # hook_post_update = 'call firenvim#install(0)'
-# hook_add = '''
-# "if exists('g:started_by_firenvim')
-# "  set showtabline=0
-# "  set laststatus=0
-#   " call lightline#disable()
-# "augroup Firenvim
-# "    au BufEnter * call Set_Font(g:firenvim_font)
-# "    au BufEnter *     colorscheme iceberg
-# "    au BufEnter github.com_*.txt set filetype=markdown
-# "  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
-# "  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
-# "  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
-# "augroup END
-# "endif
-# "let g:firenvim_font = 'Cica'
-# "function! Set_Font(font) abort
-# "  execute 'set guifont=' . a:font . ':h10'
-# "endfunction
-# '''
+# hook_post_update = 'call firenvim#install(0)'
+hook_add = '''
+"if exists('g:started_by_firenvim')
+"  set showtabline=0
+"  set laststatus=0
+  " call lightline#disable()
+"augroup Firenvim
+"    au BufEnter * call Set_Font(g:firenvim_font)
+"    au BufEnter *     colorscheme iceberg
+"    au BufEnter github.com_*.txt set filetype=markdown
+"  au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
+"  au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
+"  au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
+"augroup END
+"endif
+"let g:firenvim_font = 'Cica'
+"function! Set_Font(font) abort
+"  execute 'set guifont=' . a:font . ':h10'
+"endfunction
+'''
 
 [[plugins]]
 # colorscheme seagull
@@ -790,8 +792,8 @@ hook_add = '''
 # [[plugins]]
 # repo = 'ryanoasis/vim-devicons' 
 
-[[plugins]]
-repo = 'wfxr/minimap.vim'
+# [[plugins]]
+# repo = 'wfxr/minimap.vim'
 # [[plugins]]
 # repo = 'RishabhRD/popfix'
 # [[plugins]]
@@ -814,13 +816,13 @@ let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter']
 repo = 'kassio/neoterm'
 [[plugins]]
 repo = 'thinca/vim-themis'
-[[plugins]]
-repo = 'gelguy/wilder.nvim'
-merged = 0
-hook_add = '''
-'''
+# [[plugins]]
+# repo = 'gelguy/wilder.nvim'
+# merged = 0
+# hook_add = '''
+# '''
 # [[plugins]]
 # repo = 'tkmpypy/chowcho.nvim'
-[[plugins]]
-repo = 'karb94/neoscroll.nvim'
+# [[plugins]]
+# repo = 'karb94/neoscroll.nvim'
 # vim:set foldmethod=marker:'
