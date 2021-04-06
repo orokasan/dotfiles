@@ -56,7 +56,7 @@ call denite#custom#source('file/old', 'default_action', 'switch')
 call denite#custom#source('file/old', 'converters', ['converter/relative_abbr'])
 " call denite#custom#source('file', 'converters', ['converter/relative_abbr'])
 call denite#custom#var('buffer', 'date_format', '%Y/%m/%d %H:%M:%S')
-call denite#custom#filter('matcher/migemo', 'dict_path', g:migemodict)
+call denite#custom#filter('matcher/migemo', 'dict_path', get(g:, 'migemodict', ""))
 " call denite#custom#source('_', 'matchers', ['matcher/migemo'])
 ""need rg for grep/file-rec
 " call denite#custom#source('grep', 'args', ['', '', '!'])
