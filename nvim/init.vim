@@ -13,8 +13,8 @@ augroup END
 let g:loaded_gzip              = 1
 let g:loaded_tar               = 1
 let g:loaded_tarPlugin         = 1
-" let g:loaded_zip               = 1
-" let g:loaded_zipPlugin         = 1
+let g:loaded_zip               = 1
+let g:loaded_zipPlugin         = 1
 let g:loaded_rrhelper          = 1
 let g:loaded_2html_plugin      = 1
 let g:loaded_vimball           = 1
@@ -220,7 +220,8 @@ function! s:cmdwin_settings() abort
 endfunction
 
 " open .docx as .zip
-au vimrc BufReadCmd *.docx,*.doc,*.pages,*.xlsm,*.xlsx  call zip#Browse(expand("<amatch>"))
+" usual ext is opened as .zip by default. (see zip_plugin)
+" au vimrc BufReadCmd *.docx,*.doc,*.pages,*.xlsm,*.xlsx  call zip#Browse(expand("<amatch>"))
 " .textlintrc is json
 au vimrc BufRead .textlintrc set ft=json
 set completeopt+=menuone,longest
@@ -1317,4 +1318,35 @@ set indentexpr=
 if has('win32')
 let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 endif
+" lua << EOF
+" require'compe'.setup {
+"   enabled = true;
+"   autocomplete = true;
+"   debug = false;
+"   min_length = 1;
+"   preselect = 'enable';
+"   throttle_time = 80;
+"   source_timeout = 200;
+"   incomplete_delay = 400;
+"   max_abbr_width = 100;
+"   max_kind_width = 100;
+"   max_menu_width = 100;
+"   documentation = true;
+"   source = {
+"     path = true;
+"     buffer = true;
+"     calc = true;
+"     nvim_lsp = true;
+"     nvim_lua = true;
+"     vsnip = true;
+"   };
+" }
+" EOF
+" let g:lexima_no_default_rules = v:true
+" call lexima#set_default_rules()
+" inoremap <silent><expr> <C-Space> compe#complete()
+" inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
+" inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+" inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+" inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
 " vim:set foldmethod=marker:

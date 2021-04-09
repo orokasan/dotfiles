@@ -4,7 +4,7 @@ local on_attach = function(client, bufnr)
 local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
- buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+ -- buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
@@ -51,27 +51,40 @@ local servers = {
     'vimls',
     'jedi_language_server',
     'gopls',
-    'texlab'
+    'texlab',
 }
 
 for _, lsp in ipairs(servers) do
-    nvim_lsp[lsp].setup {
-      on_attach = on_attach,
-    };
+    -- nvim_lsp[lsp].setup {
+    --   on_attach = on_attach,
+    -- };
 -- settings for language server binary installed by `vim-lsp-settings`
     local flsp = string.gsub(lsp, "_", "-")
     local exe = vim.fn['lsp_settings#exec_path'](flsp)
     if exe ~= '' then
     nvim_lsp[lsp].setup {
         on_attach = on_attach,
-        cmd = { exe }
+        cmd = { exe },
+        on_init = function(client)
+            client.config.flags.allow_incremental_sync = false
+        end
     };
     end
 end
 --
-nvim_lsp['efm'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver')}, on_attach = on_attach };
+-- nvim_lsp['efm'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver')}, on_attach = on_attach };
 nvim_lsp['sumneko_lua'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('sumneko-lua-language-server')}, on_attach = on_attach };
 nvim_lsp['jdtls'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('eclipse-jdt-ls')}, on_attach = on_attach };
--- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
---     vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
--- )
+-- require'lspconfig'.efm.setup {
+--     cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver')},
+--     on_init = function(client)
+--         client.config.flags = {}
+--         if client.config.flags then
+--             client.config.flags.allow_incremental_sync = false
+--         end;
+--     end;
+--     on_attach = on_attach,
+--     };
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
+)

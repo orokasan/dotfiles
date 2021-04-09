@@ -771,7 +771,7 @@ repo = 'neoclide/denite-git'
 
 [[plugins]]
 merged = 0
-on_if = 'executable("gcc")'
+on_if = 'executable("gcc") && has("nvim")'
 repo = 'nvim-treesitter/nvim-treesitter'
 
 [[plugins]]
@@ -811,9 +811,10 @@ let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter']
 
 # [[plugins]]
 # repo = 'lukas-reineke/indent-blankline.nvim'
-
-[[plugins]]
-repo = 'kassio/neoterm'
+# [[plugins]]
+# repo = 'hrsh7th/nvim-compe'
+# [[plugins]]
+# repo = 'kassio/neoterm'
 [[plugins]]
 repo = 'thinca/vim-themis'
 # [[plugins]]
