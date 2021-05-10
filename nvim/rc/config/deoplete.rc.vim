@@ -59,6 +59,13 @@ call deoplete#custom#source('_', 'converters', [
     \ 'converter_truncate_menu',
     \ 'converter_truncate_kind',
     \ ])
+call deoplete#custom#option('keyword_patterns', {
+\ '_': '[a-zA-Z_]\k*',
+\ 'text': '[a-zA-Z_-]*',
+\ 'markdown': '[a-zA-Z_-]*|[\u2E80-\u2FDF\u3005-\u3007\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\U00020000-\U0002EBEF]*',
+\ 'txt': '[a-zA-Z_-]*',
+\ 'ruby': '[a-zA-Z_]\w*[!?]?',
+\})
 " deoplete-lsp should not be lazy loaded
 " if dein#is_sourced('deoplete-lsp')
 "     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex', '']

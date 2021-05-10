@@ -196,6 +196,7 @@ function! LLMode()
     return &filetype is# 'unite' ? 'Unite' :
         \ &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'defx' ? 'Defx' :
+        \ &filetype is# 'fern' ? 'Fern' :
         \ &filetype is# 'denite' ? LLDeniteMode() :
         \ &filetype is# 'undotree' ? 'undotree' :
         \ &filetype is# 'tweetvim' ? 'Tweetvim' :
@@ -237,7 +238,7 @@ function! LLMyFilepath()
 endfunction
 
 "例外filetype
-let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter)'
+let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter|fern)'
 function! s:ignore_window() abort
     return &filetype =~# s:ignore_filetype || &previewwindow
 endfunction

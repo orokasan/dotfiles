@@ -48,11 +48,9 @@ set autoread                " reload editing file if the file changed externally
 set backup                " no more backup file
 let mapleader = "\<Space>"
 "}}}
-
 " dein.vim {{{
 let g:dein#lazy_rplugins=1
 " let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
-
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 if &runtimepath !~# '/dein.vim'
@@ -67,18 +65,15 @@ if &runtimepath !~# '/dein.vim'
     " execute 'set runtimepath+=' . substitute(path, '\\$', '', '')
     execute 'set runtimepath+=' . fnamemodify(s:dein_repo_dir, ':p')
 endif
-
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
-
 " if has('nvim')
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 " else
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 " endif
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
-
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
@@ -92,15 +87,12 @@ if dein#load_state(s:dein_dir)
         call dein#call_hook('post_source')
     endif
 endif
-
 filetype plugin indent on
 syntax enable
-
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
-
 " Visual  {{{
 " language C
 set ambiwidth=double
@@ -149,7 +141,6 @@ set pumheight=12 " default
 "     \  " > " . v:fname_out
 "  endfunction
 "}}}
-
 " Editing {{{
 set virtualedit=block     "move cursor to one more char than end of line
 set display+=lastline,msgsep
@@ -190,7 +181,7 @@ if has('nvim')
 else
   set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
 endif
-
+set nrformats+=unsigned
 " set unnamed register to clipboard.
 " NOTE: not working well with CTRL-V in neovim.
 " workaround in neovim section.
@@ -215,10 +206,9 @@ function! s:cmdwin_settings() abort
     " CmdwinEnter seems not to fire below commands
     setlocal signcolumn=no
     setlocal scrolloff=0
-    nnoremap <buffer><silent>q :close<CR>
+    nnoremap <buffer><silent>q <Cmd>close<CR>
     norm $
 endfunction
-
 " open .docx as .zip
 " usual ext is opened as .zip by default. (see zip_plugin)
 " au vimrc BufReadCmd *.docx,*.doc,*.pages,*.xlsm,*.xlsx  call zip#Browse(expand("<amatch>"))
@@ -236,19 +226,16 @@ set completeopt-=preview
       endif
       return 1
     endfunction
-
     function! s:mkview() abort
        if s:is_view_available()
         silent! mkview
       endif
     endfunction
-
     function! s:loadview() abort
       if s:is_view_available()
         silent! loadview
       endif
     endfunction
-
     augroup MyAutoCmd
       autocmd!
       autocmd MyAutoCmd BufWinLeave * call s:mkview()
@@ -279,7 +266,6 @@ if !exists('g:disable_IM_Control')
     inoremap <silent> <C-k> <C-^><C-r>=IMState('FixMode')<CR>
 endif
 ""}}}
-
 "Key map - moving {{{
 nnoremap <CR> o<ESC>
 " nnoremap \ O<ESC>
@@ -298,13 +284,13 @@ nnoremap <C-d> <C-d>
 nnoremap <C-u> <C-u>
 nnoremap <C-o> <C-o>zz
 " moving around buffers
-nnoremap <silent><Leader>h :bprev!<CR>
-nnoremap <silent><Leader>l :bnext!<CR>
-nnoremap <silent><Leader>l :bnext!<CR>
+nnoremap <silent><Leader>h <Cmd>bprev!<CR>
+nnoremap <silent><Leader>l <Cmd>bnext!<CR>
+nnoremap <silent><Leader>l <Cmd>bnext!<CR>
 " moving around tabpages
-nnoremap <silent> <C-L> :tabnext<CR>
-nnoremap <silent> <C-H> :tabprevious<CR>
-nnoremap <silent>gt :<C-u>call <SID>improved_gt()<CR>
+nnoremap <silent> <C-L> <Cmd>tabnext<CR>
+nnoremap <silent> <C-H> <Cmd>tabprevious<CR>
+nnoremap <silent>gt <Cmd>call <SID>improved_gt()<CR>
 function! s:improved_gt() abort
     if tabpagenr('$') == 1
         execute 'tabnew'
@@ -324,8 +310,10 @@ omap g<TAB> g%
 nnoremap <C-p> <C-i>zz
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
+" mark
+" nnoremap M m
+" nnoremap m `
 "}}}
-
 "Key map - shortcuts {{{
 " Convenience key for getting to command mode
 nmap ; :
@@ -339,13 +327,13 @@ inoremap jk <esc>
 " make temp file
 command! -nargs=? Otempfile :edit `=tempname()` | setf <args>
 " open location list
-nnoremap <Leader>f :<C-u>lopen<CR>
+nnoremap <Leader>f <Cmd>lopen<CR>
 autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR>
 " open vimrc quickly
-nnoremap <silent> <leader>v :e $MYVIMRC<CR>
-nnoremap <silent> <Leader>sv :<C-u>source $MYVIMRC<CR>
+nnoremap <silent> <leader>v <Cmd>e $MYVIMRC<CR>
+nnoremap <silent> <Leader>sv <Cmd>source $MYVIMRC<CR>
 " source opening vim script
-nnoremap <Leader>ss :<C-u>call <SID>source_script('%')<CR>
+nnoremap <Leader>ss <Cmd>call <SID>source_script('%')<CR>
 if !exists('*s:source_script')  "{{{
   function s:source_script(path) abort
     let path = expand(a:path)
@@ -368,12 +356,11 @@ let s = "!pandoc -s --filter pandoc-crossref -f  markdown+ignore_line_breaks -t 
 execute s
 endfunction "}}}
 if has('mac')
-    nnoremap <Leader>md <C-u>:call <SID>pandoc_md_to_docx()<CR>
+    nnoremap <Leader>md <cmd>:call <SID>pandoc_md_to_docx()<CR>
 else
-    nnoremap <Leader>md <C-u>:!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
+    nnoremap <Leader>md <cmd>!start /min pandoc "%:p" -o "%:p:r.docx" --filter pandoc-crossref<CR>
 endif
 "}}}
-
 "Key map - editting {{{
 " emacs like mapping on insert mode
 inoremap <C-f> <Right>
@@ -395,7 +382,7 @@ xnoremap y y`]
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
 " repeat :substitute with same flag
-nnoremap <silent> & :&&<CR>
+nnoremap <silent> & <Cmd>&&<CR>
 " << keeps visual mode
 vnoremap < <gv
 vnoremap > >gv
@@ -406,12 +393,17 @@ cnoremap <expr><F2> strftime("%Y%m%d")
 "improve command completion
 cnoremap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<DOWN>"
 cnoremap <expr> <C-p> pumvisible() ? "\<C-p>" : "\<UP>"
+cnoremap <C-f> <Right>
+cnoremap <C-b> <Left>
+cnoremap <C-a> <C-b>
+cnoremap <C-q> <C-f>
+tnoremap <expr> <C-n> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<Down>" : "\<C-n>"
+tnoremap <expr> <C-p> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<UP>" : "\<C-p>"
 " for IME status saving
 " inoremap <silent><ESC> <ESC>
 " inoremap <silent><C-[> <ESC>
 " inoremap <silent><C-c> <ESC>
 "}}}
-
 "Key map - terminal {{{
 "terminal
 " if using iTerm2, map option key to Meta
@@ -442,24 +434,21 @@ else
     inoremap <A-l> <C-\><C-N><C-w>l
 endif
 "}}}
-
 "Key map - folding {{{
 " open folding
 nnoremap <silent>gl zo
 " smart folding closer
-nnoremap <silent>gh :silent! call <SID>smart_foldcloser()<CR>
+nnoremap <silent>gh <Cmd>silent! call <SID>smart_foldcloser()<CR>
 function! s:smart_foldcloser() "{{{
     if foldlevel('.') == 0
     norm! zM
     return
     endif
-
     let foldc_lnum = foldclosed('.')
     norm! zc
     if foldc_lnum == -1
     return
     endif
-
     if foldclosed('.') != foldc_lnum
     return
     endif
@@ -467,8 +456,8 @@ function! s:smart_foldcloser() "{{{
 endfunction
 "}}}
 " add fold marker
-nnoremap  z[     :<C-u>call <SID>put_foldmarker(0)<CR>
-nnoremap  z]     :<C-u>call <SID>put_foldmarker(1)<CR>
+nnoremap  z[     <Cmd>call <SID>put_foldmarker(0)<CR>
+nnoremap  z]     <Cmd>call <SID>put_foldmarker(1)<CR>
 function! s:put_foldmarker(foldclose_p) "{{{
     let crrstr = getline('.')
     let padding = crrstr ==# '' ? '' : crrstr =~# '\s$' ? '' : ' '
@@ -483,19 +472,18 @@ function! s:put_foldmarker(foldclose_p) "{{{
 endfunction
 "}}}
 " }}}
-
 "Key map - window {{{
 " " :close by 'q'
 " nnoremap <silent> q :close<CR>
 " escape 'q'
 " escape 'gq'
-nnoremap <silent> \ :cd %:h<Bar>echo 'current directory is changed to ' . getcwd()<CR>
-nnoremap <silent> \| :cd ..<Bar>echo 'current directory is changed to ' . getcwd()<CR>
+nnoremap <silent> \ <Cmd>cd %:h<Bar>echo 'current directory is changed to ' . getcwd()<CR>
+nnoremap <silent> \| <Cmd>cd ..<Bar>echo 'current directory is changed to ' . getcwd()<CR>
 " nnoremap gQ gq
 autocmd FileType help nnoremap <buffer> q <C-w>c
 " don't close window when closing buffer
-nnoremap <silent> Q :<C-u>Bclose<CR>
-xnoremap <silent> Q :<C-u>Bclose<CR>
+nnoremap <silent> Q <Cmd>Bclose<CR>
+xnoremap <silent> Q <Cmd>Bclose<CR>
  function! s:Bclose(bang, buffer) "{{{
 "https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
    if empty(a:buffer)
@@ -555,13 +543,12 @@ xnoremap <silent> Q :<C-u>Bclose<CR>
  endfunction "}}}
 "}}}
 " autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
-
 " spliting windows
-nnoremap <leader>ws :sp<CR>:bprev<CR>
-nnoremap <leader>wv :vsp<CR>:bprev<CR>
-nnoremap <leader>wc :close<CR>
-nnoremap <leader>wn :vne<CR>
-nnoremap <leader>wo :only<CR>
+nnoremap <leader>ws <Cmd>sp<CR>:bprev<CR>
+nnoremap <leader>wv <Cmd>vsp<CR>:bprev<CR>
+nnoremap <leader>wc <Cmd>close<CR>
+nnoremap <leader>wn <Cmd>vne<CR>
+nnoremap <leader>wo <Cmd>only<CR>
 " move between windows
 nnoremap <C-w>w <C-w>p
 nnoremap <C-w><C-w> <C-w>p
@@ -584,7 +571,7 @@ nmap <S-LeftMouse> <CR>
 nmap <2-LeftMouse> <CR>
 "{{{
 nnoremap <silent> <Plug>(my-zoom-window)
-      \ :<C-u>call <SID>toggle_window_zoom()<CR>
+      \ <Cmd>call <SID>toggle_window_zoom()<CR>
 function! s:toggle_window_zoom() abort
     if exists('t:zoom_winrestcmd')
         execute t:zoom_winrestcmd
@@ -611,7 +598,6 @@ endfunction  "}}}
 "   return has_key(l:ui, 'client') && has_key(l:ui.client, 'name') &&
 "       \ l:ui.client.name =~? 'Firenvim'
 " endfunction
-
 " function! OnUIEnter(event) abort
 "   if s:IsFirenvimActive(a:event)
 "     set laststatus=0
@@ -640,7 +626,6 @@ if has('nvim')
 else
     autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
 endif
-
 if has('nvim')
   " neovim 用
   autocmd vimrc TermEnter * startinsert
@@ -648,14 +633,12 @@ else
   " Vim 用
   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
 endif
-
 " function! s:undo_entry()
 "   let history = get(w:, 'qf_history', [])
 "   if !empty(history)
 "     call setqflist(remove(history, -1), 'r')
 "   endif
 " endfunction
-
 " function! s:del_entry() range
 "   let qf = getqflist()
 "   let history = get(w:, 'qf_history', [])
@@ -666,28 +649,26 @@ endif
 "   execute a:firstline
 " endfunction
 "}}}
-
 "Quickfix {{{
  autocmd vimrc FileType qf call s:my_qf_setting()
  function! s:my_qf_setting() abort
      set modifiable
      " nnoremap <buffer> <CR> :<C-u>.cc<CR>
-     nnoremap <silent><buffer> q :<C-u>close<CR>
+     nnoremap <silent><buffer> q <Cmd>close<CR>
      call <SID>is_loc()
      noremap <buffer> p  <CR>zz<C-w>p
  endfunction
  function! s:is_loc()
  let wi = getwininfo(win_getid())[0]
  if wi.loclist
-     nnoremap <silent><buffer> <CR> :.ll<CR><C-w>p
+     nnoremap <silent><buffer> <CR> <Cmd>.ll<CR><C-w>p
  elseif wi.quickfix
-     nnoremap <silent><buffer> <CR> :.cc<CR><C-w>p
+     nnoremap <silent><buffer> <CR> <Cmd>.cc<CR><C-w>p
  else
      echom 'here is not quickfix and location list.'
  endif
  endfunction
 "}}}
-
 " +GUI {{{
 if has('GUI')
      let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
@@ -712,7 +693,6 @@ if has('GUI')
     endif
 endif
 "}}}
-
 "+kaoriya {{{
 if has('kaoriya')
     " auto download vimproc dll
@@ -721,8 +701,8 @@ if has('kaoriya')
     let autodate_format ='%Y/%m/%d-%H:%M:%S'
     let autodate_lines = 10
     " fullscreen
-    nnoremap <C-CR> :ScreenMode 6<CR>
-    nnoremap <S-CR> :ScreenMode 1<CR>
+    nnoremap <C-CR> <Cmd>ScreenMode 6<CR>
+    nnoremap <S-CR> <Cmd>ScreenMode 1<CR>
     " background transparency
     " autocmd vimrc GUIEnter * set transparency=235
     " insert date
@@ -734,7 +714,6 @@ if has('multi_byte_ime')
   highlight CursorIM guifg=NONE guibg=Purple
 endif
 "}}}
-
 " Neovim {{{
 if has('nvim')
     au ColorScheme * highlight! iCursor guifg=#161821 guibg=#84a0c6
@@ -764,7 +743,6 @@ if has('nvim')
     " au TextYankPost * lua require'vim.highlight'.on_yank("IncSearch", 200)
 endif
 "}}}
-
 " highlight {{{
 " for foldcolumn
 " hi! link SpecialKey Comment
@@ -775,11 +753,9 @@ endif
 set background=dark
 colorscheme iceberg
 "}}}
-
 " filetype config {{{
 let g:tex_conceal=''
 "}}}
-
 " misc {{{
 "選択範囲の行をカウント {{{
 function! g:LineCharVCount() range
@@ -791,48 +767,38 @@ function! g:LineCharVCount() range
 endfunction "}}}
 "呼び出せる
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
-xnoremap<silent> <C-o> :LineCharVCount<CR>
-
+xnoremap<silent> <C-o> <Cmd>LineCharVCount<CR>
 " パフォーマンスのチェック {{{
 command! -bar LightlineUpdate    call lightline#init()|
   \ call lightline#colorscheme()|
   \ call lightline#update()
-
 function! ProfileCursorMove() abort
   let profile_file = expand('~/log/vim-profile.log')
   if filereadable(profile_file)
     call delete(profile_file)
   endif
-
   normal! gg
   normal! zR
-
   execute 'profile start ' . profile_file
   profile func *
   profile file *
-
   augroup ProfileCursorMove
     autocmd!
     autocmd CursorHold <buffer> profile pause | q
   augroup END
-
   for i in range(1000)
     call feedkeys('j')
   endfor
 endfunction
 "}}}
-
 " yank searched results
 function! s:search(pat)
 let l:cache = []
-
 execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
-
 let g:lightline#bufferline#smarttab = 1
-
 " set colorscheme
 try
     exe 'colorscheme ' . g:colors_name
@@ -903,8 +869,7 @@ if exists('g:gonvim_running')
 " set scrolljump=5
   cd ~/
 endif
-
-nnoremap <F1> :split ~/Dropbox/共有*/ToDo_??.txt<CR>
+nnoremap <F1> <Cmd>split ~/Dropbox/共有*/ToDo_??.txt<CR>
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap
 autocmd FileType text syntax sync minlines=50
 autocmd FileType markdown syntax sync minlines=50
@@ -916,27 +881,21 @@ function! Vimdiff_config(timer) abort
   " nnoremap q :tabclose<CR>
   " endif
 endfunction
-
 " autocmd vimrc TabLeave * silent! unmap q
-nnoremap <silent><C-q> :tabclose<CR>
+nnoremap <silent><C-q> <Cmd>tabclose<CR>
 " noremap <ScrollWheelUp> <C-u>
 " noremap <ScrollWheelDown> <C-d>
 " au vimrc BufEnter * set scroll=3
-nnoremap <MiddleMouse> :close<CR>
+nnoremap <MiddleMouse> <Cmd>close<CR>
 " nnoremap <expr>q &diff ? execute('tabclose') : "q"
 set background=dark
-
-nnoremap S :<C-u>%s/
-vnoremap S :%s/
-nnoremap gs :%s///g<Left><Left>
-vnoremap gs :<C-u>%s///g<Left><Left>
+nnoremap S :%s/
 " /\v(①|②|③|④|⑤|⑥|⑦|⑧|⑨|⑩)/
 " nnoremap /  /\v
 " nnoremap ?  ?\v
 set updatetime=1500
 let g:denite_text_pos = 0
 vnoremap y ygv<ESC>
-
 " function! s:IsFirenvimActive(event) abort
 "   if !exists('*nvim_get_chan_info')
 "     return 0
@@ -945,7 +904,6 @@ vnoremap y ygv<ESC>
 "   return has_key(l:ui, 'client') && has_key(l:ui.client, 'name') &&
 "       \ l:ui.client.name =~? 'Firenvim'
 " endfunction
-
 " function! OnUIEnter(event) abort
 "   if s:IsFirenvimActive(a:event)
 "   set signcolumn=no
@@ -1016,25 +974,21 @@ autocmd BufReadPre gina://* set noswapfile
 "    " let result = g:res
 "    " call setqflist(result, ' ')
 "endfunction
-if has('nvim')
-    lua require('dotfiles/nvim/lsp_settings')
-endif
 " autocmd vimrc WinEnter * if &ft == 'twitvim' | resize 17| endif
-autocmd FileType twitvim nnoremap <silent><buffer> K :echo getline('.')<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> K <cmd>echo getline('.')<CR>
 autocmd FileType twitvim nnoremap <silent><buffer><expr> k line('.') =~ '\v^(1\|2\|3)$' ? 'G' : 'k'
 autocmd FileType twitvim nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg2j' : 'j'
-autocmd FileType twitvim nnoremap <silent><buffer> <C-n> :NextTwitter<CR>
-autocmd FileType twitvim nnoremap <silent><buffer> <C-p> :PreviousTwitter<CR>
-autocmd FileType twitvim nnoremap <silent><buffer> r :RefreshTwitter<CR>
-autocmd FileType twitvim nnoremap <silent><buffer> <CR> :ProfileTwitter `expand('<cword>')[0:-2]`<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> <C-n> <cmd>NextTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> <C-p> <cmd>PreviousTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> r <cmd>RefreshTwitter<CR>
+autocmd FileType twitvim nnoremap <silent><buffer> <CR> <cmd>ProfileTwitter `expand('<cword>')[0:-2]`<CR>
 autocmd FileType twitvim nmap <silent><buffer> <leader>o /http<CR>:call histdel('/',-1)<CR><Plug>(openbrowser-smart-search)0
-nnoremap <silent> <F3> :FriendsTwitter<CR>
-nnoremap <silent> <Leader>r :RefreshTwitter<CR>
+nnoremap <silent> <F3> <Cmd>FriendsTwitter<CR>
+nnoremap <silent> <Leader>r <Cmd>RefreshTwitter<CR>
 	let g:previm_show_header = 0
 let twitvim_enable_python3 = 1
 let twitvim_timestamp_format = '%H:%M-%m/%d'
 let twitvim_count = 15
-
 function! Mdpdf()
  " !mdpdf --border=12.7mm "%"
 " if s:is_windows
@@ -1046,7 +1000,6 @@ let cmd = 'mdpdf --border=12.7mm ' . path
 " call system(cmd)
 execute "!" . cmd
 endfunction
-
 function! g:Vimrc_select_a_last_modified() abort
     return ['v', getpos("'["), getpos("']")]
 endfunction
@@ -1060,7 +1013,6 @@ set smartindent
 " highlight link JISX0208Space Underlined
 set conceallevel=2
 set concealcursor=n
-
 let s:macromode = 0
 function! MacroModeOn() abort
 if s:macromode ==# 1
@@ -1080,7 +1032,6 @@ endif
     unmap r
 let s:macromode = 0
 endfunction
-
 if exists('g:started_by_firenvim')
   set showtabline=0
   " set laststatus=0
@@ -1113,12 +1064,10 @@ let g:firenvim_font = 'HackGenNerd'
 function! Set_Font(font) abort
   execute 'set guifont=' . a:font . ':h10'
 endfunction
-
 function! s:change_lf_dos() abort
 execute('edit ++ff=dos %')
 write
 endfunction
-
 function! s:change_lf_unix() abort
 execute('edit ++ff=unix %')
 execute('%substitute/$//')
@@ -1135,7 +1084,6 @@ augroup END
     hi link LspDiagnosticsVirtualTextWarning Question
     sign define LspDiagnosticsSignError text= texthl=LspDiagnosticsVirtualTextError linehl= numhl=
     sign define LspDiagnosticsSignWarning text= texthl=LspDiagnosticsVirtualTextWarning linehl= numhl=
-
 let s:highlight_id = v:false
 function! s:gethighlight(hi, which) abort
     let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
@@ -1173,7 +1121,6 @@ if filereadable(s:dict)
 endif
 endfunction
 nnoremap <F1> <cmd>call Highlight_dict()<CR>
-
 function! Get_diagnostics()
 let tbl = luaeval('vim.lsp.diagnostic.get(0)')
 echo tbl
@@ -1185,7 +1132,6 @@ echo tbl
 " let result = luaeval('vim.lsp.diagnostic.get_all()')
 " echo result
 endfunction
-
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
   highlight = {
@@ -1212,7 +1158,6 @@ hi link TSKeyword Keyword
 hi link TSType Define
 hi link LspDiagnosticsUnderlineError Error
 hi link LspDiagnosticsUnderlineWarning Warning
-
 " abbrev の自動生成を行う
 " ref:https://zenn.dev/monaqa/articles/2020-12-22-vim-abbrev
 function! s:make_abbrev_rule(rules)
@@ -1239,7 +1184,6 @@ call s:make_abbrev_rule([
 \   {'from': 'gp', 'to': 'Gina push'},
 \   {'prepose': 'Gina commit', 'from': 'a', 'to': '--amend'},
 \ ])
-
 " cabbrev <expr> gi (getcmdtype() ==# ":" && getcmdline() ==# "gi") ? "Gina" : "gi"
 " cabbrev <expr> gc (getcmdtype() ==# ":" && getcmdline() ==# "gc") ? "Gina! commit -am" : "gc"
 let g:vimsyn_embed='lPr'
@@ -1260,9 +1204,9 @@ function! NumZentohan() abort
 %s/９/9/eg
 %s/０/0/eg
 endfunction
+"(１|２|３|４|５|６|７|８|９|０)
 set packpath=
 " ++once supported in Nvim 0.4+ and Vim 8.1+
-
 " function! s:wilder_init() abort
 " call wilder#enable_cmdline_enter()
 " set wildcharm=<Tab>
@@ -1270,7 +1214,6 @@ set packpath=
 " cmap <expr> <S-Tab> wilder#in_context() ? wilder#previous() : "\<S-Tab>"
 " cmap <expr> <C-n> wilder#in_context() ? wilder#next() : "\<Down>"
 " cmap <expr> <C-p> wilder#in_context() ? wilder#previous() : "\<Up>"
-
 " " only / and ? are enabled by default
 " call wilder#set_option('modes', [ ':'])
 " call wilder#set_option('renderer', wilder#popupmenu_renderer({
@@ -1297,7 +1240,6 @@ set packpath=
 "      \ ])
 " endfunction
 " autocmd CmdlineEnter * ++once call s:wilder_init()
-
 " lua <<EOF
 " require('chowcho').setup {
 "   border_style = 'rounded' -- 'default', 'rounded',
@@ -1318,35 +1260,75 @@ set indentexpr=
 if has('win32')
 let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 endif
-" lua << EOF
-" require'compe'.setup {
-"   enabled = true;
-"   autocomplete = true;
-"   debug = false;
-"   min_length = 1;
-"   preselect = 'enable';
-"   throttle_time = 80;
-"   source_timeout = 200;
-"   incomplete_delay = 400;
-"   max_abbr_width = 100;
-"   max_kind_width = 100;
-"   max_menu_width = 100;
-"   documentation = true;
-"   source = {
-"     path = true;
-"     buffer = true;
-"     calc = true;
-"     nvim_lsp = true;
-"     nvim_lua = true;
-"     vsnip = true;
-"   };
-" }
-" EOF
-" let g:lexima_no_default_rules = v:true
-" call lexima#set_default_rules()
-" inoremap <silent><expr> <C-Space> compe#complete()
-" inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
-" inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+lua << EOF
+require'compe'.setup {
+  enabled = true;
+  autocomplete = true;
+  debug = false;
+  min_length = 2;
+  preselect = 'enable';
+  throttle_time = 80;
+  source_timeout = 200;
+  incomplete_delay = 400;
+  max_abbr_width = 100;
+  max_kind_width = 100;
+  max_menu_width = 100;
+  documentation = true;
+  source = {
+    path = true;
+    buffer = true;
+    calc = true;
+    nvim_lsp = true;
+    nvim_lua = true;
+    vsnip = true;
+  };
+}
+EOF
+let g:lexima_no_default_rules = v:true
+call lexima#set_default_rules()
+inoremap <silent><expr> <C-Space> compe#complete()
+inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
+inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 " inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-" inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+imap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
+smap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
+" Expand or jump
+imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+" Jump forward or backward
+imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+" if exists('g:started_by_firenvim')
+"   set showtabline=0
+"   set laststatus=0
+"   set background=dark
+" augroup Firenvim
+"     au BufEnter * call Set_Font(g:firenvim_font)
+"     au BufEnter *     colorscheme iceberg
+"     " au BufEnter github.com_*.txt set filetype=markdown
+"   " au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
+"   " au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
+"   " au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
+" augroup END
+" endif
+" let g:firenvim_font = 'Cica'
+" function! Set_Font(font) abort
+"   execute 'set guifont=' . a:font . ':h12'
+" endfunction
+function! MdToText()
+%s/^#\s/■/
+%s/^##\s/■■/
+%s/\v^$\n\zs[^■]/　\0
+%s/\v。\zs$\n\ze[^][$]//
+endfunction
+nnoremap <ScrollWheelUp> 3<C-u>
+" set noswapfile
+set completeopt=menuone,noselect
+nnoremap q <nop>
+nnoremap Q q
+" for ahk workaround
+nmap <BS> <C-h>
 " vim:set foldmethod=marker:

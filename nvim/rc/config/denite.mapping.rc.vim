@@ -1,10 +1,10 @@
 nmap s [denite]
 nnoremap [denite] <Nop>
-nnoremap <silent> [denite]- :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]- <Cmd>DeniteBufferDir
     \ -start-filter
     \  source<CR>
 "現在開いているファイルのgit配下のファイルを開く
-nnoremap <silent> [denite]f :<C-u>Denite
+nnoremap <silent> [denite]f <Cmd>Denite
     \ -start-filter
     \ -path=`<SID>denite_gitdir()`
     \ file/rec file:new<CR>
@@ -22,157 +22,162 @@ function! s:denite_gitdir() abort
 endif
 
 endfunction
-nnoremap <silent> [denite]<Space> :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]<Space> <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
-nnoremap <silent> [denite]F :<C-u>DeniteBufferDir
+nnoremap <silent> [denite]F <Cmd>DeniteBufferDir
     \ -start-filter
     \ file file:new<CR>
-nnoremap <silent> [denite]s :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]s <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
-nnoremap <silent> [denite]S :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]S <Cmd>DeniteProjectDir
     \ -start-filter
     \  file file:new<CR>
 ""ホームディレクトリ下のファイル一覧。
-"nnoremap <silent> [denite]t :<C-u>Denite
+"nnoremap <silent> [denite]t <Cmd>Denite
 "    \ -start-filter
 "    \ -path=$HOME
 "    \ file/rec file:new<CR>
 ""ホームディレクトリ下のファイル一覧。
-"nnoremap <silent> [denite]T :<C-u>Denite
+"nnoremap <silent> [denite]T <Cmd>Denite
 "    \ -start-filter
 "    \ -path=$HOME
 "    \ file file:new<CR>
 "バッファ一覧
-nnoremap <silent> [denite]B :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]B <Cmd>DeniteProjectDir
     \ -buffer-name=default
     \ buffer<CR>
-nnoremap <silent> [denite]b :<C-u>Denite
+nnoremap <silent> [denite]b <Cmd>Denite
     \ -buffer-name=default
     \ buffer<CR>
-nnoremap <silent> s; :<C-u>Denite
+nnoremap <silent> s; <Cmd>Denite
     \ -winheight=10
     \ -start-filter
     \ menu:shortcut command_history<CR>
-nnoremap <silent> [denite]/ :<C-u>Denite
+nnoremap <silent> [denite]/ <Cmd>Denite
     \ line
-"neoyank
-nnoremap <silent> [denite]y :<C-u>Denite
+"miniyank
+nnoremap <silent> [denite]y <Cmd>Denite
     \ -buffer-name=relative
-    \ neoyank<CR>
+    \ miniyank<CR>
 "コマンド履歴
-nnoremap <silent> [denite]c :<C-u>Denite
+nnoremap <silent> [denite]c <Cmd>Denite
     \ -buffer-name=command
     \ -winheight=5
     \ -start-filter
     \ command_history<CR>
-nnoremap <silent> [denite]G :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]G <Cmd>DeniteProjectDir
     \ -no-empty
     \ grep<CR>
-nnoremap <silent> [denite]g :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]g <Cmd>DeniteProjectDir
     \ -path=`expand('%:h')`
     \ -no-empty
     \ grep<CR>
-" nnoremap <silent> [denite]G :<C-u>Denite
+" nnoremap <silent> [denite]G <Cmd>Denite
 "     \ -start-filter
 "     \ -path=`<SID>denite_gitdir()`
 "     \ `finddir('.git', '.;') != '' ? 'grep/git:::!' : 'grep'`<CR>
 "メニュー
-nnoremap <silent> [denite]u :<C-u>Denite
+nnoremap <silent> [denite]u <Cmd>Denite
     \ -buffer_name=relative
     \ -winheight=5
     \ menu<CR>
-nnoremap <silent> [denite]a :<C-u>Denite
+nnoremap <silent> [denite]a <Cmd>Denite
     \ -buffer_name=normal
     \ -winheight=5
     \ menu:gina<CR>
 "ヘルプ
-nnoremap <silent> [denite]h :<C-u>Denite
+nnoremap <silent> [denite]h <Cmd>Denite
     \ -start-filter
     \ help<CR>
 " MRU
-nnoremap <silent> [denite]n :<C-u>DeniteProjectDir
+nnoremap <silent> [denite]n <Cmd>DeniteProjectDir
     \ -buffer-name=normal
     \ file/old file<CR>
     " \ -unique
 "mark一覧
-nnoremap <silent> [denite]m :<C-u>Denite
+nnoremap <silent> [denite]m <Cmd>Denite
     \ -auto-action=highlight
     \ mark <CR>
 ":change
-nnoremap <silent> [denite]k :<C-u>Denite
+nnoremap <silent> [denite]k <Cmd>Denite
     \ -no-empty
     \ lsp/diagnostic<CR>
 ":jump
-nnoremap <silent> [denite]d :<C-u>Denite
+nnoremap <silent> [denite]d <Cmd>Denite
     \ jump <CR>
 "resumeして開く
-nnoremap <silent> [denite]r :<C-u>Denite
+nnoremap <silent> [denite]r <Cmd>Denite
     \ -buffer-name=default
     \ -resume<CR>
 "コマンド結果をdeniteに出力
-nnoremap [denite]p :<C-u>Denite
+nnoremap [denite]p :Denite
     \ output:
 " markdown TOC
-nnoremap <silent> [denite]o :<C-u>Denite
+nnoremap <silent> [denite]o <Cmd>Denite
     \ -buffer-name=float
     \ outline<CR>
     " \ markdown<CR>
-nnoremap <silent> [denite]j :<C-u>Denite
+nnoremap <silent> [denite]j <Cmd>Denite
     \ dirmark<CR>
 "bookmark by "add"action
-nnoremap <silent> [denite]J :<C-u>Denite
+nnoremap <silent> [denite]J <Cmd>Denite
     \ -path=`expand('%:p:h:h')`
     \ -default_action=add
     \ dirmark/add<CR>
 " move next candidate
-nnoremap <silent> [denite]. :<C-u>Denite
+nnoremap <silent> [denite]. <Cmd>Denite
     \ -buffer-name=float
     \ -resume
     \ -cursor-pos=+1
     \ -immediately
     \ <CR>
-nnoremap <silent> [denite]c :<C-u>Denite
+nnoremap <silent> [denite]c <Cmd>Denite
     \ -resume
     \ -refresh
     \ -buffer-name=quickfix
     \ quickfix<CR>
-nnoremap <silent> ,n :<C-u>Denite
-    \ -resume
-    \ -cursor-pos=+1
-    \ -immediately
-    \ <CR>
-nnoremap <silent> ,p :<C-u>Denite
-    \ -resume
-    \ -cursor-pos=-1
-    \ -immediately
-    \ <CR>
-nnoremap <silent> [denite], :<C-u>Denite
+" nnoremap <silent> ,n <Cmd>Denite
+"     \ -resume
+"     \ -cursor-pos=+1
+"     \ -immediately
+"     \ <CR>
+" nnoremap <silent> ,p <Cmd>Denite
+"     \ -resume
+"     \ -cursor-pos=-1
+"     \ -immediately
+"     \ <CR>
+nnoremap <silent> [denite], <Cmd>Denite
     \ -resume
     \ -buffer-name=quickfix
     \ -cursor-pos=-1
     \ -immediately
     \ <CR>
-" nnoremap <silent> [denite]c :<C-u>Denite
+" nnoremap <silent> [denite]c <Cmd>Denite
 "     \ -buffer-name=combo
 "     \ combo<CR>
-nnoremap <silent> [denite]t :<C-u>Denite
+nnoremap <silent> [denite]t <Cmd>Denite
     \ -buffer-name=text`bufnr()`
     \ -refresh
     \ -resume
     \ text<CR>
-nnoremap <silent> [denite]T :<C-u>Denite
+nnoremap <silent> [denite]T <Cmd>Denite
     \ -buffer-name=vtext`bufnr()`
     \ -refresh
     \ -resume
     \ -split=vertical
     \ -direction=topleft
     \ -winwidth=60
-    \ -post-action=remain
-    \ -default-action=highlight
-    \ text:1<CR>
-nnoremap <silent> [denite]/ :<C-u>Denite
+    \ -post-action=jump
+    \ text:2:1<CR>
+" nnoremap <silent> [denite]T <Cmd>Denite
+"     \ -buffer-name=vtext`bufnr()`
+"     \ -refresh
+"     \ -resume
+"     \ -default-action=highlight
+"     \ text<CR>
+nnoremap <silent> [denite]/ <Cmd>Denite
     \ -no-empty
     \ searchres<CR>
 function! s:denite_lsp_diagnostics() abort
@@ -189,7 +194,7 @@ else
     silent! execute(command)
 endif
 endfunction
-nnoremap <silent> sl :<C-u>call <SID>denite_lsp_diagnostics()<CR>
+nnoremap <silent> sl <Cmd>call <SID>denite_lsp_diagnostics()<CR>
 
 " some other options
 " au dein BufEnter * if &ft !~# '\v(denite|denite-filter)' | setlocal scroll=3 | endif

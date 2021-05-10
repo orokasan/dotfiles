@@ -155,7 +155,7 @@ call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
     \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
     \ '.hg/', '.git/*', '.bzr/', '.svn/',
     \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
-    \ 'tags', 'tags-*', 'junkfile/'])
+    \ 'tags', 'tags-*', 'junkfile/','bookmark://' ])
 call denite#custom#alias('source', 'buffer/project', 'buffer')
 call denite#custom#source('buffer/project', 'matchers', ['matcher/fuzzy','matcher/project_files'])
 " call denite#custom#alias('filter', 'matcher/ignore_for_oldfiles', 'matcher/ignore_globs')

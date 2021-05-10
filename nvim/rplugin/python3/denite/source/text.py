@@ -39,7 +39,8 @@ class Source(Base):
 
     def _convert(self, context, header):
         mark = context['__mark']
-        abbr = '{}: {} {}'.format(str(header['lnum']).ljust(len(str(context['__bufline'])), ' '),
+        lnum = str(header['lnum']).ljust(len(str(context['__bufline'])), ' ') if not context['args'] else ''
+        abbr = '{}{} {}'.format(lnum ,
                 text_align(str(mark * header['level']), context['__max_level']*get_han_count(mark)), header['text'])
         return {
                 'abbr': abbr,
