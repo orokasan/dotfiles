@@ -1276,7 +1276,7 @@ require'compe'.setup {
   documentation = true;
   source = {
     path = true;
-    buffer = true;
+    buffer = false;
     calc = true;
     nvim_lsp = true;
     nvim_lua = true;
@@ -1331,4 +1331,8 @@ nnoremap q <nop>
 nnoremap Q q
 " for ahk workaround
 nmap <BS> <C-h>
+
+if has('nvim')
+    lua require('dotfiles/nvim/lsp_settings')
+endif
 " vim:set foldmethod=marker:

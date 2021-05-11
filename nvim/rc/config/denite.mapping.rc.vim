@@ -26,13 +26,11 @@ nnoremap <silent> [denite]<Space> <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
 nnoremap <silent> [denite]F <Cmd>DeniteBufferDir
-    \ -start-filter
     \ file file:new<CR>
 nnoremap <silent> [denite]s <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
 nnoremap <silent> [denite]S <Cmd>DeniteProjectDir
-    \ -start-filter
     \  file file:new<CR>
 ""ホームディレクトリ下のファイル一覧。
 "nnoremap <silent> [denite]t <Cmd>Denite

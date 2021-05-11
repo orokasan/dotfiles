@@ -13,6 +13,7 @@ let g:my_denite_filter_winblend_config = b:denite.buffer_name !~#
 \ '\v(float|menu|relative)' ? 1 : 0
 setlocal winblend=0
 endif
+setlocal winblend=30
 setlocal signcolumn=no
 nnoremap <silent><buffer><expr> j
 \ line('.') == line('$') ? 'gg' : 'j'
@@ -184,7 +185,7 @@ let s:defx_ignore_files =
     \ '*.aux,*.dvi,*.bbl,*.out,*.fdb_latexmk,*.bst,*.blg,*.toc,Icon'
 
 call defx#custom#option('_', {
-    \ 'winwidth': 35,
+    \ 'winwidth': 40,
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename:size:space:time',
@@ -266,8 +267,23 @@ nnoremap <silent><buffer><expr> m defx#async_action('multi', ['move','redraw'])
 nnoremap <silent><buffer><expr> p defx#async_action('paste')
 nnoremap <silent><buffer><expr> <C-l> defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
 nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open_tree'). 'j' : defx#do_action('drop')
-nnoremap <silent><buffer><expr><nowait> d defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
-nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
+nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#is_opened_tree() ? defx#do_action('close_tree') : defx#do_action('open_tree') : <SID>defx_is_plaintxt() ? defx#do_action('drop') : defx#do_action('execute_system')
+"nnoremap <silent><buffer><expr> <2-LeftMouse> <SID>defx_doubleclick()
+function! s:defx_doubleclick() abort
+if defx#is_directory()
+    if defx#is_opened_tree()
+        call defx#do_action('close_tree')
+    else
+        call defx#do_action('open_tree')
+    endif
+else
+    if s:defx_is_plaintxt()
+        call defx#do_action('drop')
+    else
+        call defx#do_action('execute_system')
+    endif
+endif
+endfunction
 nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
 nnoremap <silent><buffer><expr> t defx#do_action('open', 'tabnew')
 nnoremap <silent><buffer><expr> <C-t> defx#do_action('multi', ['toggle_sort','filename','redraw'])
@@ -276,20 +292,21 @@ nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N defx#do_action('new_file')
 nnoremap <silent><buffer><expr> F defx#do_action('new_multiple_files')
 nnoremap <silent><buffer> <C-o> <Cmd>Denite  -immediately -no-empty defx/history<CR>
-nnoremap <silent><buffer> <C-o> <Cmd>Denite  -immediately -no-empty defx/history<CR>
-nnoremap <silent><buffer> u <Cmd>Denite defx/history -post-action=open -unique<CR>
-nnoremap <silent><buffer> U <Cmd>Denite defx/history -auto-action=default -post-action=open -unique<CR>
+nnoremap <silent><buffer> u <Cmd>Denite defx/history -post-action=jump -unique<CR>
+nnoremap <silent><buffer> ss <Cmd>Denite list -start-filter -split=floating -winwidth=50 -winrow=1 -wincol=`&columns-60`<CR>
+nnoremap <silent><buffer> o <Cmd>Denite list -start-filter -split=floating -winwidth=50 -winrow=1 -wincol=`&columns-60`<CR>
+nnoremap <silent><buffer> U <Cmd>Denite defx/history -auto-action=default -post-action=jump -unique<CR>
 nnoremap <silent><nowait><buffer> Z <Cmd>call Defx_archive()<CR>
 "need 'pip install Send2Trash'
 nnoremap <silent><buffer><expr><nowait> D defx#async_action('remove_trash')
 nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
-nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'toggle')
+"nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'toggle')
 nnoremap <silent><buffer><expr> O defx#do_action('open_tree', 'recursive')
 nnoremap <silent><buffer><expr> <MiddleMouse> defx#do_action('open_tree', 'recursive', 'toggle')
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
 nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
-nnoremap <silent><buffer><expr> <RightMouse> defx#do_action('cd', ['..'])
+nnoremap <silent><buffer><expr> <RightMouse> defx#do_action('cd', ['file','..'])
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
 nnoremap <silent><buffer><expr> i defx#do_action('toggle_select') . 'j'
@@ -298,7 +315,7 @@ nnoremap <silent><buffer><expr> I defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> * defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <C-h> defx#do_action('cd', ['..'])
+nnoremap <silent><buffer><expr> <C-h> defx#do_action('cd', ['file','..'])
 nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
 " nnoremap <silent><buffer><expr> a defx#do_action('cd', ['..'])
 " nnoremap <silent><buffer><expr><nowait> w line('.') == 1 ? 'G' : 'k'
@@ -316,8 +333,8 @@ nnoremap <silent><buffer> sa <Cmd>split<CR>:Defx -new -split=no<CR>
 function! s:defx_is_plaintxt()
     let file = defx#get_candidate()['action__path']
     let extension = fnamemodify(file, ':e')
-    let ex = '\v(png|xlsm|jpg|docx|docs|xlsx|pdf)'
-    if ex && ex =~# extension
+    let ex = '\v(png|xlsm|jpg|docx|docs|xlsx|pdf|pptx|exe|zip)'
+    if (extension =~# '') && (ex =~# extension)
     return 0
     else
     return 1
@@ -330,7 +347,7 @@ repo = 'kristijanhusak/defx-icons'
 on_source = 'defx.nvim'
 hook_source = '''
 let g:defx_icons_enable_syntax_highlight = 1
-let g:defx_icons_column_length = 2
+let g:defx_icons_column_length = 0
 let g:defx_icons_directory_icon = ''
 let g:defx_icons_mark_icon = '*'
 let g:defx_icons_copy_icon = ''
@@ -377,7 +394,7 @@ hi default link DefxIconsOpenedTreeIcon Title
 hi default link DefxIconsNestedTreeIcon Constant
 hi default link DefxIconsMarkIcon Error
 hi default link DefxIconsParentDirectory Function
-hi default link Defx_filename_directory directory
+hi default link Defx_filename_directory Function
 
 "NerdFont List{{
 "This list is useful for testing and choosing interesting symbols.

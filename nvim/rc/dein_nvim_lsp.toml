@@ -4,9 +4,6 @@ repo = 'neovim/nvim-lspconfig'
 # on_lua = ['lspconfig']
 # lazy = '1'
 hook_add = '''
-if has('nvim')
-    lua require('dotfiles/nvim/lsp_settings')
-endif
 '''
 
 # [[plugins]]
