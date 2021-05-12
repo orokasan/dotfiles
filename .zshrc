@@ -164,14 +164,14 @@ zstyle ':zle:*' word-style unspecified
 zstyle ':completion:*:default' menu select=2
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion::complete:*' use-cache true
-# bindkey '^r' history-incremental-pattern-search-backward
-# bindkey '^s' history-incremental-pattern-search-forward
+bindkey '^r' history-incremental-pattern-search-backward
+bindkey '^s' history-incremental-pattern-search-forward
 # # 例 ls まで打ってCtrl+pでlsコマンドをさかのぼる、Ctrl+bで逆順
-# autoload -Uz history-search-end
-# zle -N history-beginning-search-backward-end history-search-end
-# zle -N history-beginning-search-forward-end history-search-end
-# bindkey "^p" history-beginning-search-backward-end
-# bindkey "^b" history-beginning-search-forward-end
+autoload -Uz history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^p" history-beginning-search-backward-end
+bindkey "^b" history-beginning-search-forward-end
 
 # cdr タブでリストを表示
 autoload -Uz add-zsh-hook
