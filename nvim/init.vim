@@ -181,7 +181,9 @@ if has('nvim')
 else
   set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
 endif
+if !has('mac')
 set nrformats+=unsigned
+endif
 " set unnamed register to clipboard.
 " NOTE: not working well with CTRL-V in neovim.
 " workaround in neovim section.

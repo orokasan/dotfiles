@@ -1,8 +1,10 @@
 .viminfo
 .DS_Store
 minivimrc*
-nvim/rplugin/python3/denite/source/__pycache__/
+__pycache__/
 nvim/view/
 nvim/undo/
 nvim/swap/
 .goneovim/sessions/
+karabiner/assets/
+karabiner/automatic_backups/

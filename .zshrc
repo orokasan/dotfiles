@@ -7,11 +7,6 @@ export PATH=$PATH:$GOPATH/bin
 export MDPDF_STYLES=$HOME/dotfiles/mdpdf/style.css
 
 export TEXINPUTS='.//;'
-[[ -d ~/.rbenv  ]] && \
-  export PATH=${HOME}/.rbenv/bin:${PATH} && \
-  eval "$(rbenv init -)"
-autoload -Uz compinit
-compinit
 setopt share_history
 HISTSIZE=10000
 SAVEHIST=10000
@@ -183,106 +178,6 @@ autoload -Uz add-zsh-hook
 autoload -Uz chpwd_recent_dirs cdr
 add-zsh-hook chpwd chpwd_recent_dirs
 
-#zplug
-bindkey -e
-
-source ~/.zplug/init.zsh
-zplug "zsh-users/zsh-completions"
-# zplug "zsh-users/zsh-autosuggestions"
-zplug "mafredri/zsh-async", from:github
-zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
-zplug "yukiycino-dotfiles/fancy-ctrl-z"
-bindkey '^z' fancy-ctrl-z
-
-if ! zplug check --verbose; then
-    printf 'Install? [y/N]: '
-    if read -q; then
-        echo; zplug install
-    fi
-fi
-zplug load
-# zsh-syntax-highlighting
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# fgコマンドの%を省略
-fg() {
-    if [[ $# -eq 1 && $1 = - ]]; then
-        builtin fg %-
-    else
-        builtin fg %"$@"
-    fi
-}
-
-# fzf
-# Options to fzf command
-export FZF_COMPLETION_TRIGGER=''
-export FZF_DEFAULT_OPTS=' --height 40% --reverse --select-1 --exit-0 --multi'
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
-export FZF_CTRL_T_COMMAND='rg --files --hidden --glob "!.git/*"'
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-bindkey '^T' fzf-completion
-bindkey '^I' $fzf_default_completion
-
-# 一発でディレクトリ移動
-fd() {
-  local dir
-  dir=$(find ${1:-.} -path '*/\.*' -prune \
-                  -o -type d -print 2> /dev/null | fzf +m) &&
-  cd "$dir"
-}
-
-# fzf-cdr 
-alias cdd='fzf-cdr'
-function fzf-cdr() {
-    target_dir=`cdr -l | sed 's/^[^ ][^ ]*  *//' | fzf`
-    target_dir=`echo ${target_dir/\~/$HOME}`
-    if [ -n "$target_dir" ]; then
-        cd $target_dir
-    fi
-}
-# 差分を確認しながらステージング
-fga() {
-  modified_files=$(git status --short | awk '{print $2}') &&
-  selected_files=$(echo "$modified_files" | fzf -m --preview 'git diff {}') &&
-  git add $selected_files
-}
-
-# プレビューしながらvimで開く
-fvim() {
-  files=$(git ls-files) &&
-  selected_files=$(echo "$files" | fzf -m --preview 'head -100 {}') &&
-  vim $selected_files
-}
-
-fh() {
-  eval $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed 's/ *[0-9]*\*? *//' | sed 's/\\/\\\\/g')
-}
-# fkill - kill processes - list only the ones you can kill. Modified the earlier script.
-fkill() {
-    local pid 
-    if [ "$UID" != "0" ]; then
-        pid=$(ps -f -u $UID | sed 1d | fzf -m | awk '{print $2}')
-    else
-        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}') fi  
-    if [ "x$pid" != "x" ]
-    then
-        echo $pid | xargs kill -${1:-9}
-    fi  
-}
-
-# fgをfzfで
-alias fgg='_fgg'
-function _fgg() {
-    wc=$(jobs | wc -l | tr -d ' ')
-    if [ $wc -ne 0 ]; then
-        job=$(jobs | awk -F "suspended" "{print $1 $2}"|sed -e "s/\-//g" -e "s/\+//g" -e "s/\[//g" -e "s/\]//g" | grep -v pwd | fzf | awk "{print $1}")
-        wc_grep=$(echo $job | grep -v grep | grep 'suspended')
-        if [ "$wc_grep" != "" ]; then
-            fg %$job
-        fi
-    fi
-}
-
 alias gg='_gg'
 function _gg () {
 open -a /Applications/Firefox\ Nightly.app \
@@ -293,4 +188,36 @@ open -a /Applications/Firefox\ Nightly.app \
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export PATH=$PATH:/home/linuxbrew/.linuxbrew/bin
-alias nvim='neovide.exe'
+
+### Added by Zinit's installer
+if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
+    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
+    command git clone https://github.com/zdharma/zinit "$HOME/.zinit/bin" && \
+        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
+        print -P "%F{160}▓▒░ The clone has failed.%f%b"
+fi
+
+source "$HOME/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+zinit light-mode for \
+    zinit-zsh/z-a-rust \
+    zinit-zsh/z-a-as-monitor \
+    zinit-zsh/z-a-patch-dl \
+    zinit-zsh/z-a-bin-gem-node
+
+# A glance at the new for-syntax – load all of the above
+# plugins with a single command. For more information see:
+# https://zdharma.github.io/zinit/wiki/For-Syntax/
+zinit for \
+    light-mode  zsh-users/zsh-autosuggestions \
+    light-mode  zdharma/fast-syntax-highlighting \
+                zdharma/history-search-multi-word \
+    light-mode pick"async.zsh" src"pure.zsh" \
+                sindresorhus/pure
+
+### End of Zinit's installer chunk
