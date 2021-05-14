@@ -8,13 +8,17 @@ let g:lightline = {
         \ ]
     \ },
     \ 'inactive': {
-        \ 'left': [['inactivefn']],
-        \ 'right': [[ 'percent' ], [], ['filetype','denitefilter']]
+         \ 'left': [['inactivefn']],
+         \ 'right': [[ 'percent' ], [], ['filetype','denitefilter']]
     \ },
     \ 'tabline' : {
-        \ 'left': [['tab']],
-        \ 'right': [['filetype'], ['fileencoding', 'fileformat'], ['cd'] ]
+         \ 'left': [['tab']],
+         \ 'right': [['filetype'], ['fileencoding', 'fileformat'], ['cd'] ]
     \ },
+    \ 'tab' : {
+         \ 'active': [ 'tabnum', 'filename', 'modified' ],
+         \ 'inactive': [ 'tabnum', 'filename', 'modified' ]
+         \ },
     \ 'component':{
         \ 'lineinfo':'%{LLruler()}%<'
     \},
@@ -70,6 +74,9 @@ endif
 catch
 endtry
 endfunction
+let g:lightline.tab_component_function = {
+      \ 'modified': 'LLModified',
+      \ 'tabnum': 'lightline#tab#tabnum' }
 
 " let g:lightline.subseparator= { 'left': '', 'right': '' }
 " let g:lightline.separator= { 'left': '', 'right': '' }
@@ -86,6 +93,10 @@ let g:component_function_visible_condition = {
         \ 'lineinfo': 1
         \ }
 
+function! LLModified(n) abort
+  let winnr = tabpagewinnr(a:n)
+  return gettabwinvar(a:n, winnr, '&modified') ? '+' : gettabwinvar(a:n, winnr, '&modifiable') ? '' : '<>'
+endfunction
 " if !exists('g:disable_IM_Control') && g:disable_IM_Control is 1
 "     let g:lightline.component += {
 "         \'IMEstatus':'%{IMStatus("-JP-")}'
@@ -133,6 +144,7 @@ function! s:threshold(n) abort
         \ a:n == 2 ? w > s/3 : w > s/4
 endfunction
 let s:diagnostics_counts = {}
+if has('nvim')
 function! VimLspCacheDiagnosticsCounts()
     " let s:diagnostics_counts = exists('*lsp#get_buffer_diagnostics_counts') ? lsp#get_buffer_diagnostics_counts() : ''
       if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
@@ -142,7 +154,7 @@ function! VimLspCacheDiagnosticsCounts()
 endfunction
 autocmd dein User lsp_diagnostics_updated call VimLspCacheDiagnosticsCounts() | call lightline#update()
 autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts()
-
+endif
 " vim-lsp or nvim-lsp
 function! LLLspError() abort
 if exists('*lsp#get_buffer_diagnostics_counts')

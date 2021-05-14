@@ -262,21 +262,21 @@ call denite#custom#action(
 function! s:defx_open(context)
     let path = a:context['targets'][0]['action__path']
     let file = fnamemodify(path, ':p')
-    let file_search = filereadable(expand(file)) ? ' -search=' . file : ''
+    let option = filereadable(expand(file)) ? ' -search=' . file : ''
     let dir = denite#util#path2directory(path)
     let dir = substitute(dir, ' ', '\\ ', 'g')
     if &filetype ==# 'defx'
       call defx#call_action('cd', [dir])
       call defx#call_action('search', [path])
     else
-      execute('Defx ' . dir . file_search)
+      execute('Defx ' . dir . option . ' -buffer-name=defx' . tabpagenr())
     endif
 endfunction
 
 "action:defxを定義
 call denite#custom#action(
     \ 'directory,file,openable,dirmark',
-    \ 'defx',
+    \ 'my_defx',
     \  function('s:defx_open'))
 
 " autocmd dein CursorHold * if &filetype ==# 'denite' | call denite#call_map('do_action', 'highlight') | endif

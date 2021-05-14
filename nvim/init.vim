@@ -68,18 +68,18 @@ endif
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
-" if has('nvim')
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 " else
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
-" endif
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,s:myvimrc)
    call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
+if has('nvim')
     call dein#load_toml(s:lsp_toml,  {'merged': 0})
+endif
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -185,7 +185,7 @@ set nrformats+=unsigned
 " set unnamed register to clipboard.
 " NOTE: not working well with CTRL-V in neovim.
 " workaround in neovim section.
-set clipboard+=unnamedplus
+set clipboard+=unnamed,unnamedplus
 " mouse in terminal
 set mouse=a
 " Set minimal height for current window.
@@ -1132,6 +1132,7 @@ echo tbl
 " let result = luaeval('vim.lsp.diagnostic.get_all()')
 " echo result
 endfunction
+if has('nvim')
 lua <<EOF
 require'nvim-treesitter.configs'.setup {
   highlight = {
@@ -1140,6 +1141,7 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 EOF
+endif
 nnoremap  <Space>wc <cmd>lua vim.lsp.diagnostic.clear(0)<CR>
 command! VimShowHlItem echo synIDattr(synID(line("."), col("."), 1), "name")
 command! VimShowHlGroup echo synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
@@ -1291,16 +1293,19 @@ inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
 inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 " inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
 inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+imap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ compe#complete()
 imap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
 smap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
 " Expand or jump
 imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
 " Jump forward or backward
-imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+" imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+" smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+" imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+" smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 " if exists('g:started_by_firenvim')
 "   set showtabline=0
 "   set laststatus=0
@@ -1334,4 +1339,5 @@ nmap <BS> <C-h>
 if has('nvim')
     lua require('lsp_settings')
 endif
+let g:previm_enable_realtime = 1
 " vim:set foldmethod=marker:

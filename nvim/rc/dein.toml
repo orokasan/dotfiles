@@ -31,6 +31,17 @@ hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 on_if = '!has("kaoriya")'
 repo = 'deton/jasentence.vim'
 hook_add = '''
+let g:jasentence_no_default_key_mappings = 1
+  nmap <silent> ) <Plug>JaSentenceMoveNF
+  nmap <silent> ( <Plug>JaSentenceMoveNB
+  omap <silent> ) <Plug>JaSentenceMoveOF
+  omap <silent> ( <Plug>JaSentenceMoveOB
+  xmap <silent> ) <Plug>JaSentenceMoveVF
+  xmap <silent> ( <Plug>JaSentenceMoveVB
+  omap <silent> as <Plug>JaSentenceTextObjA
+  omap <silent> is <Plug>JaSentenceTextObjI
+  xmap <silent> as <Plug>JaSentenceTextObjVA
+  xmap <silent> is <Plug>JaSentenceTextObjVI
 '''
 
 [[plugins]]
@@ -96,6 +107,7 @@ let g:lexima_map_escape = '<C-[>'
 "  return pumvisible ? "\<CR>": lexima#expand('<CR>', 'i')
 inoremap <silent><expr> <CR> pumvisible() ? "\<CR>" : lexima#expand('<LT>CR>', 'i')
 "endfunction "}}}
+inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
 inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
 function! s:my_bs_function() abort "{{{
   return lexima#expand('<BS>', 'i')
@@ -846,6 +858,7 @@ repo = 'thinca/vim-themis'
 # '''
 [[plugins]]
 repo = 'hrsh7th/nvim-compe'
+on_if = 'has("nvim")'
 merged = 0
 hook_add = '''
 '''
@@ -854,15 +867,10 @@ hook_add = '''
 repo = 'hrsh7th/vim-vsnip'
 merged = 0
 hook_add = '''
-imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-imap <expr> <Tab>   pumvisible() ? "\<C-n>" : vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
 '''
 
 [[plugins]]
+on_if = 'has("nvim")'
 repo = 'bfredl/nvim-miniyank'
 hook_add = '''
 map p <Plug>(miniyank-autoput)
@@ -961,5 +969,5 @@ repo = 'lambdalisue/nerdfont.vim'
 [[plugins]]
 repo = 'lambdalisue/glyph-palette.vim'
 [[plugins]]
-repo = 'lambdalisue/fern-bookmark.vim'
+repo = 'lambdalisue/edita.vim'
 # vim:set foldmethod=marker:'

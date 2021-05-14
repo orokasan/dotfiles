@@ -65,7 +65,7 @@ nnoremap <silent><buffer><expr> r
 nnoremap <silent><buffer><expr> R
     \ denite#do_map('do_action','file/rec/txt')
 nnoremap <silent><buffer><expr> e
-    \ denite#do_map('do_action','defx')
+    \ denite#do_map('do_action','my_defx')
 nnoremap <silent><buffer><expr> <C-d>
     \ denite#do_map('do_action','directory/rec')
 nnoremap <silent><buffer><expr> <C-g>
@@ -137,7 +137,7 @@ hook_add = '''
 nmap <C-e> <Plug>(defx)
 nmap <Leader>e <Plug>(defxbufferdir)
 nnoremap <silent> <Plug>(defx) <Cmd>Defx -buffer-name=`'defx' . tabpagenr()` -resume<CR>
-nnoremap <silent> <Plug>(defxbufferdir) <Cmd>Defx  `getcwd()` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
+nnoremap <silent> <Plug>(defxbufferdir) <Cmd>Defx `expand('%:p:h')` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
 nnoremap <space>E <cmd>call <SID>defx_auto_open()<CR>
 function! s:defx_auto_open() abort
 autocmd BufNewFile,BufRead,DirChanged * if filereadable(expand('%')) | execute("Defx `getcwd()` -no-focus -resume -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`") | endif
@@ -265,7 +265,7 @@ nnoremap <silent><buffer> <C-e> <C-w>p
 nnoremap <silent><buffer><expr> c defx#async_action('multi', ['copy','redraw'])
 nnoremap <silent><buffer><expr> m defx#async_action('multi', ['move','redraw'])
 nnoremap <silent><buffer><expr> p defx#async_action('paste')
-nnoremap <silent><buffer><expr> <C-l> defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
+nnoremap <silent><buffer><expr> L defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
 nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open_tree'). 'j' : defx#do_action('drop')
 nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#is_opened_tree() ? defx#do_action('close_tree') : defx#do_action('open_tree') : <SID>defx_is_plaintxt() ? defx#do_action('drop') : defx#do_action('execute_system')
 "nnoremap <silent><buffer><expr> <2-LeftMouse> <SID>defx_doubleclick()
@@ -306,16 +306,16 @@ nnoremap <silent><buffer><expr> O defx#do_action('open_tree', 'recursive')
 nnoremap <silent><buffer><expr> <MiddleMouse> defx#do_action('open_tree', 'recursive', 'toggle')
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
 nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
-nnoremap <silent><buffer><expr> <RightMouse> defx#do_action('cd', ['file','..'])
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
 nnoremap <silent><buffer><expr> q defx#do_action('quit')
 nnoremap <silent><buffer><expr> i defx#do_action('toggle_select') . 'j'
+nnoremap <silent><buffer><expr> <RightMouse> defx#do_action('toggle_select')
 xnoremap <silent><buffer><expr> i defx#do_action('toggle_select_visual')
 nnoremap <silent><buffer><expr> I defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> * defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> <C-h> defx#do_action('cd', ['file','..'])
+nnoremap <silent><buffer><expr> H defx#do_action('cd', ['file','..'])
 nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
 " nnoremap <silent><buffer><expr> a defx#do_action('cd', ['..'])
 " nnoremap <silent><buffer><expr><nowait> w line('.') == 1 ? 'G' : 'k'

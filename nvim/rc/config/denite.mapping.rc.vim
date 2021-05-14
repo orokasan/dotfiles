@@ -90,9 +90,11 @@ nnoremap <silent> [denite]h <Cmd>Denite
     \ -start-filter
     \ help<CR>
 " MRU
+if has('nvim')
 nnoremap <silent> [denite]n <Cmd>DeniteProjectDir
     \ -buffer-name=normal
     \ file/old file<CR>
+endif
     " \ -unique
 "mark一覧
 nnoremap <silent> [denite]m <Cmd>Denite

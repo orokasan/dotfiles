@@ -68,7 +68,7 @@ augroup myeskk
     autocmd CmdlineLeave [:/?] if exists('*eskk#enable') && eskk#is_enabled() | call eskk#disable() | endif
     " autocmd CmdlineLeave [:/?] call <SID>eskk_cmdleave_off()
     " autocmd CmdlineLeave [:/?@-] call eskk#disable()
-    autocmd CmdlineLeave * call s:eskk_restore_cursor()
+    " autocmd CmdlineLeave * call s:eskk_restore_cursor()
 augroup END
 function! s:eskk_cmdleave_off() abort
     if exists('*eskk#is_enable') && eskk#is_enable() && !pumvisible()
@@ -81,18 +81,17 @@ function! s:eskk_keep_enable_toggle() abort
     if s:eskk_status || g:eskk_keep_enable
         let s:eskk_status = 0
         let g:eskk_keep_enable = 0
-        call s:eskk_restore_cursor()
+        " call s:eskk_restore_cursor()
     else
         " eskkがオフの時に呼ぶと常にeskk onでインサートモードに入る状態になる
         let g:eskk_keep_enable = 1
-        call s:eskk_highlight_cursor()
-        " call s:eskk_highlight_linenr()
+        " call s:eskk_highlight_cursor()
     endif
 endfunction
 
 function! s:eskk_save_status() abort
     if g:eskk_keep_enable
-        call s:eskk_highlight_cursor()
+        " call s:eskk_highlight_cursor()
         return
     endif
     " let s:eskk_status = eskk#is_enabled() ? 1 : 0
@@ -120,14 +119,14 @@ function! LLmyeskk() abort
 endfunction
 
 ""IME/skkの状態に応じてsigncolumnの色を変える（WIP）
-autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
+" autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
 "" InsertLeaveの前に発生するイベントであることに注意する
-autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_nicely()
+" autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_nicely()
 
 function! s:eskk_restore_highlight_nicely()
-    if exists('g:neovide')
-        return
-    endif
+    " if exists('g:neovide')
+    "     return
+    " endif
     if mode() is# 'ic'
         call s:eskk_restore_cursor()
     else
@@ -141,18 +140,16 @@ function! s:eskk_restore_highlight_nicely()
 endfunction
 
 function! s:eskk_highlight_cursor()
-    if exists('g:neovide')
-        return
-    endif
 " guicursorのハイライトをeskkCursorに変更する
-highlight Cursor guibg=#e2a478
+highlight CursorLineNr guifg=#e2a478 gui=bold
     " set guicursor=n-v-c:eskkCursor-blinkon0,i-ci:ver25-eskkCursor,r-cr:hor20
 endfunction
 set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver25-Cursor,r-cr:hor20
 function! s:eskk_restore_cursor()
+    let higroup = 'CursorLineNr'
 " guicursorのハイライトを元に戻す
     " execute('set guicursor=' . s:default_guicursor)
-    execute('highlight Cursor ' . s:eskk_default_linenr_hi)
+    execute('highlight ' . higroup .' ' . s:eskk_default_linenr_hi)
 endfunction
 highlight eskkCursor guibg=#e2a478
 " set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:Cursor,r-cr:hor20
@@ -164,8 +161,8 @@ let bg = synIDattr(synIDtrans(hlID(a:hi)), "bg")
     return ' guibg=' . bg
 endfunction
 " eskkのsource時に設定
-let s:eskk_default_linenr_hi =s:gethighlight('Cursor')
+let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 " ColorSchemeが変わった時に読み込み直す
-autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('Cursor')
+autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 
 let g:eskk#server = { 'host': 'localhost', 'port': 55100, 'type': 'dictionary' }

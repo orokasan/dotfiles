@@ -66,6 +66,7 @@ call deoplete#custom#option('keyword_patterns', {
 \ 'txt': '[a-zA-Z_-]*',
 \ 'ruby': '[a-zA-Z_]\w*[!?]?',
 \})
+call deoplete#custom#option({'ignore_sources': {'_': ['eskk']}})
 " deoplete-lsp should not be lazy loaded
 " if dein#is_sourced('deoplete-lsp')
 "     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex', '']
@@ -76,5 +77,4 @@ call deoplete#custom#option('keyword_patterns', {
 "     endfor
 "     call deoplete#custom#option({'ignore_sources': config})
 " endif
-
 call deoplete#enable()

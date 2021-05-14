@@ -106,10 +106,15 @@ nvim_lsp.sumneko_lua.setup {
 -- nvim_lsp['jdtls'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('eclipse-jdt-ls')}};
 -- nvim_lsp['html'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('html-languageserver')}};
 -- nvim_lsp['vimls'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('vim-language-server') ,'--stdio'} };
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true;
 
-local servers = { "pyright", "rust_analyzer", "tsserver" , 'vimls', 'gopls'}
+local servers = {"rust_analyzer", "tsserver" , 'vimls', 'gopls', "pyright", "jedi_language_server"}
 for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup { on_attach = on_attach }
+  nvim_lsp[lsp].setup {
+      capabilities = capabilities;
+      on_attach = on_attach,
+  }
 end
 efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
 nvim_lsp['efm'].setup{
