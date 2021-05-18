@@ -773,12 +773,14 @@ merged = 0
 on_if = 'executable("gcc") && has("nvim")'
 repo = 'nvim-treesitter/nvim-treesitter'
 
-# [[plugins]]
-# repo = 'Shougo/neomru.vim'
-# hook_add = '''
-# '''
+[[plugins]]
+repo = 'Shougo/neomru.vim'
+hook_add = '''
+'''
 [[plugins]]
  repo = 'bluz71/vim-nightfly-guicolors'
+# [[plugins]]
+#  repo = 'ctrlpvim/ctrlp.vim'
 
 # [[plugins]]
 #  repo = 'sainnhe/sonokai'
@@ -859,13 +861,11 @@ repo = 'thinca/vim-themis'
 [[plugins]]
 repo = 'hrsh7th/nvim-compe'
 on_if = 'has("nvim")'
-merged = 0
 hook_add = '''
 '''
 
 [[plugins]]
 repo = 'hrsh7th/vim-vsnip'
-merged = 0
 hook_add = '''
 '''
 

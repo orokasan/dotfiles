@@ -27,11 +27,15 @@ let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 let g:loaded_matchparen = 1
+let g:loaded_node_provider = 0
+let g:loaded_perl_provider = 0
+let g:loaded_python_provider = 0
+let g:loaded_ruby_provider = 0
 "---------------------------------------------------------------------
 "Python,vimproc
 let s:is_windows = has('win32') || has('win64')
 if has('win32')
-    let g:python3_host_prog ='C:\Python38\python.exe'
+    let g:python3_host_prog = expand('AppData\Local\Programs\Python\Python39\python.exe')
 endif
 if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
@@ -1293,9 +1297,9 @@ inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
 inoremap <silent><expr> <C-e>     compe#close('<C-e>')
 " inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
 inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-imap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ compe#complete()
+" imap <silent><expr> <TAB>
+"       \ pumvisible() ? "\<TAB>" :
+"       \ compe#complete()
 imap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
 smap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
 " Expand or jump
@@ -1340,4 +1344,6 @@ if has('nvim')
     lua require('lsp_settings')
 endif
 let g:previm_enable_realtime = 1
+let g:terminal_scrollback_buffer_size = 3000
+" au dein VimResized * :wincmd =<CR>
 " vim:set foldmethod=marker:

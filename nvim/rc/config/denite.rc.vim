@@ -182,7 +182,7 @@ function! s:candidate_grep(context) abort
         let sdir = fnamemodify(dir, ':p')
     endif
     let sources_queue = a:context['sources_queue'] + [[
-          \ {'name': 'grep', 'args': [sdir, '', '!']},
+          \ {'name': 'grep', 'args': [sdir, '', '']},
           \ ]]
     return {'is_interactive': v:false, 'sources_queue': sources_queue}
 endfunction

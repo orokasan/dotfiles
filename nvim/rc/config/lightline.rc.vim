@@ -56,7 +56,8 @@ let g:lightline = {
 " https://github.com/neovim/neovim/issues/8796
 " autocmd dein User LspDiagnosticsChanged if mode() is# 'n' | call VimLspCacheDiagnosticsCounts() | call lightline#update() | endif
 
-autocmd dein ColorScheme,VimEnter * call <SID>lightline_set_colorscheme()
+  let g:lightline.colorscheme = 'iceberg'
+" autocmd dein ColorScheme,VimEnter * call <SID>lightline_set_colorscheme()
 function! s:lightline_set_colorscheme() abort
 " if !exists('g:loaded_lightline')
 " return

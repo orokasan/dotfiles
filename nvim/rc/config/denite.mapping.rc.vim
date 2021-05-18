@@ -1,8 +1,8 @@
 nmap s [denite]
 nnoremap [denite] <Nop>
-nnoremap <silent> [denite]- <Cmd>DeniteBufferDir
+nnoremap <silent> [denite]- <Cmd>Denite
     \ -start-filter
-    \  source<CR>
+    \  dein<CR>
 "現在開いているファイルのgit配下のファイルを開く
 nnoremap <silent> [denite]f <Cmd>Denite
     \ -start-filter

@@ -68,7 +68,9 @@ nnoremap <silent><buffer><expr> e
     \ denite#do_map('do_action','my_defx')
 nnoremap <silent><buffer><expr> <C-d>
     \ denite#do_map('do_action','directory/rec')
-nnoremap <silent><buffer><expr> <C-g>
+nnoremap <silent><buffer><expr> <C-o>
+    \ denite#do_map('restore_sources')
+nnoremap <silent><buffer><expr><nowait> <C-g>
     \ denite#do_map('do_action','grep')
 nnoremap <silent><buffer><expr> <C-s>
     \ denite#do_map('change_sorters', 'sorter/rank,sorter/word')
@@ -135,8 +137,10 @@ repo =  'Shougo/defx.nvim'
 on_cmd = 'Defx'
 hook_add = '''
 nmap <C-e> <Plug>(defx)
+nmap = <Plug>(defxtab)
 nmap <Leader>e <Plug>(defxbufferdir)
 nnoremap <silent> <Plug>(defx) <Cmd>Defx -buffer-name=`'defx' . tabpagenr()` -resume<CR>
+nnoremap <silent> <Plug>(defxtab) <Cmd>Defx -buffer-name='defxtab' -resume -split=tab -listed\|Defx -buffer-name='defxtab2' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`<CR>
 nnoremap <silent> <Plug>(defxbufferdir) <Cmd>Defx `expand('%:p:h')` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
 nnoremap <space>E <cmd>call <SID>defx_auto_open()<CR>
 function! s:defx_auto_open() abort
@@ -189,7 +193,7 @@ call defx#custom#option('_', {
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename:size:space:time',
-    \ 'sort': 'filename',
+    \ 'sort': 'TIME:filename',
     \ 'ignored_files': s:defx_ignore_files,
     \ 'floating_preview': v:true
     \ })
@@ -285,8 +289,8 @@ else
 endif
 endfunction
 nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
-nnoremap <silent><buffer><expr> t defx#do_action('open', 'tabnew')
-nnoremap <silent><buffer><expr> <C-t> defx#do_action('multi', ['toggle_sort','filename','redraw'])
+nnoremap <silent><buffer><expr> T defx#do_action('open', 'tabnew')
+nnoremap <silent><buffer><expr> t defx#do_action('multi', ['toggle_sort','filename','redraw'])
 nnoremap <silent><buffer><expr> P defx#do_action('preview')
 nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N defx#do_action('new_file')
@@ -294,15 +298,13 @@ nnoremap <silent><buffer><expr> F defx#do_action('new_multiple_files')
 nnoremap <silent><buffer> <C-o> <Cmd>Denite  -immediately -no-empty defx/history<CR>
 nnoremap <silent><buffer> u <Cmd>Denite defx/history -post-action=jump -unique<CR>
 nnoremap <silent><buffer> ss <Cmd>Denite list -start-filter -split=floating -winwidth=50 -winrow=1 -wincol=`&columns-60`<CR>
-nnoremap <silent><buffer> o <Cmd>Denite list -start-filter -split=floating -winwidth=50 -winrow=1 -wincol=`&columns-60`<CR>
-nnoremap <silent><buffer> U <Cmd>Denite defx/history -auto-action=default -post-action=jump -unique<CR>
+"nnoremap <silent><buffer> U <Cmd>Denite defx/history -auto-action=default -post-action=jump -unique<CR>
 nnoremap <silent><nowait><buffer> Z <Cmd>call Defx_archive()<CR>
 "need 'pip install Send2Trash'
 nnoremap <silent><buffer><expr><nowait> D defx#async_action('remove_trash')
 nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
-"nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'toggle')
-nnoremap <silent><buffer><expr> O defx#do_action('open_tree', 'recursive')
+nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'recursive')
 nnoremap <silent><buffer><expr> <MiddleMouse> defx#do_action('open_tree', 'recursive', 'toggle')
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
 nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
