@@ -2,11 +2,12 @@ function! s:check_back_space() abort "{{{
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction "}}}
-" imap <silent><expr> <TAB>
-"       \ neosnippet#expandable_or_jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" :
-"       \ pumvisible() ? "\<C-n>" :
-"       \ <SID>check_back_space() ? "\<TAB>" :
-"       \ deoplete#manual_complete()
+imap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ "\<TAB>"
+imap <silent><expr> <S-TAB>
+      \ pumvisible() ? "\<C-p>" :
+      \ "\<S-TAB>"
 " inoremap <silent><expr> <C-n>
 "     \ pumvisible() ? "\<C-n>" :
 "     \ deoplete#manual_complete()
@@ -18,7 +19,8 @@ endfunction "}}}
 " inoremap <silent><expr><BS>
 "     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><C-l>
-    \ deoplete#complete_common_string()
+    \ pumvisible() ?  deoplete#complete_common_string()
+    \<C-l>" :
 " inoremap <expr><silent> <C-g> deoplete#undo_completion()
 
     " \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
@@ -66,7 +68,7 @@ call deoplete#custom#option('keyword_patterns', {
 \ 'txt': '[a-zA-Z_-]*',
 \ 'ruby': '[a-zA-Z_]\w*[!?]?',
 \})
-call deoplete#custom#option({'ignore_sources': {'_': ['eskk']}})
+" call deoplete#custom#option({'ignore_sources': {'_': ['eskk']}})
 " deoplete-lsp should not be lazy loaded
 " if dein#is_sourced('deoplete-lsp')
 "     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex', '']

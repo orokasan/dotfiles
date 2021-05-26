@@ -35,7 +35,7 @@ let g:loaded_ruby_provider = 0
 "Python,vimproc
 let s:is_windows = has('win32') || has('win64')
 if has('win32')
-    let g:python3_host_prog = expand('AppData\Local\Programs\Python\Python39\python.exe')
+    let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python39\python.exe')
 endif
 if has('win64') && !has('nvim')
     set pythonthreedll=C:\Python38\python38.dll
@@ -1266,74 +1266,12 @@ set indentexpr=
 if has('win32')
 let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 endif
-lua << EOF
-require'compe'.setup {
-  enabled = true;
-  autocomplete = true;
-  debug = false;
-  min_length = 2;
-  preselect = 'enable';
-  throttle_time = 80;
-  source_timeout = 200;
-  incomplete_delay = 400;
-  max_abbr_width = 100;
-  max_kind_width = 100;
-  max_menu_width = 100;
-  documentation = true;
-  source = {
-    path = true;
-    buffer = false;
-    calc = true;
-    nvim_lsp = true;
-    nvim_lua = true;
-    vsnip = true;
-  };
-}
-EOF
-let g:lexima_no_default_rules = v:true
-call lexima#set_default_rules()
-inoremap <silent><expr> <C-Space> compe#complete()
-inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
-inoremap <silent><expr> <C-e>     compe#close('<C-e>')
-" inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-" imap <silent><expr> <TAB>
-"       \ pumvisible() ? "\<TAB>" :
-"       \ compe#complete()
-imap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
-smap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
-" Expand or jump
-imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-" Jump forward or backward
-" imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-" smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-" imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-" smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-" if exists('g:started_by_firenvim')
-"   set showtabline=0
-"   set laststatus=0
-"   set background=dark
-" augroup Firenvim
-"     au BufEnter * call Set_Font(g:firenvim_font)
-"     au BufEnter *     colorscheme iceberg
-"     " au BufEnter github.com_*.txt set filetype=markdown
-"   " au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
-"   " au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
-"   " au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
-" augroup END
-" endif
-" let g:firenvim_font = 'Cica'
-" function! Set_Font(font) abort
-"   execute 'set guifont=' . a:font . ':h12'
-" endfunction
 function! MdToText()
 %s/^#\s/■/
 %s/^##\s/■■/
 %s/\v^$\n\zs[^■]/　\0
 %s/\v。\zs$\n\ze[^][$]//
 endfunction
-nnoremap <ScrollWheelUp> 3<C-u>
 " set noswapfile
 set completeopt=menuone,noselect
 nnoremap q <nop>
@@ -1346,4 +1284,5 @@ endif
 let g:previm_enable_realtime = 1
 let g:terminal_scrollback_buffer_size = 3000
 " au dein VimResized * :wincmd =<CR>
+"!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t latex
 " vim:set foldmethod=marker:

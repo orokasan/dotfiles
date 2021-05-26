@@ -2,6 +2,7 @@ nmap s [denite]
 nnoremap [denite] <Nop>
 nnoremap <silent> [denite]- <Cmd>Denite
     \ -start-filter
+    \ -default-action=file/rec
     \  dein<CR>
 "現在開いているファイルのgit配下のファイルを開く
 nnoremap <silent> [denite]f <Cmd>Denite
@@ -121,6 +122,13 @@ nnoremap <silent> [denite]o <Cmd>Denite
     " \ markdown<CR>
 nnoremap <silent> [denite]j <Cmd>Denite
     \ dirmark<CR>
+
+autocmd FileType defx call s:defx_my_settings()
+function! s:defx_my_settings() abort
+nnoremap <silent> [denite]j <Cmd>Denite
+    \ -default_action=my_defx
+    \ dirmark<CR>
+endfunction
 "bookmark by "add"action
 nnoremap <silent> [denite]J <Cmd>Denite
     \ -path=`expand('%:p:h:h')`

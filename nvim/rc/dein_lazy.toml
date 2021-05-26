@@ -103,20 +103,17 @@ inoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
 inoremap <silent><buffer><expr> <C-b> denite#do_map('move_up_path')
 inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
 imap <silent><buffer> ~ <Plug>(eskk:toggle)
-inoremap <silent><buffer><expr> <C-Space> denite#do_map('do_action', 'file/rec')
+inoremap <silent><buffer><expr> <C-d> denite#do_map('do_action', 'file/rec')
 inoremap <silent><buffer><expr> <C-x> denite#do_map('do_action', 'execute')
 " imap <silent><buffer><nowait> <C-t> <Plug>(denite_filter_update)ri
 inoremap <silent><buffer> <C-t> <Esc>
   \:call denite#move_to_parent()<CR>
   \:call denite#call_map('toggle_matchers', 'matcher/regexp', 'matcher/fuzzy')<CR>
   \:call denite#move_to_filter()<CR>A
-inoremap <silent><buffer> <C-d> <Esc>
-  \:call denite#move_to_parent()<CR>
-  \:call denite#call_map('toggle_matchers', 'matcher/migemo', 'matcher/fuzzy')<CR>
-  \:call denite#move_to_filter()<CR>A
 inoremap z; ;
 inoremap <silent><buffer><expr> <BS> col('.') == 1 ? "" : "\<BS>"
-inoremap <silent><buffer><expr> <C-a> denite#do_map('choose_action')
+inoremap <silent><buffer> <C-a> <cmd>call denite#call_map('choose_action')<CR>
+inoremap <silent><buffer><expr> <C-e> denite#do_map('do_action', 'my_defx')
 imap <silent><buffer> <C-o> <Plug>(denite_filter_update)
 imap <silent><buffer> <ESC> <Plug>(denite_filter_update)
 imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)
@@ -140,7 +137,7 @@ nmap <C-e> <Plug>(defx)
 nmap = <Plug>(defxtab)
 nmap <Leader>e <Plug>(defxbufferdir)
 nnoremap <silent> <Plug>(defx) <Cmd>Defx -buffer-name=`'defx' . tabpagenr()` -resume<CR>
-nnoremap <silent> <Plug>(defxtab) <Cmd>Defx -buffer-name='defxtab' -resume -split=tab -listed\|Defx -buffer-name='defxtab2' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`<CR>
+nnoremap <silent> <Plug>(defxtab) <Cmd>Defx -buffer-name='defxtab' -resume -split=tab -listed\|Defx -buffer-name='defxtab2' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`\|0tabmove<CR>
 nnoremap <silent> <Plug>(defxbufferdir) <Cmd>Defx `expand('%:p:h')` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
 nnoremap <space>E <cmd>call <SID>defx_auto_open()<CR>
 function! s:defx_auto_open() abort
@@ -193,7 +190,6 @@ call defx#custom#option('_', {
     \ 'split': 'vertical',
     \ 'direction': 'botright',
     \ 'columns':'mark:indent:icons:filename:size:space:time',
-    \ 'sort': 'TIME:filename',
     \ 'ignored_files': s:defx_ignore_files,
     \ 'floating_preview': v:true
     \ })
@@ -203,7 +199,9 @@ call defx#custom#option('_', {
 call defx#custom#column('time', {
       \ 'format': '%y/%m/%d %H:%M',
       \ })
-function! s:get_defx_bufferdir(candidate) abort
+call defx#custom#column('file', {
+      \ 'max_width': '-50',
+      \ }! s:get_defx_bufferdir(candidate) abort
     let path_mod = ':~:h'
     let dir = denite#util#substitute_path_separator(a:candidate)
     let dir = fnamemodify(dir, path_mod)
@@ -290,7 +288,7 @@ endif
 endfunction
 nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
 nnoremap <silent><buffer><expr> T defx#do_action('open', 'tabnew')
-nnoremap <silent><buffer><expr> t defx#do_action('multi', ['toggle_sort','filename','redraw'])
+nnoremap <silent><buffer><expr> t defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
 nnoremap <silent><buffer><expr> P defx#do_action('preview')
 nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N defx#do_action('new_file')
@@ -455,11 +453,11 @@ hi default link Defx_filename_directory Function
 " }}}
 '''
 
-# [[plugins]]
-# repo =  'Shougo/deoplete.nvim'
-# # on_if = 'has("nvim")'
-# on_event = 'InsertEnter'
-# hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
+[[plugins]]
+repo =  'Shougo/deoplete.nvim'
+# on_if = 'has("nvim")'
+on_event = 'InsertEnter'
+hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 
 # [[plugins]]
 # # on_if = '!has("nvim")'
