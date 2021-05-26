@@ -199,6 +199,7 @@ call defx#custom#option('_', {
 call defx#custom#column('time', {
       \ 'format': '%y/%m/%d %H:%M',
       \ })
+if has('win32')
 call defx#custom#column('file', {
       \ 'max_width': '-50',
       \ }! s:get_defx_bufferdir(candidate) abort
@@ -208,6 +209,7 @@ call defx#custom#column('file', {
     let fdir = '\"' . l:dir. '\"'
     return fdir
 endfunction
+endif
 function! s:get_defx_file_extension(candidate) abort
     let path_mod = ':e'
     let dir = defx#get_candidate()
