@@ -3,10 +3,9 @@ call denite#custom#option('_', {
     \ 'short_source_names': v:true,
     \ 'prompt': ' #',
     \ 'highlight_preview_line': 'Underlined',
-    \ 'max_dynamic_update_candidates': 300000,
+    \ 'max_dynamic_update_candidates': 100000,
     \ 'winwidth': &columns,
     \ 'max_candidate_width': &columns,
-    \ 'vertical_preview': v:true,
     \ 'source_names': 'short',
     \ 'statusline': v:false,
     \ 'direction': 'botright',
@@ -54,7 +53,8 @@ call denite#custom#source('help', 'default_action', 'default')
 call denite#custom#kind('buffer', 'default_action', 'switch')
 call denite#custom#source('file/old', 'default_action', 'switch')
 call denite#custom#source('file/old', 'converters', ['converter/relative_abbr'])
-" call denite#custom#source('file', 'converters', ['converter/relative_abbr'])
+call denite#custom#source('file', 'converters', ['converter/abbr_word'])
+call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy'])
 call denite#custom#var('buffer', 'date_format', '%Y/%m/%d %H:%M:%S')
 call denite#custom#filter('matcher/migemo', 'dict_path', get(g:, 'migemodict', ""))
 " call denite#custom#source('_', 'matchers', ['matcher/migemo'])
@@ -73,7 +73,7 @@ if executable('rg')
 	" \ ['pt', '--follow', '--nocolor', '--nogroup','--ignore=','AppData**',
 	" \  (has('win32') ? '-g:' : '-g='), ''])
     call denite#custom#var('file/rec', 'command',
-     \ ['rg', '--files', '--color', 'never'])
+     \ ['rg', '--files', '--color', 'never', '--no-binary'])
     " call denite#custom#source('file/rec', 'converters', ['converter/tail_path'])
     call denite#custom#var('file/rec', 'cache_threshold', 50000)
 endif
@@ -149,13 +149,13 @@ call denite#custom#var('file/rec/git', 'command',
     \ ['git', 'ls-files', '-co', '--exclude-standard'])
 "Change ignore_globs
 call denite#custom#filter('matcher/ignore_globs', 'ignore_globs',
-    \ [ '.git/', '.ropeproject/', '__pycache__/',
-    \ 'venv/', 'images/','img/', 'fonts/',
-    \ '*~', '*.o', '*.exe', '*.bak',
-    \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
-    \ '.hg/', '.git/*', '.bzr/', '.svn/',
-    \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
-    \ 'tags', 'tags-*', 'junkfile/','bookmark://' ])
+   \ [ '.git/', '.ropeproject/', '__pycache__/',
+   \ 'venv/', 'images/','img/', 'fonts/',
+   \ '*~', '*.o', '*.exe', '*.bak',
+   \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
+   \ '.hg/', '.git/*', '.bzr/', '.svn/',
+   \ '*.aux', '*.dvi', '*.bbl', '*.out', '*.fdb_latexmk', '*.bst', '*.blg', '*.toc',
+   \ 'tags', 'tags-*', 'junkfile/','bookmark://' ])
 call denite#custom#alias('source', 'buffer/project', 'buffer')
 call denite#custom#source('buffer/project', 'matchers', ['matcher/fuzzy','matcher/project_files'])
 " call denite#custom#alias('filter', 'matcher/ignore_for_oldfiles', 'matcher/ignore_globs')
@@ -238,17 +238,17 @@ call denite#custom#action(
     \ 'buffer,directory,file,openable,dirmark', 'directory/rec',
     \ function('s:denite_directory_rec')
     \ )
-function! s:denite_my_cd(context)
-let path = a:context['targets'][0]['action__path']
-if isdirectory(path)
-let path = fnamemodify(path, ':p')
-else
-let path = fnamemodify(path, ':p:h')
-endif
-call denite#util#cd(path)
-echo 'current directory is changed to ' . getcwd()
-endfunction
-call denite#custom#action('directory,file,openable', 'cd', function('s:denite_my_cd'))
+" function! s:denite_my_cd(context)
+" let path = a:context['targets'][0]['action__path']
+" if isdirectory(path)
+" let path = fnamemodify(path, ':p')
+" else
+" let path = fnamemodify(path, ':p:h')
+" endif
+" call denite#util#cd(path)
+" echo 'current directory is changed to ' . getcwd()
+" endfunction
+" call denite#custom#action('directory,file,openable', 'cd', function('s:denite_my_cd'))
 call denite#custom#action(
     \ 'buffer,directory,file,openable,dirmark', 'grep',
     \ function('s:candidate_grep')
@@ -385,3 +385,8 @@ function! s:myDeniteReplace(context)
 " call denite#custom#source('line', 'matchers', ['matcher/migemo'])
     " call denite#custom#source('file,file/rec,buffer,file/old', 'converters', ['devicons_denite_converter', 'truncate_abbr'])
     " call denite#custom#source('_', 'converters', ['converter/truncate_abbr'])
+				" let ignore=&wildignore .
+				"     \ ',*.pyc,.git,.hg,.svn,.tmp*'
+				" call denite#custom#var('file/rec', 'command',
+				" \ ['scantree.py', '--path', ':directory',
+				" \  "--ignore",ignore])

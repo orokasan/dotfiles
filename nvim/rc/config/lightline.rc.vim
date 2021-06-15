@@ -3,17 +3,17 @@ let g:lightline = {
         \ 'left': [ ['mode', 'paste'],['eskk','git'], [ 'readonly', 'path'] ],
         \ 'right': [
             \ ['lineinfo'],
-            \ ['charcount'],
-            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'denitebuffer', 'IMEstatus']
+            \ ['charcount','denitebuffer'],
+            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus']
         \ ]
     \ },
     \ 'inactive': {
          \ 'left': [['inactivefn']],
-         \ 'right': [[ 'percent' ], [], ['filetype','denitefilter']]
+         \ 'right': [[ 'percent' ], [], ['filetype']]
     \ },
     \ 'tabline' : {
          \ 'left': [['tab']],
-         \ 'right': [['filetype'], ['fileencoding', 'fileformat'], ['cd'] ]
+         \ 'right': [['filetype'], ['fileencoding', 'fileformat'], [] ]
     \ },
     \ 'tab' : {
          \ 'active': [ 'tabnum', 'filename', 'modified' ],
@@ -36,6 +36,7 @@ let g:lightline = {
         \ 'git':'LLgit',
         \ 'denitebuffer' : 'LLDeniteBuffer',
         \ 'denitefilter' : 'LLDeniteFilter',
+        \ 'progress': 'LLLspProgress',
         \ 'quickrun': 'LL_quickrun_running',
     \ },
     \ 'component_expand': {
@@ -77,7 +78,7 @@ endtry
 endfunction
 let g:lightline.tab_component_function = {
       \ 'modified': 'LLModified',
-      \ 'tabnum': 'lightline#tab#tabnum' }
+      \ 'tabnum': 'LLtabnum' }
 
 " let g:lightline.subseparator= { 'left': '', 'right': '' }
 " let g:lightline.separator= { 'left': '', 'right': '' }
@@ -85,7 +86,6 @@ let g:lightline.tab_component_function = {
 " let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 let g:component_function_visible_condition = {
         \ 'readonly': 1,
-        \ 'denitebuf': 1,
         \ 'inactivefn': 1,
         \ 'path': 1,
         \ 'mode': 1,
@@ -93,6 +93,18 @@ let g:component_function_visible_condition = {
         \ 'git': 1,
         \ 'lineinfo': 1
         \ }
+
+function! LLLspProgress() abort
+    let p = luaeval('vim.lsp.util.get_progress_messages()')
+    if empty(p)
+        return ''
+    endif
+    let p = p[0]
+    let title = get(p, 'title', '')
+    let perc = get(p, 'percentage', '')
+    let mes = get(p, 'message', '')
+    return title .. '(' .. perc .. '%)' .. ':' .. mes
+endfunction
 
 function! LLModified(n) abort
   let winnr = tabpagewinnr(a:n)
@@ -154,7 +166,7 @@ function! VimLspCacheDiagnosticsCounts()
       endif
 endfunction
 autocmd dein User lsp_diagnostics_updated call VimLspCacheDiagnosticsCounts() | call lightline#update()
-autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts()
+autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts() | call lightline#update()
 endif
 " vim-lsp or nvim-lsp
 function! LLLspError() abort
@@ -210,7 +222,7 @@ function! LLMode()
         \ &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'defx' ? 'Defx' :
         \ &filetype is# 'fern' ? 'Fern' :
-        \ &filetype is# 'denite' ? LLDeniteMode() :
+        \ &filetype is# 'denite' ? '' :
         \ &filetype is# 'undotree' ? 'undotree' :
         \ &filetype is# 'tweetvim' ? 'Tweetvim' :
         \ &previewwindow ? 'preview' :
@@ -257,7 +269,7 @@ function! s:ignore_window() abort
 endfunction
 
 function! LLInactiveFilename()
-    return !s:ignore_window() ? expand('%:t') : &filetype is# 'denite' ? '': LLMode()
+    return !s:ignore_window() ? expand('%:t') : LLMode()
 endfunction
 
 function! LLeskk() abort
@@ -323,7 +335,7 @@ endfunction
 "}}}
 
 function! LLpercent() abort
-    return &filetype !=# 'denite' ? 100 * line('.') / line('$') . '%' : ''
+    return ''
 endfunction
 
 function! LLReadonly()
@@ -383,18 +395,6 @@ function! LLDeniteBuffer() abort
     return s:denite_statusline()
 endfunction
 
-function! LLDeniteMode() abort
-    " if exists('g:gonvim_running')
-    "     return len(denite#get_status('input')) > 0 ? 'Denite: ' . denite#get_status('input') : 'Denite'
-    " endif 
-	return ''
-    " if len(denite#get_status('input')) > 0
-    "     return '#' . denite#get_status('input')
-    " else
-    "     return ''
-    " endif
-endfunction
-
 function! s:denite_statusline() abort
     if &filetype isnot# 'denite'
         return ''
@@ -429,4 +429,8 @@ endfunction
 function! LLcd() abort
     let cwd = getcwd()
     return fnamemodify(cwd, ':~')
+endfunction
+
+function! LLtabnum(n)
+    return a:n .. ':'
 endfunction

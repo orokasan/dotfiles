@@ -116,7 +116,7 @@ for _, lsp in ipairs(servers) do
       on_attach = on_attach,
   }
 end
-efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
+local efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
 nvim_lsp['efm'].setup{
     cmd = {'efm-langserver','-c',efm_cpath};
     filetypes = {'markdown', 'text', 'txt'};

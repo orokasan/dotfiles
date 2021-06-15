@@ -63,6 +63,9 @@ endif
 
 [[plugins]]
 repo = 'AndrewRadev/switch.vim'
+hook_add = '''
+let g:switch_mapping = "!"
+'''
 
 [[plugins]]
 repo =  'deton/jasegment.vim'
@@ -443,8 +446,8 @@ repo = 'rhysd/conflict-marker.vim'
 [[plugins]]
 repo =  'lambdalisue/gina.vim'
 hook_add = '''
-let g:gina#command#status#use_default_mappings=0
-nnoremap <silent> g<Leader> <Cmd>Gina status<CR>
+"let g:gina#command#status#use_default_mappings=0
+nnoremap <silent> gs <Cmd>Gina status<CR>
 nnoremap <silent> <Leader>gA <Cmd>Gina changes HEAD<CR>
 nnoremap <silent> <Leader>gc <Cmd>Gina commit<CR>
 nnoremap <silent> <Leader>gC <Cmd>Gina commit --amend<CR>
@@ -588,6 +591,10 @@ call gina#custom#execute(
       \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
       \ 'setlocal cursorline',
       \)
+call gina#custom#execute(
+      \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
+      \ 'setlocal winfixheight',
+      \)
 '''
 
 # [[plugins]]
@@ -642,6 +649,7 @@ let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
 let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['S']}]
+let g:sandwich#recipes += [{'buns' : ['《', '★》'], 'nesting':1, 'input':['C']}]
 call operator#sandwich#set('all', 'all', 'highlight', 2)
 nmap 'dd vab'd
 nmap 'rr vab'r
@@ -799,15 +807,20 @@ hook_add = '''
 # repo = 'RishabhRD/popfix'
 # [[plugins]]
 # repo = 'RishabhRD/nvim-lsputils'
-[[plugins]]
-repo = 'rickhowe/diffchar.vim'
+# [[plugins]]
+# repo = 'rickhowe/diffchar.vim'
 [[plugins]]
 repo = 'syusui-s/vim-quickrun-neovim-terminal'
 
+# [[plugins]]
+# repo = 'Yggdroot/indentLine'
 [[plugins]]
-repo = 'Yggdroot/indentLine'
+rev = 'lua'
+repo = 'lukas-reineke/indent-blankline.nvim'
 hook_add = '''
-let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern']
+let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help']
+let g:indentLine_showFirstIndentLevel=1
+let g:indentLine_faster=1
 '''
 
 # [[plugins]]
@@ -1030,6 +1043,9 @@ repo = 'lambdalisue/fern-renderer-nerdfont.vim'
 repo = 'lambdalisue/nerdfont.vim'
 [[plugins]]
 repo = 'lambdalisue/glyph-palette.vim'
+# [[plugins]]
+# merged = 0
 [[plugins]]
-repo = 'lambdalisue/edita.vim'
+repo = 'delphinus/vim-denite-window'
+# repo = 'lambdalisue/edita.vim'
 # vim:set foldmethod=marker:'

@@ -108,7 +108,7 @@ inoremap <silent><buffer><expr> <C-x> denite#do_map('do_action', 'execute')
 " imap <silent><buffer><nowait> <C-t> <Plug>(denite_filter_update)ri
 inoremap <silent><buffer> <C-t> <Esc>
   \:call denite#move_to_parent()<CR>
-  \:call denite#call_map('toggle_matchers', 'matcher/regexp', 'matcher/fuzzy')<CR>
+  \:call denite#call_map('toggle_matchers', 'matcher/migemo', 'matcher/fuzzy')<CR>
   \:call denite#move_to_filter()<CR>A
 inoremap z; ;
 inoremap <silent><buffer><expr> <BS> col('.') == 1 ? "" : "\<BS>"
@@ -134,10 +134,10 @@ repo =  'Shougo/defx.nvim'
 on_cmd = 'Defx'
 hook_add = '''
 nmap <C-e> <Plug>(defx)
-nmap = <Plug>(defxtab)
+nmap = <cmd>call <SID>defx_tab()<CR>
 nmap <Leader>e <Plug>(defxbufferdir)
 nnoremap <silent> <Plug>(defx) <Cmd>Defx -buffer-name=`'defx' . tabpagenr()` -resume<CR>
-nnoremap <silent> <Plug>(defxtab) <Cmd>Defx -buffer-name='defxtab' -resume -split=tab -listed\|Defx -buffer-name='defxtab2' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`\|0tabmove<CR>
+nnoremap <silent> <Plug>(defxtab) <Cmd>Defx -buffer-name='defxtab2' -resume -split=tab -listed\|Defx -buffer-name='defxtab' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`\|0tabmove<CR>
 nnoremap <silent> <Plug>(defxbufferdir) <Cmd>Defx `expand('%:p:h')` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
 nnoremap <space>E <cmd>call <SID>defx_auto_open()<CR>
 function! s:defx_auto_open() abort
@@ -145,13 +145,11 @@ autocmd BufNewFile,BufRead,DirChanged * if filereadable(expand('%')) | execute("
 Defx `getcwd()` -no-focus -resume -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`
 endfunction
 function! s:defx_tab()
-call execute('Defx -resume -split=tab -buffer-name=defx' . tabpagenr())
-let dir = defx#get_candidates()[0].action__path
-if has('win32')
-    let dir =  substitute(dir, '\\', '\/\/', 'g')
+if bufname(tabpagebuflist(1)[0]) =~# '\v\[defx\] defxtab-\d+'
+    tabnext 1
+else
+    Defx -buffer-name='defxtab2' -resume -split=tab -listed|Defx -buffer-name='defxtab' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`|0tabmove
 endif
-call execute('Defx -new -split=vertical -winwidth=80 ' . dir)
-wincmd p
 endfunction
 nnoremap <silent> <Space><Space>e  <Cmd>call <SID>defx_tab()<CR>
 
@@ -196,26 +194,29 @@ call defx#custom#option('_', {
 
 " call defx#custom#column('filename', { 'max_width': &columns/4 })
 " au dein VimResized * call defx#custom#column('filename', { 'max_width': &columns/4 })
+
 call defx#custom#column('time', {
       \ 'format': '%y/%m/%d %H:%M',
       \ })
-if has('win32')
 call defx#custom#column('file', {
       \ 'max_width': '-50',
-      \ }! s:get_defx_bufferdir(candidate) abort
+      \ })
+
+function! s:get_defx_bufferdir(candidate) abort
     let path_mod = ':~:h'
     let dir = denite#util#substitute_path_separator(a:candidate)
     let dir = fnamemodify(dir, path_mod)
     let fdir = '\"' . l:dir. '\"'
     return fdir
 endfunction
-endif
+
 function! s:get_defx_file_extension(candidate) abort
     let path_mod = ':e'
     let dir = defx#get_candidate()
     let dir = fnamemodify(a:candidate., path_mod)
     return dir
 endfunction
+
 function! Defx_to_denite_rec(context) abort
         let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
         silent! execute('Denite
@@ -270,7 +271,7 @@ nnoremap <silent><buffer><expr> c defx#async_action('multi', ['copy','redraw'])
 nnoremap <silent><buffer><expr> m defx#async_action('multi', ['move','redraw'])
 nnoremap <silent><buffer><expr> p defx#async_action('paste')
 nnoremap <silent><buffer><expr> L defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
-nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open_tree'). 'j' : defx#do_action('drop')
+nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open_tree', 'nested'). 'j' : defx#do_action('drop')
 nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#is_opened_tree() ? defx#do_action('close_tree') : defx#do_action('open_tree') : <SID>defx_is_plaintxt() ? defx#do_action('drop') : defx#do_action('execute_system')
 "nnoremap <silent><buffer><expr> <2-LeftMouse> <SID>defx_doubleclick()
 function! s:defx_doubleclick() abort
@@ -305,7 +306,7 @@ nnoremap <silent><buffer><expr><nowait> D defx#async_action('remove_trash')
 nnoremap <silent><buffer><expr> r defx#do_action('rename')
 nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
 nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'recursive')
-nnoremap <silent><buffer><expr> <MiddleMouse> defx#do_action('open_tree', 'recursive', 'toggle')
+nnoremap <silent><buffer><expr> <MiddleMouse> defx#do_action('open_tree', ['recursive', 'nested', 'toggle'])
 nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
 nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
 nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
@@ -336,7 +337,7 @@ function! s:defx_is_plaintxt()
     let file = defx#get_candidate()['action__path']
     let extension = fnamemodify(file, ':e')
     let ex = '\v(png|xlsm|jpg|docx|docs|xlsx|pdf|pptx|exe|zip)'
-    if (extension =~# '') && (ex =~# extension)
+    if (extension =~? '') && (ex =~? extension)
     return 0
     else
     return 1
@@ -712,6 +713,9 @@ on_map = {nx = '<Plug>(openbrowser'}
 hook_add ='''
 nmap <Leader>o <Plug>(openbrowser-smart-search)
 xmap <Leader>o <Plug>(openbrowser-smart-search)
+let g:openbrowser_message_verbosity = 1
+autocmd FileType php let b:openbrowser_default_search = 'php'
+autocmd FileType python let b:openbrowser_default_search = 'python'
 '''
 
 [[plugins]]
@@ -1040,7 +1044,7 @@ let g:deol#prompt_pattern = '% \|%$'
 # hook_add = '''
 # '''
 
-# [[plugins]]
-# repo = 'liuchengxu/vim-clap'
+[[plugins]]
+repo = 'liuchengxu/vim-clap'
 
 # vim:set foldmethod=marker:

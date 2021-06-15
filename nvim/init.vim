@@ -37,9 +37,6 @@ let s:is_windows = has('win32') || has('win64')
 if has('win32')
     let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python39\python.exe')
 endif
-if has('win64') && !has('nvim')
-    set pythonthreedll=C:\Python38\python38.dll
-endif
 " let g:vimproc#download_windows_dll = 1
 " Backup
 " set autochdir               " set current directory to editing file dir automatically
@@ -53,6 +50,7 @@ set backup                " no more backup file
 let mapleader = "\<Space>"
 "}}}
 " dein.vim {{{
+let g:dein#auto_recache = 1
 let g:dein#lazy_rplugins=1
 " let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
 let s:dein_dir = expand('~/.cache/dein')
@@ -78,7 +76,7 @@ let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
     " let s:lsp_toml = '~/dotfiles/nvim/rc/dein_vim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_dir,s:myvimrc)
+    call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml])
    call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
 if has('nvim')
@@ -304,12 +302,12 @@ function! s:improved_gt() abort
 endfunction
 nmap <C-j> <NOP>
 " matchit mapping
-nmap <TAB>  %
-nmap g<TAB> g%
-xmap <TAB>  %
-xmap g<TAB> g%
-omap <TAB>  %
-omap g<TAB> g%
+" nmap <TAB>  %
+" nmap g<TAB> g%
+" xmap <TAB>  %
+" xmap g<TAB> g%
+" omap <TAB>  %
+" omap g<TAB> g%
 " native <TAB> is useful
 nnoremap <C-p> <C-i>zz
 vnoremap <C-p> <C-i>
@@ -830,9 +828,9 @@ endif
 if exists('neovide')
     " set guifont=:RictyDiminished\ NF:h16
     " set guifont=:Cica:h16
-    set guifont:HackGenNerd:h15
+    set guifont:HackGenNerd:h14
     let g:neovide_refresh_rate=100
-set linespace=10
+" set linespace=10
 let g:neovide_transparency=0.96
 let g:neovide_transparency=0.90
 let g:neovide_cursor_trail_length=0
@@ -840,7 +838,7 @@ let g:neovide_cursor_animation_length=0
 let g:neovide_cursor_antialiasing=v:true
 " let g:neovide_cursor_vfx_mode = "wireframe"
   cd ~/
-    let g:neovide_extra_buffer_frames=4
+    " let g:neovide_extra_buffer_frames=4
 endif
 if exists('g:gonvim_running')
     " for goneovim bug(20/06/30)
@@ -1184,7 +1182,6 @@ function! s:make_abbrev_rule(rules)
   endfor
 endfunction
 call s:make_abbrev_rule([
-\   {'from': 'g', 'to': 'Gina'},
 \   {'from': 'gc', 'to': 'Gina! commit -am'},
 \   {'from': 'gf', 'to': 'Gina! commit --fixup HEAD'},
 \   {'from': 'gp', 'to': 'Gina push'},
@@ -1283,6 +1280,26 @@ if has('nvim')
 endif
 let g:previm_enable_realtime = 1
 let g:terminal_scrollback_buffer_size = 3000
+set title
+set titlestring=NVIM\ \[\ %{LLcd()}\ \]
 " au dein VimResized * :wincmd =<CR>
 "!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t latex
+"!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t pdf --wrap=preserve --filter=./converter.py -o test.pdf
+" autocmd vimrc Filetype markdown,text,txt call s:my_efm_config()
+" function! s:my_efm_config() abort
+" endfunction
+
+hi CursorBlink guibg=#84a0c6 guifg=#161821
+au FocusGained * call s:blink(1, 'CursorBlink', '.*\%#.*')
+function! s:blink(count, color, pattern)
+  for i in range(a:count)
+    let id = matchadd(a:color, a:pattern)
+    redraw
+    sleep 80m
+    call matchdelete(id)
+    redraw
+    sleep 80m
+  endfor
+endfunction
+
 " vim:set foldmethod=marker:

@@ -2,7 +2,7 @@ nmap s [denite]
 nnoremap [denite] <Nop>
 nnoremap <silent> [denite]- <Cmd>Denite
     \ -start-filter
-    \ -default-action=file/rec
+    \ -default-action=candidate_file_rec
     \  dein<CR>
 "現在開いているファイルのgit配下のファイルを開く
 nnoremap <silent> [denite]f <Cmd>Denite
@@ -94,9 +94,9 @@ nnoremap <silent> [denite]h <Cmd>Denite
 if has('nvim')
 nnoremap <silent> [denite]n <Cmd>DeniteProjectDir
     \ -buffer-name=normal
-    \ file/old file<CR>
+    \ -unique
+    \ file/old<CR>
 endif
-    " \ -unique
 "mark一覧
 nnoremap <silent> [denite]m <Cmd>Denite
     \ -auto-action=highlight
@@ -125,7 +125,7 @@ nnoremap <silent> [denite]j <Cmd>Denite
 
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
-nnoremap <silent> [denite]j <Cmd>Denite
+nnoremap <buffer><silent> [denite]j <Cmd>Denite
     \ -default_action=my_defx
     \ dirmark<CR>
 endfunction

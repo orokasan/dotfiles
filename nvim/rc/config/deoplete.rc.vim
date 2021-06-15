@@ -43,7 +43,7 @@ call deoplete#custom#var('around', {
     \   'mark_changes': '[c]',
     \})
 call deoplete#custom#option('sources', {
-    \ 'denite-filter': ['denite'],
+    \ 'denite-filter': [''],
     \ })
 call deoplete#custom#option({ 'refresh_always': v:false})
 

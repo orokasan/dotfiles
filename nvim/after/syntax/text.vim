@@ -31,7 +31,7 @@ syntax         match  gihyoUnderlineAlt '∨.\{-}∨'
 " syntax         match   gihyoSub       '▼.\{-}▼'
 " syntax         match   gihyoRed          '●.\{-}●'
 
-syntax         match   textUnderline    '　'
+" syntax         match   textUnderline    '　'
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
 " syntax         match   gihyoBullet '^・.\{-}$'
@@ -40,6 +40,7 @@ syn match  gihyoComment    '＠＠.\{-}＠＠'
 " syntax         match  gihyoComment       '^★.\{-}$'
 syntax         match  gihyoHeader1       '^★[^★].\{-}$'
 syn region  gihyoBold    start='◇' end='◇'
+syn region  gihyoInlineComment    start='《' end='》'
 " syn region  gihyoBullet    start='^・' end='$'
 syn region  gihyoBullet    start='^●' end='$'
 syn region  gihyoComment    start='^☆' end='$'
@@ -79,9 +80,10 @@ highlight       link gihyoBold Statement
 highlight      link    gihyoCommand     PreProc
 highlight      link    gihyoComment     Comment
 highlight      link    gihyoBullet      Identifier
+highlight      link    gihyoInlineComment Function
 highlight      link    gihyoPoint       Identifier
 
-highlight      link    gihyoRuler       Special
+highlight      link    gihyoRuler       Specia
 highlight      link    gihyoURL         Underlined
 highlight      link    gihyoTodo        Todo
 highlight      link    gihyoNotUseChar  Error
@@ -92,7 +94,7 @@ function! s:gethighlight(hi, which) abort
     let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
     return bg
 endfunction
-syntax match gihyoZw '　' conceal cchar=□
+" syntax match gihyoZw '　' conceal cchar=□
 highlight link gihyoZw Comment
 call execute('hi textUnderline gui=underline guisp=' .. s:gethighlight('Comment', 'fg'))
 " syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
