@@ -109,7 +109,7 @@ nvim_lsp.sumneko_lua.setup {
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true;
 
-local servers = {"rust_analyzer", "tsserver" , 'vimls', 'gopls', "pyright", "jedi_language_server"}
+local servers = {"rls", "tsserver" , 'vimls', 'gopls', "pyright", "jedi_language_server"}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
       capabilities = capabilities;

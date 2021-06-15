@@ -177,25 +177,25 @@ repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 # [[plugins]]
 # # on_if = '!has("nvim")'
 # merged = '0'
-[[plugins]]
-# on_if = 'has("windows")'
-merged = '0'
-repo = 'mattn/vim-lsp-settings'
-hook_add = '''
-let g:lsp_settings = {
-      \ 'efm-langserver': {
-      \   'disabled': 0,
-      \   'allowlist': ['markdown','text','json','*'],
-     \    'initialization_options': {
-            \"documentFormatting": v:true,
-            \"hover": v:true,
-            \"documentSymbol": v:true,
-            \"codeAction": v:true,
-            \"completion": v:true
-    \}
-      \  }
-      \ }
-'''
+# [[plugins]]
+# # on_if = 'has("windows")'
+# merged = '0'
+# repo = 'mattn/vim-lsp-settings'
+# hook_add = '''
+# let g:lsp_settings = {
+#       \ 'efm-langserver': {
+#       \   'disabled': 0,
+#       \   'allowlist': ['markdown','text','json','*'],
+#      \    'initialization_options': {
+#             \"documentFormatting": v:true,
+#             \"hover": v:true,
+#             \"documentSymbol": v:true,
+#             \"codeAction": v:true,
+#             \"completion": v:true
+#     \}
+#       \  }
+#       \ }
+# '''
 # [[plugins]]
 # merged = '0'
 # repo = 'tsuyoshicho/vim-efm-langserver-settings' 

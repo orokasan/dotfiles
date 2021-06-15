@@ -834,8 +834,45 @@ let g:indentLine_faster=1
 repo = 'thinca/vim-themis'
 # [[plugins]]
 # repo = 'gelguy/wilder.nvim'
-# merged = 0
+# on_lazy = 1
+# on_lua = 1
 # hook_add = '''
+# function! s:wilder_init() abort
+# " call wilder#enable_cmdline_enter()
+# set wildcharm=<Tab>
+# cmap <expr> <Tab> wilder#in_context() ? wilder#next() : "\<Tab>"
+# cmap <expr> <S-Tab> wilder#in_context() ? wilder#previous() : "\<S-Tab>"
+# cmap <expr> <C-n> wilder#in_context() ? wilder#next() : "\<Down>"
+# cmap <expr> <C-p> wilder#in_context() ? wilder#previous() : "\<Up>"
+
+# " only / and ? are enabled by default
+# call wilder#set_option('modes', ['/','?'])
+# call wilder#set_option('renderer', wilder#popupmenu_renderer({
+#      \ 'highlighter': wilder#basic_highlighter(),
+#      \ 'highlights': {'accent': 'Title', 'selected_accent': 'Title'},
+#      \ 'right': [],
+#      \ 'max_height': 5,
+#      \ 'min_width': 2,
+#      \ 'winblend': 20
+#      \ }))
+# call wilder#set_option('pipeline', [
+#      \   wilder#branch(
+#      \     [
+#      \       wilder#check({_, x -> empty(x)}),
+#      \       wilder#history(100),
+#      \     ],
+#      \     wilder#cmdline_pipeline({
+#      \       'language': 'python',
+#      \       'fuzzy': 1,
+#      \     }),
+#      \     wilder#python_search_pipeline({
+#      \       'fuzzy': 1,
+#      \     }),
+#      \   wilder#search_pipeline(),
+#      \   ),
+#      \ ])
+# endfunction
+# autocmd CmdlineEnter * ++once call s:wilder_init()
 # '''
 # [[plugins]]
 # repo = 'tkmpypy/chowcho.nvim'
@@ -939,10 +976,10 @@ repo = 'thinca/vim-themis'
 # " endfunction
 # '''
 
-[[plugins]]
-repo = 'hrsh7th/vim-vsnip'
-hook_add = '''
-'''
+# [[plugins]]
+# repo = 'hrsh7th/vim-vsnip'
+# hook_add = '''
+# '''
 
 [[plugins]]
 on_if = 'has("nvim")'
@@ -957,8 +994,8 @@ map <Leader>pl <Plug>(miniyank-toline)
 map <Leader>pb <Plug>(miniyank-toblock)
 '''
 
-[[plugins]]
-repo = 'lambdalisue/fern.vim'
+# [[plugins]]
+# repo = 'lambdalisue/fern.vim'
 # hook_add = '''
 # let g:fern#render#default#root_symbol = '[in]'
 # let g:fern#drawer_width =35
@@ -1037,15 +1074,18 @@ repo = 'lambdalisue/fern.vim'
 # '''
 [[plugins]]
 repo = 'antoinemadec/FixCursorHold.nvim'
-[[plugins]]
-repo = 'lambdalisue/fern-renderer-nerdfont.vim'
-[[plugins]]
-repo = 'lambdalisue/nerdfont.vim'
-[[plugins]]
-repo = 'lambdalisue/glyph-palette.vim'
+# [[plugins]]
+# repo = 'lambdalisue/fern-renderer-nerdfont.vim'
+# [[plugins]]
+# repo = 'lambdalisue/nerdfont.vim'
+# [[plugins]]
+# repo = 'lambdalisue/glyph-palette.vim'
 # [[plugins]]
 # merged = 0
 [[plugins]]
 repo = 'delphinus/vim-denite-window'
+
+[[plugins]]
+repo = 'alexaandru/nvim-lspupdate'
 # repo = 'lambdalisue/edita.vim'
 # vim:set foldmethod=marker:'
