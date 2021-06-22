@@ -135,7 +135,8 @@ set softtabstop=-1
 let g:vim_indent_cont = 4
 set autoindent
 set shiftwidth=0
-set formatoptions+=mMjoB
+set formatoptions=mMjBcrql
+au vimrc FileType * set fo-=o
 set iskeyword+=-
 " Searching
 set ignorecase
@@ -581,7 +582,7 @@ if has('nvim')
     "transparent completions menu
     set pumblend=15
     set inccommand=nosplit
-    au TextYankPost * silent! lua vim.highlight.on_yank()
+    au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
 endif
 "}}}
 " highlight {{{
@@ -875,7 +876,7 @@ set titlestring=NVIM\ \[\ %{LLcd()}\ \]
 " endfunction
 
 hi CursorBlink guibg=#84a0c6 guifg=#161821
-au FocusGained * call s:blink(1, 'CursorBlink', '.*\%#.*')
+au vimrc FocusGained * call s:blink(1, 'CursorBlink', '.*\%#.*')
 function! s:blink(count, color, pattern)
   for i in range(a:count)
     let id = matchadd(a:color, a:pattern)
@@ -886,7 +887,6 @@ function! s:blink(count, color, pattern)
     sleep 80m
   endfor
 endfunction
-
 " lua <<EOF
 " require("mark-radar").setup()
 " local opts = {
@@ -896,5 +896,6 @@ endfunction
 "     background_highlight_group = "RadarBackground",
 " }
 " EOF
-set lines=50
+" default
+set cinwords=if,else,while,do,for,switch
 " vim:set foldmethod=marker:

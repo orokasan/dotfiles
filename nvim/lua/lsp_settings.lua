@@ -31,6 +31,22 @@ elseif client.resolved_capabilities.document_range_formatting then
 buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 end
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+capabilities.textDocument.completion.completionItem.snippetSupport = true;
+-- Code actions
+capabilities.textDocument.codeAction = {
+    dynamicRegistration = true,
+    codeActionLiteralSupport = {
+        codeActionKind = {
+            valueSet = (function()
+                local res = vim.tbl_values(vim.lsp.protocol.CodeActionKind)
+                table.sort(res)
+                return res
+            end)()
+        }
+    }
+}
   -- Set autocommands conditional on server_capabilities
 -- vim.api.nvim_exec([[
 --       hi link LspReferenceRead Underlined
