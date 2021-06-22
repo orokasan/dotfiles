@@ -1,6 +1,7 @@
 {
     "rules": {
-        "preset-ja-technical-writing": true,
+        "preset-ja-technical-writing": false,
+        "preset-jtf-style": true,
         "prh": {
             "rulePaths" :["./prh.yml"]
         }

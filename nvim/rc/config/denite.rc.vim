@@ -52,6 +52,8 @@ call denite#custom#kind('file', 'default_action', 'switch')
 call denite#custom#source('help', 'default_action', 'default')
 call denite#custom#kind('buffer', 'default_action', 'switch')
 call denite#custom#source('file/old', 'default_action', 'switch')
+call denite#custom#source('buffer', 'sorters', ['sorter/oldfiles'])
+call denite#custom#source('dein', 'default_action', 'candidate_file_rec')
 call denite#custom#source('file/old', 'converters', ['converter/relative_abbr'])
 call denite#custom#source('file', 'converters', ['converter/abbr_word'])
 call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy'])
@@ -97,7 +99,6 @@ let s:menus.dein.command_candidates = []
 for v in range(len(s:dein_commands))
     let s:menus.dein.command_candidates += [[s:dein_commands[v], s:dein_commands[v]]]
 endfor
-
 let s:shortcut_commands = [
     \ 'LspDocumentDiagnostics',
     \ 'JunkfileOpen txt',
@@ -121,7 +122,6 @@ let s:menus.gina.command_candidates = []
 for v in range(len(s:gina_commands))
     let s:menus.gina.command_candidates += [[s:gina_commands[v], s:gina_commands[v]]]
 endfor
-
 call denite#custom#var('menu', 'menus', s:menus)
 
 " call denite#custom#kind('file', 'default_action', 'drop')
@@ -134,6 +134,7 @@ call denite#custom#var('menu', 'menus', s:menus)
 " call denite#custom#source('help', 'matchers', ['matcher/fuzzy'])
 " call denite#custom#source('file/old', 'converters', ['converter/tail_path'])
 " Define alias
+"
 call denite#custom#alias('source', 'file/rec/txt', 'file/rec')
     call denite#custom#var('file/rec/txt', 'command',
      \ ['rg', '--files',

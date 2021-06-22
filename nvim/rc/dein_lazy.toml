@@ -1,6 +1,6 @@
 [[plugins]]
-# repo =  'Shougo/denite.nvim'
-repo =  'orokasan/denite.nvim'
+repo =  'Shougo/denite.nvim'
+# repo =  'orokasan/denite.nvim'
 on_source = ['defx.nvim']
 on_cmd = ['Denite', 'DeniteProjectDir', 'DeniteCursorWord']
 hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
@@ -487,15 +487,11 @@ repo = 'glidenote/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn <Cmd>MemoNew<CR>
-" nnoremap <silent><Leader>ml  <Cmd>Denite 
-"     \ -buffer-name=normal
-"     \ -sorters=sorter/word,sorter/reverse
-"     \ file/rec/txt:~/GoogleDrive/memo file/rec:~/Google\ ドライブ/memo<CR>
-nnoremap <silent><Leader>ml  <Cmd>Denite 
+nnoremap <silent><Leader>ml  <Cmd>Denite
     \ -buffer-name=default
     \ -sorters=sorter/rank
-    \ file/rec:~/GoogleDrive/memo<CR>
-nnoremap <silent> sl  <Cmd>Denite 
+    \ file/rec/txt:~/GoogleDrive/memo<CR>
+nnoremap <silent> sl  <Cmd>Denite
     \ -buffer-name=default
     \ -sorters=sorter/rank
     \ file/rec/txt:~/GoogleDrive/memo<CR>
@@ -806,17 +802,16 @@ let g:quickrun_config = {
     \ },
     \ 'java': {
         \   'exec': ['javac %o -d %s:p:h %s', '%c -cp %s:p:h %s:t:r %a'],
-        \   'hook/output_encode/encoding': 'sjis',
         \   'hook/sweep/files': '%s:p:r.class',
         \ },
     \ 'vim': {
         \ "outputter/buffer/close_on_empty" : 1
         \ }
 \ }
-let g:quickrun_config['python'] = {
-    \ 'command': 'python',
-        \   'hook/output_encode/encoding': 'cp932',
-    \ }
+"let g:quickrun_config['python'] = {
+"    \ 'command': 'python',
+"        \   'hook/output_encode/encoding': 'cp932',
+"    \ }
   " let g:quickrun_config['cpp/clang++11'] = {
   "     \ 'cmdopt': '--std=c++11 --stdlib=libc++',
   "     \ 'type': 'cpp/clang++'
@@ -840,13 +835,25 @@ let g:quickrun_config['tex'] = {
             \   'cmdopt': '',
             \   'exec': ['%c %o %s']
             \ }
+let s:pandoc_option = '--pdf-engine=lualatex -V documentclass=jlreq -s --wrap=preserve'
+if executable('lualatex')
+    let s:pandoc_option = '--pdf-engine=lualatex -V documentclass=jlreq -s --wrap=preserve'
+else
+    let s:pandoc_option = ''
+endif
+if has('win32')
+    let s:quickrun_open = 'cmd.exe /c start'
+else
+    let s:quickrun_open = 'open'
+endif
 let g:quickrun_config['markdown'] = {
             \   'command' : 'pandoc',
             \   'outputter' : 'error',
             \   'outputter/error/error' : 'quickfix',
-            \   'cmdopt': '--pdf-engine=lualatex',
+            \   'cmdopt': s:pandoc_option,
             \   'exec': ['%c %o %s -o %s:p:r.pdf']
             \ }
+
 let g:quickrun_config._ = {
   \ 'runner': 'neovim_job',
   \ }

@@ -9,4 +9,4 @@ syn region markdownBoldItalic matchgroup=markdownBoldItalicDelimiter start="\S\@
 " syn region markdownBoldItalic matchgroup=markdownBoldItalicDelimiter start="\S\@<=___\|___\S\@=" end="\S\@<=___\|___\S\@=" keepend contains=markdownLineStart'
 
 syntax match markdownNextline '  $' conceal cchar=↓
-highlight! def link markdownNextline Title
+highlight! def link markdownNextline Function

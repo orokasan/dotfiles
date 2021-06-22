@@ -4,7 +4,7 @@ let g:lightline = {
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount','denitebuffer'],
-            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus']
+            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus','searchcount']
         \ ]
     \ },
     \ 'inactive': {
@@ -38,6 +38,7 @@ let g:lightline = {
         \ 'denitefilter' : 'LLDeniteFilter',
         \ 'progress': 'LLLspProgress',
         \ 'quickrun': 'LL_quickrun_running',
+        \ 'searchcount': 'LastSearchCount'
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
@@ -211,7 +212,7 @@ function! LL_quickrun_running()
     if !exists('*quickrun#is_running')
         return ''
     elseif quickrun#is_running()
-        return "QuickRunning..."
+        return exists("g:quickrun_config[&ft]['command']") ? "Running:" .. g:quickrun_config[&ft]['command'] : "Running.."
     else
         return ""
     endif
@@ -434,3 +435,23 @@ endfunction
 function! LLtabnum(n)
     return a:n .. ':'
 endfunction
+" function! s:lastSearchCount() abort
+"   let result = searchcount(#{recompute: 0})
+"   if empty(result)
+"     return ''
+"   endif
+"   if result.incomplete ==# 1     " timed out
+"     let g:lightline_searchcount = printf(' /%s [?/??]', @/)
+"   elseif result.incomplete ==# 2 " max count exceeded
+"     if result.total > result.maxcount &&
+"     \  result.current > result.maxcount
+"       let g:lightline_searchcount = printf(' /%s [>%d/>%d]', @/,
+"       \             result.current, result.total)
+"     elseif result.total > result.maxcount
+"       let g:lightline_searchcount = printf(' /%s [%d/>%d]', @/,
+"       \             result.current, result.total)
+"     endif
+"   endif
+"   let g:lightline_searchcount = printf(' /%s [%d/%d]', @/,
+"   \             result.current, result.total)
+" endfunction

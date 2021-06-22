@@ -8,12 +8,12 @@ imap <silent><expr> <TAB>
 imap <silent><expr> <S-TAB>
       \ pumvisible() ? "\<C-p>" :
       \ "\<S-TAB>"
-" inoremap <silent><expr> <C-n>
-"     \ pumvisible() ? "\<C-n>" :
-"     \ deoplete#manual_complete()
-" inoremap <silent><expr> <C-n>
-"     \ pumvisible() ? "\<C-n>" :
-"     \ deoplete#manual_complete()
+inoremap <silent><expr> <C-p>
+    \ pumvisible() ? "\<C-p>" :
+    \ deoplete#manual_complete()
+inoremap <silent><expr> <C-n>
+    \ pumvisible() ? "\<C-n>" :
+    \ deoplete#manual_complete()
 " inoremap <silent><expr><C-h>
 "     \ deoplete#smart_close_popup()."\<C-h>"
 " inoremap <silent><expr><BS>
@@ -45,7 +45,7 @@ call deoplete#custom#var('around', {
 call deoplete#custom#option('sources', {
     \ 'denite-filter': [''],
     \ })
-call deoplete#custom#option({ 'refresh_always': v:false})
+call deoplete#custom#option({ 'refresh_always': v:true})
 
 call deoplete#custom#option({
     \ 'auto_refresh_delay': 0,
@@ -65,7 +65,7 @@ call deoplete#custom#option('keyword_patterns', {
 \ '_': '[a-zA-Z_]\k*',
 \ 'text': '[a-zA-Z_-]*',
 \ 'markdown': '[a-zA-Z_-]*|[\u2E80-\u2FDF\u3005-\u3007\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\U00020000-\U0002EBEF]*',
-\ 'txt': '[a-zA-Z_-]*',
+\ 'txt': '[a-zA-Z_-]*|[\u2E80-\u2FDF\u3005-\u3007\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\U00020000-\U0002EBEF]*',
 \ 'ruby': '[a-zA-Z_]\w*[!?]?',
 \})
 " call deoplete#custom#option({'ignore_sources': {'_': ['eskk']}})

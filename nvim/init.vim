@@ -1,5 +1,8 @@
 "ork's vimrc
+set fileformats=unix,dos,mac
+" ------------------------------------------------------------------------------
 " reset vimrc autocmd group
+
 augroup vimrc
   autocmd!
 augroup END
@@ -79,7 +82,6 @@ command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
-lua require('dotfiles/nvim/lua/init.lua')
 " Visual  {{{
 " language C
 set ambiwidth=double
@@ -532,8 +534,8 @@ if has('GUI')
     """Nm秒後にカーソル点滅開始
     "set guicursor=n:blinkwait2000
     "let no_buffers_menu = 1
-    set lines=60 "ウィンドウの縦幅
-    set columns=120 " ウィンドウの横幅
+    " set lines=60 "ウィンドウの縦幅
+    " set columns=120 " ウィンドウの横幅
     winpos 500 10 " ウィンドウの起動時の位置
     if has('mac')
         set guifont=Cica:h14
@@ -885,4 +887,14 @@ function! s:blink(count, color, pattern)
   endfor
 endfunction
 
+" lua <<EOF
+" require("mark-radar").setup()
+" local opts = {
+"     set_default_mappings = true,
+" 	highlight_group = "RadarMark",
+" 	background_highlight = true,
+"     background_highlight_group = "RadarBackground",
+" }
+" EOF
+set lines=50
 " vim:set foldmethod=marker:

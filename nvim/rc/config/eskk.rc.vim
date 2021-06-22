@@ -70,6 +70,7 @@ augroup myeskk
     " autocmd CmdlineLeave [:/?@-] call eskk#disable()
     " autocmd CmdlineLeave * call s:eskk_restore_cursor()
 augroup END
+
 function! s:eskk_cmdleave_off() abort
     if exists('*eskk#is_enable') && eskk#is_enable() && !pumvisible()
         call eskk#disable()
@@ -91,7 +92,7 @@ endfunction
 
 function! s:eskk_save_status() abort
     if g:eskk_keep_enable
-        " call s:eskk_highlight_cursor()
+        call s:eskk_highlight_cursor()
         return
     endif
     " let s:eskk_status = eskk#is_enabled() ? 1 : 0
@@ -119,40 +120,52 @@ function! LLmyeskk() abort
 endfunction
 
 ""IME/skkの状態に応じてsigncolumnの色を変える（WIP）
-" autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
+autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
 "" InsertLeaveの前に発生するイベントであることに注意する
-" autocmd vimrc User eskk-disable-post call s:eskk_restore_highlight_nicely()
+autocmd vimrc User eskk-disable-pre call s:eskk_restore_highlight_nicely()
 
 function! s:eskk_restore_highlight_nicely()
+if mode() is# 'c'
+    return
+endif
     " if exists('g:neovide')
     "     return
     " endif
-    if mode() is# 'ic'
-        call s:eskk_restore_cursor()
-    else
-        " statusが1のときは戻さない
-        if g:eskk_keep_enable || s:eskk_status
-            return
-        else
-            call s:eskk_restore_cursor()
-        endif
-    endif
+call sign_unplace('Ins',{'id': 15})
+endfunction
+function! s:insert_highlight() abort
+call sign_unplace('Ins')
+if eskk#is_enabled()
+call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
+else
+call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
+endif
 endfunction
 
+au InsertLeavePre * call sign_unplace('Ins')
+au InsertLeave * call sign_unplace('Ins')
+let s:insertpos = 0
+au InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()
+au CursorMovedI * if s:insertpos != line('.') | call s:insert_highlight() | let s:insertpos = line('.') | endif
 function! s:eskk_highlight_cursor()
+if mode() is# 'c'
+    return
+endif
 " guicursorのハイライトをeskkCursorに変更する
-highlight CursorLineNr guifg=#e2a478 gui=bold
+" highlight CursorLineNr guifg=#e2a478 gui=bold
+call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
+    " highlight! Cursor guibg=#e2a478
     " set guicursor=n-v-c:eskkCursor-blinkon0,i-ci:ver25-eskkCursor,r-cr:hor20
 endfunction
-set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver25-Cursor,r-cr:hor20
+set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver20-Cursor,r-cr:hor20
 function! s:eskk_restore_cursor()
-    let higroup = 'CursorLineNr'
+    " let higroup = 'CursorLineNr'
 " guicursorのハイライトを元に戻す
     " execute('set guicursor=' . s:default_guicursor)
-    execute('highlight ' . higroup .' ' . s:eskk_default_linenr_hi)
+    " highlight! Cursor guibg=#ffffff
+    " execute('highlight ' . higroup .' ' . s:eskk_default_linenr_hi)
 endfunction
-highlight eskkCursor guibg=#e2a478
-" set guicursor=n-v-c:block-Cursor-blinkon0,i-ci:Cursor,r-cr:hor20
+" highlight eskkCursor guibg=#e2a478
 
 "もともとのhighlightを保存
 function! s:gethighlight(hi) abort
@@ -161,8 +174,14 @@ let bg = synIDattr(synIDtrans(hlID(a:hi)), "bg")
     return ' guibg=' . bg
 endfunction
 " eskkのsource時に設定
-let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
+" let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 " ColorSchemeが変わった時に読み込み直す
-autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
-
+" autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
+let s:insert_icon = '≫'
+hi InInsertSign gui=bold guifg=#84a0c6 guibg=#1e2132
+hi InEskkKanaSign gui=bold guifg=#e2a478 guibg=#1e2132
+call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
+call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
+call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 50 })
 let g:eskk#server = { 'host': 'localhost', 'port': 55100, 'type': 'dictionary' }
+

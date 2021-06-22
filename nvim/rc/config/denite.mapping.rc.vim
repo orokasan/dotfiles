@@ -2,7 +2,6 @@ nmap s [denite]
 nnoremap [denite] <Nop>
 nnoremap <silent> [denite]- <Cmd>Denite
     \ -start-filter
-    \ -default-action=candidate_file_rec
     \  dein<CR>
 "現在開いているファイルのgit配下のファイルを開く
 nnoremap <silent> [denite]f <Cmd>Denite
@@ -23,6 +22,8 @@ function! s:denite_gitdir() abort
 endif
 
 endfunction
+
+nnoremap <silent> [denite]k <cmd>DeniteBufferDir -input=`expand('%:t:r')`  file<CR>
 nnoremap <silent> [denite]<Space> <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
