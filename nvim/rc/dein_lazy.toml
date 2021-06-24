@@ -456,11 +456,11 @@ hi default link Defx_filename_directory Function
 " }}}
 '''
 
-[[plugins]]
-repo =  'Shougo/deoplete.nvim'
-# on_if = 'has("nvim")'
-on_event = 'InsertEnter'
-hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
+# [[plugins]]
+# repo =  'Shougo/deoplete.nvim'
+# # on_if = 'has("nvim")'
+# on_event = 'InsertEnter'
+# hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 
 # [[plugins]]
 # # on_if = '!has("nvim")'

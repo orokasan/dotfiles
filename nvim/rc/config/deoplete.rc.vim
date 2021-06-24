@@ -79,4 +79,4 @@ call deoplete#custom#option('keyword_patterns', {
 "     endfor
 "     call deoplete#custom#option({'ignore_sources': config})
 " endif
-call deoplete#enable()
+" call deoplete#enable()

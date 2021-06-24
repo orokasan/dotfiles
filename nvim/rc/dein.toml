@@ -111,8 +111,8 @@ let g:lexima_map_escape = '<C-[>'
 "  return pumvisible ? "\<CR>": lexima#expand('<CR>', 'i')
 inoremap <silent><expr> <CR> pumvisible() ? "\<CR>" : lexima#expand('<LT>CR>', 'i')
 "endfunction "}}}
-inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
-inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
+" inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
+" inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
 function! s:my_bs_function() abort "{{{
   return lexima#expand('<BS>', 'i')
 endfunction "}}}
@@ -826,9 +826,10 @@ let g:indentLine_faster=1
 
 # [[plugins]]
 # repo = 'lukas-reineke/indent-blankline.nvim'
-# [[plugins]]
-# repo = 'hrsh7th/nvim-compe'
-#
+[[plugins]]
+merged = 0
+repo = 'hrsh7th/nvim-compe'
+
 # [[plugins]]
 # repo = 'kassio/neoterm'
 [[plugins]]
@@ -1161,4 +1162,6 @@ repo = 'nvim-lua/plenary.nvim'
 # '''
 # [[plugins]]
 # repo = 'doums/lsp_status'
+[[plugins]]
+repo = 'goerz/jupytext.vim'
 # vim:set foldmethod=marker:'
