@@ -42,7 +42,7 @@ set backup
 let mapleader = "\<Space>"
 "}}}
 " dein.vim {{{
-let g:dein#auto_recache = 1
+" let g:dein#auto_recache = 1
 let g:dein#lazy_rplugins=1
 " let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
 let s:dein_dir = expand('~/.cache/dein')
@@ -898,4 +898,84 @@ endfunction
 " EOF
 " default
 set cinwords=if,else,while,do,for,switch
+
+function! s:get_metadata(...) abort
+  return {
+  \   'priority': 10,
+  \   'menu': '[eskk]',
+  \ }
+endfunction
+
+function! s:determine(context) abort
+    let a:context.lnum = nvim_win_get_cursor(0)[0]
+    let a:context.col = nvim_win_get_cursor(0)[1]
+    let a:context.line = nvim_get_current_line()
+    let a:context.before_line = a:context.line[0:a:context.col]
+    let a:context.before_char = a:context.before_line[-1:]
+    if !eskk#is_enabled()
+                \ || eskk#get_preedit().get_henkan_phase() ==#
+                \             g:eskk#preedit#PHASE_NORMAL
+                \ || a:context.before_char !~# '\w$'
+        let offset = -1
+    endif
+    
+    let offset =  eskk#complete#eskkcomplete(1, '')
+    return {
+          \   'keyword_pattern_offset': offset,
+          \   'trigger_character_offset': a:context.before_char ? a:context.col + offset : 0
+          \ }
+  " let offset = vim_dadbod_completion#omni(1, '') + 1
+  " let char = a:context.before_char
+  " if offset > 0
+  "   return {
+  "         \   'keyword_pattern_offset': offset,
+  "         \   'trigger_character_offset': char =~? s:trigger_rgx ? a:context.col : 0
+  "         \ }
+  " endif
+  return {}
+
+endfunction
+
+function! s:complete(args) abort
+    let a:args.lnum = nvim_win_get_cursor(0)[0]
+    let a:args.col = nvim_win_get_cursor(0)[1]
+    let a:args.line = nvim_get_current_line()
+    let a:args.before_line = a:args.line[0:a:args.col]
+    let a:args.before_char = a:args.before_line[-1:]
+    echom a:args
+    " let input = s:context.line[a:ke]
+let items = eskk#complete#eskkcomplete(0, a:args.input)
+  " for item in items
+  "   let item.filter_text = item.abbr
+  " endfor
+  call a:args.callback({ 'items': items, 'incomplete': v:true })
+endfunction
+
+let s:source = {
+\   'get_metadata': function('s:get_metadata'),
+\   'determine': function('s:determine'),
+\   'complete': function('s:complete'),
+\ }
+
+" Register your custom source.
+call compe#register_source('eskk', s:source)
+
+  let g:compe = {}
+  let g:compe.enabled = v:true
+  let g:compe.source = {
+    \ 'eskk': v:true,
+    \ }
+  " let g:compe.source = {
+  "   \ 'path': v:true,
+  "   \ 'buffer': v:true,
+  "   \ 'nvim_lsp': v:true,
+  "   \ }
+augroup GrepCmd
+    autocmd!
+    autocmd QuickFixCmdPost vim,grep,make if len(getqflist()) != 0 | cwindow | endif
+augroup END
+if executable('rg')
+    let &grepprg = 'rg --vimgrep --hidden'
+    set grepformat=%f:%l:%c:%m
+endif
 " vim:set foldmethod=marker:
