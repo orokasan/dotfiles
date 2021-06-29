@@ -7,14 +7,15 @@ hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
 hook_source = 'source ~/dotfiles/nvim/rc/config/denite.rc.vim'
 [plugins.ftplugin]
 denite = '''
+let g:my_denite_filter_winblend_config = 0
 if has('nvim')
-let g:my_denite_filter_winblend_config = 1
-let g:my_denite_filter_winblend_config = b:denite.buffer_name !~#
-\ '\v(float|menu|relative)' ? 1 : 0
-setlocal winblend=0
+    let g:my_denite_filter_winblend_config = 1
+    let g:my_denite_filter_winblend_config = b:denite.buffer_name !~#
+    \ '\v(float|menu|relative)' ? 1 : 0
+    setlocal winblend=0
+    setlocal winblend=30
+    setlocal signcolumn=no
 endif
-setlocal winblend=30
-setlocal signcolumn=no
 nnoremap <silent><buffer><expr> j
 \ line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k
@@ -93,14 +94,17 @@ if b:denite.buffer_name ==# 'combo'
 endif
 '''
 denite-filter = '''
-call lightline#update()
-if g:my_denite_filter_winblend_config ==# 1
-    setlocal winblend=100
-else
-    setlocal winblend=0
+" call lightline#update()
+if has('nvim')
+    if g:my_denite_filter_winblend_config ==# 1
+        setlocal winblend=100
+    else
+        setlocal winblend=0
+    endif
 endif
 inoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
-inoremap <silent><buffer><expr> <C-b> denite#do_map('move_up_path')
+inoremap <silent><buffer><expr> <C-CR> denite#do_map('do_action')
+inoremap <silent><buffer> <C-b> <cmd>call denite#do_map('move_up_path')<CR><cmd>call denite#move_to_filter()<CR>
 inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
 imap <silent><buffer> ~ <Plug>(eskk:toggle)
 inoremap <silent><buffer><expr> <C-d> denite#do_map('do_action', 'file/rec')
@@ -177,6 +181,7 @@ call execute("!7z a " . file_out . ' ' . file_in)
 echo  file_out .' is archived!'
 call defx#redraw()
 endfunction
+au dein BufEnter * if &ft ==# 'defx' | call defx#redraw() | endif
 '''
 hook_source = '''
 let s:defx_ignore_files =
@@ -318,8 +323,7 @@ nnoremap <silent><buffer><expr> I defx#do_action('toggle_select_all')
 nnoremap <silent><buffer><expr> * defx#do_action('clear_select_all')
 nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
 nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> H defx#do_action('cd', ['file','..'])
-nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
+nnoremap <silent><buffer><expr> h defx#get_candidate().level > 0 \|\| defx#get_candidate().is_opened_tree ? defx#do_action('close_tree') : defx#do_action('cd', ['file','..'])
 " nnoremap <silent><buffer><expr> a defx#do_action('cd', ['..'])
 " nnoremap <silent><buffer><expr><nowait> w line('.') == 1 ? 'G' : 'k'
 " nnoremap <silent><buffer><expr><nowait> s line('.') == line('$') ? 'gg' : 'j'
@@ -456,11 +460,11 @@ hi default link Defx_filename_directory Function
 " }}}
 '''
 
-# [[plugins]]
-# repo =  'Shougo/deoplete.nvim'
-# # on_if = 'has("nvim")'
-# on_event = 'InsertEnter'
-# hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
+[[plugins]]
+repo =  'Shougo/deoplete.nvim'
+# on_if = 'has("nvim")'
+on_event = 'InsertEnter'
+hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 
 # [[plugins]]
 # # on_if = '!has("nvim")'
@@ -796,6 +800,7 @@ let g:quickrun_config = {
         \ "hook/unite_quickfix/enable_failure" : 1,
         \ "hook/close_quickfix/enable_exit" : 1,
         \ "hook/close_buffer/enable_failure" : 1,
+        \   'hook/output_encode/encoding': 'utf-8',
         \ "hook/close_buffer/enable_empty_data" : 1,
         \ "outputter/buffer/split" : "botright8",
         \ "outputter/buffer/close_on_empty" : 1
@@ -909,9 +914,6 @@ xmap <C-l> <Plug>(textmanip-move-right)
 repo = 'majutsushi/tagbar'
 on_cmd = ['Tagbar']
 
-[[plugins]]
-repo = 'norcalli/nvim-colorizer.lua'
-on_cmd = ['ColorizerToggle']
 
 #[[plugins]]
 #repo = 'voldikss/vim-translator'

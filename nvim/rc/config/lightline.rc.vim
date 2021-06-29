@@ -95,17 +95,6 @@ let g:component_function_visible_condition = {
         \ 'lineinfo': 1
         \ }
 
-function! LLLspProgress() abort
-    let p = luaeval('vim.lsp.util.get_progress_messages()')
-    if empty(p)
-        return ''
-    endif
-    let p = p[0]
-    let title = get(p, 'title', '')
-    let perc = get(p, 'percentage', '')
-    let mes = get(p, 'message', '')
-    return title .. '(' .. perc .. '%)' .. ':' .. mes
-endfunction
 
 function! LLModified(n) abort
   let winnr = tabpagewinnr(a:n)
@@ -159,6 +148,17 @@ function! s:threshold(n) abort
 endfunction
 let s:diagnostics_counts = {}
 if has('nvim')
+function! LLLspProgress() abort
+    let p = luaeval('vim.lsp.util.get_progress_messages()')
+    if empty(p)
+        return ''
+    endif
+    let p = p[0]
+    let title = get(p, 'title', '')
+    let perc = get(p, 'percentage', '')
+    let mes = get(p, 'message', '')
+    return title .. '(' .. perc .. '%)' .. ':' .. mes
+endfunction
 function! VimLspCacheDiagnosticsCounts()
     " let s:diagnostics_counts = exists('*lsp#get_buffer_diagnostics_counts') ? lsp#get_buffer_diagnostics_counts() : ''
       if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')

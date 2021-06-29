@@ -778,11 +778,6 @@ merged = 0
 repo = 'neoclide/denite-git'
 
 [[plugins]]
-merged = 0
-on_if = 'executable("gcc") && has("nvim")'
-repo = 'nvim-treesitter/nvim-treesitter'
-
-[[plugins]]
 repo = 'Shougo/neomru.vim'
 hook_add = '''
 '''
@@ -815,37 +810,14 @@ repo = 'syusui-s/vim-quickrun-neovim-terminal'
 
 # [[plugins]]
 # repo = 'Yggdroot/indentLine'
-[[plugins]]
-rev = 'lua'
-repo = 'lukas-reineke/indent-blankline.nvim'
-hook_add = '''
-let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help']
-let g:indentLine_showFirstIndentLevel=1
-let g:indentLine_faster=1
-'''
 
 # [[plugins]]
 # repo = 'lukas-reineke/indent-blankline.nvim'
-[[plugins]]
-merged = 0
-repo = 'hrsh7th/nvim-compe'
 
 # [[plugins]]
 # repo = 'kassio/neoterm'
 [[plugins]]
 repo = 'thinca/vim-themis'
-# [[plugins]]
-# repo = 'gelguy/wilder.nvim'
-# on_lazy = 1
-# on_lua = 1
-# hook_add = '''
-# function! s:wilder_init() abort
-# " call wilder#enable_cmdline_enter()
-# set wildcharm=<Tab>
-# cmap <expr> <Tab> wilder#in_context() ? wilder#next() : "\<Tab>"
-# cmap <expr> <S-Tab> wilder#in_context() ? wilder#previous() : "\<S-Tab>"
-# cmap <expr> <C-n> wilder#in_context() ? wilder#next() : "\<Down>"
-# cmap <expr> <C-p> wilder#in_context() ? wilder#previous() : "\<Up>"
 
 # " only / and ? are enabled by default
 # call wilder#set_option('modes', ['/','?'])
@@ -911,90 +883,12 @@ repo = 'thinca/vim-themis'
 #     \ 'ListBufferMarkers'  :  "m?"
 #     \ }
 # '''
-# [[plugins]]
-# repo = 'hrsh7th/nvim-compe'
-# on_if = 'has("nvim")'
-# hook_add = '''
-# lua << EOF
-# require'compe'.setup {
-#   enabled = true;
-#   autocomplete = true;
-#   debug = false;
-#   min_length = 2;
-#   preselect = 'enable';
-#   throttle_time = 80;
-#   source_timeout = 200;
-#   incomplete_delay = 400;
-#   max_abbr_width = 100;
-#   max_kind_width = 100;
-#   max_menu_width = 100;
-#   documentation = true;
-#   source = {
-#     path = true;
-#     buffer = false;
-#     calc = true;
-#     nvim_lsp = true;
-#     nvim_lua = true;
-#     vsnip = true;
-#   };
-# }
-# EOF
-# let g:lexima_no_default_rules = v:true
-# call lexima#set_default_rules()
-# inoremap <silent><expr> <C-Space> compe#complete()
-# inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
-# inoremap <silent><expr> <C-e>     compe#close('<C-e>')
-# " inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
-# inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
-# " imap <silent><expr> <TAB>
-# "       \ pumvisible() ? "\<TAB>" :
-# "       \ compe#complete()
-# imap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
-# smap <expr> <C-k>   vsnip#expandable()  ? '<Plug>(vsnip-expand)'         : '<C-k>'
-# " Expand or jump
-# imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-# smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-# " Jump forward or backward
-# " imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# " smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-# " imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-# " smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-# " if exists('g:started_by_firenvim')
-# "   set showtabline=0
-# "   set laststatus=0
-# "   set background=dark
-# " augroup Firenvim
-# "     au BufEnter * call Set_Font(g:firenvim_font)
-# "     au BufEnter *     colorscheme iceberg
-# "     " au BufEnter github.com_*.txt set filetype=markdown
-# "   " au BufEnter github.com_*.txt set filetype=markdown | call Set_Font(g:firenvim_font)
-# "   " au BufEnter play.rust-lang.org_*.txt set filetype=rust | call Set_Font(g:firenvim_font)
-# "   " au BufEnter play.golang.org_*.txt set filetype=go |call Set_Font(g:firenvim_font)
-# " augroup END
-# " endif
-# " let g:firenvim_font = 'Cica'
-# " function! Set_Font(font) abort
-# "   execute 'set guifont=' . a:font . ':h12'
-# " endfunction
-# '''
 
 # [[plugins]]
 # repo = 'hrsh7th/vim-vsnip'
 # hook_add = '''
 # '''
 
-[[plugins]]
-on_if = 'has("nvim")'
-repo = 'bfredl/nvim-miniyank'
-hook_add = '''
-map p <Plug>(miniyank-autoput)
-map P <Plug>(miniyank-autoPut)
-map <leader>n <Plug>(miniyank-cycle)
-map <leader>N <Plug>(miniyank-cycleback)
-map <Leader>pc <Plug>(miniyank-tochar)
-map <Leader>pl <Plug>(miniyank-toline)
-map <Leader>pb <Plug>(miniyank-toblock)
-'''
 
 # [[plugins]]
 # repo = 'lambdalisue/fern.vim'
@@ -1074,8 +968,8 @@ map <Leader>pb <Plug>(miniyank-toblock)
 #   autocmd FileType fern call s:init_fern()
 # augroup END
 # '''
-[[plugins]]
-repo = 'antoinemadec/FixCursorHold.nvim'
+# [[plugins]]
+# repo = 'antoinemadec/FixCursorHold.nvim'
 # [[plugins]]
 # repo = 'lambdalisue/fern-renderer-nerdfont.vim'
 # [[plugins]]
@@ -1087,74 +981,6 @@ repo = 'antoinemadec/FixCursorHold.nvim'
 [[plugins]]
 repo = 'delphinus/vim-denite-window'
 
-[[plugins]]
-repo = 'alexaandru/nvim-lspupdate'
-[[plugins]]
-on_lua = 1
-repo = 'nvim-telescope/telescope.nvim'
-hook_add = '''
-lua <<EOF
-require('telescope').setup{
-  defaults = {
-    vimgrep_arguments = {
-      'rg',
-      '--color=never',
-      '--no-heading',
-      '--with-filename',
-      '--line-number',
-      '--column',
-      '--smart-case'
-    },
-    prompt_position = "bottom",
-    prompt_prefix = "> ",
-    selection_caret = "> ",
-    entry_prefix = "  ",
-    initial_mode = "insert",
-    selection_strategy = "reset",
-    sorting_strategy = "descending",
-    layout_strategy = "horizontal",
-    layout_defaults = {
-      horizontal = {
-        mirror = false,
-      },
-      vertical = {
-        mirror = false,
-      },
-    },
-    file_sorter =  require'telescope.sorters'.get_fuzzy_file,
-    file_ignore_patterns = {},
-    generic_sorter =  require'telescope.sorters'.get_generic_fuzzy_sorter,
-    shorten_path = true,
-    winblend = 0,
-    width = 0.75,
-    preview_cutoff = 120,
-    results_height = 1,
-    results_width = 0.8,
-    border = {},
-    color_devicons = true,
-    use_less = true,
-    set_env = { ['COLORTERM'] = 'truecolor' }, -- default = nil,
-    file_previewer = require'telescope.previewers'.vim_buffer_cat.new,
-    grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new,
-    qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new,
-
-    -- Developer configurations: Not meant for general override
-    buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker
-  }
-}
-EOF
-'''
-[[plugins]]
-on_lua = 1
-repo = 'nvim-lua/popup.nvim'
-[[plugins]]
-on_lua = 1
-repo = 'nvim-lua/plenary.nvim'
-# [[plugins]]
-# on_lua = 1
-# repo ='lewis6991/gitsigns.nvim'
-# hook_add = '''
-# '''
 # repo = 'lambdalisue/edita.vim'
 # [[plugins]]
 # repo = 'winston0410/mark-radar.nvim'

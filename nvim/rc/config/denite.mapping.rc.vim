@@ -4,7 +4,7 @@ nnoremap <silent> [denite]- <Cmd>Denite
     \ -start-filter
     \  dein<CR>
 "現在開いているファイルのgit配下のファイルを開く
-nnoremap <silent> [denite]f <Cmd>Denite
+nnoremap <silent> [denite]s <Cmd>Denite
     \ -start-filter
     \ -path=`<SID>denite_gitdir()`
     \ file/rec file:new<CR>
@@ -27,12 +27,12 @@ nnoremap <silent> [denite]k <cmd>DeniteBufferDir -input=`expand('%:t:r')`  file<
 nnoremap <silent> [denite]<Space> <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
-nnoremap <silent> [denite]F <Cmd>DeniteBufferDir
+nnoremap <silent> [denite]S <Cmd>DeniteBufferDir
     \ file file:new<CR>
-nnoremap <silent> [denite]s <Cmd>DeniteProjectDir
+nnoremap <silent> [denite]f <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
-nnoremap <silent> [denite]S <Cmd>DeniteProjectDir
+nnoremap <silent> [denite]F <Cmd>DeniteProjectDir
     \  file file:new<CR>
 ""ホームディレクトリ下のファイル一覧。
 "nnoremap <silent> [denite]t <Cmd>Denite

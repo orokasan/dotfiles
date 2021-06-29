@@ -121,6 +121,7 @@ endfunction
 
 ""IME/skkの状態に応じてsigncolumnの色を変える（WIP）
 autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
+
 "" InsertLeaveの前に発生するイベントであることに注意する
 autocmd vimrc User eskk-disable-pre call s:eskk_restore_highlight_nicely()
 
@@ -142,7 +143,9 @@ call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
 endif
 endfunction
 
+if has('nvim')
 au InsertLeavePre * call sign_unplace('Ins')
+endif
 au InsertLeave * call sign_unplace('Ins')
 let s:insertpos = 0
 au InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()

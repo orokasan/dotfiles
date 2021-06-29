@@ -1,5 +1,6 @@
 "ork's vimrc
 set fileformats=unix,dos,mac
+
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 
@@ -32,6 +33,8 @@ let g:loaded_ruby_provider = 0
 if has('win32')
     let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python39\python.exe')
 endif
+set rtp+=$VIM/vim82
+set notermguicolors
 set swapfile
 set undofile
 set directory=~/.backup/vim/swap
@@ -59,6 +62,7 @@ if &runtimepath !~# '/dein.vim'
 endif
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
+let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
@@ -68,6 +72,7 @@ if dein#load_state(s:dein_dir)
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
 if has('nvim')
     call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lua_toml,  {'merged': 0})
 endif
     call dein#end()
     call dein#save_state()
@@ -77,7 +82,7 @@ endif
     endif
 endif
 filetype plugin indent on
-syntax enable
+syntax on
 command! -nargs=0 -complete=command DeinInstall  call dein#install()
 command! -nargs=0 -complete=command DeinUpdate call dein#update()
 command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
@@ -117,7 +122,6 @@ set pumheight=12 " default
 "}}}
 " Editing {{{
 set virtualedit=block     "move cursor to one more char than end of line
-set display+=lastline,msgsep
 set wrap
 " Scroll
 set scrolloff=5
@@ -154,7 +158,6 @@ if has('nvim')
 else
   set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
 endif
-set nrformats+=unsigned
 set clipboard+=unnamed,unnamedplus
 " mouse in terminal
 set mouse=a
@@ -528,6 +531,53 @@ endif
  endif
  endfunction
 "}}}
+" Syntax (for vim) {{{
+" Vim syntax support file
+" Maintainer:	Bram Moolenaar <Bram@vim.org>
+" Last Change:	2001 Sep 04
+
+" This file is used for ":syntax on".
+" It installs the autocommands and starts highlighting for all buffers.
+
+if !has('nvim')
+if !has("syntax")
+  finish
+endif
+
+" If Syntax highlighting appears to be on already, turn it off first, so that
+" any leftovers are cleared.
+if exists("syntax_on") || exists("syntax_manual")
+  so <sfile>:p:h/nosyntax.vim
+endif
+
+" Load the Syntax autocommands and set the default methods for highlighting.
+runtime syntax/synload.vim
+
+" Load the FileType autocommands if not done yet.
+if exists("did_load_filetypes")
+  let s:did_ft = 1
+else
+  filetype on
+  let s:did_ft = 0
+endif
+
+" Set up the connection between FileType and Syntax autocommands.
+" This makes the syntax automatically set when the file type is detected.
+augroup syntaxset
+  au! FileType *	exe "set syntax=" . expand("<amatch>")
+augroup END
+
+
+" Execute the syntax autocommands for the each buffer.
+" If the filetype wasn't detected yet, do that now.
+" Always do the syntaxset autocommands, for buffers where the 'filetype'
+" already was set manually (e.g., help buffers).
+doautoall syntaxset FileType
+if !s:did_ft
+  doautoall filetypedetect BufRead
+endif
+endif
+" }}}
 " +GUI {{{
 if has('GUI')
      let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
@@ -566,24 +616,6 @@ if has('kaoriya')
     inoremap <F3> Last Change: .
     set ambiwidth=auto
 endif
-"IME状態でカーソルカラー変更
-if has('multi_byte_ime')
-  highlight CursorIM guifg=NONE guibg=Purple
-endif
-"}}}
-" Neovim {{{
-if has('nvim')
-    " show complettion popup in commandline.
-    set wildoptions=pum
-    set winblend=20
-    set termguicolors
-    " remove end of buffer ~~~~~~~~~
-    set fillchars+=eob:\ 
-    "transparent completions menu
-    set pumblend=15
-    set inccommand=nosplit
-    au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
-endif
 "}}}
 " highlight {{{
 " for foldcolumn
@@ -609,6 +641,23 @@ function! g:LineCharVCount() range
 endfunction "}}}
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> <Cmd>LineCharVCount<CR>
+"}}}
+" Neovim {{{
+if !has('nvim')
+    finish
+endif
+    " show complettion popup in commandline.
+    set display+=lastline,msgsep
+    set nrformats+=unsigned
+    set wildoptions=pum
+    set winblend=20
+    set termguicolors
+    " remove end of buffer ~~~~~~~~~
+    set fillchars+=eob:\ 
+    "transparent completions menu
+    set pumblend=15
+    set inccommand=nosplit
+    au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
 "}}}
 " yank searched results
 function! s:search(pat)
@@ -778,16 +827,6 @@ if filereadable(s:dict)
 endif
 endfunction
 nnoremap <F1> <cmd>call Highlight_dict()<CR>
-if has('nvim')
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  highlight = {
-    enable = true,              -- false will disable the whole extension
-    disable = {"c"},  -- list of language that will be disabled
-  },
-}
-EOF
-endif
 nnoremap  <Space>wc <cmd>lua vim.lsp.diagnostic.clear(0)<CR>
 command! VimShowHlItem echo synIDattr(synID(line("."), col("."), 1), "name")
 command! VimShowHlGroup echo synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
@@ -876,7 +915,7 @@ set titlestring=NVIM\ \[\ %{LLcd()}\ \]
 " endfunction
 
 hi CursorBlink guibg=#84a0c6 guifg=#161821
-au vimrc FocusGained * call s:blink(1, 'CursorBlink', '.*\%#.*')
+" au vimrc FocusGained * call s:blink(1, 'CursorBlink', '.*\%#.*')
 function! s:blink(count, color, pattern)
   for i in range(a:count)
     let id = matchadd(a:color, a:pattern)
@@ -897,85 +936,6 @@ endfunction
 " }
 " EOF
 " default
-set cinwords=if,else,while,do,for,switch
-
-function! s:get_metadata(...) abort
-  return {
-  \   'priority': 10,
-  \   'menu': '[eskk]',
-  \ }
-endfunction
-
-function! s:determine(context) abort
-    let a:context.lnum = nvim_win_get_cursor(0)[0]
-    let a:context.col = nvim_win_get_cursor(0)[1]
-    let a:context.line = nvim_get_current_line()
-    let a:context.before_line = a:context.line[0:a:context.col]
-    let a:context.before_char = a:context.before_line[-1:]
-    if !eskk#is_enabled()
-                \ || eskk#get_preedit().get_henkan_phase() ==#
-                \             g:eskk#preedit#PHASE_NORMAL
-                \ || a:context.before_char !~# '\w$'
-        let offset = -1
-    endif
-    
-    let offset =  eskk#complete#eskkcomplete(1, '')
-    return {
-          \   'keyword_pattern_offset': offset,
-          \   'trigger_character_offset': a:context.before_char ? a:context.col + offset : 0
-          \ }
-  " let offset = vim_dadbod_completion#omni(1, '') + 1
-  " let char = a:context.before_char
-  " if offset > 0
-  "   return {
-  "         \   'keyword_pattern_offset': offset,
-  "         \   'trigger_character_offset': char =~? s:trigger_rgx ? a:context.col : 0
-  "         \ }
-  " endif
-  return {}
-
-endfunction
-
-function! s:complete(args) abort
-    let a:args.lnum = nvim_win_get_cursor(0)[0]
-    let a:args.col = nvim_win_get_cursor(0)[1]
-    let a:args.line = nvim_get_current_line()
-    let a:args.before_line = a:args.line[0:a:args.col]
-    let a:args.before_char = a:args.before_line[-1:]
-    echom a:args
-    " let input = s:context.line[a:ke]
-let items = eskk#complete#eskkcomplete(0, a:args.input)
-  " for item in items
-  "   let item.filter_text = item.abbr
-  " endfor
-  call a:args.callback({ 'items': items, 'incomplete': v:true })
-endfunction
-
-let s:source = {
-\   'get_metadata': function('s:get_metadata'),
-\   'determine': function('s:determine'),
-\   'complete': function('s:complete'),
-\ }
-
-" Register your custom source.
-call compe#register_source('eskk', s:source)
-
-  let g:compe = {}
-  let g:compe.enabled = v:true
-  let g:compe.source = {
-    \ 'eskk': v:true,
-    \ }
-  " let g:compe.source = {
-  "   \ 'path': v:true,
-  "   \ 'buffer': v:true,
-  "   \ 'nvim_lsp': v:true,
-  "   \ }
-augroup GrepCmd
-    autocmd!
-    autocmd QuickFixCmdPost vim,grep,make if len(getqflist()) != 0 | cwindow | endif
-augroup END
-if executable('rg')
-    let &grepprg = 'rg --vimgrep --hidden'
-    set grepformat=%f:%l:%c:%m
-endif
+" call termopen('pandoc -f markdown -t json %|python' .. expand('~/.config/pandoc/converter.py') .. '|pandoc -f json -V documentclass=jlreq --template=template/latex_template.tex -s -t latex -o test.tex |lualatex test.tex')
+" terminal pandoc -f markdown -t json %|python converter.py|pandoc -f json -V documentclass=jlreq --template=latex_template.tex -s -t latex -o test.tex |lualatex test.tex
 " vim:set foldmethod=marker:

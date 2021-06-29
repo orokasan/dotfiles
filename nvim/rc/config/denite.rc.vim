@@ -3,7 +3,7 @@ call denite#custom#option('_', {
     \ 'short_source_names': v:true,
     \ 'prompt': ' #',
     \ 'highlight_preview_line': 'Underlined',
-    \ 'max_dynamic_update_candidates': 100000,
+    \ 'max_dynamic_update_candidates': 20000,
     \ 'winwidth': &columns,
     \ 'max_candidate_width': &columns,
     \ 'source_names': 'short',
