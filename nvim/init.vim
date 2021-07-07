@@ -46,7 +46,7 @@ let mapleader = "\<Space>"
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
-let g:dein#lazy_rplugins=1
+" let g:dein#lazy_rplugins=1
 " let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
@@ -322,6 +322,7 @@ cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
 cnoremap <C-a> <C-b>
 cnoremap <C-q> <C-f>
+cnoremap <silent> <S-Tab> <C-p>
 tnoremap <expr> <C-n> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<Down>" : "\<C-n>"
 tnoremap <expr> <C-p> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<UP>" : "\<C-p>"
 "}}}
@@ -861,6 +862,7 @@ function! s:make_abbrev_rule(rules)
   endfor
 endfunction
 call s:make_abbrev_rule([
+\   {'from': 'gi', 'to': 'Gina'},
 \   {'from': 'gc', 'to': 'Gina! commit -am'},
 \   {'from': 'gf', 'to': 'Gina! commit --fixup HEAD'},
 \   {'from': 'gp', 'to': 'Gina push'},
@@ -938,4 +940,45 @@ endfunction
 " default
 " call termopen('pandoc -f markdown -t json %|python' .. expand('~/.config/pandoc/converter.py') .. '|pandoc -f json -V documentclass=jlreq --template=template/latex_template.tex -s -t latex -o test.tex |lualatex test.tex')
 " terminal pandoc -f markdown -t json %|python converter.py|pandoc -f json -V documentclass=jlreq --template=latex_template.tex -s -t latex -o test.tex |lualatex test.tex
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    disable = {"c"},  -- list of language that will be disabled
+  },
+}
+EOF
+let s:lsptoggle_switch = v:false
+command! -nargs=0 -complete=command LspToggle call s:lspdefinetoggleaucmd()
+function! s:lspdefinetoggleaucmd() abort
+    if !s:lsptoggle_switch
+        let s:lsptoggle_switch = v:true
+        augroup lsptoggle
+            au!
+            au BufEnter * LspStop
+        augroup END
+        edit %
+        echom "Lsp OFF"
+    else
+        augroup lsptoggle
+            au!
+        augroup END
+        let s:lsptoggle_switch = v:false
+        echom "Lsp ON"
+    endif
+endfunction
+
+" ウィンドウを閉じた時一つ前のウィンドウに戻る
+let g:prev_win = [0, 0]
+function! g:Goto_prev_win()
+	call win_gotoid(g:prev_win[1])
+endfunction
+function! g:Save_prev_win()
+    let g:prev_win[1] = g:prev_win[0]
+	let g:prev_win[0] = win_getid()
+endfunction
+
+autocmd WinLeave * call g:Goto_prev_win()
+autocmd WinEnter * call g:Save_prev_win()
 " vim:set foldmethod=marker:

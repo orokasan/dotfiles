@@ -59,34 +59,34 @@ repo = 'Shougo/deoplete-lsp'
 hook_add = '''
 '''
 
-[[plugins]]
+# [[plugins]]
 # repo = 'orokasan/vim-lsp'
-merged = 0
-repo = 'prabirshrestha/vim-lsp'
-hook_add = '''
-let g:lsp_auto_enable = 0
-'''
+# merged = 0
+# repo = 'prabirshrestha/vim-lsp'
+# hook_add = '''
+# let g:lsp_auto_enable = 0
+# '''
 
-[[plugins]]
-# on_if = 'has("windows")'
-merged = 0
-repo = 'mattn/vim-lsp-settings'
-hook_add = '''
-let g:lsp_settings_enable_suggestions = 1
-"let g:lsp_settings = {
-"      \ 'efm-langserver': {
-"      \   'disabled': 0,
-"      \   'allowlist': ['markdown','text','json','*'],
-"     \    'initialization_options': {
-"            \"documentFormatting": v:true,
-"            \"hover": v:true,
-"            \"documentSymbol": v:true,
-"            \"codeAction": v:true,
-"            \"completion": v:true
-"    \}
-"      \  }
-"      \ }
-'''
+# [[plugins]]
+# # on_if = 'has("windows")'
+# merged = 0
+# repo = 'mattn/vim-lsp-settings'
+# hook_add = '''
+# let g:lsp_settings_enable_suggestions = 1
+# "let g:lsp_settings = {
+# "      \ 'efm-langserver': {
+# "      \   'disabled': 0,
+# "      \   'allowlist': ['markdown','text','json','*'],
+# "     \    'initialization_options': {
+# "            \"documentFormatting": v:true,
+# "            \"hover": v:true,
+# "            \"documentSymbol": v:true,
+# "            \"codeAction": v:true,
+# "            \"completion": v:true
+# "    \}
+# "      \  }
+# "      \ }
+# '''
 
 [[plugins]]
 repo = 'alexaandru/nvim-lspupdate'

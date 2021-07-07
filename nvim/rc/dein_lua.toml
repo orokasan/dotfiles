@@ -64,7 +64,6 @@ repo = 'nvim-lua/plenary.nvim'
 # '''
 
 [[plugins]]
-rev = 'lua'
 repo = 'lukas-reineke/indent-blankline.nvim'
 hook_add = '''
 let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help']
@@ -244,21 +243,6 @@ let g:indentLine_faster=1
 [[plugins]]
 repo = 'norcalli/nvim-colorizer.lua'
 on_cmd = ['ColorizerToggle']
-
-[[plugins]]
-on_if = 'executable("gcc") && has("nvim")'
-merged = 1
-repo = 'nvim-treesitter/nvim-treesitter'
-hook_add = '''
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  highlight = {
-    enable = true,              -- false will disable the whole extension
-    disable = {"c"},  -- list of language that will be disabled
-  },
-}
-EOF
-'''
 
 [[plugins]]
 repo = 'bfredl/nvim-miniyank'

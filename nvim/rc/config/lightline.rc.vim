@@ -166,8 +166,8 @@ function! VimLspCacheDiagnosticsCounts()
         let s:diagnostics_counts['warning'] = luaeval("vim.lsp.diagnostic.get_count(0, [[Warning]])")
       endif
 endfunction
-autocmd dein User lsp_diagnostics_updated call VimLspCacheDiagnosticsCounts() | call lightline#update()
-autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts() | call lightline#update()
+autocmd dein User LspDiagnosticsChanged call VimLspCacheDiagnosticsCounts() | call lightline#update()
+" autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts() | call lightline#update()
 endif
 " vim-lsp or nvim-lsp
 function! LLLspError() abort
@@ -270,7 +270,7 @@ function! s:ignore_window() abort
 endfunction
 
 function! LLInactiveFilename()
-    return !s:ignore_window() ? expand('%:t') : LLMode()
+    return !s:ignore_window() ? expand('%:t') .. win_getid() : LLMode()
 endfunction
 
 function! LLeskk() abort

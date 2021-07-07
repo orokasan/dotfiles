@@ -155,6 +155,11 @@ autocmd dein ColorScheme iceberg highlight! link WhiteSpace Comment
 " autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
 '''
 
+[[plugins]]
+on_if = 'executable("gcc")'
+merged = 0
+repo = 'nvim-treesitter/nvim-treesitter'
+
 # [[plugins]]
 # repo = 'lifepillar/vim-solarized8'
 # hook_add =''' " {{{
@@ -309,21 +314,21 @@ nmap <Leader>xu <Plug>(GitGutterUndoHunk)
 # hook_add = '''
 # '''
 
-[[plugins]]
-# colorscheme seagull
-repo = 'nightsense/seabird'
-hook_add = '''
-" au ColorScheme seagull hi NormalFloat guibg=#fbffff
-au ColorScheme seagull hi! NormalFloat guibg=#f5f5f5
-au ColorScheme seagull hi! clear Search
-au ColorScheme seagull hi! link Search IncSearch
-au ColorScheme seagull hi! clear MatchParen
-au ColorScheme seagull hi! MatchParen ctermfg=1 ctermbg=NONE guibg=#b4b8bf
-au ColorScheme seagull hi! Comment cterm=NONE ctermfg=14 guifg=#8d9193 gui=NONE
-au ColorScheme seagull hi! link SignColumn CursorColumn
-'''
-[[plugins]]
-repo = 'nightsense/snow'
+# [[plugins]]
+# # colorscheme seagull
+# repo = 'nightsense/seabird'
+# hook_add = '''
+# " au ColorScheme seagull hi NormalFloat guibg=#fbffff
+# au ColorScheme seagull hi! NormalFloat guibg=#f5f5f5
+# au ColorScheme seagull hi! clear Search
+# au ColorScheme seagull hi! link Search IncSearch
+# au ColorScheme seagull hi! clear MatchParen
+# au ColorScheme seagull hi! MatchParen ctermfg=1 ctermbg=NONE guibg=#b4b8bf
+# au ColorScheme seagull hi! Comment cterm=NONE ctermfg=14 guifg=#8d9193 gui=NONE
+# au ColorScheme seagull hi! link SignColumn CursorColumn
+# '''
+# [[plugins]]
+# repo = 'nightsense/snow'
 
 # [[plugins]]
 # repo = 'dstein64/vim-startuptime'
@@ -443,160 +448,6 @@ repo = 'rhysd/conflict-marker.vim'
 # " let g:beacon_ignore_buffers = ['\[Command Line\]']
 # au ColorScheme * highlight Beacon guibg=#e2a478 ctermbg=15
 # '''
-
-[[plugins]]
-repo =  'lambdalisue/gina.vim'
-hook_add = '''
-"let g:gina#command#status#use_default_mappings=0
-nnoremap <silent> gs <Cmd>Gina status<CR>
-nnoremap <silent> <Leader>gA <Cmd>Gina changes HEAD<CR>
-nnoremap <silent> <Leader>gc <Cmd>Gina commit<CR>
-nnoremap <silent> <Leader>gC <Cmd>Gina commit --amend<CR>
-nnoremap <silent> <Leader>gb <Cmd>Gina branch -av<CR>
-nnoremap <silent> <Leader>gB <Cmd>nos Gina blame<CR>
-nnoremap <silent> <Leader>gt <Cmd>Gina tag<CR>
-nnoremap <silent> <Leader>gq <Cmd>Gina qrep<CR>
-nnoremap <silent> <Leader>gd <Cmd>nos Gina compare<CR>zz
-nnoremap <silent> <Leader>gg <Cmd>Gina diff<CR>
-nnoremap <silent> <Leader>gs <Cmd>Gina df<CR>
-nnoremap <silent> <Leader>gD <Cmd>Gina changes origin/HEAD...<CR>
-nnoremap <silent> <Leader>gl <Cmd>Gina log<CR>
-nnoremap <silent> <Leader>gL <Cmd>Gina log :<CR>
-nnoremap <silent> <Leader>gr <Cmd>Gina reflog<CR>
-nnoremap <silent> <Leader>gf <Cmd>Gina ls<CR>
-nnoremap <silent> <Leader>gp <Cmd>Gina!! add -p<CR>
-let g:gina#core#spinner#delaytime = 10
-call gina#custom#command#alias('branch', 'br')
-call gina#custom#command#alias('diff', 'df')
-call gina#custom#command#option('df', '--stat')
-call gina#custom#command#option(
-    \ '/\%(log\|reflog\|diff\)',
-    \ '--opener', 'vsplit'
-    \)
-call gina#custom#command#option(
-    \ '/\%(status\|branch\|ls\|grep\|changes\|tag\|df\)',
-    \ '--opener' , 'botright 10split'
-    \)
-call gina#custom#command#option('commit', '--opener' , 'split')
-call gina#custom#command#option('log', '--group', 'log-viewer')
-call gina#custom#command#option('diff', '--group', 'log-viewer')
-call gina#custom#command#option('status', '--group', 'status-viewer')
-call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
-call gina#custom#command#option('commit', '-v|--verbose')
-call gina#custom#command#option('commit', '--group', 'status-viewer')
-" call gina#custom#command#option('diff', '-U0')
-call gina#custom#command#option('compare', '-R')
-call gina#custom#command#option('branch', '-v', 'v')
-call gina#custom#command#option('status', '--short')
-call gina#custom#command#option('status', '--branch')
-call gina#custom#command#option('log', '--graph')
-call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
-"call gina#custom#command#option(
-"\ '/\%(status\|changes\)',
-"\ '--ignore-submodules'
-"\)
-"call gina#custom#action#alias(
-"\ 'branch', 'track',
-"\ 'checkout:track'
-"\)
-call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
-call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
-call gina#custom#mapping#nmap(
-    \ '/.*', 'q',
-    \ ':close<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ '/.*', '<TAB>',
-      \ ':call gina#action#call(''builtin:choice'')<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', '<C-^>',
-    \ '<Cmd>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', '<C-^>',
-    \ '<Cmd>Gina status<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', '<C-6>',
-    \ '<Cmd>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-      \ 'status', 'a',
-      \ ':call gina#action#call(''toggle'')<CR>',
-      \ {'noremap': 1, 'silent': 1},
-      \)
-call gina#custom#mapping#vmap(
-    \ 'status', '-',
-      \ ':call gina#action#call(''toggle'')<CR>',
-    \ { 'noremap':1, 'silent': 1, 'nowait': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', 'c',
-    \ '<Cmd>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1, 'nowait':1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', '<C-6>',
-    \ '<Cmd>Gina status<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', 'I',
-    \ 'ggI',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'preview',
-      \ 'topleft show:commit:preview',
-      \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'preview',
-      \ 'show:commit:above',
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'yy',
-      \ '<Cmd>call gina#action#call(''yank:rev'')<CR>',
-      \ {'noremap': 1}
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'yy',
-      \ '<Cmd>call gina#action#call(''yank:rev'')<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'changes',
-      \ 'changes:of:split',
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'c',
-      \ '<Cmd>call gina#action#call(''changes'')<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
-"call gina#custom#execute(
-"      \ '/\%(ls\|log\|reflog\|grep\)',
-"      \ 'setlocal noautoread',
-"      \)
-call gina#custom#execute(
-      \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
-      \ 'setlocal cursorline',
-      \)
-call gina#custom#execute(
-      \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
-      \ 'setlocal winfixheight',
-      \)
-'''
 
 # [[plugins]]
 # merged = '0'
@@ -773,14 +624,14 @@ nnoremap <silent> [denite]v <Cmd>Denite -no-empty -path=~/.cache/junkfile grep:~
 [[plugins]]
 repo = 'nekowasabi/denite-migemo'
 
-[[plugins]]
-merged = 0
-repo = 'neoclide/denite-git'
+# [[plugins]]
+# merged = 0
+# repo = 'neoclide/denite-git'
 
-[[plugins]]
-repo = 'Shougo/neomru.vim'
-hook_add = '''
-'''
+# [[plugins]]
+# repo = 'Shougo/neomru.vim'
+# hook_add = '''
+# '''
 [[plugins]]
  repo = 'bluz71/vim-nightfly-guicolors'
 # [[plugins]]
@@ -816,8 +667,8 @@ repo = 'syusui-s/vim-quickrun-neovim-terminal'
 
 # [[plugins]]
 # repo = 'kassio/neoterm'
-[[plugins]]
-repo = 'thinca/vim-themis'
+# [[plugins]]
+# repo = 'thinca/vim-themis'
 
 # " only / and ? are enabled by default
 # call wilder#set_option('modes', ['/','?'])
@@ -978,8 +829,8 @@ repo = 'thinca/vim-themis'
 # repo = 'lambdalisue/glyph-palette.vim'
 # [[plugins]]
 # merged = 0
-[[plugins]]
-repo = 'delphinus/vim-denite-window'
+# [[plugins]]
+# repo = 'delphinus/vim-denite-window'
 
 # repo = 'lambdalisue/edita.vim'
 # [[plugins]]
@@ -990,4 +841,8 @@ repo = 'delphinus/vim-denite-window'
 # repo = 'doums/lsp_status'
 [[plugins]]
 repo = 'goerz/jupytext.vim'
+# [[plugins]]
+# repo = 'Shougo/ddc.vim'
+[[plugins]]
+repo = 'vim-denops/denops.vim'
 # vim:set foldmethod=marker:'
