@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 export LANG=ja_JP.UTF-8
 
 export PATH="$HOME/bin:$PATH"
@@ -188,6 +195,23 @@ open -a /Applications/Firefox\ Nightly.app \
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 export PATH=$PATH:/home/linuxbrew/.linuxbrew/bin
+#
+# checks to see if we are in a windows or linux dir
+function isWinDir {
+  case $PWD/ in
+    /mnt/*) return $(true);;
+    *) return $(false);;
+  esac
+}
+# wrap the git command to either run windows git or linux
+function git {
+  if isWinDir
+  then
+    git.exe "$@"
+  else
+    /usr/bin/git "$@"
+  fi
+}
 
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
@@ -210,14 +234,21 @@ zinit light-mode for \
     zinit-zsh/z-a-patch-dl \
     zinit-zsh/z-a-bin-gem-node
 
+
+zinit ice depth=1; zinit light romkatv/powerlevel10k
 # A glance at the new for-syntax – load all of the above
 # plugins with a single command. For more information see:
 # https://zdharma.github.io/zinit/wiki/For-Syntax/
-zinit for \
-    light-mode  zsh-users/zsh-autosuggestions \
-    light-mode  zdharma/fast-syntax-highlighting \
-                zdharma/history-search-multi-word \
-    light-mode pick"async.zsh" src"pure.zsh" \
-                sindresorhus/pure
 
-### End of Zinit's installer chunk
+zinit light zdharma/history-search-multi-word
+# zinit light  zdharma/fast-syntax-highlighting
+# zinit light-mode for \
+#     light-mode pick"async.zsh" src"pure.zsh" \
+#                 sindresorhus/pure
+# autosuggestions is too slow in wsl2
+    # light-mode  zsh-users/zsh-autosuggestions \
+
+### End of Zinit's installer chun
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
