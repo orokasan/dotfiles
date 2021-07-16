@@ -12,7 +12,7 @@ StartMaximizedWindow = false
 # Editor external font-family, font-size, and linespace.
 # https://github.com/rytkmt/RictyDiminished
 FontFamily = "HackGenNerd"
-FontSize = 12
+FontSize = 10
 Linespace = 0
 # # Goneovim has a cached rendering feature enabled to speed up the process.
 # # If you want to disable it, set it to false
@@ -32,6 +32,7 @@ DrawShadowForFloatWindow = false
 # Drawing window and Transparent breaks statusline and tabline.
 # Transparent window alpha
 # Note: This setting also implicitly enables the Drawborder setting
+
 # Transparent = 0.95
 #
 # Drawing window border instead of vertical split, statusline

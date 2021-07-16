@@ -91,7 +91,7 @@ hook_add = '''
 let s:lexima_my_rules = [
 \ {'char': 'z[', 'input': '「', 'input_after': '」'},
 \ {'char': 'z{', 'input': '『', 'input_after': '』'},
-\ {'char': 'z\', 'input': '【', 'input_after': '】'},
+\ {'char': 'zz{', 'input': '【', 'input_after': '】'},
 \ {'char': 'z(', 'input': '（', 'input_after': '）'},
 \ {'char': '<CR>', 'at': '"""\%#"""', 'input_after': '<CR>'},
 \ {'char': '<CR>', 'at': '```\%#```', 'input_after': '<CR>'},
@@ -496,12 +496,21 @@ silent! xmap <unique> 'r <Plug>(operator-sandwich-replace)
 
 let g:textobj#sandwich#stimeoutlen = 100
 let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
+let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['b']}]
+let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['k']}]
+let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['p']}]
+let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['d']}]
+let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['s']}]
 let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}]
 let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
 let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['S']}]
 let g:sandwich#recipes += [{'buns' : ['《', '★》'], 'nesting':1, 'input':['C']}]
+autocmd dein FileType markdown call sandwich#util#addlocal([
+  \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
+  \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
+  \ ])
 call operator#sandwich#set('all', 'all', 'highlight', 2)
 nmap 'dd vab'd
 nmap 'rr vab'r
@@ -841,8 +850,4 @@ repo = 'syusui-s/vim-quickrun-neovim-terminal'
 # repo = 'doums/lsp_status'
 [[plugins]]
 repo = 'goerz/jupytext.vim'
-# [[plugins]]
-# repo = 'Shougo/ddc.vim'
-[[plugins]]
-repo = 'vim-denops/denops.vim'
 # vim:set foldmethod=marker:'

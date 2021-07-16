@@ -4,7 +4,7 @@ nnoremap <silent> [denite]- <Cmd>Denite
     \ -start-filter
     \  dein<CR>
 "現在開いているファイルのgit配下のファイルを開く
-nnoremap <silent> [denite]s <Cmd>Denite
+nnoremap <silent> [denite]f <Cmd>Denite
     \ -start-filter
     \ -path=`<SID>denite_gitdir()`
     \ file/rec file:new<CR>
@@ -27,12 +27,12 @@ nnoremap <silent> [denite]k <cmd>DeniteBufferDir -input=`expand('%:t:r')`  file<
 nnoremap <silent> [denite]<Space> <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
-nnoremap <silent> [denite]S <Cmd>DeniteBufferDir
+nnoremap <silent> [denite]s <Cmd>DeniteBufferDir
     \ file file:new<CR>
-nnoremap <silent> [denite]f <Cmd>DeniteProjectDir
+nnoremap <silent> [denite]F <Cmd>DeniteProjectDir
     \ -start-filter
     \  file/rec file:new<CR>
-nnoremap <silent> [denite]F <Cmd>DeniteProjectDir
+nnoremap <silent> [denite]S <Cmd>DeniteProjectDir
     \  file file:new<CR>
 ""ホームディレクトリ下のファイル一覧。
 "nnoremap <silent> [denite]t <Cmd>Denite
@@ -123,6 +123,9 @@ nnoremap <silent> [denite]o <Cmd>Denite
     " \ markdown<CR>
 nnoremap <silent> [denite]j <Cmd>Denite
     \ dirmark<CR>
+nnoremap <silent> [denite]J <Cmd>Denite
+    \ -start-filter
+    \ dirmark<CR>
 
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
@@ -131,10 +134,10 @@ nnoremap <buffer><silent> [denite]j <Cmd>Denite
     \ dirmark<CR>
 endfunction
 "bookmark by "add"action
-nnoremap <silent> [denite]J <Cmd>Denite
-    \ -path=`expand('%:p:h:h')`
-    \ -default_action=add
-    \ dirmark/add<CR>
+" nnoremap <silent> [denite]J <Cmd>Denite
+"     \ -path=`expand('%:p:h:h')`
+"     \ -default_action=add
+"     \ dirmark/add<CR>
 " move next candidate
 nnoremap <silent> [denite]. <Cmd>Denite
     \ -buffer-name=float

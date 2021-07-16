@@ -2,7 +2,7 @@
 "
 " hz_ja.vim - Convert character between HANKAKU and ZENKAKU
 "
-" Last Change: 2020-06-04[11:25].
+" Last Change: 2021-07-15[13:03].
 " Written By:  MURAOKA Taro <koron.kaoriya@gmail.com>
 "
 " Commands:

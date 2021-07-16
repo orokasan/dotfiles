@@ -8,19 +8,19 @@ imap <silent><expr> <TAB>
 imap <silent><expr> <S-TAB>
       \ pumvisible() ? "\<C-p>" :
       \ "\<S-TAB>"
-inoremap <silent><expr> <C-p>
-    \ pumvisible() ? "\<C-p>" :
-    \ deoplete#manual_complete()
-inoremap <silent><expr> <C-n>
-    \ pumvisible() ? "\<C-n>" :
-    \ deoplete#manual_complete()
+" inoremap <silent><expr> <C-p>
+"     \ pumvisible() ? "\<C-p>" :
+"     \ deoplete#manual_complete()
+" inoremap <silent><expr> <C-n>
+"     \ pumvisible() ? "\<C-n>" :
+"     \ deoplete#manual_complete()
 " inoremap <silent><expr><C-h>
 "     \ deoplete#smart_close_popup()."\<C-h>"
 " inoremap <silent><expr><BS>
 "     \ deoplete#smart_close_popup()."\<C-h>"
 inoremap <silent><expr><C-l>
-    \ pumvisible() ?  deoplete#complete_common_string()
-    \<C-l>" :
+    \ pumvisible() ?  deoplete#complete_common_string() :
+    \ "\<C-l>"
 " inoremap <expr><silent> <C-g> deoplete#undo_completion()
 
     " \ pumvisible() ? deoplete#undo_completion() : "\<C-g>"
@@ -52,6 +52,7 @@ call deoplete#custom#option({
     \ 'skip_multibyte': v:false,
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'filter',
+    \ 'smart_case': v:true,
     \ })
 
 call deoplete#custom#source('_', 'converters', [

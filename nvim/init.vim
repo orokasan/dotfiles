@@ -63,6 +63,8 @@ endif
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
+let s:exp_toml = '~/dotfiles/nvim/rc/dein_experimental.toml'
+let s:comp_toml = '~/dotfiles/nvim/rc/dein_comp.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
@@ -70,6 +72,9 @@ if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml])
    call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
+    
+    " call dein#load_toml(s:exp_toml, {'merged': 0})
+    call dein#load_toml(s:comp_toml, {'merged': 0})
 if has('nvim')
     call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#load_toml(s:lua_toml,  {'merged': 0})
@@ -330,9 +335,7 @@ tnoremap <expr> <C-p> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<UP>" : "
 "terminal
 " if using iTerm2, map option key to Meta
 " Preference -> Profile -> Keys
-tnoremap <C-[> <C-\><C-n>
 tnoremap <Esc> <C-\><C-n>
-tnoremap <nowait> <C-f> <C-f>
 "}}}
 "Key map - folding {{{
 " open folding
@@ -680,7 +683,7 @@ if !has('nvim')
 endif
 " for neovide initialize hook
 if exists('neovide')
-    set guifont:HackGenNerd:h14
+    set guifont:HackGenNerd:h11
     let g:neovide_refresh_rate=100
     let g:neovide_transparency=0.96
     let g:neovide_transparency=0.90
@@ -970,15 +973,18 @@ function! s:lspdefinetoggleaucmd() abort
 endfunction
 
 " ウィンドウを閉じた時一つ前のウィンドウに戻る
-let g:prev_win = [0, 0]
-function! g:Goto_prev_win()
-	call win_gotoid(g:prev_win[1])
-endfunction
-function! g:Save_prev_win()
-    let g:prev_win[1] = g:prev_win[0]
-	let g:prev_win[0] = win_getid()
-endfunction
+" seems buggy
+" let g:prev_win = [0, 0]
+" function! g:Goto_prev_win()
+" 	call win_gotoid(g:prev_win[1])
+" endfunction
+" function! g:Save_prev_win()
+"     let g:prev_win[1] = g:prev_win[0]
+" 	let g:prev_win[0] = win_getid()
+" endfunction
 
-autocmd WinLeave * call g:Goto_prev_win()
-autocmd WinEnter * call g:Save_prev_win()
+" autocmd WinLeave * call g:Goto_prev_win()
+" autocmd WinEnter * call g:Save_prev_win()
+
 " vim:set foldmethod=marker:
+
