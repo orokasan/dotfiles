@@ -1,5 +1,7 @@
 "ork's vimrc
 set fileformats=unix,dos,mac
+set encoding=utf-8
+set fileencodings=utf-8,cp932
 
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
@@ -70,9 +72,8 @@ let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml])
-   call dein#load_toml(s:toml,      {'lazy': 0})
+    call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    
     " call dein#load_toml(s:exp_toml, {'merged': 0})
     call dein#load_toml(s:comp_toml, {'merged': 0})
 if has('nvim')
@@ -908,6 +909,7 @@ nnoremap Q q
 nmap <BS> <C-h>
 if has('nvim')
     lua require('lsp_settings')
+    lua require('telescope_config')
 endif
 let g:terminal_scrollback_buffer_size = 3000
 set title
@@ -985,6 +987,13 @@ endfunction
 
 " autocmd WinLeave * call g:Goto_prev_win()
 " autocmd WinEnter * call g:Save_prev_win()
+au VimEnter * call s:remove_focus_event()
+function! s:remove_focus_event()
+au! gitgutter FocusLost *
+au! gitgutter FocusGained *
+au! ConflictMarkerDetect FocusLost *
+au! ConflictMarkerDetect FocusGained *
+endfunction
 
 " vim:set foldmethod=marker:
 

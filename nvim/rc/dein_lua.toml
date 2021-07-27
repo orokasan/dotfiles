@@ -1,60 +1,10 @@
-# [[plugins]]
-# on_lua = 1
-# repo = 'nvim-telescope/telescope.nvim'
-# hook_add = '''
-# lua <<EOF
-# require('telescope').setup{
-#   defaults = {
-#     vimgrep_arguments = {
-#       'rg',
-#       '--color=never',
-#       '--no-heading',
-#       '--with-filename',
-#       '--line-number',
-#       '--column',
-#       '--smart-case'
-#     },
-#     prompt_position = "bottom",
-#     prompt_prefix = "> ",
-#     selection_caret = "> ",
-#     entry_prefix = "  ",
-#     initial_mode = "insert",
-#     selection_strategy = "reset",
-#     sorting_strategy = "descending",
-#     layout_strategy = "horizontal",
-#     layout_defaults = {
-#       horizontal = {
-#         mirror = false,
-#       },
-#       vertical = {
-#         mirror = false,
-#       },
-#     },
-#     file_sorter =  require'telescope.sorters'.get_fuzzy_file,
-#     file_ignore_patterns = {},
-#     generic_sorter =  require'telescope.sorters'.get_generic_fuzzy_sorter,
-#     shorten_path = true,
-#     winblend = 0,
-#     width = 0.75,
-#     preview_cutoff = 120,
-#     results_height = 1,
-#     results_width = 0.8,
-#     border = {},
-#     color_devicons = true,
-#     use_less = true,
-#     set_env = { ['COLORTERM'] = 'truecolor' }, -- default = nil,
-#     file_previewer = require'telescope.previewers'.vim_buffer_cat.new,
-#     grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new,
-#     qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new,
+[[plugins]]
+repo = 'nvim-telescope/telescope.nvim'
+hook_source = '''
+'''
 
-#     -- Developer configurations: Not meant for general override
-#     buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker
-#   }
-# }
-# EOF
-# '''
-# [[plugins]]
-# repo = 'nvim-lua/popup.nvim'
+[[plugins]]
+repo = 'nvim-lua/popup.nvim'
 [[plugins]]
 repo = 'nvim-lua/plenary.nvim'
 # [[plugins]]
@@ -255,3 +205,22 @@ map <Leader>pc <Plug>(miniyank-tochar)
 map <Leader>pl <Plug>(miniyank-toline)
 map <Leader>pb <Plug>(miniyank-toblock)
 '''
+
+# [[plugins]]
+# repo = 'sunjon/shade.nvim'
+# on_event = ['VimEnter']
+# hook_source = '''
+# lua <<EOF
+# require'shade'.setup({
+#   overlay_opacity = 70,
+#   opacity_step = 1,
+#   keys = {
+#     brightness_up    = '<C-Up>',
+#     brightness_down  = '<C-Down>',
+#     toggle           = '<Leader>s',
+#   }
+# })
+# EOF
+# '''
+[[plugins]]
+repo = 'kyazdani42/nvim-web-devicons'

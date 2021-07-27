@@ -44,6 +44,7 @@ call deoplete#custom#var('around', {
     \})
 call deoplete#custom#option('sources', {
     \ 'denite-filter': [''],
+    \ 'TelescopePrompt': [''],
     \ })
 call deoplete#custom#option({ 'refresh_always': v:true})
 

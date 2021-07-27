@@ -184,7 +184,7 @@ endfunction
 " let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 " ColorSchemeが変わった時に読み込み直す
 " autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
-let s:insert_icon = ''
+let s:insert_icon = ''
 hi InInsertSign gui=bold guifg=#84a0c6 guibg=#1e2132
 hi InEskkKanaSign gui=bold guifg=#e2a478 guibg=#1e2132
 call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
