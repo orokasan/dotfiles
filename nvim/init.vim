@@ -90,9 +90,9 @@ endif
 endif
 filetype plugin indent on
 syntax on
-command! -nargs=0 -complete=command DeinInstall  call dein#install()
-command! -nargs=0 -complete=command DeinUpdate call dein#update()
-command! -nargs=0 -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
+command! -nargs=? -complete=command DeinInstall  call dein#install()
+command! -nargs=? -complete=command DeinUpdate call dein#update()
+command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 "}}}
 " Visual  {{{
 " language C
@@ -785,8 +785,8 @@ execute('edit ++ff=unix %')
 execute('%substitute/$//')
 write
 endfunction
-command! -nargs=0 -complete=command LFdos call s:change_lf_dos()
-command! -nargs=0 -complete=command LFunix call s:change_lf_unix()
+command! -nargs=? -complete=command LFdos call s:change_lf_dos()
+command! -nargs=? -complete=command LFunix call s:change_lf_unix()
 nnoremap <C-6> <C-^>
 augroup lsp_setup
 au!
@@ -957,7 +957,7 @@ require'nvim-treesitter.configs'.setup {
 }
 EOF
 let s:lsptoggle_switch = v:false
-command! -nargs=0 -complete=command LspToggle call s:lspdefinetoggleaucmd()
+command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
 function! s:lspdefinetoggleaucmd() abort
     if !s:lsptoggle_switch
         let s:lsptoggle_switch = v:true
@@ -1009,6 +1009,7 @@ call ddc#custom#patch_global('sourceOptions', {
       \   'matchers': ['matcher_head'],
       \   'sorters': ['sorter_rank']},
       \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': []},
+      \ 'nvimlsp': {'mark': 'lsp', 'forceCompletionPattern': '\.|:|->'},
       \ })
 
 " Change source options
@@ -1019,7 +1020,7 @@ call ddc#custom#patch_global('sourceParams', {
       \ 'around': {'maxSize': 500},
       \ })
 " Customize settings on a filetype
-call ddc#custom#patch_global('sources', ['eskk','around','buffer','nvim-lsp'])
+call ddc#custom#patch_global('sources', ['nvimlsp','eskk','around','buffer'])
 
 call ddc#enable()
 " vim:set foldmethod=marker:

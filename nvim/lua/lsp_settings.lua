@@ -134,14 +134,52 @@ for _, lsp in ipairs(servers) do
 end
 local efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
 nvim_lsp['efm'].setup{
-    cmd = {'efm-langserver','-c',efm_cpath};
-    filetypes = {'markdown', 'text', 'txt'};
+    -- cmd = {vim.fn['lsp_settings#exec_path']('efm-langserver'),'-c',efm_cpath};
+    -- filetypes = {'markdown', 'text', 'txt'};
     on_attach = on_attach,
-    debounce_text_changes = 500,
+    root_dir = function(fname)
+      return nvim_lsp.util.root_pattern '.git'(fname) or nvim_lsp.util.path.dirname(fname)
+    end,
+settings = {
+    -- rootMarkers = {".git/"},
+    languages = {
+      lua = {luafmt},
+      typescript = {prettier},
+      javascript = {prettier},
+      typescriptreact = {prettier},
+      javascriptreact = {prettier},
+      ["javascript.jsx"] = {prettier},
+      ["typescript.tsx"] = {prettier},
+      yaml = {prettier},
+      -- json = {prettier},
+      html = {prettier},
+      -- less = {prettier},
+      -- scss = {prettier},
+      -- css = {prettier},
+      markdown = {prettier},
+      text = {textlint}
+    }
+  },
+  filetypes = {
+    "javascript",
+    "javascriptreact",
+    "javascript.jsx",
+    "typescript",
+    "typescript.tsx",
+    "typescriptreact",
+    "lua",
+    "text",
+    "markdown",
+    -- "less",
+    -- "scss",
+    -- "css",
+  }
     };
 
 -- efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
--- nvim_lsp['efm'].setup{on_attach = on_attach };
+-- nvim_lsp['efm'].setup{on_attach = on_attach ,
+--     filetypes = {'markdown', 'text', 'txt'};
+--     };
 -- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 --     vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
 -- )

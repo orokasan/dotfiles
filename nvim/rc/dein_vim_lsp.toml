@@ -6,9 +6,9 @@ repo = 'prabirshrestha/vim-lsp'
 # on_ft = ['markdown', 'tex', 'python', 'go']
 hook_add = '''
 let g:lsp_highlight_references_enabled = 1
-let g:lsp_auto_enable = 0
+let g:lsp_auto_enable = 1
 " autocmd dein BufAdd * call lsp#enable()
-" let g:lsp_log_file = expand('~/vim-lsp.log')
+let g:lsp_log_file = expand('~/vim-lsp.log')
 function! s:lsp_local_setting()
     " setlocal omnifunc=lsp#complete
     nmap <buffer> <C-]> <plug>(lsp-definition)
@@ -174,28 +174,28 @@ lazy = 1'
 on_source = ['deoplete.nvim']
 repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
+[[plugins]]
+# on_if = '!has("nvim")'
+merged = '0'
 # [[plugins]]
-# # on_if = '!has("nvim")'
-# merged = '0'
-# [[plugins]]
-# # on_if = 'has("windows")'
-# merged = '0'
-# repo = 'mattn/vim-lsp-settings'
-# hook_add = '''
-# let g:lsp_settings = {
-#       \ 'efm-langserver': {
-#       \   'disabled': 0,
-#       \   'allowlist': ['markdown','text','json','*'],
-#      \    'initialization_options': {
-#             \"documentFormatting": v:true,
-#             \"hover": v:true,
-#             \"documentSymbol": v:true,
-#             \"codeAction": v:true,
-#             \"completion": v:true
-#     \}
-#       \  }
-#       \ }
-# '''
+# on_if = 'has("windows")'
+merged = '0'
+repo = 'mattn/vim-lsp-settings'
+hook_add = '''
+let g:lsp_settings = {
+      \ 'efm-langserver': {
+      \   'disabled': 0,
+      \   'allowlist': ['markdown','text','json','*'],
+     \    'initialization_options': {
+            \"documentFormatting": v:true,
+            \"hover": v:true,
+            \"documentSymbol": v:true,
+            \"codeAction": v:true,
+            \"completion": v:true
+    \}
+      \  }
+      \ }
+'''
 # [[plugins]]
 # merged = '0'
 # repo = 'tsuyoshicho/vim-efm-langserver-settings' 

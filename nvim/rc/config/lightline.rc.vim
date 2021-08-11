@@ -153,62 +153,35 @@ endfunction
 let s:diagnostics_counts = {}
 if has('nvim')
 function! LLLspProgress() abort
-    let p = luaeval('vim.lsp.util.get_progress_messages()')
-    if empty(p)
-        return ''
-    endif
-    let p = p[0]
-    let title = get(p, 'title', '')
-    let perc = get(p, 'percentage', '')
-    let mes = get(p, 'message', '')
-    return title .. '(' .. perc .. '%)' .. ':' .. mes
+    " let p = luaeval('vim.lsp.util.get_progress_messages()')
+    " if empty(p)
+    "     return ''
+    " endif
+    " let p = p[0]
+    " let title = get(p, 'title', '')
+    " let perc = get(p, 'percentage', '')
+    " let mes = get(p, 'message', '')
+    " return title .. '(' .. perc .. '%)' .. ':' .. mes
+    return
 endfunction
-function! VimLspCacheDiagnosticsCounts()
-    " let s:diagnostics_counts = exists('*lsp#get_buffer_diagnostics_counts') ? lsp#get_buffer_diagnostics_counts() : ''
-      if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-        let s:diagnostics_counts['error'] = luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
-        let s:diagnostics_counts['warning'] = luaeval("vim.lsp.diagnostic.get_count(0, [[Warning]])")
-      endif
-endfunction
-autocmd dein User LspDiagnosticsChanged call VimLspCacheDiagnosticsCounts() | call lightline#update()
+autocmd dein User LspDiagnosticsChanged  call lightline#update()
 " autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts() | call lightline#update()
 endif
 " vim-lsp or nvim-lsp
 function! LLLspError() abort
-if exists('*lsp#get_buffer_diagnostics_counts')
-    let error = s:diagnostics_counts['error']
-    return error ? '' . error : ''
-" workaround
-" gopls is crashed by calling vim.lsp.buf.server_ready()
-else
-    " if &filetype ==# 'go'
-    "     return ''
-    " endif
     if luaeval('vim.lsp.buf.server_ready()')
         let e = luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
         return e ? '' . e : ''
     else
         return ''
     endif
-endif
 endfunction
 function! LLLspWarning() abort
-if exists('*lsp#get_buffer_diagnostics_counts')
-    let warning = s:diagnostics_counts['warning']
-    " return warning ? '' . warning : ''
-    return warning ? '' . warning : ''
-" workaround
-" gopls is crashed by calling vim.lsp.buf.server_ready()
-else
-if &filetype ==# 'go'
-    return ''
-endif
 if luaeval('vim.lsp.buf.server_ready()')
     let w = luaeval("vim.lsp.util.buf_diagnostics_count(\"Warning\")")
     return  w ? '' . w : ''
 else
     return ''
-endif
 endif
 endfunction
 
