@@ -850,4 +850,18 @@ repo = 'syusui-s/vim-quickrun-neovim-terminal'
 # repo = 'doums/lsp_status'
 [[plugins]]
 repo = 'goerz/jupytext.vim'
+
+[[plugins]]
+repo = 'vim-denops/denops-helloworld.vim'
+[[plugins]]
+repo = 'koron/nyancat-vim'
+[[plugins]]
+repo = 'uki00a/denops-pomodoro.vim'
+[[plugins]]
+merged = 0
+repo = 'vim-denops/denops.vim'
+hook_add = '''
+'''
+[[plugins]]
+repo = 'tyru/capture.vim'
 # vim:set foldmethod=marker:'

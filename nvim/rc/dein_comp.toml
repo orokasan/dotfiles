@@ -1,36 +1,31 @@
-# [[plugins]]
-# repo = 'vim-denops/denops.vim'
-# hook_add = '''
-# let g:denops#deno = 'C:/ProgramData/chocolatey/bin/deno.exe'
-# '''
-
-# [[plugins]]
-# repo = 'Shougo/ddc.vim'
-# lazy = 1
-# on_event = 'InsertEnter'
-# depends = ['denops.vim']
-# hook_source = '''
-#   inoremap <silent><expr> <TAB>
-#         \ pumvisible() ? "\<C-n>" :
-#         \ <SID>check_back_space() ? "\<TAB>" :
-#         \ ""
-#   function! s:check_back_space() abort
-#     let col = col('.') - 1
-#     return !col || getline('.')[col - 1]  =~# '\s'
-#   endfunction
-#   call ddc#custom#patch_global('sources', ['around'])
-#   call ddc#custom#patch_global('sourceOptions', {
-#       \ '_': {'matchers': ['matcher_head']},
-#       \ 'around': {'mark': 'A'},
-#       \ })
-#   call ddc#enable()
-# '''
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+hook_source = '''
+'''
 
 [[plugins]]
-repo =  'Shougo/deoplete.nvim'
-# on_if = 'has("nvim")'
-on_event = 'InsertEnter'
-hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
+repo = 'Shougo/ddc-around'
+
+[[plugins]]
+repo = 'Shougo/ddc-matcher_head'
+
+[[plugins]]
+repo = 'Shougo/ddc-sorter_rank'
+
+[[plugins]]
+repo = 'matsui54/ddc-buffer'
+
+[[plugins]]
+repo = 'matsui54/ddc-matcher_fuzzy'
+
+[[plugins]]
+repo = 'Shougo/ddc-nvim-lsp'
+
+# [[plugins]]
+# repo =  'Shougo/deoplete.nvim'
+# # on_if = 'has("nvim")'
+# on_event = 'InsertEnter'
+# hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 
 # [[plugins]]
 # rev = 'dev'

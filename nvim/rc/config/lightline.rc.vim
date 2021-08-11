@@ -4,7 +4,7 @@ let g:lightline = {
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount','denitebuffer'],
-            \ [ 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus','searchcount']
+            \ ['pomodoro', 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus','searchcount']
         \ ]
     \ },
     \ 'inactive': {
@@ -23,6 +23,7 @@ let g:lightline = {
         \ 'lineinfo':'%{LLruler()}%<'
     \},
     \ 'component_function': {
+        \ 'pomodoro': 'LLpomodoro',
         \ 'percent' : 'LLpercent',
         \ 'cd': 'LLcd',
         \ 'readonly':'LLReadonly',
@@ -95,6 +96,9 @@ let g:component_function_visible_condition = {
         \ 'lineinfo': 1
         \ }
 
+function! LLpomodoro() abort
+    return get(g:, 'pomodoro_timer_status', '')
+endfunction
 
 function! LLModified(n) abort
   let winnr = tabpagewinnr(a:n)

@@ -42,6 +42,9 @@ call deoplete#custom#var('around', {
     \   'mark_below': '[↓]',
     \   'mark_changes': '[c]',
     \})
+call deoplete#custom#var('buffer', {
+    \   'require_same_filetype': v:false,
+    \})
 call deoplete#custom#option('sources', {
     \ 'denite-filter': [''],
     \ 'TelescopePrompt': [''],
@@ -54,6 +57,7 @@ call deoplete#custom#option({
     \ 'min_pattern_length': 2,
     \ 'prev_completion_mode': 'filter',
     \ 'smart_case': v:true,
+    \ 'num_processes': 0,
     \ })
 
 call deoplete#custom#source('_', 'converters', [
@@ -70,7 +74,7 @@ call deoplete#custom#option('keyword_patterns', {
 \ 'txt': '[a-zA-Z_-]*|[\u2E80-\u2FDF\u3005-\u3007\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\U00020000-\U0002EBEF]*',
 \ 'ruby': '[a-zA-Z_]\w*[!?]?',
 \})
-" call deoplete#custom#option({'ignore_sources': {'_': ['eskk']}})
+call deoplete#custom#option({'ignore_sources': {'_': ['around','look','syntax','member']}})
 " deoplete-lsp should not be lazy loaded
 " if dein#is_sourced('deoplete-lsp')
 "     let lsp_enabled_filetype = ['vim', 'python', 'go', 'tex', '']

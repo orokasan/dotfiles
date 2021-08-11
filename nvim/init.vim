@@ -45,6 +45,7 @@ set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup
 let mapleader = "\<Space>"
+set rtp+=C:\Users\t_kuriki\.cache\dein\repos\github.com\Shougo\ddc.vim
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
@@ -899,8 +900,9 @@ endif
 function! MdToText()
 %s/^#\s/■/
 %s/^##\s/■■/
-%s/\v^$\n\zs[^■]/　\0
+" %s/\v^$\n\zs[^■]/　\0
 %s/\v。\zs$\n\ze[^][$]//
+%s/\v(^\s*)[-*]/\1・/
 endfunction
 " set noswapfile
 nnoremap q <nop>
@@ -994,6 +996,31 @@ au! gitgutter FocusGained *
 au! ConflictMarkerDetect FocusLost *
 au! ConflictMarkerDetect FocusGained *
 endfunction
+" Customize global settings
 
+" Use around source.
+" https://github.com/Shougo/ddc-around
+
+" Use matcher_head and sorter_rank.
+" https://github.com/Shougo/ddc-matcher_head
+" https://github.com/Shougo/ddc-sorter_rank
+call ddc#custom#patch_global('sourceOptions', {
+      \ '_': {
+      \   'matchers': ['matcher_head'],
+      \   'sorters': ['sorter_rank']},
+      \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': []},
+      \ })
+
+" Change source options
+call ddc#custom#patch_global('sourceOptions', {
+      \ 'around': {'mark': 'A'},
+      \ })
+call ddc#custom#patch_global('sourceParams', {
+      \ 'around': {'maxSize': 500},
+      \ })
+" Customize settings on a filetype
+call ddc#custom#patch_global('sources', ['eskk','around','buffer','nvim-lsp'])
+
+call ddc#enable()
 " vim:set foldmethod=marker:
 
