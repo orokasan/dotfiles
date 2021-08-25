@@ -1,12 +1,12 @@
-[[plugins]]
-repo = 'nvim-telescope/telescope.nvim'
-hook_source = '''
-'''
-
-[[plugins]]
-repo = 'nvim-lua/popup.nvim'
-[[plugins]]
-repo = 'nvim-lua/plenary.nvim'
+# [[plugins]]
+# repo = 'nvim-telescope/telescope.nvim'
+# hook_source = '''
+# '''
+# 
+# [[plugins]]
+# repo = 'nvim-lua/popup.nvim'
+# [[plugins]]
+# repo = 'nvim-lua/plenary.nvim'
 # [[plugins]]
 # on_lua = 1
 # repo ='lewis6991/gitsigns.nvim'
@@ -17,8 +17,10 @@ repo = 'nvim-lua/plenary.nvim'
 repo = 'lukas-reineke/indent-blankline.nvim'
 hook_add = '''
 let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help']
-let g:indentLine_showFirstIndentLevel=1
-        let g:indent_blankline_char = '|'
+let g:indent_blankline_use_treesitter = v:true
+let g:indent_blankline_show_first_indent_level = v:true
+let g:indent_blankline_char = '|'
+let g:indent_blankline_show_current_context = v:true
 '''
 # [[plugins]]
 # repo = 'gelguy/wilder.nvim'
@@ -222,5 +224,7 @@ map <Leader>pb <Plug>(miniyank-toblock)
 # })
 # EOF
 # '''
-[[plugins]]
-repo = 'kyazdani42/nvim-web-devicons'
+# [[plugins]]
+# repo = 'kyazdani42/nvim-web-devicons'
+# [[plugins]]
+# repo = 'windwp/nvim-autopairs'

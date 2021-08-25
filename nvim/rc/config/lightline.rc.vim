@@ -59,25 +59,8 @@ let g:lightline = {
 " https://github.com/neovim/neovim/issues/8796
 " autocmd dein User LspDiagnosticsChanged if mode() is# 'n' | call VimLspCacheDiagnosticsCounts() | call lightline#update() | endif
 
-  let g:lightline.colorscheme = 'iceberg'
+let g:lightline.colorscheme = 'iceberg'
 " autocmd dein ColorScheme,VimEnter * call <SID>lightline_set_colorscheme()
-function! s:lightline_set_colorscheme() abort
-" if !exists('g:loaded_lightline')
-" return
-" endif
-try
-if g:colors_name ==# 'seagull'
-  let g:lightline.colorscheme = 'snow_light'
-elseif g:colors_name =~# 'iceberg\|wombat\|solarized\|landscape\|jellybeans\|seoul256\|Tomorrow'
-  let g:lightline.colorscheme =
-        \ substitute(substitute(g:colors_name, '-', '_', 'g'), '256.*', '', '')
-endif
-  call lightline#init()
-  call lightline#colorscheme()
-  call lightline#update()
-catch
-endtry
-endfunction
 let g:lightline.tab_component_function = {
       \ 'modified': 'LLModified',
       \ 'tabnum': 'LLtabnum' }
@@ -162,7 +145,7 @@ function! LLLspProgress() abort
     " let perc = get(p, 'percentage', '')
     " let mes = get(p, 'message', '')
     " return title .. '(' .. perc .. '%)' .. ':' .. mes
-    return
+    return ''
 endfunction
 autocmd dein User LspDiagnosticsChanged  call lightline#update()
 " autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts() | call lightline#update()
@@ -247,7 +230,7 @@ function! s:ignore_window() abort
 endfunction
 
 function! LLInactiveFilename()
-    return !s:ignore_window() ? expand('%:t') .. win_getid() : LLMode()
+    return !s:ignore_window() ? expand('%:t') : LLMode()
 endfunction
 
 function! LLeskk() abort
@@ -313,7 +296,7 @@ endfunction
 "}}}
 
 function! LLpercent() abort
-    return ''
+return &filetype !=# 'denite' ? 100 * line('.') / line('$') . '%' : ''
 endfunction
 
 function! LLReadonly()

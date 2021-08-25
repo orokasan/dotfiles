@@ -34,6 +34,7 @@ let g:loaded_ruby_provider = 0
 "---------------------------------------------------------------------
 if has('win32')
     let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python39\python.exe')
+   let g:python3_host_prog = 'C:\Python39\python.exe'
 endif
 set rtp+=$VIM/vim82
 set notermguicolors
@@ -48,11 +49,14 @@ let mapleader = "\<Space>"
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
-" let g:dein#lazy_rplugins=1
+let g:dein#lazy_rplugins=1
+let g:dein#default_options = { 'merged': v:true }
+" let g:dein#install_process_timeout = 300
 " let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
 let g:dein#default_options = { 'merged': v:true }
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
+let s:dein_is_initializing = 0
 if &runtimepath !~# '/dein.vim'
       if !isdirectory(s:dein_repo_dir)
         if !executable('git')
@@ -60,6 +64,7 @@ if &runtimepath !~# '/dein.vim'
         endif
         echo 'install dein.vim ...'
         execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+        let s:dein_is_initializing = 1
       endif
     execute 'set runtimepath+=' . fnamemodify(s:dein_repo_dir, ':p')
 endif
@@ -76,7 +81,7 @@ if dein#load_state(s:dein_dir)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     " call dein#load_toml(s:exp_toml, {'merged': 0})
-    call dein#load_toml(s:comp_toml, {'merged': 0})
+    call dein#load_toml(s:comp_toml, {'merged': 1})
 if has('nvim')
     call dein#load_toml(s:lsp_toml,  {'merged': 0})
     call dein#load_toml(s:lua_toml,  {'merged': 0})
@@ -93,7 +98,12 @@ syntax on
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-
+if s:dein_is_initializing
+    call dein#install()
+    let s:dein_is_initializing = 0
+    source $myvimrc
+    finish
+endif
 "}}}
 " Visual  {{{
 " language C
@@ -136,7 +146,7 @@ set scrolloff=5
 set sidescrolloff=5
 set sidescroll=1
 " add japanese matchpairs
-set showmatch       " highlight matched pairs
+set noshowmatch       " highlight matched pairs
 set matchtime=1     " highlighting long
 set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕
 set nojoinspaces
@@ -673,13 +683,6 @@ execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
 call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
-" set colorscheme
-try
-    exe 'colorscheme ' . g:colors_name
-catch /^Vim\%((\a\+)\)\=:E185:/
-    echom "colorscheme '"  . g:colors_name .  "' is not found. Using 'peachpuff' instead"
-    exe 'colorscheme peachpuff'
-endtry
 "}}}
 if !has('nvim')
     finish
@@ -913,7 +916,7 @@ nnoremap Q q
 nmap <BS> <C-h>
 if has('nvim')
     lua require('lsp_settings')
-    lua require('telescope_config')
+    " lua require('telescope_config')
 endif
 let g:terminal_scrollback_buffer_size = 3000
 set title
@@ -998,7 +1001,4 @@ au! gitgutter FocusGained *
 au! ConflictMarkerDetect FocusLost *
 au! ConflictMarkerDetect FocusGained *
 endfunction
-" Customize global settings
-
 " vim:set foldmethod=marker:
-

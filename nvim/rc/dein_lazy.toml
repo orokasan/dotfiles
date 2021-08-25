@@ -477,7 +477,7 @@ hi default link Defx_filename_directory Function
 
 [[plugins]]
 repo =  'Shougo/neco-vim'
-on_source = ['deoplete','neocomplete']
+# on_source = ['deoplete','neocomplete']
 on_ft = 'vim'
 
 [[plugins]]
@@ -544,69 +544,69 @@ cmap <C-j> <Plug>(eskk:toggle)
 hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
 
 
-[[plugins]]
-repo =  't9md/vim-choosewin'
-on_cmd = 'ChooseWin'
-hook_add = '''
-nmap - <Cmd>ChooseWin<CR>
-" tmap - <C-\><C-n><Plug>(choosewin)
-" let g:choosewin_overlay_font_size = 'small'
-" let g:choosewin_overlay_clear_multibyte = 1
-" let g:choosewin_overlay_enable = 1
-" let g:choosewin_color_overlay = {
-"    \ 'gui': ['#839496']
-"    \ }
-" let g:choosewin_color_overlay_current = {
-"    \ 'gui': ['#859900']
-"    \ }
-'''
-hook_source = '''
-function! s:gethighlight(hi, which) abort
-    let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
-    return bg
-endfunction
-function! s:set_choosewin_color() abort
-let g:choosewin_color_label_current = {
-    \ 'gui': [ s:gethighlight('Title', 'fg'), s:gethighlight('Normal', 'bg'), 'bold']
-      \ }
-let g:choosewin_color_label = {
-    \ 'gui': [ s:gethighlight('StatusLine', 'fg'), s:gethighlight('StatusLine', 'bg'), 'bold']
-      \ }
-" let g:choosewin_color_other = {
-"       \ 'gui': [s:gethighlight('LightlineLeft_command_0', 'bg'), s:gethighlight('LightlineLeft_command_1', 'bg')]
-"       \ }
-let g:choosewin_color_other = {
-      \ 'gui': [ s:gethighlight('Normal', 'bg'), s:gethighlight('Normal', 'fg'),],
-      \ 'cterm': [ 40, 40 ] 
-      \ }
-let g:choosewin_color_land = {
-      \ 'gui': [ s:gethighlight('Title', 'fg'), s:gethighlight('Title', 'bg'),],
-      \ 'cterm': [ 40, 40 ] 
-      \ }
-endfunction
-" let g:choosewin_label_fill = 1
-let g:choosewin_tabline_replace = 1
-let g:choosewin_statusline_replace = 1
-"let g:choosewin_label_padding = 8
-" let g:choosewin_color_land = 1
-" let g:choosewin_return_on_single_win = 1
-let s:keymap = {
-      \ '0':     'tab_first',
-      \ '[':     'tab_prev',
-      \ ']':     'tab_next',
-      \ '$':     'tab_last',
-      \ 'x':     'tab_close',
-      \ ';':     'win_land',
-      \ '-':     'previous',
-      \ 's':     'swap',
-      \ 'S':     'swap_stay',
-      \ "\<CR>": 'win_land',
-      \ }
-let g:choosewin_keymap = s:keymap
-let g:choosewin_label = 'ASDFGHJKL'
-let g:choosewin_blink_on_land = 1
-call s:set_choosewin_color()
-'''
+# [[plugins]]
+# repo =  't9md/vim-choosewin'
+# on_cmd = 'ChooseWin'
+# hook_add = '''
+# nmap - <Cmd>ChooseWin<CR>
+# " tmap - <C-\><C-n><Plug>(choosewin)
+# " let g:choosewin_overlay_font_size = 'small'
+# " let g:choosewin_overlay_clear_multibyte = 1
+# " let g:choosewin_overlay_enable = 1
+# " let g:choosewin_color_overlay = {
+# "    \ 'gui': ['#839496']
+# "    \ }
+# " let g:choosewin_color_overlay_current = {
+# "    \ 'gui': ['#859900']
+# "    \ }
+# '''
+# hook_source = '''
+# function! s:gethighlight(hi, which) abort
+#     let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
+#     return bg
+# endfunction
+# "function! s:set_choosewin_color() abort
+# "let g:choosewin_color_label_current = {
+# "    \ 'gui': [ s:gethighlight('Title', 'fg'), s:gethighlight('Normal', 'bg'), 'bold']
+# "      \ }
+# "let g:choosewin_color_label = {
+# "    \ 'gui': [ s:gethighlight('StatusLine', 'fg'), s:gethighlight('StatusLine', 'bg'), 'bold']
+# "      \ }
+# "" let g:choosewin_color_other = {
+# ""       \ 'gui': [s:gethighlight('LightlineLeft_command_0', 'bg'), s:gethighlight('LightlineLeft_command_1', 'bg')]
+# ""       \ }
+# "let g:choosewin_color_other = {
+# "      \ 'gui': [ s:gethighlight('Normal', 'bg'), s:gethighlight('Normal', 'fg'),],
+# "      \ 'cterm': [ 40, 40 ] 
+# "      \ }
+# "let g:choosewin_color_land = {
+# "      \ 'gui': [ s:gethighlight('Title', 'fg'), s:gethighlight('Title', 'bg'),],
+# "      \ 'cterm': [ 40, 40 ] 
+# "      \ }
+# "endfunction
+# " let g:choosewin_label_fill = 1
+# let g:choosewin_tabline_replace = 1
+# let g:choosewin_statusline_replace = 1
+# "let g:choosewin_label_padding = 8
+# " let g:choosewin_color_land = 1
+# " let g:choosewin_return_on_single_win = 1
+# let s:keymap = {
+#       \ '0':     'tab_first',
+#       \ '[':     'tab_prev',
+#       \ ']':     'tab_next',
+#       \ '$':     'tab_last',
+#       \ 'x':     'tab_close',
+#       \ ';':     'win_land',
+#       \ '-':     'previous',
+#       \ 's':     'swap',
+#       \ 'S':     'swap_stay',
+#       \ "\<CR>": 'win_land',
+#       \ }
+# let g:choosewin_keymap = s:keymap
+# let g:choosewin_label = 'ASDFGHJKL'
+# let g:choosewin_blink_on_land = 1
+# "call s:set_choosewin_color()
+# '''
 
 # [[plugins]]
 # repo =  'rhysd/vim-operator-surround'
@@ -656,43 +656,43 @@ call s:set_choosewin_color()
 # cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
 # '''
 
-[[plugins]]
-repo = 'itchyny/vim-cursorword'
-on_map = {nv='<Plug>'}
-hook_add = '''
-let g:cursorword = 0
-function! s:toggle_vim_cursorword() abort
-  let g:cursorword = g:cursorword ? 0 : 1
-  call cursorword#matchadd()
-endfunction
-nnoremap <silent> <Plug>(cursorword-toggle)
-      \ <Cmd>call <SID>toggle_vim_cursorword()<CR>
-nmap <C-g>c     <Plug>(cursorword-toggle)
-nmap <C-g><C-c> <Plug>(cursorword-toggle)
-'''
+# [[plugins]]
+# repo = 'itchyny/vim-cursorword'
+# on_map = {nv='<Plug>'}
+# hook_add = '''
+# let g:cursorword = 0
+# function! s:toggle_vim_cursorword() abort
+#   let g:cursorword = g:cursorword ? 0 : 1
+#   call cursorword#matchadd()
+# endfunction
+# nnoremap <silent> <Plug>(cursorword-toggle)
+#       \ <Cmd>call <SID>toggle_vim_cursorword()<CR>
+# nmap <C-g>c     <Plug>(cursorword-toggle)
+# nmap <C-g><C-c> <Plug>(cursorword-toggle)
+# '''
 
-[[plugins]]
-repo = 'mattn/benchvimrc-vim'
-on_cmd = 'BenchVimrc'
+# [[plugins]]
+# repo = 'mattn/benchvimrc-vim'
+# on_cmd = 'BenchVimrc'
 
-[[plugins]]
-repo = 'junegunn/goyo.vim'
-on_cmd = 'Goyo'
-hook_add = '''
-nnoremap <F4> <Cmd>Goyo<CR>
-let g:goyo_width = 80
-let g:goyo_height = '60%'
-function! s:goyo_enter()
-  set scrolloff=999
-  Limelight
-endfunction
-function! s:goyo_leave()
-  set scrolloff=3
-  Limelight!
-endfunction
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
-'''
+# [[plugins]]
+# repo = 'junegunn/goyo.vim'
+# on_cmd = 'Goyo'
+# hook_add = '''
+# nnoremap <F4> <Cmd>Goyo<CR>
+# let g:goyo_width = 80
+# let g:goyo_height = '60%'
+# function! s:goyo_enter()
+#   set scrolloff=999
+#   Limelight
+# endfunction
+# function! s:goyo_leave()
+#   set scrolloff=3
+#   Limelight!
+# endfunction
+# autocmd! User GoyoEnter nested call <SID>goyo_enter()
+# autocmd! User GoyoLeave nested call <SID>goyo_leave()
+# '''
 
 [[plugins]]
 repo = 'junegunn/vim-easy-align'
@@ -713,6 +713,94 @@ let g:openbrowser_message_verbosity = 1
 autocmd FileType php let b:openbrowser_default_search = 'php'
 autocmd FileType python let b:openbrowser_default_search = 'python'
 '''
+
+[[plugins]]
+repo =  'machakann/vim-sandwich'
+on_event = ['VimEnter']
+hook_source = '''
+let g:sandwich_no_default_key_mappings = 1
+let g:operator_sandwich_no_default_key_mappings = 1
+silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+silent! nmap <unique><silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+silent! nmap <unique><silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+silent! nmap <unique><silent> 'rb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+silent! omap <unique> ib <Plug>(textobj-sandwich-auto-i)
+silent! xmap <unique> ib <Plug>(textobj-sandwich-auto-i)
+silent! omap <unique> ab <Plug>(textobj-sandwich-auto-a)
+silent! xmap <unique> ab <Plug>(textobj-sandwich-auto-a)
+
+silent! omap <unique> i' <Plug>(textobj-sandwich-query-i)
+silent! xmap <unique> i' <Plug>(textobj-sandwich-query-i)
+silent! omap <unique> a' <Plug>(textobj-sandwich-query-a)
+silent! xmap <unique> a' <Plug>(textobj-sandwich-query-a)
+
+" add
+silent! nmap <unique> 'a <Plug>(operator-sandwich-add)
+silent! xmap <unique> 'a <Plug>(operator-sandwich-add)
+silent! omap <unique> 'a <Plug>(operator-sandwich-g@)
+
+" delete
+silent! xmap <unique> 'd <Plug>(operator-sandwich-delete)
+
+" replace
+silent! xmap <unique> 'r <Plug>(operator-sandwich-replace)
+
+let g:textobj#sandwich#stimeoutlen = 100
+let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
+let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['b']}]
+let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['k']}]
+let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['p']}]
+let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['d']}]
+let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['s']}]
+let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}]
+let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
+let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
+let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
+let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['S']}]
+let g:sandwich#recipes += [{'buns' : ['《', '★》'], 'nesting':1, 'input':['C']}]
+autocmd dein FileType markdown call sandwich#util#addlocal([
+  \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
+  \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
+  \ ])
+call operator#sandwich#set('all', 'all', 'highlight', 2)
+nmap 'dd vab'd
+nmap 'rr vab'r
+'''
+
+# [[plugins]]
+# repo =  'cohama/lexima.vim'
+# on_if = 'has("nvim")'
+# on_event = ['InsertEnter', 'CmdlineEnter']
+# hook_source = '''
+# let s:lexima_my_rules = [
+# \ {'char': 'z[', 'input': '「', 'input_after': '」'},
+# \ {'char': 'z{', 'input': '『', 'input_after': '』'},
+# \ {'char': 'zz{', 'input': '【', 'input_after': '】'},
+# \ {'char': 'z(', 'input': '（', 'input_after': '）'},
+# \ {'char': '<CR>', 'at': '"""\%#"""', 'input_after': '<CR>'},
+# \ {'char': '<CR>', 'at': '```\%#```', 'input_after': '<CR>'},
+# \ ]
+
+# let g:lexima_enable_endwise_rules = v:false
+# let g:lexima_enable_space_rules = v:false
+# for rule in s:lexima_my_rules
+#   call lexima#add_rule(rule)
+# endfor
+# inoremap z] 」
+# inoremap z} 』
+# inoremap z) ）
+# let g:lexima_map_escape = '<C-[>'
+# "inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+# "function! s:my_cr_function() abort "{{{
+# "  return pumvisible ? "\<CR>": lexima#expand('<CR>', 'i')
+# inoremap <silent><expr> <CR> pumvisible() ? "\<CR>" : lexima#expand('<LT>CR>', 'i')
+# "endfunction "}}}
+# " inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
+# " inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
+# function! s:my_bs_function() abort "{{{
+#   return lexima#expand('<BS>', 'i')
+# endfunction "}}}
+# '''
 
 [[plugins]]
 # repo = 'orokasan/clever-f.vim'
@@ -754,30 +842,30 @@ map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
 map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
 '''
 
-[[plugins]]
-on_map = { nxi = '<Plug>(easymotion'}
-repo = 'easymotion/vim-easymotion'
-hook_add = '''
-let g:EasyMotion_do_mapping = 0
-" nmap m <Plug>(easymotion-overwin-f2)
-"nmap <C-s> <Plug>(easymotion-s2)
-"xmap <C-s> <Plug>(easymotion-s2)
-"omap <C-s> <Plug>(easymotion-s2)
-" Jump to first match with enter & space
-let g:EasyMotion_use_upper = 1
-let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
-let g:EasyMotion_smartcase = 1
-let g:EasyMotion_space_jump_first = 1
-let g:EasyMotion_use_migemo = 1
-let g:EasyMotion_prompt = '{n}>>> '
-let g:EasyMotion_verbose = 0
-hi link EasyMotionTarget Type
-hi link EasyMotionShade  Comment
-hi link EasyMotionTarget2First MatchParen
-hi link EasyMotionTarget2Second MatchParen
-hi link EasyMotionMoveHL Search
-hi link EasyMotionIncSearch Search
-'''
+# [[plugins]]
+# on_map = { nxi = '<Plug>(easymotion'}
+# repo = 'easymotion/vim-easymotion'
+# hook_add = '''
+# let g:EasyMotion_do_mapping = 0
+# " nmap m <Plug>(easymotion-overwin-f2)
+# "nmap <C-s> <Plug>(easymotion-s2)
+# "xmap <C-s> <Plug>(easymotion-s2)
+# "omap <C-s> <Plug>(easymotion-s2)
+# " Jump to first match with enter & space
+# let g:EasyMotion_use_upper = 1
+# let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
+# let g:EasyMotion_smartcase = 1
+# let g:EasyMotion_space_jump_first = 1
+# let g:EasyMotion_use_migemo = 1
+# let g:EasyMotion_prompt = '{n}>>> '
+# let g:EasyMotion_verbose = 0
+# hi link EasyMotionTarget Type
+# hi link EasyMotionShade  Comment
+# hi link EasyMotionTarget2First MatchParen
+# hi link EasyMotionTarget2Second MatchParen
+# hi link EasyMotionMoveHL Search
+# hi link EasyMotionIncSearch Search
+# '''
 
 [[plugins]]
 repo = 'thinca/vim-quickrun'
@@ -907,10 +995,10 @@ xmap <C-l> <Plug>(textmanip-move-right)
 # let g:neoterm_autojump = v:true
 # '''
 
-[[plugins]]
-repo = 'majutsushi/tagbar'
-on_cmd = ['Tagbar']
-
+# [[plugins]]
+# repo = 'majutsushi/tagbar'
+# on_cmd = ['Tagbar']
+# 
 
 #[[plugins]]
 #repo = 'voldikss/vim-translator'
@@ -1045,14 +1133,11 @@ let g:deol#prompt_pattern = '% \|%$'
 			\ }
 '''
 
-# [[plugins]]
-# repo = 'tpope/vim-fugitive'
-# on_cmd = ['Git', 'G']
-# hook_add = '''
-# '''
-
 [[plugins]]
-repo = 'liuchengxu/vim-clap'
+repo = 'tpope/vim-fugitive'
+on_cmd = ['Git', 'G']
+hook_add = '''
+'''
 
 [[plugins]]
 on_cmd = ['Gina']
@@ -1216,4 +1301,9 @@ repo = 'rhysd/git-messenger.vim'
 hook_add = '''
 nmap <Leader>gm <Plug>(git-messenger)
 '''
+
+[[plugins]]
+repo = 'mattn/vim-maketable'
+on_cmd = ['MakeTable']
+
 # vim:set foldmethod=marker:

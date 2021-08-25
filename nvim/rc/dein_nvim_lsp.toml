@@ -6,18 +6,18 @@ repo = 'neovim/nvim-lspconfig'
 hook_add = '''
 '''
 
-[[plugins]]
-# lazy = '1'
-repo = 'hrsh7th/vim-vsnip'
-# on_source = ['deoplete.nvim']
-hook_add = '''
-imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-imap <expr> <Tab>   pumvisible() ? "\<C-n>" : vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-'''
+# [[plugins]]
+# # lazy = '1'
+# repo = 'hrsh7th/vim-vsnip'
+# # on_source = ['deoplete.nvim']
+# hook_add = '''
+# imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+# smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+# imap <expr> <Tab>   pumvisible() ? "\<C-n>" : vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# smap <expr> <Tab>   vsnip#available(1)  ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+# imap <expr> <S-Tab> pumvisible() ? "\<C-p>" : vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+# '''
 
 # [[plugins]]
 # repo =  'Shougo/deoppet.nvim'
@@ -48,32 +48,36 @@ smap <expr> <S-Tab> vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)'      : '<S-T
 # \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 # '''
 
-[[plugins]]
-# lazy = '1'
-# on_source = ['deoplete.nvim']
-repo = 'hrsh7th/vim-vsnip-integ'
+# [[plugins]]
+# # lazy = '1'
+# # on_source = ['deoplete.nvim']
+# repo = 'hrsh7th/vim-vsnip-integ'
+
+# [[plugins]]
+# merged = 0
+# repo = 'Shougo/deoplete-lsp'
+# hook_add = '''
+# '''
+
+# [[plugins]]
+# repo = 'orokasan/vim-lsp'
+# merged = 0
+# repo = 'prabirshrestha/vim-lsp'
+# hook_add = '''
+# let g:lsp_auto_enable = 0
+# '''
+
+# [[plugins]]
+# # on_if = 'has("windows")'
+# merged = 0
+# repo = 'mattn/vim-lsp-settings'
+# hook_add = '''
+# let g:lsp_settings_enable_suggestions = 1
+# '''
+
+# [[plugins]]
+# repo = 'alexaandru/nvim-lspupdate'
 
 [[plugins]]
-merged = 0
-repo = 'Shougo/deoplete-lsp'
-hook_add = '''
-'''
-
-[[plugins]]
-repo = 'orokasan/vim-lsp'
-merged = 0
-repo = 'prabirshrestha/vim-lsp'
-hook_add = '''
-let g:lsp_auto_enable = 0
-'''
-
-[[plugins]]
-# on_if = 'has("windows")'
-merged = 0
-repo = 'mattn/vim-lsp-settings'
-hook_add = '''
-let g:lsp_settings_enable_suggestions = 1
-'''
-
-[[plugins]]
-repo = 'alexaandru/nvim-lspupdate'
+repo = 'Borwe/nvim-lspinstall'
+rev = 'windows_support'

@@ -81,40 +81,6 @@ nmap <silent> B <Plug>JaSegmentMoveNB
 "xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
 '''# }}} 
 
-[[plugins]]
-repo =  'cohama/lexima.vim'
-on_if = 'has("nvim")'
-# on_event = 'InsertEnter'
-hook_add = '''
-let s:lexima_my_rules = [
-\ {'char': 'z[', 'input': '「', 'input_after': '」'},
-\ {'char': 'z{', 'input': '『', 'input_after': '』'},
-\ {'char': 'zz{', 'input': '【', 'input_after': '】'},
-\ {'char': 'z(', 'input': '（', 'input_after': '）'},
-\ {'char': '<CR>', 'at': '"""\%#"""', 'input_after': '<CR>'},
-\ {'char': '<CR>', 'at': '```\%#```', 'input_after': '<CR>'},
-\ ]
-
-let g:lexima_enable_endwise_rules = v:false
-let g:lexima_enable_space_rules = v:false
-for rule in s:lexima_my_rules
-  call lexima#add_rule(rule)
-endfor
-inoremap z] 」
-inoremap z} 』
-inoremap z) ）
-let g:lexima_map_escape = '<C-[>'
-"inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-"function! s:my_cr_function() abort "{{{
-"  return pumvisible ? "\<CR>": lexima#expand('<CR>', 'i')
-inoremap <silent><expr> <CR> pumvisible() ? "\<CR>" : lexima#expand('<LT>CR>', 'i')
-"endfunction "}}}
-" inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
-" inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
-function! s:my_bs_function() abort "{{{
-  return lexima#expand('<BS>', 'i')
-endfunction "}}}
-'''
 
 # [[plugins]]
 # repo =  'mattn/webapi-vim'
@@ -231,8 +197,8 @@ nmap N <Plug>(is-N)zvzz
 [[plugins]]
 repo =  'kana/vim-operator-user'
 
-[[plugins]]
-repo = 'deoplete-plugins/deoplete-zsh'
+# [[plugins]]
+# repo = 'deoplete-plugins/deoplete-zsh'
 
 [[plugins]]
 repo =  'Shougo/neosnippet-snippets'
@@ -252,12 +218,17 @@ repo =  'kmnk/denite-dirmark'
 on_if = 'has("nvim")'
 repo = 'lambdalisue/vim-quickrun-neovim-job'
 
-[[plugins]]
-repo = 'itchyny/vim-parenmatch'
-hook_add = '''
-let g:parenmatch_highlight = 0
-hi! link ParenMatch MatchParen
-'''
+# [[plugins]]
+# repo = 'itchyny/vim-parenmatch'
+# hook_add = '''
+# let g:parenmatch_highlight = 0
+# autocmd BufEnter * call s:enable_parenmatch()
+# function! s:enable_parenmatch() abort
+# let g:parenmatch_highlight = 1
+# call parenmatch#highlight()
+# hi! link ParenMatch MatchParen
+# endfunction
+# '''
 
 # [[plugins]]
 # ## only for incsearch-migemo.vim
@@ -452,9 +423,6 @@ repo = 'rhysd/conflict-marker.vim'
 # repo =  'twitvim/twitvim' 
 # hook_add = '''
 # '''
-
-[[plugins]]
-repo = 'mattn/vim-maketable'
 
 # [[plugins]]
 # repo = 'Xuyuanp/scrollbar.nvim'
@@ -671,8 +639,6 @@ repo = 'nekowasabi/denite-migemo'
 # repo = 'RishabhRD/nvim-lsputils'
 # [[plugins]]
 # repo = 'rickhowe/diffchar.vim'
-[[plugins]]
-repo = 'syusui-s/vim-quickrun-neovim-terminal'
 
 # [[plugins]]
 # repo = 'Yggdroot/indentLine'
@@ -858,11 +824,8 @@ repo = 'syusui-s/vim-quickrun-neovim-terminal'
 repo = 'goerz/jupytext.vim'
 
 [[plugins]]
-repo = 'vim-denops/denops-helloworld.vim'
-[[plugins]]
 repo = 'koron/nyancat-vim'
-[[plugins]]
-repo = 'uki00a/denops-pomodoro.vim'
+
 [[plugins]]
 merged = 0
 repo = 'vim-denops/denops.vim'

@@ -1,5 +1,6 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
+<<<<<<< Updated upstream
 lazy = 1
 on_event = 'InsertEnter'
 hook_source = '''
@@ -42,6 +43,51 @@ call ddc#custom#patch_global('sourceParams', {
 call ddc#custom#patch_global('sources', ['nvimlsp','eskk','around','buffer'])
 
 call ddc#enable()
+||||||| constructed merge base
+hook_source = '''
+=======
+hook_add = '''
+
+" Customize global settings
+
+" Use around source.
+" https://github.com/Shougo/ddc-around
+
+" Use matcher_head and sorter_rank.
+" https://github.com/Shougo/ddc-matcher_head
+" https://github.com/Shougo/ddc-sorter_rank
+call ddc#custom#patch_global('sourceOptions', {
+      \ '_': {
+      \   'matchers': ['matcher_head'],
+      \   'sorters': ['sorter_rank']},
+      \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': []},
+      \ 'nvimlsp': {'mark': 'lsp', 'forceCompletionPattern': '\.|:|->'},
+      \  'buffer' : {'mark': 'B'}
+      \ })
+" inoremap <expr><BS> pumvisible() ? ddc#manual_complete() : "\<C-h>"
+" inoremap <expr><C-h> pumvisible() ? "\<C-H>".ddc#manual_complete() : "\<C-h>"
+" Change source options
+call ddc#custom#patch_global('sourceOptions', {
+      \ 'around': {'mark': 'A'},
+      \ })
+call ddc#custom#patch_global('sourceParams', {
+      \ 'around': {'maxSize': 500},
+      \ })
+" Customize settings on a filetype
+call ddc#custom#patch_global('sources', ['nvimlsp','eskk','around','buffer'])
+call ddc#custom#patch_filetype(['denite-filter'], {'sources': ['buffer'],'completionMode':'inline'})
+call ddc#enable()
+" Mappings
+
+" <TAB>: completion.
+inoremap <silent><expr> <TAB>
+\ pumvisible() ? "\<C-n>" :
+\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+\ "\<TAB>" : ddc#manual_complete()
+
+" <S-TAB>: completion back.
+inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
+>>>>>>> Stashed changes
 '''
 
 [[plugins]]
@@ -76,6 +122,8 @@ on_source = ['ddc.vim']
 # # on_if = 'has("nvim")'
 # on_event = 'InsertEnter'
 # hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
+[[plugins]]
+repo = 'Shougo/deoppet.nvim'
 
 # [[plugins]]
 # rev = 'dev'

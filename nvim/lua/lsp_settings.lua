@@ -90,39 +90,53 @@ end
 --     end
 -- end
 
-local sumneko_binary = vim.fn['lsp_settings#exec_path']('sumneko-lua-language-server')
-nvim_lsp.sumneko_lua.setup {
-  cmd = {sumneko_binary};
-  settings = {
-    Lua = {
-      runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-        version = 'LuaJIT',
-        -- Setup your lua path
-        path = vim.split(package.path, ';'),
-      },
-      diagnostics = {
-        -- Get the language server to recognize the `vim` global
-        globals = {'vim'},
-      },
-      workspace = {
-        -- Make the server aware of Neovim runtime files
-        library = {
-          [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-          [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
-        },
-      },
-      -- Do not send telemetry data containing a randomized but unique identifier
-      telemetry = {
-        enable = false,
-      },
-    },
-  },
-}
+-- local sumneko_binary = vim.fn['lsp_settings#exec_path']('sumneko-lua-language-server')
+-- nvim_lsp.sumneko_lua.setup {
+--   cmd = {sumneko_binary};
+--   settings = {
+--     Lua = {
+--       runtime = {
+--         -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+--         version = 'LuaJIT',
+--         -- Setup your lua path
+--         path = vim.split(package.path, ';'),
+--       },
+--       diagnostics = {
+--         -- Get the language server to recognize the `vim` global
+--         globals = {'vim'},
+--       },
+--       workspace = {
+--         -- Make the server aware of Neovim runtime files
+--         library = {
+--           [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+--           [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+--         },
+--       },
+--       -- Do not send telemetry data containing a randomized but unique identifier
+--       telemetry = {
+--         enable = false,
+--       },
+--     },
+--   },
+-- }
 -- nvim_lsp['jdtls'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('eclipse-jdt-ls')}};
 -- nvim_lsp['html'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('html-languageserver')}};
 -- nvim_lsp['vimls'].setup{ cmd = {vim.fn['lsp_settings#exec_path']('vim-language-server') ,'--stdio'} };
+local function setup_servers()
+  require'lspinstall'.setup()
+  local servers = require'lspinstall'.installed_servers()
+  for _, server in pairs(servers) do
+    require'lspconfig'[server].setup{}
+  end
+end
 
+setup_servers()
+
+-- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
+require'lspinstall'.post_install_hook = function ()
+  setup_servers() -- reload installed servers
+  vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
+end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true;
 local servers = {"rls", "tsserver" , 'vimls', 'gopls', "pyright", "jedi_language_server","denols"}
@@ -141,10 +155,6 @@ nvim_lsp['efm'].setup{
     on_attach = on_attach,
     };
 
--- efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
--- nvim_lsp['efm'].setup{on_attach = on_attach ,
---     filetypes = {'markdown', 'text', 'txt'};
---     };
 -- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 --     vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
 -- )
