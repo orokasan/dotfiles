@@ -40,8 +40,8 @@ class Source(Base):
     def _convert(self, context, header):
         mark = context['__mark']
         lnum = str(header['lnum']).ljust(len(str(context['__bufline'])), ' ') if not context['args'] else ''
-        abbr = '{}{} {}'.format(lnum ,
-                text_align(str(mark * header['level']), context['__max_level']*get_han_count(mark)), header['text'])
+        abbr = '{} {}'.format(lnum + ':' ,
+                (header['level']-1)*'  ' + header['text'])
         return {
                 'abbr': abbr,
                 'word': header['text'],
@@ -77,7 +77,7 @@ class Source(Base):
             if match:
                 level = len(match.group(1))
                 if max_level < level:
-                    max_level = level 
+                    max_level = level
                 text = match.group(2)
                 if limit_level and level > limit_level:
                     continue

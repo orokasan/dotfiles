@@ -1,7 +1,7 @@
 "ork's vimrc
 set fileformats=unix,dos,mac
 set encoding=utf-8
-set fileencodings=utf-8,cp932
+set fileencodings=utf-8,cp932,euc-jp
 
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
@@ -45,12 +45,12 @@ set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup
 let mapleader = "\<Space>"
-set rtp+=C:\Users\t_kuriki\.cache\dein\repos\github.com\Shougo\ddc.vim
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
 " let g:dein#lazy_rplugins=1
 " let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
+let g:dein#default_options = { 'merged': v:true }
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 if &runtimepath !~# '/dein.vim'
@@ -93,6 +93,7 @@ syntax on
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
+
 "}}}
 " Visual  {{{
 " language C
@@ -892,6 +893,7 @@ function! NumZentohan() abort
 %s/０/0/eg
 endfunction
 "(１|２|３|４|５|６|７|８|９|０)
+
 set packpath=
 " ++once supported in Nvim 0.4+ and Vim 8.1+
 if has('win32')
@@ -998,30 +1000,5 @@ au! ConflictMarkerDetect FocusGained *
 endfunction
 " Customize global settings
 
-" Use around source.
-" https://github.com/Shougo/ddc-around
-
-" Use matcher_head and sorter_rank.
-" https://github.com/Shougo/ddc-matcher_head
-" https://github.com/Shougo/ddc-sorter_rank
-call ddc#custom#patch_global('sourceOptions', {
-      \ '_': {
-      \   'matchers': ['matcher_head'],
-      \   'sorters': ['sorter_rank']},
-      \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': []},
-      \ 'nvimlsp': {'mark': 'lsp', 'forceCompletionPattern': '\.|:|->'},
-      \ })
-
-" Change source options
-call ddc#custom#patch_global('sourceOptions', {
-      \ 'around': {'mark': 'A'},
-      \ })
-call ddc#custom#patch_global('sourceParams', {
-      \ 'around': {'maxSize': 500},
-      \ })
-" Customize settings on a filetype
-call ddc#custom#patch_global('sources', ['nvimlsp','eskk','around','buffer'])
-
-call ddc#enable()
 " vim:set foldmethod=marker:
 

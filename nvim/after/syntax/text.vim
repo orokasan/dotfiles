@@ -57,6 +57,15 @@ syntax         region  gihyoCommand     start=/\n==コマンド\n/  end=/\n==.\{
 
 " syntax         region  gihyoTable       start=/^▼構文-----$/   end=/^\{-}-----\n/
 
+syntax         region  gihyoBlockSyntax        start=/\n<syntax>-----/    end=/\n-----<syntax>\n/ contains=ALL
+syntax         region  gihyoBlockCode         start=/\n^list\d\+-\d\+\t/    end=/\n-----<code>\n/ contains=ALL
+syntax         region  gihyoBlockMI         start=/<MI>-----/ end=/-----<MI>\n/ contains=ALL
+syntax         region  gihyoBlockTable         start=/\n<table>-----/    end=/\n-----<table>\n/ contains=ALL
+highlight      link    gihyoBlockSyntax       Number
+highlight      link    gihyoBlockCode       Identifier
+highlight      link    gihyoBlockMI       Special
+highlight      link    gihyoBlockTable       Number
+
 " highlight link
 highlight      link    gihyoHeader1 Title
 highlight      link    gihyoHeader2    Constant
@@ -73,7 +82,6 @@ highlight      link    gihyoUnderlineAlt Title
 highlight      link    gihyoTable       Special
 highlight      link    gihyoFigure       Special
 highlight      link    gihyoUnderline       Special
-highlight      link    gihyoBlock       Number
 highlight      link    gihyoItalic       String
 highlight      link    gihyoCode        Statement
 highlight       link gihyoBold Statement

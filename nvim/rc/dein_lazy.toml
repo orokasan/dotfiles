@@ -294,7 +294,8 @@ else
     endif
 endif
 endfunction
-nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
+nnoremap <silent><buffer><expr> E defx#do_action('drop', 'vsplit')
+nnoremap <silent><buffer><expr> S defx#do_action('drop', 'split')
 nnoremap <silent><buffer><expr> T defx#do_action('open', 'tabnew')
 nnoremap <silent><buffer><expr> t defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
 nnoremap <silent><buffer><expr> P defx#do_action('preview')
@@ -707,6 +708,7 @@ on_map = {nx = '<Plug>(openbrowser'}
 hook_add ='''
 nmap <Leader>o <Plug>(openbrowser-smart-search)
 xmap <Leader>o <Plug>(openbrowser-smart-search)
+omap <Leader>O <Plug>(openbrowser-smart-search)
 let g:openbrowser_message_verbosity = 1
 autocmd FileType php let b:openbrowser_default_search = 'php'
 autocmd FileType python let b:openbrowser_default_search = 'python'

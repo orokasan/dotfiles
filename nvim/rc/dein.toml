@@ -51,14 +51,12 @@ repo = 'tyru/skkdict.vim'
 repo = 'kana/vim-textobj-user'
 hook_add = '''
 " https://github.com/todesking/dotfiles/blob/master/nvim/plug/plugins.vim
-if exists('*textobj#user#plugin')
 call textobj#user#plugin('lastmofified', {
 \   'lastmodified': {
 \     'select-a': 'ag',
 \     'select-a-function': 'g:Vimrc_select_a_last_modified',
 \   },
 \ })
-endif
 '''
 
 [[plugins]]
@@ -135,11 +133,11 @@ depends = ['lightline.vim']
 # [[plugins]]
 # repo = 'orokasan/vim-quack-lightline'
 
- # [[plugins]]
- # repo = 'Shougo/context_filetype.vim'
- # hook_add = '''
- # let g:context_filetype#search_offset = 100
-# '''
+ [[plugins]]
+ repo = 'Shougo/context_filetype.vim'
+ hook_add = '''
+ let g:context_filetype#search_offset = 100
+'''
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
@@ -469,7 +467,8 @@ repo =  'machakann/vim-sandwich'
 hook_add = '''
 let g:sandwich_no_default_key_mappings = 1
 let g:operator_sandwich_no_default_key_mappings = 1
-silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+
+silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)
 silent! nmap <unique><silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
 silent! nmap <unique><silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
 silent! nmap <unique><silent> 'rb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
@@ -500,13 +499,18 @@ let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['b']}
 let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['k']}]
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['p']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['d']}]
-let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['s']}]
 let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}]
 let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
-let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['S']}]
-let g:sandwich#recipes += [{'buns' : ['《', '★》'], 'nesting':1, 'input':['C']}]
+
+let g:sandwich#recipes += [{'buns' : ['●', '●'], 'nesting':1, 'input':['1']}]
+let g:sandwich#recipes += [{'buns' : ['◆', '◆'], 'nesting':1, 'input':['2']}]
+let g:sandwich#recipes += [{'buns' : ['▲', '▲'], 'nesting':1, 'input':['3']}]
+let g:sandwich#recipes += [{'buns' : ['▼', '▼'], 'nesting':1, 'input':['4']}]
+let g:sandwich#recipes += [{'buns' : ['★', '★'], 'nesting':1, 'input':['5']}]
+let g:sandwich#recipes += [{'buns' : ['☆', '☆'], 'nesting':1, 'input':['6']}]
+let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['7']}]
 autocmd dein FileType markdown call sandwich#util#addlocal([
   \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
   \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
@@ -539,8 +543,10 @@ depends = ['vim-textobj-user']
 # gb
 repo = 'saaguero/vim-textobj-pastedtext'
 hook_add = '''
-xmap gb <Plug>(textobj-pastedtext-text)
-omap gb <Plug>(textobj-pastedtext-text)
+xmap gp <Plug>(textobj-pastedtext-text)
+omap gp <Plug>(textobj-pastedtext-text)
+xmap gp <Plug>(textobj-pastedtext-text)
+omap gp <Plug>(textobj-pastedtext-text)
 '''
 
 # [[plugins]]
@@ -577,21 +583,21 @@ xmap il <Plug>(textobj-line-i)
 omap il <Plug>(textobj-line-i)
 '''
 
-[[plugins]]
-# av, iv
-# aV, iV
-depends = ['vim-textobj-user']
-repo = 'rhysd/vim-textobj-word-column'
-hook_add = '''
-xmap av <Plug>(textobj-wordcolumn-w-a)
-omap av <Plug>(textobj-wordcolumn-w-a)
-xmap iv <Plug>(textobj-wordcolumn-w-i)
-omap iv <Plug>(textobj-wordcolumn-w-i)
-xmap aV <Plug>(textobj-wordcolumn-W-a)
-omap aV <Plug>(textobj-wordcolumn-W-a)
-xmap iV <Plug>(textobj-wordcolumn-W-i)
-omap iV <Plug>(textobj-wordcolumn-W-i)
-'''
+# [[plugins]]
+# # av, iv
+# # aV, iV
+# depends = ['vim-textobj-user']
+# repo = 'rhysd/vim-textobj-word-column'
+# hook_add = '''
+# xmap av <Plug>(textobj-wordcolumn-w-a)
+# omap av <Plug>(textobj-wordcolumn-w-a)
+# xmap iv <Plug>(textobj-wordcolumn-w-i)
+# omap iv <Plug>(textobj-wordcolumn-w-i)
+# xmap aV <Plug>(textobj-wordcolumn-W-a)
+# omap aV <Plug>(textobj-wordcolumn-W-a)
+# xmap iV <Plug>(textobj-wordcolumn-W-i)
+# omap iV <Plug>(textobj-wordcolumn-W-i)
+# '''
 
 [[plugins]]
 repo = 'kana/vim-operator-replace'
@@ -628,7 +634,7 @@ nnoremap <silent> [denite]v <Cmd>Denite -no-empty -path=~/.cache/junkfile grep:~
 # repo = 'junegunn/fzf'
 
 # [[plugins]]
-# repo =  'hrsh7th/denite-converter-prioritize-basename' 
+# repo =  'hrsh7th/denite-converter-prioritize-basename'
 
 [[plugins]]
 repo = 'nekowasabi/denite-migemo'
@@ -864,4 +870,7 @@ hook_add = '''
 '''
 [[plugins]]
 repo = 'tyru/capture.vim'
+
+# [[plugins]]
+# repo  = 'mfussenegger/nvim-lint'
 # vim:set foldmethod=marker:'

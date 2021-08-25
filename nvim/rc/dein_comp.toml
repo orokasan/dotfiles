@@ -1,26 +1,76 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
+lazy = 1
+on_event = 'InsertEnter'
 hook_source = '''
+au User DenopsPluginPre:ddc echo 'ddc is loading...'
+au User DenopsPluginPost:ddc echo 'ddc has been loaded!'
+" <TAB>: completion.
+inoremap <silent><expr> <TAB>
+\ pumvisible() ? "\<C-n>" :
+\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+\ "\<TAB>" : ddc#manual_complete()
+" Use around source.
+" https://github.com/Shougo/ddc-around
+" Use matcher_head and sorter_rank.
+" https://github.com/Shougo/ddc-matcher_head
+" https://github.com/Shougo/ddc-sorter_rank
+call ddc#custom#patch_global('sourceOptions', {
+      \ '_': {
+      \   'matchers': ['matcher_head'],
+      \   'sorters': ['sorter_rank']},
+      \   'converters': ['converter_remove_overlap'],
+      \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': []},
+      \ 'nvimlsp': {'mark': 'lsp', 'forceCompletionPattern': '\.|:|->'},
+      \ })
+
+    call ddc#custom#patch_global({
+    \ 'smartCase': v:true,
+    \ })
+" Change source options
+
+"call ddc#custom#patch_global('sourceOptions', {
+"      \ 'eskk': {'minAutoCompleteLength': '3'},
+"      \ })
+call ddc#custom#patch_global('sourceOptions', {
+      \ 'around': {'mark': 'A'},
+      \ })
+call ddc#custom#patch_global('sourceParams', {
+      \ 'around': {'maxSize': 500},
+      \ })
+" Customize settings on a filetype
+call ddc#custom#patch_global('sources', ['nvimlsp','eskk','around','buffer'])
+
+call ddc#enable()
 '''
 
 [[plugins]]
 repo = 'Shougo/ddc-around'
+on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-matcher_head'
+on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-sorter_rank'
+on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'matsui54/ddc-buffer'
+on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'matsui54/ddc-matcher_fuzzy'
+on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-nvim-lsp'
+on_source = ['ddc.vim']
 
+[[plugins]]
+repo = 'Shougo/ddc-converter_remove_overlap'
+on_source = ['ddc.vim']
 # [[plugins]]
 # repo =  'Shougo/deoplete.nvim'
 # # on_if = 'has("nvim")'
