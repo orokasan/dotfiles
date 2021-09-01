@@ -38,8 +38,8 @@ function! s:eskk_initial_pre() abort
     call t.add_map('z8', '８')
     call t.add_map('z9', '９')
     call t.add_map('z-', '-')
-    " call t.add_map('z[', '『')
-    " call t.add_map('z]', '』')
+    call t.add_map('z(', '（')
+    call t.add_map('z)', '）')
     call t.add_map('zz{', '【')
     call t.add_map('zz}', '】')
     call t.add_map('z%', '％')
@@ -1260,8 +1260,8 @@ endfunction
 " ColorSchemeが変わった時に読み込み直す
 " autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 let s:insert_icon = ''
-hi InInsertSign gui=bold guifg=#84a0c6 guibg=#1e2132
-hi InEskkKanaSign gui=bold guifg=#e2a478 guibg=#1e2132
+hi InInsertSign gui=bold guifg=#84a0c6
+hi InEskkKanaSign gui=bold guifg=#e2a478
 call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
 call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
 call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 50 })

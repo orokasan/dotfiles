@@ -1,6 +1,6 @@
 let g:lightline = {
     \ 'active': {
-        \ 'left': [ ['mode', 'paste'],['eskk','git'], [ 'readonly', 'path'] ],
+        \ 'left': [ ['mode', 'paste'],['git'], [ 'readonly', 'path'] ],
         \ 'right': [
             \ ['lineinfo'],
             \ ['charcount','denitebuffer'],
@@ -251,8 +251,7 @@ function! LLruler() abort
     let col = printf("%3s", col('.'))
     let line = printf("%3s", line('.'))
     if !s:ignore_window()
-        return s:threshold(0) ? printf('%s:%s«%d', line , col , line('$') ) :
-            \  s:threshold(1) ? printf('%s:%s', line, col  ) : ''
+            return printf('L%s:C%s', line, col)
     else
         return ''
     endif
@@ -263,7 +262,8 @@ function! LLCharcount()
         " let abbr = s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
         "     \ s:threshold(1) ? '' . s:llcharcount : ''
         " return abbr
-        return '' . printf('%3S', strchars(getline('.'))) . '|' . s:llcharallcount
+        let ac =  s:llcharallcount > 10000 ? s:llcharallcount/1000 . 'k' : s:llcharallcount
+        return '' . printf('%3S', strchars(getline('.'))) . '| ' . ac
     else
         return ''
     endif
@@ -296,7 +296,7 @@ endfunction
 "}}}
 
 function! LLpercent() abort
-return &filetype !=# 'denite' ? 100 * line('.') / line('$') . '%' : ''
+return &filetype !=# 'denite' ? 100 * line('.') / line('$') . '%«' . line('$') : ''
 endfunction
 
 function! LLReadonly()
@@ -309,13 +309,12 @@ function! LLtabnr() abort
     return tabpagenr('$') > 1 ? tabpagenr().':'.tabpagenr('$').'«' : '«'
 endfunction
 
-call get(s:, 'llgitbranch', '')
+let s:llgitbranch = ''
 function! LLgit() abort
     if s:ignore_window()
         return ''
     else
-        return s:threshold(1) ? ''. s:llgitbranch :
-       \ s:threshold(2) ? '' :''
+        return len(s:llgitbranch) ? ''. s:llgitbranch : ''
         " return s:threshold(1) ? ' '. s:llgitbranch :
        " \ s:threshold(2) ? '' :''
     endif
@@ -325,8 +324,8 @@ endfunction
 "本当は重くないはず…
 autocmd dein BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
 autocmd dein SourcePost $MYVIMRC call <SID>llgitcache()
+
 function! s:llgitcache() abort
-    let s:llgitbranch = ''
     if !exists('*gitbranch#name')
         return
     else

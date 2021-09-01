@@ -2,7 +2,6 @@
 set fileformats=unix,dos,mac
 set encoding=utf-8
 set fileencodings=utf-8,cp932,euc-jp
-
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 
@@ -34,7 +33,7 @@ let g:loaded_ruby_provider = 0
 "---------------------------------------------------------------------
 if has('win32')
     let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python39\python.exe')
-   let g:python3_host_prog = 'C:\Python39\python.exe'
+   " let g:python3_host_prog = 'C:\Python39\python.exe'
 endif
 set rtp+=$VIM/vim82
 set notermguicolors
@@ -77,7 +76,7 @@ let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml])
+    call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:comp_toml,s:lsp_toml, s:lua_toml])
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     " call dein#load_toml(s:exp_toml, {'merged': 0})
@@ -137,6 +136,7 @@ set previewheight=10 " Adjust window size of preview
 set helpheight=15 "and help.
 " max candidate of completion menu
 set pumheight=12 " default
+autocmd vimrc ColorScheme * highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 "}}}
 " Editing {{{
 set virtualedit=block     "move cursor to one more char than end of line
@@ -641,8 +641,9 @@ if has('nvim')
     hi! PmenuSel blend=0
 endif
 " edit fold column
-set background=dark
-colorscheme iceberg
+set background=light
+colorscheme edge
+let g:lightline.colorscheme = 'edge'
 "}}}
 " filetype config {{{
 let g:tex_conceal=''
@@ -695,7 +696,7 @@ if exists('neovide')
     let g:neovide_transparency=0.90
     let g:neovide_cursor_trail_length=0
     let g:neovide_cursor_animation_length=0
-    let g:neovide_cursor_antialiasing=v:true
+    " let g:neovide_cursor_antialiasing=v:true
     cd ~/
         " let g:neovide_extra_buffer_frames=4
 endif
@@ -840,17 +841,6 @@ nnoremap <F1> <cmd>call Highlight_dict()<CR>
 nnoremap  <Space>wc <cmd>lua vim.lsp.diagnostic.clear(0)<CR>
 command! VimShowHlItem echo synIDattr(synID(line("."), col("."), 1), "name")
 command! VimShowHlGroup echo synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
-hi link TSFunction Title
-hi link TSConstant Constant
-hi link TSConstructor Define
-hi link TSLavel Number
-hi link TSLabel Number
-hi link TSNamespace Number
-hi link TSOperator Number
-hi link TSKeyword Keyword
-hi link TSType Define
-hi link LspDiagnosticsUnderlineError Error
-hi link LspDiagnosticsUnderlineWarning Warning
 " abbrev の自動生成を行う
 " ref:https://zenn.dev/monaqa/articles/2020-12-22-vim-abbrev
 function! s:make_abbrev_rule(rules)
@@ -953,14 +943,6 @@ endfunction
 " call termopen('pandoc -f markdown -t json %|python' .. expand('~/.config/pandoc/converter.py') .. '|pandoc -f json -V documentclass=jlreq --template=template/latex_template.tex -s -t latex -o test.tex |lualatex test.tex')
 " terminal pandoc -f markdown -t json %|python converter.py|pandoc -f json -V documentclass=jlreq --template=latex_template.tex -s -t latex -o test.tex |lualatex test.tex
 
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  highlight = {
-    enable = true,              -- false will disable the whole extension
-    disable = {"c"},  -- list of language that will be disabled
-  },
-}
-EOF
 let s:lsptoggle_switch = v:false
 command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
 function! s:lspdefinetoggleaucmd() abort
@@ -991,10 +973,22 @@ endfunction
 "     let g:prev_win[1] = g:prev_win[0]
 " 	let g:prev_win[0] = win_getid()
 " endfunction
-
 " autocmd WinLeave * call g:Goto_prev_win()
 " autocmd WinEnter * call g:Save_prev_win()
-au VimEnter * call s:remove_focus_event()
+" set packpath+=C:/Users/ork/AppData/Local/nvim-data/site
+" lua <<EOF
+" vim.cmd [[packadd packer.nvim]]
+
+" -- Only if your version of Neovim doesn't have https://github.com/neovim/neovim/pull/12632 merged
+" return require('packer').startup(function()
+" use 'wbthomason/packer.nvim'
+" use {'lewis6991/impatient.nvim', rocks = 'mpack'}
+" end)
+" EOF
+" lua require('impatient')
+" lua require('impatient')
+
+au BufRead * call s:remove_focus_event()
 function! s:remove_focus_event()
 au! gitgutter FocusLost *
 au! gitgutter FocusGained *

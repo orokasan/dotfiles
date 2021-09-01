@@ -475,10 +475,10 @@ hi default link Defx_filename_directory Function
 # nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
 # '''
 
-[[plugins]]
-repo =  'Shougo/neco-vim'
-# on_source = ['deoplete','neocomplete']
-on_ft = 'vim'
+# [[plugins]]
+# repo =  'Shougo/neco-vim'
+# # on_source = ['deoplete','neocomplete']
+# on_ft = 'vim'
 
 [[plugins]]
 repo = 'glidenote/memolist.vim'
@@ -714,58 +714,6 @@ autocmd FileType php let b:openbrowser_default_search = 'php'
 autocmd FileType python let b:openbrowser_default_search = 'python'
 '''
 
-[[plugins]]
-repo =  'machakann/vim-sandwich'
-on_event = ['VimEnter']
-hook_source = '''
-let g:sandwich_no_default_key_mappings = 1
-let g:operator_sandwich_no_default_key_mappings = 1
-silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-silent! nmap <unique><silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-silent! nmap <unique><silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-silent! nmap <unique><silent> 'rb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-silent! omap <unique> ib <Plug>(textobj-sandwich-auto-i)
-silent! xmap <unique> ib <Plug>(textobj-sandwich-auto-i)
-silent! omap <unique> ab <Plug>(textobj-sandwich-auto-a)
-silent! xmap <unique> ab <Plug>(textobj-sandwich-auto-a)
-
-silent! omap <unique> i' <Plug>(textobj-sandwich-query-i)
-silent! xmap <unique> i' <Plug>(textobj-sandwich-query-i)
-silent! omap <unique> a' <Plug>(textobj-sandwich-query-a)
-silent! xmap <unique> a' <Plug>(textobj-sandwich-query-a)
-
-" add
-silent! nmap <unique> 'a <Plug>(operator-sandwich-add)
-silent! xmap <unique> 'a <Plug>(operator-sandwich-add)
-silent! omap <unique> 'a <Plug>(operator-sandwich-g@)
-
-" delete
-silent! xmap <unique> 'd <Plug>(operator-sandwich-delete)
-
-" replace
-silent! xmap <unique> 'r <Plug>(operator-sandwich-replace)
-
-let g:textobj#sandwich#stimeoutlen = 100
-let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
-let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['b']}]
-let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['k']}]
-let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['p']}]
-let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['d']}]
-let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['s']}]
-let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}]
-let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
-let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
-let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
-let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['S']}]
-let g:sandwich#recipes += [{'buns' : ['《', '★》'], 'nesting':1, 'input':['C']}]
-autocmd dein FileType markdown call sandwich#util#addlocal([
-  \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
-  \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
-  \ ])
-call operator#sandwich#set('all', 'all', 'highlight', 2)
-nmap 'dd vab'd
-nmap 'rr vab'r
-'''
 
 # [[plugins]]
 # repo =  'cohama/lexima.vim'
@@ -1133,11 +1081,11 @@ let g:deol#prompt_pattern = '% \|%$'
 			\ }
 '''
 
-[[plugins]]
-repo = 'tpope/vim-fugitive'
-on_cmd = ['Git', 'G']
-hook_add = '''
-'''
+# [[plugins]]
+# repo = 'tpope/vim-fugitive'
+# on_cmd = ['Git', 'G']
+# hook_add = '''
+# '''
 
 [[plugins]]
 on_cmd = ['Gina']

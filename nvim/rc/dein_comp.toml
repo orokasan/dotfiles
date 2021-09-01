@@ -1,7 +1,7 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
-<<<<<<< Updated upstream
 lazy = 1
+depends = ['context_filetype.vim', 'denops.vim']
 on_event = 'InsertEnter'
 hook_source = '''
 au User DenopsPluginPre:ddc echo 'ddc is loading...'
@@ -18,7 +18,7 @@ inoremap <silent><expr> <TAB>
 " https://github.com/Shougo/ddc-sorter_rank
 call ddc#custom#patch_global('sourceOptions', {
       \ '_': {
-      \   'matchers': ['matcher_head'],
+      \   'matchers': ['matcher_fuzzy'],
       \   'sorters': ['sorter_rank']},
       \   'converters': ['converter_remove_overlap'],
       \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': []},
@@ -35,59 +35,27 @@ call ddc#custom#patch_global('sourceOptions', {
 "      \ })
 call ddc#custom#patch_global('sourceOptions', {
       \ 'around': {'mark': 'A'},
+      \ 'buffer': {'mark': 'B'},
       \ })
+
+call ddc#custom#patch_global('filterParams', {
+    \ 'buffer': {'requireSameFiletype': v:true,
+    \ 'fromAltBuf': v:true},
+    \ })
 call ddc#custom#patch_global('sourceParams', {
       \ 'around': {'maxSize': 500},
       \ })
 " Customize settings on a filetype
 call ddc#custom#patch_global('sources', ['nvimlsp','eskk','around','buffer'])
 
+	"inoremap <silent><expr> <C-p>
+	"\ pumvisible() ? '<C-p>' : ddc#manual_complete()
+inoremap <silent><expr> <C-h> <SID>ddc_smart_close_popup()."\<C-h>"
+inoremap <silent><expr> <BS> <SID>ddc_smart_close_popup()."\<BS>"
+function! s:ddc_smart_close_popup() abort
+  return pumvisible() ? "\<C-e>" : ''
+endfunction
 call ddc#enable()
-||||||| constructed merge base
-hook_source = '''
-=======
-hook_add = '''
-
-" Customize global settings
-
-" Use around source.
-" https://github.com/Shougo/ddc-around
-
-" Use matcher_head and sorter_rank.
-" https://github.com/Shougo/ddc-matcher_head
-" https://github.com/Shougo/ddc-sorter_rank
-call ddc#custom#patch_global('sourceOptions', {
-      \ '_': {
-      \   'matchers': ['matcher_head'],
-      \   'sorters': ['sorter_rank']},
-      \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': []},
-      \ 'nvimlsp': {'mark': 'lsp', 'forceCompletionPattern': '\.|:|->'},
-      \  'buffer' : {'mark': 'B'}
-      \ })
-" inoremap <expr><BS> pumvisible() ? ddc#manual_complete() : "\<C-h>"
-" inoremap <expr><C-h> pumvisible() ? "\<C-H>".ddc#manual_complete() : "\<C-h>"
-" Change source options
-call ddc#custom#patch_global('sourceOptions', {
-      \ 'around': {'mark': 'A'},
-      \ })
-call ddc#custom#patch_global('sourceParams', {
-      \ 'around': {'maxSize': 500},
-      \ })
-" Customize settings on a filetype
-call ddc#custom#patch_global('sources', ['nvimlsp','eskk','around','buffer'])
-call ddc#custom#patch_filetype(['denite-filter'], {'sources': ['buffer'],'completionMode':'inline'})
-call ddc#enable()
-" Mappings
-
-" <TAB>: completion.
-inoremap <silent><expr> <TAB>
-\ pumvisible() ? "\<C-n>" :
-\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-\ "\<TAB>" : ddc#manual_complete()
-
-" <S-TAB>: completion back.
-inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
->>>>>>> Stashed changes
 '''
 
 [[plugins]]
@@ -124,7 +92,18 @@ on_source = ['ddc.vim']
 # hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
 [[plugins]]
 repo = 'Shougo/deoppet.nvim'
+on_source = ['ddc.vim']
 
 # [[plugins]]
-# rev = 'dev'
-# repo = 'hrsh7th/nvim-cmp'
+# repo = 'kuuote/denops-skkeleton.vim'
+# hook_add = '''
+# call skkeleton#config({
+#     \ 'globalJisyo': expand('~/.skk/SKK-JISYO.L'),
+#     \ 'eggLikeNewline': v:true
+#     \})
+#     imap <C-j> <Plug>(skkeleton-enable)
+#     cmap <C-j> <Plug>(skkeleton-enable)
+# '''
+# # [[plugins]]
+# # rev = 'dev'
+# # repo = 'hrsh7th/nvim-cmp'
