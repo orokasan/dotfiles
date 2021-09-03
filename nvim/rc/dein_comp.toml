@@ -21,8 +21,8 @@ call ddc#custom#patch_global('sourceOptions', {
       \   'matchers': ['matcher_fuzzy'],
       \   'sorters': ['sorter_rank']},
       \   'converters': ['converter_remove_overlap'],
-      \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': []},
-      \ 'nvimlsp': {'mark': 'lsp', 'forceCompletionPattern': '\.|:|->'},
+      \ 'skkeleton': {'mark': 'skk', 'matchers': ['skkeleton'], 'sorters': []},
+      \ 'nvim-lsp': {'mark': 'lsp', 'forceCompletionPattern': '\.|:|->'},
       \ })
 
     call ddc#custom#patch_global({
@@ -38,15 +38,15 @@ call ddc#custom#patch_global('sourceOptions', {
       \ 'buffer': {'mark': 'B'},
       \ })
 
-call ddc#custom#patch_global('filterParams', {
-    \ 'buffer': {'requireSameFiletype': v:true,
-    \ 'fromAltBuf': v:true},
+call ddc#custom#patch_global('sourceParams', {
+    \ 'buffer': {'requireSameFiletype': v:false,
+            \ 'fromAltBuf': v:true},
     \ })
 call ddc#custom#patch_global('sourceParams', {
       \ 'around': {'maxSize': 500},
       \ })
 " Customize settings on a filetype
-call ddc#custom#patch_global('sources', ['nvimlsp','eskk','around','buffer'])
+call ddc#custom#patch_global('sources', ['nvim-lsp','around','buffer','skkeleton','file'])
 
 	"inoremap <silent><expr> <C-p>
 	"\ pumvisible() ? '<C-p>' : ddc#manual_complete()
@@ -55,6 +55,25 @@ inoremap <silent><expr> <BS> <SID>ddc_smart_close_popup()."\<BS>"
 function! s:ddc_smart_close_popup() abort
   return pumvisible() ? "\<C-e>" : ''
 endfunction
+
+call ddc#custom#patch_global('sourceOptions', {
+    \ 'file': {
+    \   'mark': 'F',
+    \   'isVolatile': v:true,
+    \   'forceCompletionPattern': '\S/\S*',
+    \ }})
+call ddc#custom#patch_filetype(
+    \ ['ps1', 'dosbatch', 'autohotkey', 'registry'], {
+    \ 'sourceOptions': {
+    \   'file': {
+    \     'forceCompletionPattern': '\S\\\S*',
+    \   },
+    \ },
+    \ 'sourceParams': {
+    \   'file': {
+    \     'mode': 'win32',
+    \   },
+    \ }})
 call ddc#enable()
 '''
 
@@ -94,16 +113,63 @@ on_source = ['ddc.vim']
 repo = 'Shougo/deoppet.nvim'
 on_source = ['ddc.vim']
 
-# [[plugins]]
-# repo = 'kuuote/denops-skkeleton.vim'
-# hook_add = '''
-# call skkeleton#config({
-#     \ 'globalJisyo': expand('~/.skk/SKK-JISYO.L'),
-#     \ 'eggLikeNewline': v:true
-#     \})
-#     imap <C-j> <Plug>(skkeleton-enable)
-#     cmap <C-j> <Plug>(skkeleton-enable)
-# '''
-# # [[plugins]]
-# # rev = 'dev'
-# # repo = 'hrsh7th/nvim-cmp'
+[[plugins]]
+repo = 'kuuote/denops-skkeleton.vim'
+# repo = 'orokasan/denops-skkeleton.vim'
+lazy = 1
+on_event = ['InsertEnter','CmdlineEnter']
+depends = ['denops.vim']
+hook_source = '''
+call skkeleton#config({
+    \ 'globalJisyo': expand('~/.skk/SKK-JISYO.L'),
+    \ 'userJisyo': expand('~/.skk/.skk-jisyo'),
+    \ 'eggLikeNewline': v:true,
+    \ 'registerConvertResult': v:true,
+    \ 'showCandidatesCount': 3,
+    \ 'immediatelyCancel': v:true,
+    \})
+
+call skkeleton#register_kanatable('rom', {
+       \ "z\<Space>": ["\u3000", ''],
+	\ 'va': ['ゔぁ', ''],
+	\ 'vi': ['ゔぃ', ''],
+	\ 'vu': ['ゔ', ''],
+	\ 've': ['ゔぇ', ''],
+	\ 'vo': ['ゔぉ', ''],
+	\ 'ca': ['か', ''],
+	\ 'ci': ['し', ''],
+	\ 'cu': ['く', ''],
+	\ 'ce': ['せ', ''],
+	\ 'co': ['こ', ''],
+	\ 'xn': ['ん', ''],
+	\ '~': ['〜', ''],
+	\ 'zk': ['■', ''],
+	\ 'zm': ['●', ''],
+	\ 'zss': ['▼', ''],
+	\ 'zsu': ['▲', ''],
+	\ 'zds': ['◇', ''],
+	\ 'zdk': ['◆', ''],
+	\ 'z1': ['１', ''],
+	\ 'z2': ['２', ''],
+	\ 'z3': ['３', ''],
+	\ 'z4': ['４', ''],
+	\ 'z5': ['５', ''],
+	\ 'z6': ['６', ''],
+	\ 'z7': ['７', ''],
+	\ 'z8': ['８', ''],
+	\ 'z9': ['９', ''],
+	\ 'z-': ['-', ''],
+	\ 'z(': ['（', ''],
+	\ 'z)': ['）', ''],
+	\ 'zz{': ['【', ''],
+	\ 'zz}': ['】', ''],
+	\ 'z%': ['％', ''],
+	\ 'z.': ['…', ''],
+	\ 'z/': ['・', ''],
+	\ 'z,': ['●', ''],
+      \ })
+'''
+
+[[plugins]]
+repo = 'LumaKernel/ddc-file'
+

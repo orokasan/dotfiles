@@ -194,10 +194,10 @@ let g:indent_blankline_show_current_context = v:true
 # endfunction
 # '''
 
-[[plugins]]
-repo = 'norcalli/nvim-colorizer.lua'
-lazy = 1
-on_cmd = ['ColorizerToggle']
+# [[plugins]]
+# repo = 'norcalli/nvim-colorizer.lua'
+# lazy = 1
+# on_cmd = ['ColorizerToggle']
 
 [[plugins]]
 repo = 'bfredl/nvim-miniyank'
@@ -215,6 +215,11 @@ map <Leader>pb <Plug>(miniyank-toblock)
 
 # [[plugins]]
 # repo = 'TimUntersberger/neogit'
+# hook_add = '''
+# '''
+# [[plugins]]
+# repo = "sindrets/diffview.nvim"
+
 # [[plugins]]
 # repo = 'sunjon/shade.nvim'
 # on_event = ['VimEnter']
@@ -253,6 +258,23 @@ require'nvim-treesitter.configs'.setup {
         enable = true,
         disable = { "cpp", "vim" },
     },
+  matchup = {
+    enable = true,              -- mandatory, false will disable the whole extension
+  },
 }
+EOF
 '''
+# [[plugins]]
+# lua script eg.impatient.nvim might cause segfault when alt-tab
+# repo = 'lewis6991/impatient.nvim'
+# merged = 1
+# hook_add = '''
+#
+#lua require('impatient')
+# '''
 
+# [[plugins]]
+# repo = 'nathom/filetype.nvim'
+# hook_add = '''
+#   " Do not source the default filetype.vim
+# '''

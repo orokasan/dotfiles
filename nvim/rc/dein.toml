@@ -1,4 +1,4 @@
-[[plugins]]
+[[plugin]]
 repo = 'Shougo/dein.vim'
 hook_add = '''
 augroup dein
@@ -28,25 +28,6 @@ hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 # '''
 
 [[plugins]]
-on_if = '!has("kaoriya")'
-repo = 'deton/jasentence.vim'
-lazy = 1
-on_map = { nox = '<Plug>(JaSentence' }
-hook_add = '''
-let g:jasentence_no_default_key_mappings = 1
-  nmap <silent> ) <Plug>JaSentenceMoveNF
-  nmap <silent> ( <Plug>JaSentenceMoveNB
-  omap <silent> ) <Plug>JaSentenceMoveOF
-  omap <silent> ( <Plug>JaSentenceMoveOB
-  xmap <silent> ) <Plug>JaSentenceMoveVF
-  xmap <silent> ( <Plug>JaSentenceMoveVB
-  omap <silent> as <Plug>JaSentenceTextObjA
-  omap <silent> is <Plug>JaSentenceTextObjI
-  xmap <silent> as <Plug>JaSentenceTextObjVA
-  xmap <silent> is <Plug>JaSentenceTextObjVI
-'''
-
-[[plugins]]
 repo = 'tyru/skkdict.vim'
 
 [[plugins]]
@@ -70,22 +51,42 @@ let g:switch_mapping = "!"
 '''
 
 [[plugins]]
-repo =  'deton/jasegment.vim'
-#TODO:qitta
-lazy = 1
-on_map = { n = '<Plug>(JaSegment' }
+repo =  'orokasan/jasegment.vim'
 hook_add = ''' "{{{
 let g:jasegment#model='knbc_bunsetu'
 let g:jasegment_no_default_key_mappings = 1
-let g:jasegment#highlight = 0
+let g:jasegment#highlight = 1
 nmap <silent> E <Plug>JaSegmentMoveNE
 nmap <silent> W <Plug>JaSegmentMoveNW
 nmap <silent> B <Plug>JaSegmentMoveNB
+xmap <silent> E <Plug>JaSegmentMoveVE
+xmap <silent> W <Plug>JaSegmentMoveVW
+xmap <silent> B <Plug>JaSegmentMoveVB
 "omap <silent><buffer> aW <Plug>JaSegmentTextObjA
 "omap <silent><buffer> iW <Plug>JaSegmentTextObjI
 "xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
 "xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
 '''# }}} 
+
+[[plugins]]
+on_if = '!has("kaoriya")'
+# repo = 'deton/jasentence.vim'
+repo = 'orokasan/jasentence.vim'
+# lazy = 1
+# on_map = { nox = '<Plug>(JaSentence' }
+hook_add = '''
+let g:jasentence_no_default_key_mappings = 1
+  nmap <silent> ) <Plug>JaSentenceMoveNF
+  nmap <silent> ( <Plug>JaSentenceMoveNB
+  omap <silent> ) <Plug>JaSentenceMoveOF
+  omap <silent> ( <Plug>JaSentenceMoveOB
+  xmap <silent> ) <Plug>JaSentenceMoveVF
+  xmap <silent> ( <Plug>JaSentenceMoveVB
+  omap <silent> as <Plug>JaSentenceTextObjA
+  omap <silent> is <Plug>JaSentenceTextObjI
+  xmap <silent> as <Plug>JaSentenceTextObjVA
+  xmap <silent> is <Plug>JaSentenceTextObjVI
+'''
 
 
 # [[plugins]]
@@ -93,6 +94,7 @@ nmap <silent> B <Plug>JaSegmentMoveNB
 
 [[plugins]]
 repo = 'cespare/vim-toml'
+lazy = 1
 on_ft = ['toml']
 
 # [[plugins]]
@@ -822,8 +824,10 @@ on_cmd = ['Capture']
 
 [[plugins]]
 repo = 'lambdalisue/guise.vim'
+depends = ['denops.vim']
 lazy = 1
 on_source = 'deol.nvim'
+
 [[plugins]]
 repo = 'lambdalisue/gin.vim'
 lazy = 1
@@ -902,9 +906,10 @@ let g:sandwich#recipes += [{'buns' : ['●', '●'], 'nesting':1, 'input':['1']}
 let g:sandwich#recipes += [{'buns' : ['◆', '◆'], 'nesting':1, 'input':['2']}]
 let g:sandwich#recipes += [{'buns' : ['▲', '▲'], 'nesting':1, 'input':['3']}]
 let g:sandwich#recipes += [{'buns' : ['▼', '▼'], 'nesting':1, 'input':['4']}]
-let g:sandwich#recipes += [{'buns' : ['★', '★'], 'nesting':1, 'input':['5']}]
-let g:sandwich#recipes += [{'buns' : ['☆', '☆'], 'nesting':1, 'input':['6']}]
-let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['7']}]
+let g:sandwich#recipes += [{'buns' : ['▽', '▽'], 'nesting':1, 'input':['5']}]
+let g:sandwich#recipes += [{'buns' : ['★', '★'], 'nesting':1, 'input':['6']}]
+let g:sandwich#recipes += [{'buns' : ['☆', '☆'], 'nesting':1, 'input':['7']}]
+let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['8']}]
 autocmd dein FileType markdown call sandwich#util#addlocal([
   \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
   \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
@@ -913,4 +918,21 @@ call operator#sandwich#set('all', 'all', 'highlight', 2)
 nmap 'dd vab'd
 nmap 'rr vab'r
 '''
+# [[plugins]]
+# repo = 'andymass/vim-matchup'
+# merged = 0
+# # lazy = 1
+# hook_add = '''
+# nmap <TAB> <plug>(matchup-%)
+# xmap <TAB> <plug>(matchup-%)
+# omap <TAB> <plug>(matchup-%)
+# let g:matchup_transmute_enabled = 1
+# autocmd colorscheme * hi! link MatchWord MatchParen
+# autocmd colorscheme * hi! link MatchWordCur MatchParenCur
+#   highlight! OffscreenPopup guibg=red guifg=blue
+# let g:matchup_matchparen_offscreen
+#   \ = {'method': 'popup', 'highlight': 'OffscreenPopup'}
+# let g:matchup_matchparen_deferred = 1
+# '''
+
 # vim:set foldmethod=marker:'

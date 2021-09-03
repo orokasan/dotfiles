@@ -26,10 +26,10 @@ syntax         match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@
 syntax         match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
 syntax         match  gihyoUnderline '▽.\{-}▽'
 syntax         match  gihyoUnderlineAlt '∨.\{-}∨'
-" syntax         match  gihyoItalic        '◆.\{-}◆'
-" syntax         match   gihyoSup '▲.\{-}▲'
-" syntax         match   gihyoSub       '▼.\{-}▼'
-" syntax         match   gihyoRed          '●.\{-}●'
+syntax         match  gihyoItalic        '◆.\{-}◆'
+syntax         match   gihyoSup '▲.\{-}▲'
+syntax         match   gihyoSub       '▼.\{-}▼'
+syntax         match   gihyoRed          '●.\{-}●'
 
 " syntax         match   textUnderline    '　'
 syntax         match   gihyoSubTitle    '^◎[^◎]*$'
@@ -58,7 +58,7 @@ syntax         region  gihyoCommand     start=/\n==コマンド\n/  end=/\n==.\{
 " syntax         region  gihyoTable       start=/^▼構文-----$/   end=/^\{-}-----\n/
 
 syntax         region  gihyoBlockSyntax        start=/\n<syntax>-----/    end=/\n-----<syntax>\n/ contains=ALL
-syntax         region  gihyoBlockCode         start=/\n^list\d\+-\d\+\t/    end=/\n-----<code>\n/ contains=ALL
+syntax         region  gihyoBlockCode         start=/<code:.*>-----/    end=/\n-----<code:.*>\n/ contains=ALL
 syntax         region  gihyoBlockMI         start=/<MI>-----/ end=/-----<MI>\n/ contains=ALL
 syntax         region  gihyoBlockTable         start=/\n<table>-----/    end=/\n-----<table>\n/ contains=ALL
 highlight      link    gihyoBlockSyntax       Number

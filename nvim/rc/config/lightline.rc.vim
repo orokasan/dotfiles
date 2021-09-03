@@ -35,6 +35,7 @@ let g:lightline = {
         \ 'eskk': 'LLeskk',
         \ 'tabnr': 'LLtabnr',
         \ 'git':'LLgit',
+        \ 'searchres': 'LLsearchres',
         \ 'denitebuffer' : 'LLDeniteBuffer',
         \ 'denitefilter' : 'LLDeniteFilter',
         \ 'progress': 'LLLspProgress',
@@ -147,7 +148,7 @@ function! LLLspProgress() abort
     " return title .. '(' .. perc .. '%)' .. ':' .. mes
     return ''
 endfunction
-autocmd dein User LspDiagnosticsChanged  call lightline#update()
+autocmd dein User DiagnosticsChanged  call lightline#update()
 " autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts() | call lightline#update()
 endif
 " vim-lsp or nvim-lsp
@@ -236,10 +237,8 @@ endfunction
 function! LLeskk() abort
     if s:ignore_window() || !s:threshold(2)
         return ''
-    elseif !exists('*LLmyeskk')
-        return '[aA]'
     else
-        return LLmyeskk()
+        return skkeleton#mode()
     endif
 endfunction
 
@@ -414,3 +413,23 @@ endfunction
 "   let g:lightline_searchcount = printf(' /%s [%d/%d]', @/,
 "   \             result.current, result.total)
 " endfunction
+function! LLsearchres() abort
+  let result = searchcount(#{recompute: 0})
+  if empty(result)
+    return ''
+  endif
+  if result.incomplete ==# 1     " timed out
+    return printf(' /%s [?/??]', @/)
+  elseif result.incomplete ==# 2 " max count exceeded
+    if result.total > result.maxcount &&
+    \  result.current > result.maxcount
+      return printf(' /%s [>%d/>%d]', @/,
+      \             result.current, result.total)
+    elseif result.total > result.maxcount
+      return printf(' /%s [%d/>%d]', @/,
+      \             result.current, result.total)
+    endif
+  endif
+  return printf(' /%s [%d/%d]', @/,
+  \             result.current, result.total)
+endfunction

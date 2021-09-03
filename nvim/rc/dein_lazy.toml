@@ -15,6 +15,7 @@ if has('nvim')
     setlocal winblend=0
     setlocal winblend=30
     setlocal signcolumn=no
+    setlocal nonumber
 endif
 nnoremap <silent><buffer><expr> j
 \ line('.') == line('$') ? 'gg' : 'j'
@@ -264,6 +265,7 @@ nmap <silent><buffer> [denite]d <Plug>(defx) <Cmd>Denite
 nmap <silent><buffer> [denite]H <Plug>(defx) <Cmd>Denite
     \ defx/history<CR>
 setlocal signcolumn=no
+setlocal nonumber
 " Define mappings
 " nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
 nnoremap <silent><buffer><expr> <CR>
@@ -509,39 +511,38 @@ let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
 " let g:memolist_prompt_categories = 1
 '''
 
-[[plugins]]
-repo =  'tyru/eskk.vim'
-on_event = ['InsertEnter', 'CmdlineEnter']
-# repo =  'orokasan/eskk.vim'
-# on_map = {icrtn = '<Plug>(eskk:'}
-hook_add = '''
-"let g:eskk#marker_okuri = '*'
-let g:eskk#rom_input_style = 'msime'
-let g:eskk#egg_like_newline = 1
-let g:eskk#egg_like_newline_completion = 1
-let g:eskk#tab_select_completion = 1
-let g:eskk#max_candidates = 20
-let g:eskk#start_completion_length = 2
-let g:eskk#revert_henkan_style = 'okuri'
-" backspaceで確定
-let g:eskk#delete_implies_kakutei = 1
-let g:eskk#dictionary = {
-    \    'path': "~/.skk/.skk-jisyo",
-    \    'sorted': 0,
-    \    'encoding': 'utf-8'
-    \ }
-let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
-"let g:eskk#cursor_color = {
-"    \   'ascii': '#b4be82',
-"    \   'hira': '#e28878',
-"    \   'kata': '#84a0c6',
-"    \   'abbrev': '#4169e1',
-"    \   'zenei': '#ffd700',
-"    \}
-imap <C-j> <Plug>(eskk:toggle)
-cmap <C-j> <Plug>(eskk:toggle)
-'''
-hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
+# [[plugins]]
+# repo =  'tyru/eskk.vim'
+# on_event = ['InsertEnter', 'CmdlineEnter']
+# # repo =  'orokasan/eskk.vim'
+# # on_map = {icrtn = '<Plug>(eskk:'}
+# hook_add = '''
+# "let g:eskk#marker_okuri = '*'
+# let g:eskk#rom_input_style = 'msime'
+# let g:eskk#egg_like_newline = 1
+# let g:eskk#egg_like_newline_completion = 1
+# let g:eskk#tab_select_completion = 1
+# let g:eskk#max_candidates = 20
+# let g:eskk#auto_save_dictionary_at_exit = 0
+# let g:eskk#start_completion_length = 2
+# let g:eskk#revert_henkan_style = 'okuri'
+# " backspaceで確定
+# let g:eskk#delete_implies_kakutei = 1
+# let g:eskk#dictionary = {
+#     \    'path': "~/.skk/.skk-jisyo",
+#     \    'sorted': 0,
+#     \    'encoding': 'utf-8'
+#     \ }
+# let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
+# "let g:eskk#cursor_color = {
+# "    \   'ascii': '#b4be82',
+# "    \   'hira': '#e28878',
+# "    \   'kata': '#84a0c6',
+# "    \   'abbrev': '#4169e1',
+# "    \   'zenei': '#ffd700',
+# "    \}
+# '''
+# hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
 
 
 # [[plugins]]

@@ -5,6 +5,8 @@ set fileencodings=utf-8,cp932,euc-jp
 " ------------------------------------------------------------------------------
 " reset vimrc autocmd group
 
+let g:did_load_filetypes = 1
+
 augroup vimrc
   autocmd!
 augroup END
@@ -15,7 +17,6 @@ let g:loaded_tarPlugin         = 1
 let g:loaded_zip               = 1
 let g:loaded_zipPlugin         = 1
 let g:loaded_rrhelper          = 1
-let g:loaded_2html_plugin      = 1
 let g:loaded_vimball           = 1
 let g:loaded_vimballPlugin     = 1
 let g:loaded_getscript         = 1
@@ -34,25 +35,28 @@ let g:loaded_ruby_provider = 0
 if has('win32')
     let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python39\python.exe')
    " let g:python3_host_prog = 'C:\Python39\python.exe'
+    let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 endif
-set rtp+=$VIM/vim82
 set notermguicolors
 set swapfile
+if has('nvim')
 set undofile
+endif
 set directory=~/.backup/vim/swap
 set undodir=~/.backup/vim/undo " put together undo files
 set backupdir=~/.backup/vim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup
 let mapleader = "\<Space>"
+
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
 let g:dein#lazy_rplugins=1
 let g:dein#default_options = { 'merged': v:true }
-" let g:dein#install_process_timeout = 300
+let g:dein#install_max_processes = 8
+let g:dein#install_process_timeout = 300
 " let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
-let g:dein#default_options = { 'merged': v:true }
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 let s:dein_is_initializing = 0
@@ -72,6 +76,7 @@ let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
 let s:exp_toml = '~/dotfiles/nvim/rc/dein_experimental.toml'
 let s:comp_toml = '~/dotfiles/nvim/rc/dein_comp.toml'
+let s:cmp_toml = '~/dotfiles/nvim/rc/dein_cmp.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
     let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
@@ -80,10 +85,11 @@ if dein#load_state(s:dein_dir)
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     " call dein#load_toml(s:exp_toml, {'merged': 0})
-    call dein#load_toml(s:comp_toml, {'merged': 1})
+    call dein#load_toml(s:comp_toml, {'merged': 0})
+    " call dein#load_toml(s:cmp_toml, {'merged': 0})
 if has('nvim')
     call dein#load_toml(s:lsp_toml,  {'merged': 0})
-    call dein#load_toml(s:lua_toml,  {'merged': 0})
+    call dein#load_toml(s:lua_toml,  {'on_if': has('nvim'), 'merged': 0})
 endif
     call dein#end()
     call dein#save_state()
@@ -92,11 +98,17 @@ endif
         call dein#call_hook('post_source')
     endif
 endif
+
 filetype plugin indent on
 syntax on
+
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
+
+" for dein dein#util#_check_vimrcs() bug workaround
+autocmd! dein BufWritePost
+
 if s:dein_is_initializing
     call dein#install()
     let s:dein_is_initializing = 0
@@ -109,8 +121,8 @@ endif
 set ambiwidth=double
 set shortmess+=aAcTtI
 set showtabline=2   " always show tabline
-set nonumber
-set signcolumn=yes  " show signcolumn
+set number
+set signcolumn=number  " show signcolumn
 set laststatus=2    " always show statusline
 set cmdheight=1     " set commandline lines
 set noshowcmd       " don't let show inserting command
@@ -171,11 +183,6 @@ set hlsearch
 set complete=.,w,b,u
 " viminfo
 set history=1000
-if has('nvim')
-  set shada=!,'200,<100,s10,h
-else
-  set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
-endif
 set clipboard+=unnamed,unnamedplus
 " mouse in terminal
 set mouse=a
@@ -189,16 +196,19 @@ set equalalways
 " for cmdwin
 autocmd vimrc CmdwinEnter * call <SID>cmdwin_settings()
 function! s:cmdwin_settings() abort
+    setlocal signcolumn=no
     " delete useless commands
     silent g/^qa\?!\?$/d
     silent g/^e\?!\?$/d
     silent g/^wq\?a\?!\?$/d
     " move to nice position
     " CmdwinEnter seems not to fire below commands
-    setlocal signcolumn=no
-    setlocal scrolloff=0
+    " setlocal signcolumn=no
+    " setlocal scrolloff=0
     nnoremap <buffer><silent>q <Cmd>close<CR>
     norm $
+    norm G
+    map <buffer> <CR> <CR>
 endfunction
 set completeopt=menuone,longest
 set completeopt-=preview
@@ -237,6 +247,8 @@ nnoremap <CR> o<ESC>
 " moving visible lines by j/k
 nnoremap <silent>j gj
 nnoremap <silent>k gk
+vnoremap <silent>j gj
+vnoremap <silent>k gk
 " moving tip/end of a line
 nnoremap <S-l> $
 nnoremap <S-h> ^
@@ -265,12 +277,12 @@ function! s:improved_gt() abort
 endfunction
 nmap <C-j> <NOP>
 " matchit mapping
-" nmap <TAB>  %
-" nmap g<TAB> g%
-" xmap <TAB>  %
-" xmap g<TAB> g%
-" omap <TAB>  %
-" omap g<TAB> g%
+nmap <TAB>  %
+nmap g<TAB> g%
+xmap <TAB>  %
+xmap g<TAB> g%
+omap <TAB>  %
+omap g<TAB> g%
 " native <TAB> is useful
 nnoremap <C-p> <C-i>zz
 vnoremap <C-p> <C-i>
@@ -290,7 +302,6 @@ inoremap jk <esc>
 command! -nargs=? Otempfile :edit `=tempname()` | setf <args>
 " open location list
 nnoremap <Leader>f <Cmd>lopen<CR>
-autocmd vimrc CmdwinEnter * map <buffer> <CR> <CR>
 " open vimrc quickly
 nnoremap <silent> <leader>v <Cmd>e $MYVIMRC<CR>
 nnoremap <silent> <Leader>sv <Cmd>source $MYVIMRC<CR>
@@ -500,18 +511,7 @@ function! s:toggle_window_zoom() abort
 endfunction  "}}}
 "}}}
 " Terminal {{{
-if has('nvim')
-    autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
-else
-    autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
-endif
-if has('nvim')
-  " neovim 用
-  autocmd vimrc TermEnter * startinsert
-else
-  " Vim 用
-  autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
-endif
+
 " function! s:undo_entry()
 "   let history = get(w:, 'qf_history', [])
 "   if !empty(history)
@@ -548,52 +548,6 @@ endif
  endif
  endfunction
 "}}}
-" Syntax (for vim) {{{
-" Vim syntax support file
-" Maintainer:	Bram Moolenaar <Bram@vim.org>
-" Last Change:	2001 Sep 04
-
-" This file is used for ":syntax on".
-" It installs the autocommands and starts highlighting for all buffers.
-
-if !has('nvim')
-if !has("syntax")
-  finish
-endif
-
-" If Syntax highlighting appears to be on already, turn it off first, so that
-" any leftovers are cleared.
-if exists("syntax_on") || exists("syntax_manual")
-  so <sfile>:p:h/nosyntax.vim
-endif
-
-" Load the Syntax autocommands and set the default methods for highlighting.
-runtime syntax/synload.vim
-
-" Load the FileType autocommands if not done yet.
-if exists("did_load_filetypes")
-  let s:did_ft = 1
-else
-  filetype on
-  let s:did_ft = 0
-endif
-
-" Set up the connection between FileType and Syntax autocommands.
-" This makes the syntax automatically set when the file type is detected.
-augroup syntaxset
-  au! FileType *	exe "set syntax=" . expand("<amatch>")
-augroup END
-
-
-" Execute the syntax autocommands for the each buffer.
-" If the filetype wasn't detected yet, do that now.
-" Always do the syntaxset autocommands, for buffers where the 'filetype'
-" already was set manually (e.g., help buffers).
-doautoall syntaxset FileType
-if !s:did_ft
-  doautoall filetypedetect BufRead
-endif
-endif
 " }}}
 " +GUI {{{
 if has('GUI')
@@ -637,13 +591,11 @@ endif
 " highlight {{{
 " for foldcolumn
 " hi! link SpecialKey Comment
-if has('nvim')
-    hi! PmenuSel blend=0
-endif
+
 " edit fold column
-set background=light
-colorscheme edge
-let g:lightline.colorscheme = 'edge'
+set background=dark
+colorscheme iceberg
+let g:lightline.colorscheme = 'iceberg'
 "}}}
 " filetype config {{{
 let g:tex_conceal=''
@@ -661,7 +613,20 @@ command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> <Cmd>LineCharVCount<CR>
 "}}}
 " Neovim {{{
-if !has('nvim')
+
+if has('nvim')
+
+lua require('lsp_settings')
+
+  set shada=!,'200,<100,s10,h
+    autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
+  autocmd vimrc TermEnter * startinsert
+    hi! PmenuSel blend=0
+else
+  set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
+set rtp+=$VIM/vim82
+    autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
+  autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
     finish
 endif
     " show complettion popup in commandline.
@@ -689,47 +654,16 @@ if !has('nvim')
     finish
 endif
 " for neovide initialize hook
-if exists('neovide')
-    set guifont:HackGenNerd:h11
-    let g:neovide_refresh_rate=100
+if exists('neovide') || exists('nvy')
+    set guifont:HackGenNerd:h12
+    let g:neovide_refresh_rate=120
     let g:neovide_transparency=0.96
     let g:neovide_transparency=0.90
     let g:neovide_cursor_trail_length=0
     let g:neovide_cursor_animation_length=0
     " let g:neovide_cursor_antialiasing=v:true
-    cd ~/
+    " cd ~/
         " let g:neovide_extra_buffer_frames=4
-endif
-if exists('g:gonvim_running')
-    " for goneovim bug(20/06/30)
- augroup GonvimAuStatusline
-    autocmd!
-  augroup end
-  augroup GonvimAuLint
-    autocmd!
-  augroup end
-  augroup GonvimAuFiler
-    autocmd!
-  augroup end
-  augroup GonvimAuFilepath
-    autocmd!
-  augroup end
-  augroup GonvimAuMinimap
-    autocmd!
-  augroup end
-  augroup GonvimAuMinimapSync
-    autocmd!
-  augroup end
-  " augroup GonvimAuMd
-  "   autocmd!
-  " augroup end
-  augroup GonvimAuWorkspace
-    autocmd!
-  augroup end
-  set mouse=nicr
-  set pumheight=10
-" set scrolljump=5
-  cd ~/
 endif
 
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap
@@ -755,8 +689,8 @@ endfunction
 vnoremap y ygv<ESC>
 " g/\W*\ze \/\//s/^\(\W*\) \/\zs\ze\//\=jautil#convert(submatch(1),'hiragana')
 set smartindent
-syntax match JISX0208Space "　" display containedin=ALL
-highlight link JISX0208Space Underlined
+" syntax match JISX0208Space "　" display containedin=ALL
+" highlight link JISX0208Space Underlined
 set conceallevel=2
 set concealcursor=n
 let s:macromode = 0
@@ -797,11 +731,8 @@ augroup lsp_setup
 au!
 augroup END
 
-hi link LspDiagnosticsVirtualTextError Error
-hi link LspDiagnosticsVirtualTextWarning Question
-sign define LspDiagnosticsSignError text= texthl=LspDiagnosticsVirtualTextError linehl= numhl=
-sign define LspDiagnosticsSignWarning text= texthl=LspDiagnosticsVirtualTextWarning linehl= numhl=
 let s:highlight_id = v:false
+
 function! s:gethighlight(hi, which) abort
     let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
     return bg
@@ -874,24 +805,21 @@ function! NumCheckZen()
 g/\v(１|２|３|４|５|６|７|８|９|０)/
 endfunction
 function! NumZentohan() abort
-%s/１/1/eg
-%s/２/2/eg
-%s/３/3/eg
-%s/４/4/eg
-%s/５/5/eg
-%s/６/6/eg
-%s/７/7/eg
-%s/８/8/eg
-%s/９/9/eg
-%s/０/0/eg
+%s/１/〓1/eg
+%s/２/〓2/eg
+%s/３/〓3/eg
+%s/４/〓4/eg
+%s/５/〓5/eg
+%s/６/〓6/eg
+%s/７/〓7/eg
+%s/８/〓8/eg
+%s/９/〓9/eg
+%s/０/〓0/eg
 endfunction
 "(１|２|３|４|５|６|７|８|９|０)
 
 set packpath=
 " ++once supported in Nvim 0.4+ and Vim 8.1+
-if has('win32')
-let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
-endif
 function! MdToText()
 %s/^#\s/■/
 %s/^##\s/■■/
@@ -904,65 +832,14 @@ nnoremap q <nop>
 nnoremap Q q
 " for ahk workaround
 nmap <BS> <C-h>
-if has('nvim')
-    lua require('lsp_settings')
-    " lua require('telescope_config')
-endif
 let g:terminal_scrollback_buffer_size = 3000
 set title
 set titlestring=NVIM\ \[\ %{LLcd()}\ \]
-" au dein VimResized * :wincmd =<CR>
+
 "!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t latex
 "!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t pdf --wrap=preserve --filter=./converter.py -o test.pdf
-" autocmd vimrc Filetype markdown,text,txt call s:my_efm_config()
-" function! s:my_efm_config() abort
-" endfunction
 
-hi CursorBlink guibg=#84a0c6 guifg=#161821
-" au vimrc FocusGained * call s:blink(1, 'CursorBlink', '.*\%#.*')
-function! s:blink(count, color, pattern)
-  for i in range(a:count)
-    let id = matchadd(a:color, a:pattern)
-    redraw
-    sleep 80m
-    call matchdelete(id)
-    redraw
-    sleep 80m
-  endfor
-endfunction
-" lua <<EOF
-" require("mark-radar").setup()
-" local opts = {
-"     set_default_mappings = true,
-" 	highlight_group = "RadarMark",
-" 	background_highlight = true,
-"     background_highlight_group = "RadarBackground",
-" }
-" EOF
-" default
-" call termopen('pandoc -f markdown -t json %|python' .. expand('~/.config/pandoc/converter.py') .. '|pandoc -f json -V documentclass=jlreq --template=template/latex_template.tex -s -t latex -o test.tex |lualatex test.tex')
-" terminal pandoc -f markdown -t json %|python converter.py|pandoc -f json -V documentclass=jlreq --template=latex_template.tex -s -t latex -o test.tex |lualatex test.tex
-
-let s:lsptoggle_switch = v:false
-command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
-function! s:lspdefinetoggleaucmd() abort
-    if !s:lsptoggle_switch
-        let s:lsptoggle_switch = v:true
-        augroup lsptoggle
-            au!
-            au BufEnter * LspStop
-        augroup END
-        edit %
-        echom "Lsp OFF"
-    else
-        augroup lsptoggle
-            au!
-        augroup END
-        let s:lsptoggle_switch = v:false
-        echom "Lsp ON"
-    endif
-endfunction
-
+    lua require('lsp_settings')
 " ウィンドウを閉じた時一つ前のウィンドウに戻る
 " seems buggy
 " let g:prev_win = [0, 0]
@@ -979,14 +856,6 @@ endfunction
 " lua <<EOF
 " vim.cmd [[packadd packer.nvim]]
 
-" -- Only if your version of Neovim doesn't have https://github.com/neovim/neovim/pull/12632 merged
-" return require('packer').startup(function()
-" use 'wbthomason/packer.nvim'
-" use {'lewis6991/impatient.nvim', rocks = 'mpack'}
-" end)
-" EOF
-" lua require('impatient')
-" lua require('impatient')
 
 au BufRead * call s:remove_focus_event()
 function! s:remove_focus_event()
@@ -995,4 +864,81 @@ au! gitgutter FocusGained *
 au! ConflictMarkerDetect FocusLost *
 au! ConflictMarkerDetect FocusGained *
 endfunction
+autocmd CmdWinEnter [:>] syntax sync minlines=1 maxlines=1
+
+" imap <C-j> <Plug>(eskk:toggle)
+" cmap <C-j> <Plug>(eskk:toggle)
+
+imap <C-j> <Plug>(skkeleton-toggle)
+cmap <C-j> <Plug>(skkeleton-toggle)
+
+if executable('win32yank.exe')
+if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
+  let win32yank = resolve(exepath('win32yank.exe'))
+else
+  let win32yank = 'win32yank.exe'
+endif
+let g:clipboard = {
+      \   'name': 'myClipboard',
+      \   'copy': {
+      \      '+': [win32yank, '-i', '--crlf'],
+      \      '*': [win32yank, '-i', '--crlf'],
+      \    },
+      \   'paste': {
+      \      '+': [win32yank, '-o', '--lf'],
+      \      '*': [win32yank, '-o', '--lf'],
+      \   },
+      \   'cache_enabled': 0,
+      \ }
+else
+call  provider#clipboard#Executable()
+endif
+
+hi! link DiagnosticsVirtualTextError Error
+hi! link DiagnosticsVirtualTextWarning Question
+sign define DiagnosticSignError text= texthl=DiagnosticVirtualTextError linehl= numhl=
+sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl= numhl=
+
+" autocmd CmdlineLeave [:>/?=@] if get(g:, 'skkeleton#enabled', v:false) | call skkeleton#request('disable', []) | endif
+
+autocmd vimrc User skkeleton-enable-post call s:highlight_imesign_on()
+autocmd vimrc User skkeleton-disable-post call s:highlight_imesign_off()
+
+function! s:highlight_imesign_off()
+if mode() is# 'c' | return | endif
+    call sign_unplace('Ins',{'id': 15})
+endfunction
+
+function! s:insert_highlight() abort
+    call sign_unplace('Ins')
+    if skkeleton#is_enabled()
+        call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
+    else
+        call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
+    endif
+endfunction
+
+let s:insertpos = 0
+
+au vimrc InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()
+au vimrc CursorMovedI * if s:insertpos != line('.') | call s:insert_highlight() | let s:insertpos = line('.') | endif
+if has('nvim')
+    au vimrc InsertLeavePre * call sign_unplace('Ins')
+else
+    au vimrc InsertLeave * call sign_unplace('Ins')
+endif
+
+function! s:highlight_imesign_on()
+    if mode() is# 'c' | return | endif
+    call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
+endfunction
+
+" au InsertLeave * call sign_unplace('Ins')
+
+let s:insert_icon = '▶'
+hi InInsertSign gui=bold guifg=#84a0c6
+hi InEskkKanaSign gui=bold guifg=#e2a478
+call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
+call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
+call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 50 })
 " vim:set foldmethod=marker:

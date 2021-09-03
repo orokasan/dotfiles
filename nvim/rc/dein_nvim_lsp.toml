@@ -3,7 +3,27 @@ repo = 'neovim/nvim-lspconfig'
 # merged = '1'
 # on_lua = ['lspconfig']
 # lazy = '1'
-hook_add = '''
+hook_source = '''
+let s:lsptoggle_switch = v:false
+command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
+function! s:lspdefinetoggleaucmd() abort
+    if !s:lsptoggle_switch
+        let s:lsptoggle_switch = v:true
+        augroup lsptoggle
+            au!
+            au BufEnter * LspStop
+        augroup END
+        edit %
+        echom "Lsp OFF"
+    else
+        augroup lsptoggle
+            au!
+        augroup END
+        let s:lsptoggle_switch = v:false
+        echom "Lsp ON"
+    endif
+endfunction
+
 '''
 
 # [[plugins]]
@@ -72,12 +92,12 @@ hook_add = '''
 # merged = 0
 # repo = 'mattn/vim-lsp-settings'
 # hook_add = '''
-# let g:lsp_settings_enable_suggestions = 1
+# let g:lsp_settings_enable_suggestions = 0
 # '''
 
 # [[plugins]]
 # repo = 'alexaandru/nvim-lspupdate'
 
-[[plugins]]
-repo = 'Borwe/nvim-lspinstall'
-rev = 'windows_support'
+# [[plugins]]
+# repo = 'Borwe/nvim-lspinstall'
+# rev = 'windows_support'

@@ -2,7 +2,7 @@
 	name = orokasan
 	email = fuu989@gmail.com
 [core]
-	editor = nvr
+	editor = nvim
     quotepath = false
     preloadindex = true
     autoCRLF = false

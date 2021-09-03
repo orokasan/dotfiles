@@ -1146,7 +1146,7 @@ augroup myeskk
     "In neovim inccommand substitute, if statement seems not evaluated. (20210421)
     autocmd CmdlineLeave [:/?] if exists('*eskk#enable') && eskk#is_enabled() | call eskk#disable() | endif
     " autocmd CmdlineLeave [:/?] call <SID>eskk_cmdleave_off()
-    " autocmd CmdlineLeave [:/?@-] call eskk#disable()
+    autocmd CmdlineLeave [:/?@-] call skkeleton#request('disable', [])
     " autocmd CmdlineLeave * call s:eskk_restore_cursor()
 augroup END
 
@@ -1199,10 +1199,10 @@ function! LLmyeskk() abort
 endfunction
 
 ""IME/skkの状態に応じてsigncolumnの色を変える（WIP）
-autocmd vimrc User eskk-enable-post call s:eskk_highlight_cursor()
+autocmd vimrc User skkeleton-enable-post call s:eskk_highlight_cursor()
 
 "" InsertLeaveの前に発生するイベントであることに注意する
-autocmd vimrc User eskk-disable-pre call s:eskk_restore_highlight_nicely()
+autocmd vimrc User skkeleton-disable-pre call s:eskk_restore_highlight_nicely()
 
 function! s:eskk_restore_highlight_nicely()
 if mode() is# 'c'
@@ -1215,7 +1215,7 @@ call sign_unplace('Ins',{'id': 15})
 endfunction
 function! s:insert_highlight() abort
 call sign_unplace('Ins')
-if eskk#is_enabled()
+if skkeleton#is_enabled()
 call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
 else
 call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
@@ -1233,6 +1233,7 @@ function! s:eskk_highlight_cursor()
 if mode() is# 'c'
     return
 endif
+
 " guicursorのハイライトをeskkCursorに変更する
 " highlight CursorLineNr guifg=#e2a478 gui=bold
 call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
@@ -1259,12 +1260,12 @@ endfunction
 " let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
 " ColorSchemeが変わった時に読み込み直す
 " autocmd ColorScheme * let s:eskk_default_linenr_hi =s:gethighlight('CursorLineNr')
-let s:insert_icon = ''
+let s:insert_icon = '▶'
 hi InInsertSign gui=bold guifg=#84a0c6
 hi InEskkKanaSign gui=bold guifg=#e2a478
 call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
 call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
 call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 50 })
-let g:eskk#server = { 'host': 'localhost', 'port': 55100, 'type': 'dictionary' }
+" let g:eskk#server = { 'host': 'localhost', 'port': 55100, 'type': 'dictionary' }
 
 " vim:set foldmethod=marker:
