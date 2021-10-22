@@ -153,7 +153,7 @@ function! s:defx_tab()
 if bufname(tabpagebuflist(1)[0]) =~# '\v\[defx\] defxtab-\d+'
     tabnext 1
 else
-    Defx -buffer-name='defxtab2' -resume -split=tab -listed|Defx -buffer-name='defxtab' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`|0tabmove
+    Defx -buffer-name='defxtab' -resume -split=tab -listed|Defx -new -buffer-name='defxtab' -resume -split=vertical -direction=botright -winwidth=`winwidth(0)/2`|0tabmove|wincmd h
 endif
 endfunction
 nnoremap <silent> <Space><Space>e  <Cmd>call <SID>defx_tab()<CR>
@@ -305,7 +305,7 @@ nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
 nnoremap <silent><buffer><expr> N defx#do_action('new_file')
 nnoremap <silent><buffer><expr> F defx#do_action('new_multiple_files')
 nnoremap <silent><buffer> <C-o> <Cmd>Denite  -immediately -no-empty defx/history<CR>
-nnoremap <silent><buffer> u <Cmd>Denite defx/history -post-action=jump -unique<CR>
+nnoremap <silent><buffer> u <Cmd>Denite defx/history -unique<CR>
 nnoremap <silent><buffer> ss <Cmd>Denite list -start-filter -split=floating -winwidth=50 -winrow=1 -wincol=`&columns-60`<CR>
 "nnoremap <silent><buffer> U <Cmd>Denite defx/history -auto-action=default -post-action=jump -unique<CR>
 nnoremap <silent><nowait><buffer> Z <Cmd>call Defx_archive()<CR>
@@ -350,6 +350,21 @@ function! s:defx_is_plaintxt()
     return 1
     endif
 endfunction
+if b:defx.context.buffer_name ==# 'defxtab'
+nnoremap <silent><buffer><expr> <CR>
+\ defx#is_directory() ? defx#do_action('open') :
+\ defx#is_binary() ?
+\ defx#do_action('execute_system') :
+\ defx#do_action('drop','tab')
+nnoremap <silent><buffer> <tab> <C-w>w
+nnoremap <silent><buffer> L <cmd>call win_execute(win_getid(winnr('$')), "call defx#call_action('cd'," . string(<SID>defx_filer_open_next_win()) .")")\|wincmd w<CR>
+function! s:defx_filer_open_next_win() abort
+   let path = defx#get_candidate()['action__path']
+   return path
+endfunction
+" nnoremap <silent><buffer><expr> L <SID>defx_filer_open_next_win()
+
+endif
 '''
 
 [[plugins]]
@@ -1063,8 +1078,10 @@ let g:sonictemplate_vim_template_dir = '~/GoogleDrive/template/'
 repo =  'Shougo/deol.nvim'
 on_cmd = ['Deol']
 hook_add = '''
-nnoremap <Space>t <cmd> Deol -command=cmd.exe -winheight=30 -split<CR>
-nnoremap <Space>T <cmd> Deol -command=wsl.exe -winheight=30 -split<CR>
+nnoremap <Space>t <cmd> Deol -command=cmd.exe -winheight=30 -split=hor<CR>
+nnoremap <Space>T <cmd> Deol -command=wsl.exe -winheight=30 -split=hor<CR>
+" nnoremap <Space>t <cmd>sp term://cmd <CR>
+" nnoremap <Space>T <cmd>sp term://wsl<CR>
 let g:deol#shell_history_path = expand('~/.cache/deol/history')
 let g:deol#prompt_pattern = '% \|%$'
 		let g:deol#custom_map = {
@@ -1249,6 +1266,7 @@ on_map = '<Plug>(git-messenger'
 repo = 'rhysd/git-messenger.vim'
 hook_add = '''
 nmap <Leader>gm <Plug>(git-messenger)
+let g:git_messenger_always_into_popup = v:true
 '''
 
 [[plugins]]

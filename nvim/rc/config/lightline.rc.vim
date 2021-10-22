@@ -279,10 +279,7 @@ let s:llcharcount = ''
 let s:llcharallcount = ''
 
 function! s:llvarCharAllCount()
-    let l:count = 0
-    for l in range(0, line('$'))
-        let l:count += strchars(getline(l))
-    endfor
+    let l:count = wordcount().chars
     let s:llcharallcount = printf('%4S', l:count)
 endfunction
 

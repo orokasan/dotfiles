@@ -39,7 +39,7 @@ class Source(Base):
 
     def _convert(self, context, header):
         mark = context['__mark']
-        lnum = str(header['lnum']).ljust(len(str(context['__bufline'])), ' ') if not context['args'] else ''
+        lnum = str(header['lnum']).ljust(len(str(context['__bufline'])), ' ')
         abbr = '{} {}'.format(lnum + ':' ,
                 (header['level']-1)*'  ' + header['text'])
         return {
@@ -59,7 +59,7 @@ class Source(Base):
         max_level = 0
         limit_level = int(context['args'][0]) if context['args'] else 0
         ft = self.vim.call('getbufvar', context['bufnr'], '&filetype')
-        if ft == 'text':
+        if ft == 'txt':
             mark = '■'
         elif ft == 'markdown':
             mark = '#'

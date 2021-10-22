@@ -4,6 +4,7 @@ repo = 'neovim/nvim-lspconfig'
 # on_lua = ['lspconfig']
 # lazy = '1'
 hook_source = '''
+
 let s:lsptoggle_switch = v:false
 command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
 function! s:lspdefinetoggleaucmd() abort

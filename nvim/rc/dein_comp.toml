@@ -30,9 +30,6 @@ call ddc#custom#patch_global('sourceOptions', {
     \ })
 " Change source options
 
-"call ddc#custom#patch_global('sourceOptions', {
-"      \ 'eskk': {'minAutoCompleteLength': '3'},
-"      \ })
 call ddc#custom#patch_global('sourceOptions', {
       \ 'around': {'mark': 'A'},
       \ 'buffer': {'mark': 'B'},
@@ -47,7 +44,18 @@ call ddc#custom#patch_global('sourceParams', {
       \ })
 " Customize settings on a filetype
 call ddc#custom#patch_global('sources', ['nvim-lsp','around','buffer','skkeleton','file'])
-
+if dein#tap('pum.vim')
+call ddc#custom#patch_global({
+\ 'completionMenu': 'pum.vim',
+\ })
+call ddc#custom#patch_global('sourceOptions', {
+  \   '_': {
+  \     'matchers': ['matcher_fuzzy'],
+  \     'sorters': ['sorter_fuzzy'],
+  \     'converters': ['converter_fuzzy']
+  \   }
+  \ })
+endif
 	"inoremap <silent><expr> <C-p>
 	"\ pumvisible() ? '<C-p>' : ddc#manual_complete()
 inoremap <silent><expr> <C-h> <SID>ddc_smart_close_popup()."\<C-h>"
@@ -173,3 +181,19 @@ call skkeleton#register_kanatable('rom', {
 [[plugins]]
 repo = 'LumaKernel/ddc-file'
 
+# [[plugins]]
+# repo = 'Shougo/pum.vim'
+# hook_add = '''
+# inoremap <Tab>   <Cmd>call pum#map#insert_relative(+1)<CR>
+# inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
+# inoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
+# inoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
+# inoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
+# inoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
+# inoremap <PageDown> <Cmd>call pum#map#insert_relative_page(+1)<CR>
+# inoremap <PageUp>   <Cmd>call pum#map#insert_relative_page(-1)<CR>
+# '''
+
+[[plugins]]
+repo = 'tani/ddc-fuzzy'
+on_source = ['ddc.vim']

@@ -2,7 +2,7 @@
 # repo = 'nvim-telescope/telescope.nvim'
 # hook_source = '''
 # '''
-# 
+
 # [[plugins]]
 # repo = 'nvim-lua/popup.nvim'
 # [[plugins]]
@@ -24,6 +24,7 @@ let g:indent_blankline_show_first_indent_level = v:true
 let g:indent_blankline_char = '|'
 let g:indent_blankline_show_current_context = v:true
 '''
+
 # [[plugins]]
 # repo = 'gelguy/wilder.nvim'
 # on_lazy = 1
@@ -194,10 +195,10 @@ let g:indent_blankline_show_current_context = v:true
 # endfunction
 # '''
 
-# [[plugins]]
-# repo = 'norcalli/nvim-colorizer.lua'
-# lazy = 1
-# on_cmd = ['ColorizerToggle']
+[[plugins]]
+repo = 'norcalli/nvim-colorizer.lua'
+lazy = 1
+on_cmd = ['ColorizerToggle']
 
 [[plugins]]
 repo = 'bfredl/nvim-miniyank'
@@ -258,18 +259,16 @@ require'nvim-treesitter.configs'.setup {
         enable = true,
         disable = { "cpp", "vim" },
     },
-  matchup = {
-    enable = true,              -- mandatory, false will disable the whole extension
-  },
 }
+
 EOF
 '''
-# [[plugins]]
-# lua script eg.impatient.nvim might cause segfault when alt-tab
-# repo = 'lewis6991/impatient.nvim'
-# merged = 1
-# hook_add = '''
-#
+#[[plugins]]
+##lua script eg.impatient.nvim might cause segfault when alt-tab
+#repo = 'lewis6991/impatient.nvim'
+#merged = 1
+#hook_add = '''
+
 #lua require('impatient')
 # '''
 
@@ -278,3 +277,7 @@ EOF
 # hook_add = '''
 #   " Do not source the default filetype.vim
 # '''
+
+# [[plugins]]
+# merged = 0
+# repo = 'hoob3rt/lualine.nvim'

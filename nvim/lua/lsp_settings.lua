@@ -85,12 +85,34 @@ for _, lsp in ipairs(servers) do
 end
 
 local efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
-nvim_lsp['efm'].setup{on_attach = on_attach ,
-    cmd = { 'efm-langserver', '-c', efm_cpath },
-    init_options = {documentFormatting = true},
+nvim_lsp['efm'].setup{
     autostart = false,
-    filetypes = {'markdown', 'text', 'txt','json','html', 'css'};
+    on_attach = on_attach ,
+    -- cmd = { 'efm-langserver', '-c', efm_cpath },
+    init_options = {documentFormatting = true},
+    filetypes = {'markdown', 'text', 'txt','json','html', 'css'},
     };
+
+local textlint = {
+                    lintCommand = "npx --no-install textlint -f unix --stdin --stdin-filename ${INPUT}",
+                    lintStdin = true,
+                    lintFormats = {"%f:%l:%c: %m [%trror/%r]"},
+                }
+-- nvim_lsp['efm'].setup{
+--     on_attach = on_attach ,
+--     cmd = { 'efm-langserver'},
+--      rootMarkers = {".git/"},
+--     init_options = {documentFormatting = true},
+--     settings = {
+--         languages = {
+--             text = {textlint},
+--             markdown = {textlint},
+--             txt = {textlint}
+--         }
+--     },
+--   filetypes = { 'txt', 'text','markdown' }
+-- };
+
 -- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 --     vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
 -- )

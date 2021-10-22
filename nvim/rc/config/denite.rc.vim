@@ -47,6 +47,8 @@ call denite#custom#option('relative',{
     \ 'winrow' : &lines *1/3,
     \ })
 
+call denite#custom#source('file,file/rec,file_mru,file/old,buffer,directory/rec,directory_mru', 'converters', ['devicons_denite_converter'])
+call denite#custom#source('file/old', 'converters', ['converter/relative_abbr','devicons_denite_converter'])
 call denite#custom#kind('openable', 'default_action', 'switch')
 call denite#custom#kind('file', 'default_action', 'switch')
 call denite#custom#source('help', 'default_action', 'default')
@@ -54,8 +56,7 @@ call denite#custom#kind('buffer', 'default_action', 'switch')
 call denite#custom#source('file/old', 'default_action', 'switch')
 call denite#custom#source('buffer', 'sorters', ['sorter/oldfiles'])
 call denite#custom#source('dein', 'default_action', 'candidate_file_rec')
-call denite#custom#source('file/old', 'converters', ['converter/relative_abbr'])
-call denite#custom#source('file', 'converters', ['converter/abbr_word'])
+call denite#custom#source('file', 'converters', ['converter/abbr_word','devicons_denite_converter'])
 call denite#custom#source('file/rec', 'matchers', ['matcher/fuzzy'])
 call denite#custom#var('buffer', 'date_format', '%Y/%m/%d %H:%M:%S')
 call denite#custom#filter('matcher/migemo', 'dict_path', get(g:, 'migemodict', ""))
@@ -89,6 +90,9 @@ if executable('jvgrep')
             \ 'final_opts': [],
             \ })
 endif
+
+" call denite#custom#var('file/rec', 'command',
+" \ ['fd', '--color', 'never' , '--full-path', '--fixed-strings'])
 " Add custom menus
 let s:menus = {
     \ }

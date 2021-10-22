@@ -5,8 +5,9 @@ repo = 'prabirshrestha/vim-lsp'
 # lazy = 1'
 # on_ft = ['markdown', 'tex', 'python', 'go']
 hook_add = '''
+let g:lsp_document_code_action_signs_enabled = 0
 let g:lsp_highlight_references_enabled = 1
-let g:lsp_auto_enable = 1
+let g:lsp_auto_enable = 0
 " autocmd dein BufAdd * call lsp#enable()
 let g:lsp_log_file = expand('~/vim-lsp.log')
 function! s:lsp_local_setting()
@@ -54,8 +55,8 @@ let s:efm_config_path = '-c=' .. expand('~/.config/efm-langserver/config.yaml')
 let s:efm_log_path = '-log=' .. expand('~/efmlog')
 augroup VimLsp
     au!
-    autocmd User lsp_buffer_enabled call s:lsp_local_setting()
-    autocmd User lsp_setup call s:lsp_setup()
+    " autocmd User lsp_buffer_enabled call s:lsp_local_setting()
+    " autocmd User lsp_setup call s:lsp_setup()
     " " if executable('pyls')
     " "     " pip install python-language-server
     " "     au User lsp_setup call lsp#register_server({
@@ -117,20 +118,21 @@ augroup VimLsp
     " endif
 augroup END
 
-autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
-	augroup lsp_float_colours
-	    autocmd!
-	    if !has('nvim')
-		autocmd User lsp_float_opened
-		    \ call win_execute(lsp#ui#vim#output#getpreviewwinid(),
-		    \		       'setlocal wincolor=PopupWindow')
-	    else
-		autocmd User lsp_float_opened
-		    \ call nvim_win_set_option(
-		    \   lsp#ui#vim#output#getpreviewwinid(),
-		    \   'winhighlight', 'Normal:PopupWindow')
-	    endif
-	augroup end
+" autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
+" 	augroup lsp_float_colours
+" 	    autocmd!
+" 	    if !has('nvim')
+" 		autocmd User lsp_float_opened
+" 		    \ call win_execute(lsp#ui#vim#output#getpreviewwinid(),
+" 		    \		       'setlocal wincolor=PopupWindow')
+" 	    else
+" 		autocmd User lsp_float_opened
+" 		    \ call nvim_win_set_option(
+" 		    \   lsp#ui#vim#output#getpreviewwinid(),
+" 		    \   'winhighlight', 'Normal:PopupWindow')
+" 	    endif
+" 	augroup end
+
 ''' # }}}
 
 # [[plugins]]
@@ -169,14 +171,13 @@ autocmd vimrc ColorScheme * highlight link PopupWindow DiffText
 # repo = 'microsoft/vscode-go'
 # merged = '0'
 
-[[plugins]]
-lazy = 1'
-on_source = ['deoplete.nvim']
-repo = 'thomasfaingnaert/vim-lsp-neosnippet'
+# [[plugins]]
+# lazy = 1'
+# on_source = ['deoplete.nvim']
+# repo = 'thomasfaingnaert/vim-lsp-neosnippet'
 
 [[plugins]]
 # on_if = '!has("nvim")'
-merged = '0'
 # [[plugins]]
 # on_if = 'has("windows")'
 merged = '0'
@@ -200,18 +201,18 @@ let g:lsp_settings = {
 # merged = '0'
 # repo = 'tsuyoshicho/vim-efm-langserver-settings' 
 
-[[plugins]]
-lazy = '1'
-on_source = ['deoplete.nvim']
-depends = ['vim-lsp']
-repo = 'lighttiger2505/deoplete-vim-lsp'
-hook_source ='''
-call deoplete#custom#option('sources', {
-    \ 'python': ['lsp','eskk','neosnippet', 'buffer'],
-    \ 'go': ['lsp','eskk','neosnippet', 'buffer'],
-    \ 'tex' :['lsp','eskk','look','neosnippet', 'buffer'],
-    \ })
-'''
+# [[plugins]]
+# lazy = '1'
+# on_source = ['deoplete.nvim']
+# depends = ['vim-lsp']
+# repo = 'lighttiger2505/deoplete-vim-lsp'
+# hook_source ='''
+# call deoplete#custom#option('sources', {
+#     \ 'python': ['lsp','eskk','neosnippet', 'buffer'],
+#     \ 'go': ['lsp','eskk','neosnippet', 'buffer'],
+#     \ 'tex' :['lsp','eskk','look','neosnippet', 'buffer'],
+#     \ })
+# '''
 
 
 # repo = 'prabirshrestha/asyncomplete-lsp.vim'

@@ -3,9 +3,6 @@ set fileformats=unix,dos,mac
 set encoding=utf-8
 set fileencodings=utf-8,cp932,euc-jp
 " ------------------------------------------------------------------------------
-" reset vimrc autocmd group
-
-let g:did_load_filetypes = 1
 
 augroup vimrc
   autocmd!
@@ -31,27 +28,40 @@ let g:loaded_node_provider = 0
 let g:loaded_perl_provider = 0
 let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
+
+if executable('win32yank.exe')
+if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
+  let win32yank = resolve(exepath('win32yank.exe'))
+else
+  let win32yank = 'win32yank.exe'
+endif
+let g:clipboard = {
+      \   'name': 'myClipboard',
+      \   'copy': {
+      \      '+': [win32yank, '-i', '--crlf'],
+      \      '*': [win32yank, '-i', '--crlf'],
+      \    },
+      \   'paste': {
+      \      '+': [win32yank, '-o', '--lf'],
+      \      '*': [win32yank, '-o', '--lf'],
+      \   },
+      \   'cache_enabled': 0,
+      \ }
+else
+call  provider#clipboard#Executable()
+endif
 "---------------------------------------------------------------------
 if has('win32')
     let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python39\python.exe')
    " let g:python3_host_prog = 'C:\Python39\python.exe'
     let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 endif
-set notermguicolors
-set swapfile
-if has('nvim')
-set undofile
-endif
-set directory=~/.backup/vim/swap
-set undodir=~/.backup/vim/undo " put together undo files
-set backupdir=~/.backup/vim/backup " put together undo files
-set autoread                " reload editing file if the file changed externally
-set backup
-let mapleader = "\<Space>"
 
+let mapleader = "\<Space>"
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
+if has('nvim')
 let g:dein#lazy_rplugins=1
 let g:dein#default_options = { 'merged': v:true }
 let g:dein#install_max_processes = 8
@@ -71,6 +81,8 @@ if &runtimepath !~# '/dein.vim'
       endif
     execute 'set runtimepath+=' . fnamemodify(s:dein_repo_dir, ':p')
 endif
+
+    execute 'set runtimepath+=' . fnamemodify(s:dein_repo_dir, ':p')
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
@@ -78,10 +90,10 @@ let s:exp_toml = '~/dotfiles/nvim/rc/dein_experimental.toml'
 let s:comp_toml = '~/dotfiles/nvim/rc/dein_comp.toml'
 let s:cmp_toml = '~/dotfiles/nvim/rc/dein_cmp.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
-    let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
+let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:comp_toml,s:lsp_toml, s:lua_toml])
+    call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:comp_toml])
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
     " call dein#load_toml(s:exp_toml, {'merged': 0})
@@ -107,19 +119,34 @@ command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
 
 " for dein dein#util#_check_vimrcs() bug workaround
-autocmd! dein BufWritePost
-
+au! dein BufWritePost
+set guifont:HackGenNerd:h12
 if s:dein_is_initializing
     call dein#install()
     let s:dein_is_initializing = 0
     source $myvimrc
     finish
 endif
+endif
+
+set notermguicolors
+set swapfile
+set undofile
+if !has('nvim')
+set directory=~/.backup/vim/swap
+set undodir=~/.backup/vim/undo " put together undo files
+set backupdir=~/.backup/vim/backup " put together undo files
+endif
+set directory=~/.backup/nvim/swap
+set undodir=~/.backup/nvim/undo " put together undo files
+set backupdir=~/.backup/nvim/backup " put together undo files
+set autoread                " reload editing file if the file changed externally
+set backup
 "}}}
 " Visual  {{{
 " language C
 set ambiwidth=double
-set shortmess+=aAcTtI
+set shortmess=aAcTtF
 set showtabline=2   " always show tabline
 set number
 set signcolumn=number  " show signcolumn
@@ -254,6 +281,8 @@ nnoremap <S-l> $
 nnoremap <S-h> ^
 vnoremap <S-l> g_
 vnoremap <S-h> ^
+onoremap <S-l> $
+onoremap <S-h> ^
 " nnoremap G Gzz
 nnoremap <C-f> <C-f>zz
 nnoremap <C-b> <C-b>zz
@@ -556,22 +585,13 @@ if has('GUI')
     """Nm秒後にカーソル点滅開始
     "set guicursor=n:blinkwait2000
     "let no_buffers_menu = 1
-    " set lines=60 "ウィンドウの縦幅
-    " set columns=120 " ウィンドウの横幅
+    set lines=40 "ウィンドウの縦幅
+    set columns=80 " ウィンドウの横幅
     winpos 500 10 " ウィンドウの起動時の位置
-    if has('mac')
-        set guifont=Cica:h14
-    else
-    "https://github.com/iij/fontmerger/blob/master/sample/RictyDiminished-with-icons-Regular.ttf
-        " let s:fontsize = '12'
-        " let s:font = 'Ricty_Diminished_with-icons'
-        " let s:myguifont = s:font . ':h' . s:fontsize .':cDEFAULT'
-        " let &guifont = s:myguifont
-        " let &guifontwide = s:myguifont
-        set guifont=Cica:h12:
-        set renderoptions=type:directx,renmode:5,geom:1
-    endif
+    set guifont:HackGenNerd:h12
+    set renderoptions=type:directx,renmode:5,geom:1
 endif
+
 "}}}
 "+kaoriya {{{
 if has('kaoriya')
@@ -588,6 +608,12 @@ if has('kaoriya')
     set ambiwidth=auto
 endif
 "}}}
+
+if !has('nvim')
+    set runtimepath+=~\.cache\dein\repos\github.com\thinca\vim-singleton
+	call singleton#enable()
+    finish
+endif
 " highlight {{{
 " for foldcolumn
 " hi! link SpecialKey Comment
@@ -613,14 +639,12 @@ command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> <Cmd>LineCharVCount<CR>
 "}}}
 " Neovim {{{
-
 if has('nvim')
 
 lua require('lsp_settings')
-
   set shada=!,'200,<100,s10,h
     autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
-  autocmd vimrc TermEnter * startinsert
+  autocmd vimrc TermOpen * startinsert
     hi! PmenuSel blend=0
 else
   set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
@@ -630,18 +654,19 @@ set rtp+=$VIM/vim82
     finish
 endif
     " show complettion popup in commandline.
-    set display+=lastline,msgsep
-    set nrformats+=unsigned
-    set wildoptions=pum
-    set winblend=20
-    set termguicolors
-    " remove end of buffer ~~~~~~~~~
-    set fillchars+=eob:\ 
-    "transparent completions menu
-    set pumblend=15
-    set inccommand=nosplit
-    au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
+set display+=lastline,msgsep
+set nrformats+=unsigned
+set wildoptions=pum
+set winblend=20
+set termguicolors
+" remove end of buffer ~~~~~~~~~
+set fillchars+=eob:\ 
+"transparent completions menu
+set pumblend=15
+set inccommand=nosplit
+au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
 "}}}
+
 " yank searched results
 function! s:search(pat)
 let l:cache = []
@@ -650,22 +675,17 @@ call setreg(v:register,join(l:cache, "\n"))
 endfunction
 command! -nargs=* SearchYank call s:search(<q-args>)
 "}}}
-if !has('nvim')
-    finish
-endif
 " for neovide initialize hook
 if exists('neovide') || exists('nvy')
-    set guifont:HackGenNerd:h12
+    " フォント変更後に画面を再描画
     let g:neovide_refresh_rate=120
-    let g:neovide_transparency=0.96
     let g:neovide_transparency=0.90
-    let g:neovide_cursor_trail_length=0
-    let g:neovide_cursor_animation_length=0
     " let g:neovide_cursor_antialiasing=v:true
-    " cd ~/
-        " let g:neovide_extra_buffer_frames=4
+    cd ~/
+    let g:neovide_extra_buffer_frames=4
 endif
 
+au BufRead,BufNew * ++once let g:neovide_cursor_trail_length=0 | let g:neovide_cursor_animation_length=0
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap
 autocmd FileType text syntax sync minlines=50
 autocmd FileType markdown syntax sync minlines=50
@@ -691,8 +711,8 @@ vnoremap y ygv<ESC>
 set smartindent
 " syntax match JISX0208Space "　" display containedin=ALL
 " highlight link JISX0208Space Underlined
-set conceallevel=2
-set concealcursor=n
+" set conceallevel=2
+" set concealcursor=n
 let s:macromode = 0
 function! MacroModeOn() abort
 if s:macromode ==# 1
@@ -818,7 +838,6 @@ function! NumZentohan() abort
 endfunction
 "(１|２|３|４|５|６|７|８|９|０)
 
-set packpath=
 " ++once supported in Nvim 0.4+ and Vim 8.1+
 function! MdToText()
 %s/^#\s/■/
@@ -833,13 +852,12 @@ nnoremap Q q
 " for ahk workaround
 nmap <BS> <C-h>
 let g:terminal_scrollback_buffer_size = 3000
-set title
-set titlestring=NVIM\ \[\ %{LLcd()}\ \]
+" set titlestring=NVIM\ \[\ %{LLcd()}\ \]
 
 "!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t latex
 "!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t pdf --wrap=preserve --filter=./converter.py -o test.pdf
 
-    lua require('lsp_settings')
+    " lua require('lsp_settings')
 " ウィンドウを閉じた時一つ前のウィンドウに戻る
 " seems buggy
 " let g:prev_win = [0, 0]
@@ -857,13 +875,13 @@ set titlestring=NVIM\ \[\ %{LLcd()}\ \]
 " vim.cmd [[packadd packer.nvim]]
 
 
-au BufRead * call s:remove_focus_event()
-function! s:remove_focus_event()
-au! gitgutter FocusLost *
-au! gitgutter FocusGained *
-au! ConflictMarkerDetect FocusLost *
-au! ConflictMarkerDetect FocusGained *
-endfunction
+" au BufRead * call s:remove_focus_event()
+" function! s:remove_focus_event()
+" au! gitgutter FocusLost *
+" au! gitgutter FocusGained *
+" au! ConflictMarkerDetect FocusLost *
+" au! ConflictMarkerDetect FocusGained *
+" endfunction
 autocmd CmdWinEnter [:>] syntax sync minlines=1 maxlines=1
 
 " imap <C-j> <Plug>(eskk:toggle)
@@ -872,27 +890,6 @@ autocmd CmdWinEnter [:>] syntax sync minlines=1 maxlines=1
 imap <C-j> <Plug>(skkeleton-toggle)
 cmap <C-j> <Plug>(skkeleton-toggle)
 
-if executable('win32yank.exe')
-if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
-  let win32yank = resolve(exepath('win32yank.exe'))
-else
-  let win32yank = 'win32yank.exe'
-endif
-let g:clipboard = {
-      \   'name': 'myClipboard',
-      \   'copy': {
-      \      '+': [win32yank, '-i', '--crlf'],
-      \      '*': [win32yank, '-i', '--crlf'],
-      \    },
-      \   'paste': {
-      \      '+': [win32yank, '-o', '--lf'],
-      \      '*': [win32yank, '-o', '--lf'],
-      \   },
-      \   'cache_enabled': 0,
-      \ }
-else
-call  provider#clipboard#Executable()
-endif
 
 hi! link DiagnosticsVirtualTextError Error
 hi! link DiagnosticsVirtualTextWarning Question
@@ -932,13 +929,39 @@ function! s:highlight_imesign_on()
     if mode() is# 'c' | return | endif
     call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
 endfunction
-
 " au InsertLeave * call sign_unplace('Ins')
-
 let s:insert_icon = '▶'
 hi InInsertSign gui=bold guifg=#84a0c6
 hi InEskkKanaSign gui=bold guifg=#e2a478
 call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
 call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
-call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 50 })
+call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 51 })
+" lua <<EOF
+"     require('telescope').setup{
+"       defaults = {
+"           border = false,
+"         -- Default configuration for telescope goes here:
+"         -- config_key = value,
+"         -- ..
+"       },
+"       pickers = {
+"         -- Default configuration for builtin pickers goes here:
+"         -- picker_name = {
+"         --   picker_config_key = value,
+"         --   ...
+"         -- }
+"         -- Now the picker_config_key will be applied every time you call this
+"         -- builtin picker
+"       },
+"       extensions = {
+"         -- Your extension configuration goes here:
+"         -- extension_name = {
+"         --   extension_config_key = value,
+"         -- }
+"         -- please take a look at the readme of the extension you want to configure
+"       }
+"     }
+" EOF
+" hi! link TelescopeNormal Pmenu
+
 " vim:set foldmethod=marker:
