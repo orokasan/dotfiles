@@ -1,11 +1,12 @@
 [[plugins]]
+repo = 'vim-denops/denops.vim'
+
+[[plugins]]
 repo = 'Shougo/ddc.vim'
 lazy = 1
 depends = ['context_filetype.vim', 'denops.vim']
 on_event = 'InsertEnter'
 hook_source = '''
-au User DenopsPluginPre:ddc echo 'ddc is loading...'
-au User DenopsPluginPost:ddc echo 'ddc has been loaded!'
 " <TAB>: completion.
 inoremap <silent><expr> <TAB>
 \ pumvisible() ? "\<C-n>" :
@@ -22,12 +23,17 @@ call ddc#custom#patch_global('sourceOptions', {
       \   'sorters': ['sorter_rank']},
       \   'converters': ['converter_remove_overlap'],
       \ 'skkeleton': {'mark': 'skk', 'matchers': ['skkeleton'], 'sorters': []},
-      \ 'nvim-lsp': {'mark': 'lsp', 'forceCompletionPattern': '\.|:|->'},
       \ })
 
     call ddc#custom#patch_global({
     \ 'smartCase': v:true,
     \ })
+
+call ddc#custom#patch_global('sourceOptions', {
+      \ 'nvim-lsp': {
+      \   'mark': 'lsp',
+      \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
+      \ })
 " Change source options
 
 call ddc#custom#patch_global('sourceOptions', {
@@ -44,18 +50,10 @@ call ddc#custom#patch_global('sourceParams', {
       \ })
 " Customize settings on a filetype
 call ddc#custom#patch_global('sources', ['nvim-lsp','around','buffer','skkeleton','file'])
-if dein#tap('pum.vim')
-call ddc#custom#patch_global({
-\ 'completionMenu': 'pum.vim',
-\ })
-call ddc#custom#patch_global('sourceOptions', {
-  \   '_': {
-  \     'matchers': ['matcher_fuzzy'],
-  \     'sorters': ['sorter_fuzzy'],
-  \     'converters': ['converter_fuzzy']
-  \   }
-  \ })
-endif
+"if dein#tap('pum.vim')
+"call ddc#custom#patch_global({
+"\ 'completionMenu': 'pum.vim',
+"\ })
 	"inoremap <silent><expr> <C-p>
 	"\ pumvisible() ? '<C-p>' : ddc#manual_complete()
 inoremap <silent><expr> <C-h> <SID>ddc_smart_close_popup()."\<C-h>"
@@ -82,8 +80,38 @@ call ddc#custom#patch_filetype(
     \     'mode': 'win32',
     \   },
     \ }})
+
+" call ddc#custom#patch_global('autoCompleteEvents',
+"     \ ['InsertEnter', 'TextChangedI', 'TextChangedP', 'CmdlineChanged'])
+  
+" cnoremap <Tab>   <Cmd>call pum#map#insert_relative(+1)<CR>
+" cnoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
+" cnoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
+" cnoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
+" cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
+" cnoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
+" nnoremap :       <Cmd>call CommandlinePre()<CR>:
+" function! CommandlinePre() abort
+"   " Overwrite sources
+"   let s:prev_buffer_config = ddc#custom#get_buffer()
+"   call ddc#custom#patch_buffer('sources', ['cmdline-history'])
+  
+"   autocmd User DDCCmdlineLeave ++once call CommandlinePost()
+  
+"   " Enable command line completion
+"   call ddc#enable_cmdline_completion()
+" endfunction
+" function! CommandlinePost() abort
+"   " Restore sources
+"   call ddc#custom#set_buffer(s:prev_buffer_config)
+" endfunction
+
 call ddc#enable()
 '''
+
+[[plugins]]
+repo = 'Shougo/ddc-cmdline-history'
+on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-around'
@@ -132,12 +160,14 @@ call skkeleton#config({
     \ 'globalJisyo': expand('~/.skk/SKK-JISYO.L'),
     \ 'userJisyo': expand('~/.skk/.skk-jisyo'),
     \ 'eggLikeNewline': v:true,
+\ 'completionRankFile': expand('~/temp/.skkeleton'),
     \ 'registerConvertResult': v:true,
     \ 'showCandidatesCount': 3,
-    \ 'immediatelyCancel': v:true,
+    \ 'immediatelyCancel': v:false,
     \})
 
 call skkeleton#register_kanatable('rom', {
+    \ '\<C-w>': 'deleteChar',
        \ "z\<Space>": ["\u3000", ''],
 	\ 'va': ['ゔぁ', ''],
 	\ 'vi': ['ゔぃ', ''],
@@ -176,6 +206,46 @@ call skkeleton#register_kanatable('rom', {
 	\ 'z/': ['・', ''],
 	\ 'z,': ['●', ''],
       \ })
+imap <C-j> <Plug>(skkeleton-toggle)
+cmap <C-j> <Plug>(skkeleton-enable)
+autocmd vimrc User skkeleton-enable-post call s:highlight_imesign_on()
+autocmd vimrc User skkeleton-disable-post call s:highlight_imesign_off()
+
+function! s:highlight_imesign_off()
+if mode() is# 'c' | return | endif
+    call sign_unplace('Ins',{'id': 15})
+endfunction
+
+function! s:insert_highlight() abort
+    call sign_unplace('Ins')
+    if skkeleton#is_enabled()
+        call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
+    else
+        call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
+    endif
+endfunction
+
+let s:insertpos = 0
+
+au vimrc InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()
+au vimrc CursorMovedI * if s:insertpos != line('.') | call s:insert_highlight() | let s:insertpos = line('.') | endif
+if has('nvim')
+    au vimrc InsertLeavePre * call sign_unplace('Ins')
+else
+    au vimrc InsertLeave * call sign_unplace('Ins')
+endif
+
+function! s:highlight_imesign_on()
+    if mode() is# 'c' | return | endif
+    call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
+endfunction
+" au InsertLeave * call sign_unplace('Ins')
+let s:insert_icon = '▶'
+hi InInsertSign gui=bold guifg=#84a0c6
+hi InEskkKanaSign gui=bold guifg=#e2a478
+call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
+call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
+call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 51 })
 '''
 
 [[plugins]]
@@ -183,7 +253,8 @@ repo = 'LumaKernel/ddc-file'
 
 # [[plugins]]
 # repo = 'Shougo/pum.vim'
-# hook_add = '''
+# on_event = 'InsertEnter'
+# hook_source = '''
 # inoremap <Tab>   <Cmd>call pum#map#insert_relative(+1)<CR>
 # inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
 # inoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
@@ -194,6 +265,6 @@ repo = 'LumaKernel/ddc-file'
 # inoremap <PageUp>   <Cmd>call pum#map#insert_relative_page(-1)<CR>
 # '''
 
-[[plugins]]
-repo = 'tani/ddc-fuzzy'
-on_source = ['ddc.vim']
+# [[plugins]]
+# repo = 'tani/ddc-fuzzy'
+# on_source = ['ddc.vim']

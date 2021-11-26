@@ -1,10 +1,10 @@
 [[plugin]]
 repo = 'Shougo/dein.vim'
-hook_add = '''
-augroup dein
-    autocmd!
-augroup END
-'''
+# hook_add = '''
+# augroup dein
+#     autocmd!
+# augroup END
+# '''
 
 [[plugins]]
 on_if = '!has("nvim")'
@@ -44,10 +44,14 @@ call textobj#user#plugin('lastmofified', {
 
 [[plugins]]
 repo = 'AndrewRadev/switch.vim'
-lazy = 1
-on_cmd = ['Switch']
+# lazy = 1
+# on_cmd = ['Switch']
 hook_add = '''
-let g:switch_mapping = "!"
+nnoremap ! <cmd>Switch<CR>
+" autocmd FileType markdown let b:switch_custom_definitions =
+"     \ [
+"     \   switch#Word(['[]', '[x]']),
+"     \ ]
 '''
 
 [[plugins]]
@@ -89,8 +93,9 @@ let g:jasentence_no_default_key_mappings = 1
 '''
 
 
-# [[plugins]]
-# repo =  'mattn/webapi-vim'
+[[plugins]]
+merged = 0
+repo =  'mattn/webapi-vim'
 
 [[plugins]]
 repo = 'cespare/vim-toml'
@@ -577,9 +582,11 @@ lazy = 1
 on_cmd = ['JunkfileOpen']
 hook_add = '''
 nnoremap <silent> <C-T> <Cmd>tabnew<bar>JunkfileOpen txt<CR>
+nnoremap <silent> g<C-T> <Cmd>JunkfileOpen<CR>
 nnoremap <C-S> <Cmd>JunkfileOpen<CR>
-nnoremap <silent> [denite]V <Cmd>Denite -path=~/.cache/junkfile file/rec<CR>
-nnoremap <silent> [denite]v <Cmd>Denite -no-empty -path=~/.cache/junkfile grep:~/.cache/junkfile::<CR>
+nnoremap <silent> [denite]V <Cmd>Denite -path=~/.cache/junkfile/`strftime('%Y/%m')` file/rec<CR>
+nnoremap <silent> <Plug>(JunkfileGrep) <Cmd>Denite -no-empty -path=~/.cache/junkfile/`strftime('%Y/%m')` grep<CR>
+nmap <silent> [denite]v <Plug>(JunkfileGrep)
 '''
 
 # [[plugins]]
@@ -817,9 +824,6 @@ lazy = 1
 on_cmd = ['Nyancat','Nyancat2']
 
 [[plugins]]
-repo = 'vim-denops/denops.vim'
-
-[[plugins]]
 repo = 'tyru/capture.vim'
 lazy = 1
 on_cmd = ['Capture']
@@ -910,6 +914,7 @@ let g:sandwich#recipes += [{'buns' : ['▽', '▽'], 'nesting':1, 'input':['5']}
 let g:sandwich#recipes += [{'buns' : ['★', '★'], 'nesting':1, 'input':['6']}]
 let g:sandwich#recipes += [{'buns' : ['☆', '☆'], 'nesting':1, 'input':['7']}]
 let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['8']}]
+let g:sandwich#recipes += [{'buns' : ['<s>', '<\s>'], 'nesting':1, 'input':['s']}]
 autocmd dein FileType markdown call sandwich#util#addlocal([
   \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
   \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
@@ -935,10 +940,10 @@ nmap 'rr vab'r
 # let g:matchup_matchparen_deferred = 1
 # '''
 
-# [[plugins]]
-# rtp = 'vim'
-# merged = 0
-# repo = 'soywod/himalaya'
+[[plugins]]
+rtp = 'vim'
+merged = 0
+repo = 'soywod/himalaya'
 [[plugins]]
 lazy = 1
 repo = 'thinca/vim-singleton'
@@ -948,6 +953,12 @@ repo = 'ryanoasis/vim-devicons'
 
 [[plugins]]
 repo = 'kat0h/bufpreview.vim'
+
+[[plugins]]
+repo = 'thinca/vim-jautil'
+[[plugins]]
+merged = 0
+repo = 'skanehira/gh.vim'
 # [[plugins]]
 # repo = 'dbeniamine/vim-mail'
 # vim:set foldmethod=marker:'

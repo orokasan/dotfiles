@@ -1,4 +1,8 @@
 local vim = vim
+local lsp_installer = require("nvim-lsp-installer")
+
+local lsp_installer_servers = require'nvim-lsp-installer.servers'
+
 local nvim_lsp = require('lspconfig')
 local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
@@ -74,45 +78,127 @@ end
 --   setup_servers() -- reload installed servers
 --   vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
 -- end
+
+-- Register a handler that will be called for all installed servers.
+-- Alternatively, you may also register handlers on specific server instances instead (see example below).
+-- local efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
+-- nvim_lsp['efm'].setup{
+--     autostart = false,
+--     on_attach = on_attach ,
+--     -- cmd = { 'efm-langserver', '-c', efm_cpath },
+--     init_options = {documentFormatting = true},
+--     filetypes = {'markdown', 'text', 'txt','json','html', 'css'},
+--     };
+
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true;
-local servers = {"rls", "tsserver" , 'vimls', 'gopls', "pyright", "jedi_language_server","denols"}
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup {
-     capabilities = capabilities;
-     on_attach = on_attach,
-  }
-end
 
-local efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
-nvim_lsp['efm'].setup{
-    autostart = false,
-    on_attach = on_attach ,
-    -- cmd = { 'efm-langserver', '-c', efm_cpath },
-    init_options = {documentFormatting = true},
-    filetypes = {'markdown', 'text', 'txt','json','html', 'css'},
-    };
+lsp_installer.on_server_ready(function(server)
+    local default_opts = {
+        on_attach = on_attach,
+        capabilities = capabilities,
+    }
+    local server_opts = {
+        ["tsserver"] = function()
+            default_opts.autostart = false
+          end,
+        ["denols"] = function()
+            default_opts.autostart = false
+          end,
+        ["efm"] = function()
+            capabilities.textDocument.completion.completionItem = {}
+            default_opts.autostart = false
+            default_opts.cmd = {
+                vim.fn.stdpath("data") .. "/lsp_servers/efm/efm-langserver",
+                "-c",
+                vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml'),
+            }
+            default_opts.root_dir = nvim_lsp.util.find_git_ancestor
+            default_opts.single_file_support = true
+            default_opts.flags = {
+                debounce_text_changes = 150,
+            }
+            default_opts.filetypes = {
+                'markdown',
+                'text',
+                'txt',
+                'json',
+                'html',
+                'css',
+            }
+            default_opts.init_options = {
+                documentFormatting = true,
+            }
 
-local textlint = {
-                    lintCommand = "npx --no-install textlint -f unix --stdin --stdin-filename ${INPUT}",
-                    lintStdin = true,
-                    lintFormats = {"%f:%l:%c: %m [%trror/%r]"},
-                }
--- nvim_lsp['efm'].setup{
+            default_opts.on_attach = on_attach
+            default_opts.capabilities = capabilities
+
+            return default_opts
+        end,
+    }
+
+    -- (optional) Customize the options passed to the server
+    -- if server.name == "tsserver" then
+    --     opts.root_dir = function() ... end
+    -- end
+
+    -- This setup() function is exactly the same as lspconfig's setup function.
+    -- Refer to https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+
+    -- We check to see if any custom server_opts exist for the LSP server, if so, load them, if not, use our default_opts
+    server:setup(server_opts[server.name] and server_opts[server.name]() or default_opts)
+    vim.cmd([[ do User LspAttachBuffers ]])
+end)
+
+-- local servers = {"rls",  'vimls', 'gopls', "pyright", "jedi_language_server"}
+-- -- "tsserver" ,
+-- -- local servers = lsp_installer_servers.get_installed_server_names()
+
+-- for _, lsp in ipairs(servers) do
+--   nvim_lsp[lsp].setup {
+--      capabilities = capabilities;
+--      on_attach = on_attach,
+--   }
+-- end
+
+-- nvim_lsp['texlab'].setup{
 --     on_attach = on_attach ,
---     cmd = { 'efm-langserver'},
---      rootMarkers = {".git/"},
+--     build = {
+--           executable = 'lualatex',
+--           args = {"%f"},
+--           onSave = false,
+--           forwardSearchAfter = false,
+--         },
+--     }
+-- local efm_cpath = vim.fn.expand('~/AppData/Roaming/efm-langserver/config.yaml')
+-- nvim_lsp['efm'].setup{
+--     autostart = false,
+--     on_attach = on_attach ,
+--     -- cmd = { 'efm-langserver', '-c', efm_cpath },
 --     init_options = {documentFormatting = true},
---     settings = {
---         languages = {
---             text = {textlint},
---             markdown = {textlint},
---             txt = {textlint}
---         }
---     },
---   filetypes = { 'txt', 'text','markdown' }
--- };
+--     filetypes = {'markdown', 'text', 'txt','json','html', 'css'},
+--     };
 
--- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
---     vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
--- )
+-- local textlint = {
+--                     lintCommand = "npx --no-install textlint -f unix --stdin --stdin-filename ${INPUT}",
+--                     lintStdin = true,
+--                     lintFormats = {"%f:%l:%c: %m [%trror/%r]"},
+--                 }
+-- -- nvim_lsp['efm'].setup{
+-- --     on_attach = on_attach ,
+-- --     cmd = { 'efm-langserver'},
+-- --      rootMarkers = {".git/"},
+-- --     init_options = {documentFormatting = true},
+-- --     settings = {
+-- --         languages = {
+-- --             text = {textlint},
+-- --             markdown = {textlint},
+-- --             txt = {textlint}
+-- --         }
+-- --     },
+-- --   filetypes = { 'txt', 'text','markdown' }
+-- -- };
+
+-- -- vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+-- --     vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false }
+-- -- )

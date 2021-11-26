@@ -27,6 +27,9 @@ endfunction
 
 '''
 
+[[plugins]]
+repo = 'williamboman/nvim-lsp-installer'
+
 # [[plugins]]
 # # lazy = '1'
 # repo = 'hrsh7th/vim-vsnip'

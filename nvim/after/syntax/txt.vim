@@ -24,6 +24,7 @@ syn region  gihyoHeader4    start='^■■■■[^■]' end='$'
 syntax         match   gihyoRuler       "\(=\|-\|+\)\{50,120}"
 syntax         match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@A-Za-z_~]\+"
 syntax         match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
+syntax         match  gihyoUnderline '<s>.\{-}<\\s>'
 syntax         match  gihyoUnderline '▽.\{-}▽'
 syntax         match  gihyoUnderlineAlt '∨.\{-}∨'
 syntax         match  gihyoItalic        '◆.\{-}◆'

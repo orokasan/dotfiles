@@ -12,7 +12,7 @@ StartMaximizedWindow = false
 # Editor external font-family, font-size, and linespace.
 # https://github.com/rytkmt/RictyDiminished
 FontFamily = "HackGenNerd"
-FontSize = 10
+FontSize = 12
 Linespace = 0
 # # Goneovim has a cached rendering feature enabled to speed up the process.
 # # If you want to disable it, set it to false

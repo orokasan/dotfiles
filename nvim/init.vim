@@ -1,9 +1,9 @@
 "ork's vimrc
 set fileformats=unix,dos,mac
 set encoding=utf-8
-set fileencodings=utf-8,cp932,euc-jp
+set fileencodings=utf-8,ucs2le,ucs-2,iso-2022-jp,euc-jp,sjis,cp932
+runtime! C:\Users\t_kuriki\Downloads\nvui-win64\nvui\vim\plugin\*.vim
 " ------------------------------------------------------------------------------
-
 augroup vimrc
   autocmd!
 augroup END
@@ -56,12 +56,11 @@ if has('win32')
    " let g:python3_host_prog = 'C:\Python39\python.exe'
     let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 endif
-
 let mapleader = "\<Space>"
+if has('nvim')
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
-if has('nvim')
 let g:dein#lazy_rplugins=1
 let g:dein#default_options = { 'merged': v:true }
 let g:dein#install_max_processes = 8
@@ -79,30 +78,30 @@ if &runtimepath !~# '/dein.vim'
         execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
         let s:dein_is_initializing = 1
       endif
-    execute 'set runtimepath+=' . fnamemodify(s:dein_repo_dir, ':p')
 endif
+let s:dein_path =  fnamemodify(s:dein_repo_dir, ':p')
+execute 'set runtimepath+=' . s:dein_path
 
-    execute 'set runtimepath+=' . fnamemodify(s:dein_repo_dir, ':p')
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
 let s:exp_toml = '~/dotfiles/nvim/rc/dein_experimental.toml'
-let s:comp_toml = '~/dotfiles/nvim/rc/dein_comp.toml'
+let s:denops_toml = '~/dotfiles/nvim/rc/dein_denops.toml'
 let s:cmp_toml = '~/dotfiles/nvim/rc/dein_cmp.toml'
 let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
 let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:comp_toml])
+    call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:denops_toml])
+    if has('nvim')
     call dein#load_toml(s:toml,      {'lazy': 0})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    " call dein#load_toml(s:exp_toml, {'merged': 0})
-    call dein#load_toml(s:comp_toml, {'merged': 0})
-    " call dein#load_toml(s:cmp_toml, {'merged': 0})
-if has('nvim')
     call dein#load_toml(s:lsp_toml,  {'merged': 0})
-    call dein#load_toml(s:lua_toml,  {'on_if': has('nvim'), 'merged': 0})
-endif
+    call dein#load_toml(s:lua_toml,  {'merged': 0})
+    endif
+    " call dein#load_toml(s:exp_toml, {'merged': 0})
+    call dein#load_toml(s:denops_toml, {'merged': 0})
+    " call dein#load_toml(s:cmp_toml, {'merged': 0})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -110,36 +109,34 @@ endif
         call dein#call_hook('post_source')
     endif
 endif
-
-filetype plugin indent on
-syntax on
-
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-
 " for dein dein#util#_check_vimrcs() bug workaround
+
 au! dein BufWritePost
-set guifont:HackGenNerd:h12
 if s:dein_is_initializing
     call dein#install()
     let s:dein_is_initializing = 0
     source $myvimrc
-    finish
 endif
+
 endif
+filetype plugin indent on
+syntax on
 
 set notermguicolors
 set swapfile
 set undofile
 if !has('nvim')
-set directory=~/.backup/vim/swap
-set undodir=~/.backup/vim/undo " put together undo files
-set backupdir=~/.backup/vim/backup " put together undo files
+    set directory=~/.backup/vim/swap
+    set undodir=~/.backup/vim/undo " put together undo files
+    set backupdir=~/.backup/vim/backup " put together undo files
+else
+    set directory=~/.backup/nvim/swap
+    set undodir=~/.backup/nvim/undo " put together undo files
+    set backupdir=~/.backup/nvim/backup " put together undo files
 endif
-set directory=~/.backup/nvim/swap
-set undodir=~/.backup/nvim/undo " put together undo files
-set backupdir=~/.backup/nvim/backup " put together undo files
 set autoread                " reload editing file if the file changed externally
 set backup
 "}}}
@@ -190,6 +187,7 @@ set matchtime=1     " highlighting long
 set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕
 set nojoinspaces
 set textwidth=0             " don't let insert auto indentation
+set updatecount=50
 set tabstop=4               " number of spaces inserted by <TAB>
 set expandtab
 set softtabstop=-1
@@ -304,7 +302,6 @@ function! s:improved_gt() abort
         normal! gt
     endif
 endfunction
-nmap <C-j> <NOP>
 " matchit mapping
 nmap <TAB>  %
 nmap g<TAB> g%
@@ -350,6 +347,7 @@ if !exists('*s:source_script')  "{{{
           \)
   endfunction
 endif  "}}}
+nnoremap , @q
 "}}}
 "Key map - editting {{{
 " emacs like mapping on insert mode
@@ -580,16 +578,18 @@ endfunction  "}}}
 " }}}
 " +GUI {{{
 if has('GUI')
-     let &guioptions = substitute(&guioptions, '[mTrRlLbeg]', '', 'g')
+     let &guioptions = substitute(&guioptions, '[mTlLbeg]', '', 'g')
     set guioptions+=Mc!
     """Nm秒後にカーソル点滅開始
     "set guicursor=n:blinkwait2000
     "let no_buffers_menu = 1
-    set lines=40 "ウィンドウの縦幅
-    set columns=80 " ウィンドウの横幅
+    set lines=45 "ウィンドウの縦幅
+    set columns=150 " ウィンドウの横幅
     winpos 500 10 " ウィンドウの起動時の位置
     set guifont:HackGenNerd:h12
     set renderoptions=type:directx,renmode:5,geom:1
+    set imsearch=0
+    set statusline=%<%F\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 endif
 
 "}}}
@@ -611,6 +611,7 @@ endif
 
 if !has('nvim')
     set runtimepath+=~\.cache\dein\repos\github.com\thinca\vim-singleton
+    set runtimepath+=~\.cache\dein\repos\github.com\mattn\webapi-vim
 	call singleton#enable()
     finish
 endif
@@ -651,10 +652,9 @@ else
 set rtp+=$VIM/vim82
     autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
-    finish
 endif
     " show complettion popup in commandline.
-set display+=lastline,msgsep
+    set display=lastline,msgsep,truncate
 set nrformats+=unsigned
 set wildoptions=pum
 set winblend=20
@@ -678,17 +678,21 @@ command! -nargs=* SearchYank call s:search(<q-args>)
 " for neovide initialize hook
 if exists('neovide') || exists('nvy')
     " フォント変更後に画面を再描画
-    let g:neovide_refresh_rate=120
+set guifont:HackGenNerd:h12
+    let g:neovide_refresh_rate=100
     let g:neovide_transparency=0.90
     " let g:neovide_cursor_antialiasing=v:true
-    cd ~/
-    let g:neovide_extra_buffer_frames=4
+    " cd ~/
+    " let g:neovide_extra_buffer_frames=4
+    let g:neovide_cursor_trail_size=0
 endif
 
 au BufRead,BufNew * ++once let g:neovide_cursor_trail_length=0 | let g:neovide_cursor_animation_length=0
 set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap
 autocmd FileType text syntax sync minlines=50
 autocmd FileType markdown syntax sync minlines=50
+autocmd FileType lua setlocal tabstop=2
+autocmd FileType typescript setlocal tabstop=2
 nnoremap <silent><C-q> <Cmd>tabclose<CR>
 nnoremap <MiddleMouse> <Cmd>close<CR>
 nnoremap S :%s/
@@ -825,16 +829,16 @@ function! NumCheckZen()
 g/\v(１|２|３|４|５|６|７|８|９|０)/
 endfunction
 function! NumZentohan() abort
-%s/１/〓1/eg
-%s/２/〓2/eg
-%s/３/〓3/eg
-%s/４/〓4/eg
-%s/５/〓5/eg
-%s/６/〓6/eg
-%s/７/〓7/eg
-%s/８/〓8/eg
-%s/９/〓9/eg
-%s/０/〓0/eg
+%s/１/1/eg
+%s/２/2/eg
+%s/３/3/eg
+%s/４/4/eg
+%s/５/5/eg
+%s/６/6/eg
+%s/７/7/eg
+%s/８/8/eg
+%s/９/9/eg
+%s/０/0/eg
 endfunction
 "(１|２|３|４|５|６|７|８|９|０)
 
@@ -887,10 +891,6 @@ autocmd CmdWinEnter [:>] syntax sync minlines=1 maxlines=1
 " imap <C-j> <Plug>(eskk:toggle)
 " cmap <C-j> <Plug>(eskk:toggle)
 
-imap <C-j> <Plug>(skkeleton-toggle)
-cmap <C-j> <Plug>(skkeleton-toggle)
-
-
 hi! link DiagnosticsVirtualTextError Error
 hi! link DiagnosticsVirtualTextWarning Question
 sign define DiagnosticSignError text= texthl=DiagnosticVirtualTextError linehl= numhl=
@@ -898,70 +898,165 @@ sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl=
 
 " autocmd CmdlineLeave [:>/?=@] if get(g:, 'skkeleton#enabled', v:false) | call skkeleton#request('disable', []) | endif
 
-autocmd vimrc User skkeleton-enable-post call s:highlight_imesign_on()
-autocmd vimrc User skkeleton-disable-post call s:highlight_imesign_off()
-
-function! s:highlight_imesign_off()
-if mode() is# 'c' | return | endif
-    call sign_unplace('Ins',{'id': 15})
-endfunction
-
-function! s:insert_highlight() abort
-    call sign_unplace('Ins')
-    if skkeleton#is_enabled()
-        call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
-    else
-        call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
-    endif
-endfunction
-
-let s:insertpos = 0
-
-au vimrc InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()
-au vimrc CursorMovedI * if s:insertpos != line('.') | call s:insert_highlight() | let s:insertpos = line('.') | endif
-if has('nvim')
-    au vimrc InsertLeavePre * call sign_unplace('Ins')
-else
-    au vimrc InsertLeave * call sign_unplace('Ins')
+if exists("g:nvui")
+set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver20-Cursor,r-cr:hor20
+NvuiAnimationsEnabled 0
+set guifont:HackGenNerd:h12
+NvuiOpacity 0.93
+NvuiCursorFrametime 0
+NvuiFrameless 1
+NvuiTitlebarFontFamily RockWell
+NvuiTitlebarFontSize 11
+NvuiTitlebarSeparator ' - '
+set shortmess+=I
+set notitle
+nnoremap <F1> <cmd>NvuiToggleFullscreen<CR>
+let g:nvui_tb_separator = ' - '
+" NvuiFrameless 1
+" NvuiTitlebarFontFamily Arial
+" NvuiTitlebarFontSize 11
+" NvuiTitlebarFg #5e6482
+" NvuiTitlebarBg #0f1117
 endif
+let g:jupytext_enable = 0
 
-function! s:highlight_imesign_on()
-    if mode() is# 'c' | return | endif
-    call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
-endfunction
-" au InsertLeave * call sign_unplace('Ins')
-let s:insert_icon = '▶'
-hi InInsertSign gui=bold guifg=#84a0c6
-hi InEskkKanaSign gui=bold guifg=#e2a478
-call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
-call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
-call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 51 })
+" lua require('gitsigns').setup()
+" lua require('nvim-autopairs').setup{}
 " lua <<EOF
-"     require('telescope').setup{
-"       defaults = {
-"           border = false,
-"         -- Default configuration for telescope goes here:
-"         -- config_key = value,
-"         -- ..
-"       },
-"       pickers = {
-"         -- Default configuration for builtin pickers goes here:
-"         -- picker_name = {
-"         --   picker_config_key = value,
-"         --   ...
-"         -- }
-"         -- Now the picker_config_key will be applied every time you call this
-"         -- builtin picker
-"       },
-"       extensions = {
-"         -- Your extension configuration goes here:
-"         -- extension_name = {
-"         --   extension_config_key = value,
-"         -- }
-"         -- please take a look at the readme of the extension you want to configure
-"       }
-"     }
+" require('telescope').setup{
+"   defaults = {
+"       border = false,
+"     -- Default configuration for telescope goes here:
+"     -- config_key = value,
+"     -- ..
+"   },
+"   pickers = {
+"     -- Default configuration for builtin pickers goes here:
+"     -- picker_name = {
+"     --   picker_config_key = value,
+"     --   ...
+"     -- }
+"     -- Now the picker_config_key will be applied every time you call this
+"     -- builtin picker
+"   },
+"   extensions = {
+"     -- Your extension configuration goes here:
+"     -- extension_name = {
+"     --   extension_config_key = value,
+"     -- }
+"     -- please take a look at the readme of the extension you want to configure
+"   }
+" }
 " EOF
 " hi! link TelescopeNormal Pmenu
 
+set inccommand=
+
+function! GetRaw()
+let isbn = expand('<cword>')
+let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
+let s = json_decode(raw)[0]
+echom s
+endfunction
+function! Isbn()
+let hankei = {
+\ 'B108': 'A5',
+\ 'B109': 'B5',
+\ 'B110': 'B6',
+\ 'B111': '文庫',
+\ 'B112': '新書',
+\ 'B119': '46',
+\ 'B120': '46変形',
+\ 'B121': 'A4',
+\ 'B122': 'A4変形',
+\ 'B123': 'A5変形',
+\ 'B124': 'B5変形',
+\ 'B125': 'B6変形',
+\ 'B126': 'AB',
+\ 'B127': 'B7',
+\ 'B128': '菊',
+\ 'B129': '菊変形',
+\ 'B130': 'B4',
+\ }
+
+let output = {}
+let isbn = expand('<cword>')
+let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
+let s = json_decode(raw)[0]
+if type(s) != v:t_dict
+    echom 'no data'
+    return
+endif
+for i in keys(s.summary)
+    let output[i] = s.summary[i]
+endfor
+try
+let output['Price'] = s.onix.ProductSupply.SupplyDetail.Price[0].PriceAmount
+let output['hankei'] = hankei[s.onix.DescriptiveDetail.ProductFormDetail]
+let output['PageNum'] = s.onix.DescriptiveDetail.Extent[0].ExtentValue
+let output['AuthorBio'] = s.onix.DescriptiveDetail.Contributor[0].BiographicalNote
+catch
+endtry
+try
+let output['見出し'] = s.onix.CollateralDetail.TextContent[0].Text
+let output['概要'] = s.onix.CollateralDetail.TextContent[1].Text
+let output['目次'] = s.onix.CollateralDetail.TextContent[2].Text
+catch
+endtry
+let isbn10 = substitute(isbn,'^978','','')
+let output['Amazon'] = 'https://amazon.co.jp/dp/' .. isbn10
+let koumoku = [
+    \ 'isbn',
+    \ 'title',
+    \ 'author',
+    \ 'publisher',
+    \ 'pubdate',
+    \ 'PageNum',
+    \ 'Price',
+    \ 'hankei',
+    \ 'Amazon',
+    \ '概要',
+    \ '見出し',
+    \ '目次',
+    \ 'AuthorBio',
+    \ 'cover',
+    \ 'series',
+    \ ]
+
+" if exists('s:id')
+    " call win_gotoid(s:id)
+    " edit `=tempname()`
+" else
+split
+edit `=tempname()`
+" let s:id = win_getid()
+" endif
+setlocal filetype=isbn
+  setlocal bufhidden=hide
+  setlocal buftype=nofile
+  setlocal nobuflisted
+  setlocal nofoldenable
+  setlocal nolist
+  setlocal nomodeline
+  setlocal nospell
+  setlocal noswapfile
+nnoremap <buffer> q :quit<CR>
+for k in koumoku
+    if has_key(output, k)
+        if match(output[k], '\n') > -1
+            call append(line('$'), '')
+            call append(line('$'), k .. ': -----')
+            let o = split(output[k], '\n')
+            for l in o
+                call append(line('$'), l)
+            endfor
+            call append(line('$'), '-----')
+            call append(line('$'), '')
+        else
+            call append(line('$'), k . ': ' . output[k])
+        endif
+    endif
+endfor
+endfunction
+nmap <silent> gm <cmd>call Isbn()<CR>
 " vim:set foldmethod=marker:
