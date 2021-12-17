@@ -1,7 +1,7 @@
-# [[plugins]]
-# repo = 'nvim-telescope/telescope.nvim'
-# lazy = 1
-# on_lua = 'telescope'
+[[plugins]]
+repo = 'nvim-telescope/telescope.nvim'
+lazy = 1
+on_lua = 'telescope'
 # hook_add = '''
 # lua <<EOF
 # require('telescope').setup{
@@ -32,14 +32,14 @@
 # hi! link TelescopeNormal Pmenu
 # '''
 
-# [[plugins]]
-# repo = 'nvim-lua/popup.nvim'
-# lazy = 1
-# on_lua = 'popup'
-# [[plugins]]
-# repo = 'nvim-lua/plenary.nvim'
-# lazy = 1
-# on_lua = 'plenary'
+[[plugins]]
+repo = 'nvim-lua/popup.nvim'
+lazy = 1
+on_lua = 'popup'
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+lazy = 1
+on_lua = 'plenary'
 # [[plugins]]
 # on_lua = 1
 # repo ='lewis6991/gitsigns.nvim'
@@ -329,3 +329,50 @@ EOF
 # [[plugins]]
 # merged = 0
 # repo = 'hoob3rt/lualine.nvim'
+# [[plugins]]
+# repo = 'kevinhwang91/nvim-hlslens'
+
+[[plugins]]
+repo = 'nvim-lua/lsp-status.nvim'
+
+[[plugins]]
+repo = 'delphinus/hop.nvim'
+rev = 'feature/migemo'
+
+[[plugins]]
+repo = 'romgrk/nvim-treesitter-context'
+hook_add = '''
+lua <<EOF
+require'treesitter-context'.setup{
+    enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+    throttle = true, -- Throttles plugin updates (may improve performance)
+    max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+    patterns = { -- Match patterns for TS nodes. These get wrapped to match at word boundaries.
+        -- For all filetypes
+        -- Note that setting an entry here replaces all other patterns for this entry.
+        -- By setting the 'default' entry below, you can control which nodes you want to
+        -- appear in the context window.
+        default = {
+            'class',
+            'function',
+            'method',
+            -- 'for', -- These won't appear in the context
+            -- 'while',
+            -- 'if',
+            -- 'switch',
+            -- 'case',
+        },
+        -- Example for a specific filetype.
+        -- If a pattern is missing, *open a PR* so everyone can benefit.
+        --   rust = {
+        --       'impl_item',
+        --   },
+    },
+}
+EOF
+'''
+[[plugins]]
+repo = 'f-person/git-blame.nvim'
+hook_add = '''
+let g:gitblame_enabled = 0
+'''

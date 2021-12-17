@@ -1,6 +1,6 @@
 function! diagnostic#get_diagnostic(bufnr) abort
 lua <<EOF
-tbl = vim.lsp.diagnostic.get(a:bufnr)
+tbl = vim.diagnostic.get(a:bufnr)
 for key, val in pairs(tbl) do
 vim.sval.range.start.line)
 print(val.message)

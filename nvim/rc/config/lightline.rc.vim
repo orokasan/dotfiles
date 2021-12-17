@@ -40,7 +40,7 @@ let g:lightline = {
         \ 'denitefilter' : 'LLDeniteFilter',
         \ 'progress': 'LLLspProgress',
         \ 'quickrun': 'LL_quickrun_running',
-        \ 'searchcount': 'LastSearchCount'
+        \ 'searchcount': 'LastSearchCount',
     \ },
     \ 'component_expand': {
         \ 'buffers': 'lightline#bufferline#buffers',
@@ -135,6 +135,8 @@ function! s:threshold(n) abort
         \ a:n == 2 ? w > s/3 : w > s/4
 endfunction
 let s:diagnostics_counts = {}
+autocmd DiagnosticChanged * call lightline#update()
+" autocmd User LspRequest lightline#update()
 if has('nvim')
 function! LLLspProgress() abort
     " let p = luaeval('vim.lsp.util.get_progress_messages()')
@@ -148,21 +150,22 @@ function! LLLspProgress() abort
     " return title .. '(' .. perc .. '%)' .. ':' .. mes
     return ''
 endfunction
-autocmd dein User DiagnosticsChanged  call lightline#update()
+" autocmd dein DiagnosticChanged  call lightline#update()
 " autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts() | call lightline#update()
 endif
 " vim-lsp or nvim-lsp
 function! LLLspError() abort
     if luaeval('vim.lsp.buf.server_ready()')
-        let e = luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")
+        let bufnr = bufnr('%')
+        let e = luaeval("vim.inspect(#vim.diagnostic.get(_A[1], {_A[2]}))", [bufnr, 1])
         return e ? '' . e : ''
     else
         return ''
     endif
 endfunction
 function! LLLspWarning() abort
-if luaeval('vim.lsp.buf.server_ready()')
-    let w = luaeval("vim.lsp.util.buf_diagnostics_count(\"Warning\")")
+    if luaeval('vim.lsp.buf.server_ready()')
+        let w = luaeval("vim.inspect(#vim.diagnostic.get(_A[1], {_A[2]}))", [bufnr, 2])
     return  w ? '' . w : ''
 else
     return ''

@@ -5,29 +5,23 @@ repo = 'vim-denops/denops.vim'
 repo = 'Shougo/ddc.vim'
 lazy = 1
 depends = ['context_filetype.vim', 'denops.vim']
-on_event = 'InsertEnter'
+on_event = ['InsertEnter', 'CmdlineEnter']
 hook_source = '''
-" <TAB>: completion.
-inoremap <silent><expr> <TAB>
-\ pumvisible() ? "\<C-n>" :
-\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-\ "\<TAB>" : ddc#manual_complete()
 " Use around source.
 " https://github.com/Shougo/ddc-around
 " Use matcher_head and sorter_rank.
 " https://github.com/Shougo/ddc-matcher_head
 " https://github.com/Shougo/ddc-sorter_rank
+
 call ddc#custom#patch_global('sourceOptions', {
       \ '_': {
-      \   'matchers': ['matcher_fuzzy'],
-      \   'sorters': ['sorter_rank']},
-      \   'converters': ['converter_remove_overlap'],
+          \ 'matchers': ['matcher_fuzzy'],
+          \  'sorters': ['sorter_fuzzy'],
+          \   'converters': ['converter_remove_overlap', 'converter_truncate'],
+          \ 'ignoreCase': v:true,
+          \ },
       \ 'skkeleton': {'mark': 'skk', 'matchers': ['skkeleton'], 'sorters': []},
       \ })
-
-    call ddc#custom#patch_global({
-    \ 'smartCase': v:true,
-    \ })
 
 call ddc#custom#patch_global('sourceOptions', {
       \ 'nvim-lsp': {
@@ -48,26 +42,61 @@ call ddc#custom#patch_global('sourceParams', {
 call ddc#custom#patch_global('sourceParams', {
       \ 'around': {'maxSize': 500},
       \ })
+
+
 " Customize settings on a filetype
-call ddc#custom#patch_global('sources', ['nvim-lsp','around','buffer','skkeleton','file'])
-"if dein#tap('pum.vim')
-"call ddc#custom#patch_global({
-"\ 'completionMenu': 'pum.vim',
-"\ })
-	"inoremap <silent><expr> <C-p>
-	"\ pumvisible() ? '<C-p>' : ddc#manual_complete()
-inoremap <silent><expr> <C-h> <SID>ddc_smart_close_popup()."\<C-h>"
-inoremap <silent><expr> <BS> <SID>ddc_smart_close_popup()."\<BS>"
-function! s:ddc_smart_close_popup() abort
-  return pumvisible() ? "\<C-e>" : ''
+call ddc#custom#patch_global('sources', [
+\'nvim-lsp',
+\ 'deoppet',
+\ 'file',
+\ 'buffer',
+\ 'around',
+\ 'skkeleton',
+\ ])
+" if dein#tap('pum.vim')
+" call ddc#custom#patch_global({
+" \ 'completionMenu': 'pum.vim',
+" \ })
+" endif
+" inoremap <silent><expr> <C-h> <SID>ddc_smart_close_popup()."\<C-h>"
+" inoremap <silent><expr> <BS> <SID>ddc_smart_close_popup()."\<BS>"
+" function! s:ddc_smart_close_popup() abort
+"   return pumvisible()  ? "\<C-e>" : ''
+" endfunction
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+
+function! s:my_cr_function() abort "{{{
+  return pumvisible()  ? "\<CR>": lexima#expand('<CR>', 'i')
 endfunction
 
+inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
+inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
+
+function! s:my_bs_function() abort "{{{
+  return lexima#expand('<BS>', 'i')
+endfunction "}}}
+
+" <TAB>: completion.
+inoremap <silent><expr> <TAB> pumvisible()  ? "\<C-n>" : lexima#expand('<TAB>', 'i')
+inoremap <silent><expr> <S-TAB>
+\ pumvisible()  ? "\<C-p>" :
+\ "\<BS>"
+
+call ddc#custom#patch_global('filterParams', {
+      \ 'converter_truncate': {'maxMenuWidth': 35},
+      \ })
 call ddc#custom#patch_global('sourceOptions', {
     \ 'file': {
     \   'mark': 'F',
     \   'isVolatile': v:true,
-    \   'forceCompletionPattern': '\S/\S*',
+    \ 'minAutoCompleteLength': 3,
+    \   'forceCompletionPattern': '/\S*',
     \ }})
+call ddc#custom#patch_global('sourceParams', {
+      \ 'file': {
+        \   'trailingSlashAbbr': v:true,
+        \ }})
+
 call ddc#custom#patch_filetype(
     \ ['ps1', 'dosbatch', 'autohotkey', 'registry'], {
     \ 'sourceOptions': {
@@ -81,36 +110,54 @@ call ddc#custom#patch_filetype(
     \   },
     \ }})
 
-" call ddc#custom#patch_global('autoCompleteEvents',
-"     \ ['InsertEnter', 'TextChangedI', 'TextChangedP', 'CmdlineChanged'])
-  
-" cnoremap <Tab>   <Cmd>call pum#map#insert_relative(+1)<CR>
-" cnoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
-" cnoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
-" cnoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
-" cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
-" cnoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
+" call ddc#custom#patch_global('autoCompleteEvents', [
+"     \ 'InsertEnter', 'TextChangedI', 'TextChangedP',
+"     \ 'CmdlineEnter', 'CmdlineChanged',
+"     \ ])
+" 
 " nnoremap :       <Cmd>call CommandlinePre()<CR>:
+" 
 " function! CommandlinePre() abort
+"   " Note: It disables default command line completion!
+"   cnoremap <expr> <Tab>
+"   \ pumvisible()  ? '<Cmd>call pum#map#insert_relative(+1)<CR>' :
+"   \ ddc#manual_complete()
+"   cnoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
+"   cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
+"   cnoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
+" 
 "   " Overwrite sources
 "   let s:prev_buffer_config = ddc#custom#get_buffer()
-"   call ddc#custom#patch_buffer('sources', ['cmdline-history'])
-  
+"   call ddc#custom#patch_buffer('sources',
+"           \ ['file', 'cmdline', 'necovim', ])
+" call ddc#custom#patch_buffer('sourceOptions', {
+"       \ '_': {
+"           \ 'matchers': ['matcher_length', 'matcher_fuzzy'],
+"           \ 'sorters': [],
+"           \ },
+"     \})
+" 
 "   autocmd User DDCCmdlineLeave ++once call CommandlinePost()
-  
+" 
 "   " Enable command line completion
 "   call ddc#enable_cmdline_completion()
+"   call ddc#enable()
 " endfunction
 " function! CommandlinePost() abort
 "   " Restore sources
 "   call ddc#custom#set_buffer(s:prev_buffer_config)
+"   cunmap <Tab>
 " endfunction
-
+" 
 call ddc#enable()
 '''
 
 [[plugins]]
 repo = 'Shougo/ddc-cmdline-history'
+on_source = ['ddc.vim']
+
+[[plugins]]
+repo = 'Shougo/ddc-cmdline'
 on_source = ['ddc.vim']
 
 [[plugins]]
@@ -129,9 +176,9 @@ on_source = ['ddc.vim']
 repo = 'matsui54/ddc-buffer'
 on_source = ['ddc.vim']
 
-[[plugins]]
-repo = 'matsui54/ddc-matcher_fuzzy'
-on_source = ['ddc.vim']
+# [[plugins]]
+# repo = 'matsui54/ddc-matcher_fuzzy'
+# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-nvim-lsp'
@@ -160,12 +207,13 @@ call skkeleton#config({
     \ 'globalJisyo': expand('~/.skk/SKK-JISYO.L'),
     \ 'userJisyo': expand('~/.skk/.skk-jisyo'),
     \ 'eggLikeNewline': v:true,
-\ 'completionRankFile': expand('~/temp/.skkeleton'),
     \ 'registerConvertResult': v:true,
     \ 'showCandidatesCount': 3,
     \ 'immediatelyCancel': v:false,
+    \ 'keepState': v:true,
     \})
 
+" \ 'completionRankFile': expand('~/temp/.skkeleton'),
 call skkeleton#register_kanatable('rom', {
     \ '\<C-w>': 'deleteChar',
        \ "z\<Space>": ["\u3000", ''],
@@ -196,6 +244,17 @@ call skkeleton#register_kanatable('rom', {
 	\ 'z7': ['７', ''],
 	\ 'z8': ['８', ''],
 	\ 'z9': ['９', ''],
+	\ 'z0': ['０', ''],
+	\ 'zz0': ['⓪ ', ''],
+	\ 'zz1': ['①', ''],
+	\ 'zz2': ['②', ''],
+	\ 'zz3': ['③', ''],
+	\ 'zz4': ['④', ''],
+	\ 'zz5': ['⑤', ''],
+	\ 'zz6': ['⑥', ''],
+	\ 'zz7': ['⑦', ''],
+	\ 'zz8': ['⑧', ''],
+	\ 'zz9': ['⑨', ''],
 	\ 'z-': ['-', ''],
 	\ 'z(': ['（', ''],
 	\ 'z)': ['）', ''],
@@ -265,6 +324,11 @@ repo = 'LumaKernel/ddc-file'
 # inoremap <PageUp>   <Cmd>call pum#map#insert_relative_page(-1)<CR>
 # '''
 
-# [[plugins]]
-# repo = 'tani/ddc-fuzzy'
-# on_source = ['ddc.vim']
+[[plugins]]
+repo = 'Shougo/ddc-matcher_length'
+[[plugins]]
+repo = 'tani/ddc-fuzzy'
+on_source = ['ddc.vim']
+
+[[plugins]]
+repo = 'matsui54/ddc-converter_truncate'

@@ -140,7 +140,7 @@ endfunction
 "     \ dirmark/add<CR>
 " move next candidate
 nnoremap <silent> [denite]. <Cmd>Denite
-    \ -buffer-name=float
+    \ -buffer-name=default
     \ -resume
     \ -cursor-pos=+1
     \ -immediately
@@ -162,7 +162,7 @@ nnoremap <silent> [denite]c <Cmd>Denite
 "     \ <CR>
 nnoremap <silent> [denite], <Cmd>Denite
     \ -resume
-    \ -buffer-name=quickfix
+    \ -buffer-name=default
     \ -cursor-pos=-1
     \ -immediately
     \ <CR>

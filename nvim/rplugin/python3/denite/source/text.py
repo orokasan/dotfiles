@@ -12,6 +12,7 @@ HIGHLIGHT_SYNTAX = [
     {'name': 'lnum',     'link': 'Comment',  're': r'\d\+\s*:\s'},
 ]
 
+
 class Source(Base):
     def __init__(self, vim):
         super().__init__(vim)
@@ -35,7 +36,7 @@ class Source(Base):
         candidate = []
         for h in header:
             candidate.append(self._convert(context, h))
-        return  candidate
+        return candidate
 
     def _convert(self, context, header):
         mark = context['__mark']
@@ -82,7 +83,7 @@ class Source(Base):
                 if limit_level and level > limit_level:
                     continue
                 headers.append({
-                    'line':x,
+                    'line': x,
                     'level': level,
                     'text': text,
                     'lnum': i + 1,

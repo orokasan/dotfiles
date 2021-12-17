@@ -22,10 +22,6 @@ hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 # on_if = '!has("kaoriya")'
 # repo = 'vim-jp/vimdoc-ja'
 
-[[plugins]]
-repo = 'fuenor/JpFormat.vim'
-hook_add = '''
-'''
 
 [[plugins]]
 repo = 'tyru/skkdict.vim'
@@ -54,28 +50,28 @@ nnoremap ! <cmd>Switch<CR>
 "     \ ]
 '''
 
-[[plugins]]
-repo =  'orokasan/jasegment.vim'
-hook_add = ''' "{{{
-let g:jasegment#model='knbc_bunsetu'
-let g:jasegment_no_default_key_mappings = 1
-let g:jasegment#highlight = 1
-nmap <silent> E <Plug>JaSegmentMoveNE
-nmap <silent> W <Plug>JaSegmentMoveNW
-nmap <silent> B <Plug>JaSegmentMoveNB
-xmap <silent> E <Plug>JaSegmentMoveVE
-xmap <silent> W <Plug>JaSegmentMoveVW
-xmap <silent> B <Plug>JaSegmentMoveVB
-"omap <silent><buffer> aW <Plug>JaSegmentTextObjA
-"omap <silent><buffer> iW <Plug>JaSegmentTextObjI
-"xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
-"xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
-'''# }}} 
+# [[plugins]]
+# repo =  'orokasan/jasegment.vim'
+# hook_add = ''' "{{{
+# let g:jasegment#model='knbc_bunsetu'
+# let g:jasegment_no_default_key_mappings = 1
+# let g:jasegment#highlight = 1
+# nmap <silent> E <Plug>JaSegmentMoveNE
+# nmap <silent> W <Plug>JaSegmentMoveNW
+# nmap <silent> B <Plug>JaSegmentMoveNB
+# xmap <silent> E <Plug>JaSegmentMoveVE
+# xmap <silent> W <Plug>JaSegmentMoveVW
+# xmap <silent> B <Plug>JaSegmentMoveVB
+# "omap <silent><buffer> aW <Plug>JaSegmentTextObjA
+# "omap <silent><buffer> iW <Plug>JaSegmentTextObjI
+# "xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
+# "xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
+# '''# }}} 
 
 [[plugins]]
 on_if = '!has("kaoriya")'
-# repo = 'deton/jasentence.vim'
-repo = 'orokasan/jasentence.vim'
+repo = 'deton/jasentence.vim'
+# repo = 'orokasan/jasentence.vim'
 # lazy = 1
 # on_map = { nox = '<Plug>(JaSentence' }
 hook_add = '''
@@ -245,17 +241,11 @@ on_if = 'has("nvim")'
 on_source = ['vim-quickrun']
 repo = 'lambdalisue/vim-quickrun-neovim-job'
 
-# [[plugins]]
-# repo = 'itchyny/vim-parenmatch'
-# hook_add = '''
-# let g:parenmatch_highlight = 0
-# autocmd BufEnter * call s:enable_parenmatch()
-# function! s:enable_parenmatch() abort
-# let g:parenmatch_highlight = 1
-# call parenmatch#highlight()
-# hi! link ParenMatch MatchParen
-# endfunction
-# '''
+[[plugins]]
+repo = 'itchyny/vim-parenmatch'
+hook_add = '''
+hi! link ParenMatch MatchParen
+'''
 
 # [[plugins]]
 # ## only for incsearch-migemo.vim
@@ -286,31 +276,31 @@ repo = 'chemzqm/denite-extra'
 # " autocmd dein TextYankPost * call neoyank#update()
 # '''
 
-# [[plugins]]
-# repo = 'airblade/vim-gitgutter'
-# lazy = 1
-# on_event = 'BufRead'
-# hook_add = '''
-# let g:gitgutter_sign_added = '++'
-# let g:gitgutter_sign_modified = '~~'
-# let g:gitgutter_sign_removed = '--'
-# let g:gitgutter_sign_removed_first_line = '__'
-# let g:gitgutter_sign_modified_removed = '+-'
-# let g:gitgutter_sign_priority = 0
-# let g:gitgutter_preview_win_floating = 0
-# autocmd dein ColorScheme * highlight link GitGutterAdd String
-# autocmd dein ColorScheme * highlight link GitGutterChange Constant
-# nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
-# nmap <Leader>xx <Plug>(GitGutterStageHunk)
-# nmap <Leader>xu <Plug>(GitGutterUndoHunk)
-# '''
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+lazy = 1
+on_event = 'BufRead'
+hook_add = '''
+let g:gitgutter_sign_added = '++'
+let g:gitgutter_sign_modified = '~~'
+let g:gitgutter_sign_removed = '--'
+let g:gitgutter_sign_removed_first_line = '__'
+let g:gitgutter_sign_modified_removed = '+-'
+let g:gitgutter_sign_priority = 0
+let g:gitgutter_preview_win_floating = 0
+autocmd dein ColorScheme * highlight link GitGutterAdd String
+autocmd dein ColorScheme * highlight link GitGutterChange Constant
+nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
+nmap <Leader>xx <Plug>(GitGutterStageHunk)
+nmap <Leader>xu <Plug>(GitGutterUndoHunk)
+'''
 
-# [[plugins]]
-# repo = 'glacambre/firenvim'
-# # on_if = 'has("nvim")'
-# # hook_post_update = 'call firenvim#install(0)'
-# hook_add = '''
-# '''
+[[plugins]]
+repo = 'glacambre/firenvim'
+# on_if = 'has("nvim")'
+# hook_post_update = 'call firenvim#install(0)'
+hook_add = '''
+'''
 
 # [[plugins]]
 # # colorscheme seagull
@@ -940,16 +930,16 @@ nmap 'rr vab'r
 # let g:matchup_matchparen_deferred = 1
 # '''
 
-[[plugins]]
-rtp = 'vim'
-merged = 0
-repo = 'soywod/himalaya'
+# [[plugins]]
+# rtp = 'vim'
+# merged = 0
+# repo = 'soywod/himalaya'
 [[plugins]]
 lazy = 1
 repo = 'thinca/vim-singleton'
 
-[[plugins]]
-repo = 'ryanoasis/vim-devicons'
+# [[plugins]]
+# repo = 'ryanoasis/vim-devicons'
 
 [[plugins]]
 repo = 'kat0h/bufpreview.vim'
@@ -959,6 +949,56 @@ repo = 'thinca/vim-jautil'
 [[plugins]]
 merged = 0
 repo = 'skanehira/gh.vim'
+
+# [[plugins]]
+# repo = 'chentau/marks.nvim'
+# hook_add = '''
+
+# '''
+
+[[plugins]]
+repo = 'dstein64/vim-win'
+hook_add='''
+nmap <C-Space> <Plug>WinWin
+" map <C-w> :Win 1<CR>
+let g:win_disable_version_warning = 1
+let g:win_ext_command_map = {
+      \   'c': 'wincmd c',
+      \   'C': 'close!',
+      \   'q': 'Win#exit',
+      \   'Q': 'quit',
+      \   'v': 'wincmd v',
+      \   's': 'wincmd s',
+      \   'n': 'bnext',
+      \   'N': 'bnext!',
+      \   'p': 'bprevious',
+      \   'P': 'bprevious!',
+      \   "\<c-n>": 'tabnext',
+      \   "\<c-p>": 'tabprevious',
+      \   '=': 'wincmd =',
+      \   't': 'tabnew',
+      \   'x': 'Win#exit',
+      \   '\<C-Space>': 'Win#exit',
+      \ }
+'''
+
+
+[[plugins]]
+repo =  'tyru/open-browser.vim'
+hook_add ='''
+nmap <Leader>o <Plug>(openbrowser-smart-search)
+xmap <Leader>o <Plug>(openbrowser-smart-search)
+omap <Leader>O <Plug>(openbrowser-smart-search)
+let g:openbrowser_message_verbosity = 1
+autocmd FileType php let b:openbrowser_default_search = 'php'
+autocmd FileType python let b:openbrowser_default_search = 'python'
+'''
+
 # [[plugins]]
 # repo = 'dbeniamine/vim-mail'
+
+# [[plugins]]
+# merged = 0
+# repo = 'phaazon/hop.nvim'
+
 # vim:set foldmethod=marker:'

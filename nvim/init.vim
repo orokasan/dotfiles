@@ -1,4 +1,8 @@
 "ork's vimrc
+
+        if exists('g:started_by_firenvim')
+            finish
+        endif
 set fileformats=unix,dos,mac
 set encoding=utf-8
 set fileencodings=utf-8,ucs2le,ucs-2,iso-2022-jp,euc-jp,sjis,cp932
@@ -8,6 +12,9 @@ augroup vimrc
   autocmd!
 augroup END
 " don't load unused default plugins
+let g:skip_loading_mswin        = 1
+let g:did_install_default_menus = 1
+let g:did_install_syntax_menu   = 1
 let g:loaded_gzip              = 1
 let g:loaded_tar               = 1
 let g:loaded_tarPlugin         = 1
@@ -23,7 +30,7 @@ let g:loaded_netrwPlugin       = 1
 let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
-let g:loaded_matchparen = 1
+let g:loaded_matchparen = 0
 let g:loaded_node_provider = 0
 let g:loaded_perl_provider = 0
 let g:loaded_python_provider = 0
@@ -61,7 +68,7 @@ if has('nvim')
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
-let g:dein#lazy_rplugins=1
+" let g:dein#lazy_rplugins=1
 let g:dein#default_options = { 'merged': v:true }
 let g:dein#install_max_processes = 8
 let g:dein#install_process_timeout = 300
@@ -73,7 +80,7 @@ if &runtimepath !~# '/dein.vim'
       if !isdirectory(s:dein_repo_dir)
         if !executable('git')
           echo 'Please install git or update your path to include the git executable!'
-        endif
+      endif
         echo 'install dein.vim ...'
         execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
         let s:dein_is_initializing = 1
@@ -94,14 +101,12 @@ let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:denops_toml])
     if has('nvim')
-    call dein#load_toml(s:toml,      {'lazy': 0})
-    call dein#load_toml(s:lazy_toml, {'lazy': 1})
-    call dein#load_toml(s:lsp_toml,  {'merged': 0})
-    call dein#load_toml(s:lua_toml,  {'merged': 0})
+        call dein#load_toml(s:toml,      {'lazy': 0})
+        call dein#load_toml(s:lazy_toml, {'lazy': 1})
+        call dein#load_toml(s:lsp_toml,  {'merged': 0})
+    call dein#load_toml(s:lua_toml,  {'merged': 1})
     endif
-    " call dein#load_toml(s:exp_toml, {'merged': 0})
     call dein#load_toml(s:denops_toml, {'merged': 0})
-    " call dein#load_toml(s:cmp_toml, {'merged': 0})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -194,7 +199,7 @@ set softtabstop=-1
 let g:vim_indent_cont = 4
 set autoindent
 set shiftwidth=0
-set formatoptions=mMjBcrql
+set formatoptions=mjMcrql
 au vimrc FileType * set fo-=o
 set iskeyword+=-
 " Searching
@@ -223,9 +228,9 @@ autocmd vimrc CmdwinEnter * call <SID>cmdwin_settings()
 function! s:cmdwin_settings() abort
     setlocal signcolumn=no
     " delete useless commands
-    silent g/^qa\?!\?$/d
-    silent g/^e\?!\?$/d
-    silent g/^wq\?a\?!\?$/d
+    silent g/^qa\?!\?$/de
+    silent g/^e\?!\?$/de
+    silent g/^wq\?a\?!\?$/de
     " move to nice position
     " CmdwinEnter seems not to fire below commands
     " setlocal signcolumn=no
@@ -235,6 +240,7 @@ function! s:cmdwin_settings() abort
     norm G
     map <buffer> <CR> <CR>
 endfunction
+autocmd vimrc CmdwinLeave * call histdel('/', -1)
 set completeopt=menuone,longest
 set completeopt-=preview
 " nicely folding
@@ -244,9 +250,9 @@ set completeopt-=preview
         return 0
       elseif !filewritable(expand('%:p'))
         return 0
-      endif
+    endif
       return 1
-    endfunction
+     endfunction
     function! s:mkview() abort
        if s:is_view_available()
         silent! mkview
@@ -287,6 +293,9 @@ nnoremap <C-b> <C-b>zz
 nnoremap <C-d> <C-d>
 nnoremap <C-u> <C-u>
 nnoremap <C-o> <C-o>zz
+
+nnoremap m '
+nnoremap M m
 " moving around buffers
 nnoremap <silent><Leader>h <Cmd>bprev!<CR>
 nnoremap <silent><Leader>l <Cmd>bnext!<CR>
@@ -611,8 +620,10 @@ endif
 
 if !has('nvim')
     set runtimepath+=~\.cache\dein\repos\github.com\thinca\vim-singleton
-    set runtimepath+=~\.cache\dein\repos\github.com\mattn\webapi-vim
+    set runtimepath+=~\.cache\dein\repos\github.com\cocopon/iceberg.vim
 	call singleton#enable()
+    colorscheme iceberg
+    set background=light
     finish
 endif
 " highlight {{{
@@ -776,7 +787,7 @@ if !filereadable(s:dict)
     if !filereadable(s:dict)
         echom 'dict file is not found'
 	return
-    endif
+endif
 endif
 let s:dict = substitute(s:dict, '\\', '\/', 'g')
 if filereadable(s:dict)
@@ -785,7 +796,7 @@ if filereadable(s:dict)
 	if line !=# ''
         let word = split(line)
         call matchadd('HighlightDict',word[0])
-	endif
+    endif
     endfor
     call matchadd('UnderlineSpace', ' ')
     call matchadd('UnderlineSpace', '　')
@@ -808,8 +819,8 @@ function! s:make_abbrev_rule(rules)
         let dict[val['prepose'] .. ' ' .. key] = (val['to'])
       else
         let dict[key] = val['to']
-      endif
-    endfor
+    endif
+  endfor
     exec 'cnoreabbrev <expr> ' .. key .. ' '
     \ .. '(getcmdtype() !=# ":")? "' .. key .. '" : '
     \ .. 'get(' .. string(dict) .. ', getcmdline(), "' .. key .. '")'
@@ -899,12 +910,12 @@ sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl=
 " autocmd CmdlineLeave [:>/?=@] if get(g:, 'skkeleton#enabled', v:false) | call skkeleton#request('disable', []) | endif
 
 if exists("g:nvui")
-set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver20-Cursor,r-cr:hor20
+" set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver20-Cursor,r-cr:hor20
 NvuiAnimationsEnabled 0
 set guifont:HackGenNerd:h12
 NvuiOpacity 0.93
 NvuiCursorFrametime 0
-NvuiFrameless 1
+" NvuiFrameless 1
 NvuiTitlebarFontFamily RockWell
 NvuiTitlebarFontSize 11
 NvuiTitlebarSeparator ' - '
@@ -923,34 +934,9 @@ let g:jupytext_enable = 0
 " lua require('gitsigns').setup()
 " lua require('nvim-autopairs').setup{}
 " lua <<EOF
-" require('telescope').setup{
-"   defaults = {
-"       border = false,
-"     -- Default configuration for telescope goes here:
-"     -- config_key = value,
-"     -- ..
-"   },
-"   pickers = {
-"     -- Default configuration for builtin pickers goes here:
-"     -- picker_name = {
-"     --   picker_config_key = value,
-"     --   ...
-"     -- }
-"     -- Now the picker_config_key will be applied every time you call this
-"     -- builtin picker
-"   },
-"   extensions = {
-"     -- Your extension configuration goes here:
-"     -- extension_name = {
-"     --   extension_config_key = value,
-"     -- }
-"     -- please take a look at the readme of the extension you want to configure
-"   }
-" }
+" require('telescope_config')
 " EOF
-" hi! link TelescopeNormal Pmenu
-
-set inccommand=
+hi! link TelescopeNormal Pmenu
 
 function! GetRaw()
 let isbn = expand('<cword>')
@@ -1058,5 +1044,85 @@ for k in koumoku
     endif
 endfor
 endfunction
-nmap <silent> gm <cmd>call Isbn()<CR>
+" lua <<EOF
+" require'marks'.setup {
+"   -- whether to map keybinds or not. default true
+"   default_mappings = true,
+"   -- which builtin marks to show. default {}
+"   builtin_marks = {},
+"   -- whether movements cycle back to the beginning/end of buffer. default true
+"   cyclic = true,
+"   -- whether the shada file is updated after modifying uppercase marks. default false
+"   force_write_shada = false,
+"   -- how often (in ms) to redraw signs/recompute mark positions. 
+"   -- higher values will have better performance but may cause visual lag, 
+"   -- while lower values may cause performance penalties. default 150.
+"   refresh_interval = 250,
+"   -- sign priorities for each type of mark - builtin marks, uppercase marks, lowercase
+"   -- marks, and bookmarks.
+"   -- can be either a table with all/none of the keys, or a single number, in which case
+"   -- the priority applies to all marks.
+"   -- default 10.
+"   sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
+"   -- disables mark tracking for specific filetypes. default {}
+"   excluded_filetypes = {},
+"   -- marks.nvim allows you to configure up to 10 bookmark groups, each with its own
+"   -- sign/virttext. Bookmarks can be used to group together positions and quickly move
+"   -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
+"   -- default virt_text is "".
+"   bookmark_0 = {
+"     sign = "⚑",
+"     virt_text = "hello world"
+"   },
+"   mappings = {}
+" }
+" require('hlslens').setup({
+"     calm_down = true,
+"     nearest_only = true,
+" })
+" EOF
+" Find files using Telescope command-line sugar.
+" nnoremap sf <cmd>Telescope find_files<cr>
+" nnoremap sg <cmd>Telescope live_grep<cr>
+" nnoremap sb <cmd>Telescope buffers<cr>
+" nnoremap sh <cmd>Telescope help_tags<cr>
+" nnoremap sn <cmd>Telescope oldfiles<cr>
+" au FileType TelescopePrompt set signcolumn=no
+
+" noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
+"             \<Cmd>lua require('hlslens').start()<CR>
+" noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
+
+"             \<Cmd>lua require('hlslens').start()<CR>
+" noremap * *<Cmd>lua require('hlslens').start()<CR>
+" noremap # #<Cmd>lua require('hlslens').start()<CR>
+" noremap g* g*<Cmd>lua require('hlslens').start()<CR>
+" noremap g# g#<Cmd>lua require('hlslens').start()<CR>
+" nnoremap <silent> gm <cmd>call Isbn()<CR>
+" hi! default link HlSearchNear Search
+" hi! default link HlSearchLens WildMenu
+" hi! default link HlSearchLensNear Search
+" hi! default link HlSearchFloat Search
+" use : instead of <Cmd>
+" nnoremap <silent> <leader>l :noh<CR>
+" set shortmess+=S
+
+" set lazyredraw
+nnoremap <silent> ` :call OpenBrowserSearch(input('Search: '))<CR>
+
+lua << EOF
+require'hop'.setup{
+    use_migemo = true;
+    migemo_dict = vim.g.migemodict
+    }
+EOF
+
+nnoremap  , :HopChar2<CR>
+highlight! clear HopUnmatched
+highlight! HopNextKey1 gui=bold guifg=#ff007c guibg=#c6c8d1
+highlight! HopNextKey2 gui=bold guifg=#2b8db3 guibg=#c6c8d1
+highlight! HopNextKey gui=bold guifg=#ff007c guibg=#c6c8d1
+set imsearch=0
+au vimrc CmdlineEnter * setlocal iminsert=0
+au vimrc FileType vim set indentexpr=
 " vim:set foldmethod=marker:

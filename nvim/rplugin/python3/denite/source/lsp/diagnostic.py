@@ -1,5 +1,4 @@
 from denite.base.source import Base
-import unicodedata
 from denite.util import debug, clear_cmdline, strwidth
 
 HIGHLIGHT_SYNTAX = [
@@ -8,6 +7,7 @@ HIGHLIGHT_SYNTAX = [
     {'name': 'warning',     'link': 'Warning',  're': r'\[warning\]'},
     {'name': 'line',     'link': 'Comment',  're': r'|.*'},
 ]
+
 
 class Source(Base):
     def __init__(self, vim):
@@ -29,12 +29,12 @@ class Source(Base):
 
     def gather_candidates(self, context):
         candidates = []
-        tbl = self.vim.call('luaeval','vim.lsp.diagnostic.get('+ str(context['__bufnr']) +')')
+        tbl = self.vim.call(
+            'luaeval', 'vim.diagnostic.get(' + str(context['__bufnr']) + ')')
         for i in tbl:
-            lnum = i['range']['start']['line'] +1
-            col = i['range']['start']['character']
-            line = self.vim.call('getbufline', context['__bufnr'], lnum)[0]
-            r_col = _len_checker(line[0:col])
+            lnum = i['lnum'] + 1
+            col = i['col'] + 1
+            line = self.vim.call('getbufline', context['__bufnr'], lnum)
             severity = i['severity']
             if 'source' in i:
                 source = '(' + i['source'] + ')'
@@ -52,21 +52,11 @@ class Source(Base):
                 mes = 'hint'
             candidates.append({
                 'word': word,
-                'abbr': '{}:{} [{}] {} {} | {}'.format(str(lnum).ljust(3),str(col).ljust(3), mes, word, source, line),
+                'abbr': '{}:{} [{}] {} {}'.format(
+                    str(lnum).ljust(3), str(col).ljust(3), mes, word, source),
                 'action__path': self.vim.call('bufname', context['__bufnr']),
                 'action__line': lnum,
-                'action__col': r_col,
+                'action__col': col,
                 'action__text': line
-                })
+            })
         return candidates
-
-def _len_checker(text):
-    count = 0
-    for c in text:
-        if unicodedata.east_asian_width(c) in 'A':
-            break
-        elif unicodedata.east_asian_width(c) in 'FW':
-            count += 3
-        else:
-            count += 1
-    return count
