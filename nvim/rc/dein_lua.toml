@@ -1,4 +1,40 @@
 [[plugins]]
+repo = 'neovim/nvim-lspconfig'
+# merged = '1'
+# on_lua = ['lspconfig']
+# lazy = '1'
+
+hook_add = '''
+lua require('lsp_settings')
+'''
+hook_source = '''
+
+let s:lsptoggle_switch = v:false
+command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
+function! s:lspdefinetoggleaucmd() abort
+    if !s:lsptoggle_switch
+        let s:lsptoggle_switch = v:true
+        augroup lsptoggle
+            au!
+            au BufEnter * LspStop
+        augroup END
+        edit %
+        echom "Lsp OFF"
+    else
+        augroup lsptoggle
+            au!
+        augroup END
+        let s:lsptoggle_switch = v:false
+        echom "Lsp ON"
+    endif
+endfunction
+
+'''
+
+[[plugins]]
+repo = 'williamboman/nvim-lsp-installer'
+
+[[plugins]]
 repo = 'nvim-telescope/telescope.nvim'
 lazy = 1
 on_lua = 'telescope'
@@ -51,7 +87,7 @@ repo = 'lukas-reineke/indent-blankline.nvim'
 lazy = 1
 on_event = 'BufRead'
 hook_add = '''
-let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help']
+let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree']
 let g:indent_blankline_use_treesitter = v:true
 let g:indent_blankline_show_first_indent_level = v:true
 let g:indent_blankline_char = '|'
@@ -239,6 +275,7 @@ repo = 'bfredl/nvim-miniyank'
 # lazy = 1
 # on_map = '<Plug>(miniyank'
 hook_add = '''
+let g:miniyank_maxitems = 25
 map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
 map <leader>n <Plug>(miniyank-cycle)
@@ -246,20 +283,19 @@ map <leader>N <Plug>(miniyank-cycleback)
 map <Leader>pc <Plug>(miniyank-tochar)
 map <Leader>pl <Plug>(miniyank-toline)
 map <Leader>pb <Plug>(miniyank-toblock)
-" function! To_miniyank_on_focused() abort
-"     let data = {}
-"     let data = {
-" 		\ 'regcontents': [getreg('*')],
-" 		\ 'visual': v:false,
-" 		\ 'inclusive': v:false,
-" 		\ 'regname': '',
-" 		\ 'operator': 'y',
-" 		\ 'regtype': 'V',
-" 		\ }
-"     call miniyank#on_yank(data)
-"     echom 'hoge'
-" endfunction
-" au dein FocusGained * To_miniyank_on_focused()
+function! To_miniyank_on_focused() abort
+    let data = {}
+    let data = {
+		\ 'regcontents': [getreg('*')],
+		\ 'visual': v:false,
+		\ 'inclusive': v:false,
+		\ 'regname': '',
+		\ 'operator': 'y',
+		\ 'regtype': 'V',
+		\ }
+    call miniyank#on_yank(data)
+endfunction
+au dein FocusGained * call To_miniyank_on_focused()
 '''
 
 # [[plugins]]
@@ -299,6 +335,7 @@ map <Leader>pb <Plug>(miniyank-toblock)
 [[plugins]]
 on_if = 'executable("gcc")'
 lazy = 1
+merged = 0
 on_event = 'BufRead'
 repo = 'nvim-treesitter/nvim-treesitter'
 hook_source = '''
@@ -306,7 +343,7 @@ lua <<EOF
 require'nvim-treesitter.configs'.setup {
     highlight = {
         enable = true,
-        disable = { "cpp", "vim" },
+        disable = { "cpp", "vim" ,'markdown'},
     },
 }
 
@@ -338,10 +375,28 @@ repo = 'nvim-lua/lsp-status.nvim'
 [[plugins]]
 repo = 'delphinus/hop.nvim'
 rev = 'feature/migemo'
+hook_add = '''
+lua << EOF
+require'hop'.setup{
+    use_migemo = true;
+    migemo_dict = vim.g.migemodict
+    }
+EOF
+
+nnoremap  , :HopChar2<CR>
+highlight! clear HopUnmatched
+highlight! HopNextKey1 gui=bold guifg=#ff007c guibg=#c6c8d1
+highlight! HopNextKey2 gui=bold guifg=#2b8db3 guibg=#c6c8d1
+highlight! HopNextKey gui=bold guifg=#ff007c guibg=#c6c8d1
+'''
 
 [[plugins]]
 repo = 'romgrk/nvim-treesitter-context'
-hook_add = '''
+lazy = 1
+merged = 0
+on_event = 'BufRead'
+depends = ['nvim-treesitter']
+hook_source = '''
 lua <<EOF
 require'treesitter-context'.setup{
     enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
@@ -371,8 +426,20 @@ require'treesitter-context'.setup{
 }
 EOF
 '''
+# [[plugins]]
+# repo = 'f-person/git-blame.nvim'
+# hook_add = '''
+# let g:gitblame_enabled = 0
+# '''
+
+# [[plugins]]
+# repo = 'TimUntersberger/neogit'
+# hook_add = '''
+# lua <<EOF
+# local neogit = require('neogit')
+# neogit.setup {}
+# EOF
+# '''
+
 [[plugins]]
-repo = 'f-person/git-blame.nvim'
-hook_add = '''
-let g:gitblame_enabled = 0
-'''
+repo = 'delphinus/skkeleton_indicator.nvim'

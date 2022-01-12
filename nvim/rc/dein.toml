@@ -1,10 +1,11 @@
 [[plugin]]
 repo = 'Shougo/dein.vim'
-# hook_add = '''
-# augroup dein
-#     autocmd!
-# augroup END
-# '''
+merged = 0
+hook_add = '''
+augroup dein
+    autocmd!
+augroup END
+'''
 
 [[plugins]]
 on_if = '!has("nvim")'
@@ -44,10 +45,7 @@ repo = 'AndrewRadev/switch.vim'
 # on_cmd = ['Switch']
 hook_add = '''
 nnoremap ! <cmd>Switch<CR>
-" autocmd FileType markdown let b:switch_custom_definitions =
-"     \ [
-"     \   switch#Word(['[]', '[x]']),
-"     \ ]
+" autocmd FileType txt let b:switch_custom_definitions =
 '''
 
 # [[plugins]]
@@ -129,17 +127,17 @@ autocmd dein ColorScheme iceberg highlight! Underlined cterm=underline gui=under
 autocmd dein ColorScheme iceberg highlight! link WhiteSpace Comment
 " autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
 
-autocmd dein Colorscheme iceberg hi link TSFunction Title
-autocmd dein Colorscheme iceberg hi link TSConstant Constant
-autocmd dein Colorscheme iceberg hi link TSConstructor Define
-autocmd dein Colorscheme iceberg hi link TSLavel Number
-autocmd dein Colorscheme iceberg hi link TSLabel Number
-autocmd dein Colorscheme iceberg hi link TSNamespace Number
-autocmd dein Colorscheme iceberg hi link TSOperator Number
-autocmd dein Colorscheme iceberg hi link TSKeyword Keyword
-autocmd dein Colorscheme iceberg hi link TSType Define
-autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineError Error
-autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineWarning Warning
+"autocmd dein Colorscheme iceberg hi link TSFunction Title
+"autocmd dein Colorscheme iceberg hi link TSConstant Constant
+"autocmd dein Colorscheme iceberg hi link TSConstructor Define
+"autocmd dein Colorscheme iceberg hi link TSLavel Number
+"autocmd dein Colorscheme iceberg hi link TSLabel Number
+"autocmd dein Colorscheme iceberg hi link TSNamespace Number
+"autocmd dein Colorscheme iceberg hi link TSOperator Number
+"autocmd dein Colorscheme iceberg hi link TSKeyword Keyword
+"autocmd dein Colorscheme iceberg hi link TSType Define
+"autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineError Error
+"autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineWarning Warning
 '''
 
 
@@ -196,13 +194,9 @@ repo = 'ujihisa/neco-look'
 
 [[plugins]]
 repo = 'haya14busa/is.vim'
-lazy = 1
-on_map = { n = '<Plug>(is' }
 #TODO:qitta
 hook_add = ''' " {{{
 let g:is#do_default_mapping = 0
-nmap n <Plug>(is-n)zvzz
-nmap N <Plug>(is-N)zvzz
 ''' # }}}
 
 # [[plugins]]
@@ -246,22 +240,6 @@ repo = 'itchyny/vim-parenmatch'
 hook_add = '''
 hi! link ParenMatch MatchParen
 '''
-
-# [[plugins]]
-# ## only for incsearch-migemo.vim
-# repo = 'Shougo/vimproc.vim'
-# hook_post_update = '''
-#   if has('win32')
-#     let cmd = 'tools\\update-dll-mingw'
-#   elseif has('win32unix') " for Cygwin
-#     let cmd = 'make -f make_cygwin.mak'
-#   elseif executable('gmake')
-#     let cmd = 'gmake'
-#   else
-#     let cmd = 'make'
-#   endif
-#   let g:dein#plugin.build = cmd
-# '''
 
 [[plugins]]
 repo = 'chemzqm/denite-extra'
@@ -388,18 +366,6 @@ let g:autodate_format="%Y-%m-%d[%H:%M]"
 # # TODO vimproc依存をなくす
 
 # [[plugins]]
-# # repo = 'haya14busa/incsearch-migemo.vim'
-# merged = 0
-# repo = 'orokasan/incsearch-migemo.vim'
-# on_if = "!has('kaoriya')"
-# # depends = 'incsearch.vim'
-# # on_map = { nx = '<Plug>(incsearch-migemo-' }
-# hook_add = '''
-# map g/ <Plug>(incsearch-migemo-/)
-# map g? <Plug>(incsearch-migemo-?)
-# '''
-
-# [[plugins]]
 # repo = 'heavenshell/vim-textlint' 
 
 [[plugins]]
@@ -458,8 +424,8 @@ hook_add = '''
 # [[plugins]]
 # repo = 'Xuyuanp/scrollbar.nvim'
 
-[[plugins]]
-repo = 'Milly/vim-migemo'
+# [[plugins]]
+# repo = 'Milly/vim-migemo'
 # lazy = 1
 # on_map = { n = '<Plug>(migemo-migemosearch' }
 
@@ -895,6 +861,7 @@ let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}
 let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
+let g:sandwich#recipes += [{'buns' : ['［', '］'], 'nesting':1, 'input':['U']}]
 
 let g:sandwich#recipes += [{'buns' : ['●', '●'], 'nesting':1, 'input':['1']}]
 let g:sandwich#recipes += [{'buns' : ['◆', '◆'], 'nesting':1, 'input':['2']}]
@@ -905,6 +872,7 @@ let g:sandwich#recipes += [{'buns' : ['★', '★'], 'nesting':1, 'input':['6']}
 let g:sandwich#recipes += [{'buns' : ['☆', '☆'], 'nesting':1, 'input':['7']}]
 let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['8']}]
 let g:sandwich#recipes += [{'buns' : ['<s>', '<\s>'], 'nesting':1, 'input':['s']}]
+let g:sandwich#recipes += [{'buns' : ['□', '□'], 'nesting':1, 'input':['c']}]
 autocmd dein FileType markdown call sandwich#util#addlocal([
   \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
   \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
@@ -946,9 +914,9 @@ repo = 'kat0h/bufpreview.vim'
 
 [[plugins]]
 repo = 'thinca/vim-jautil'
-[[plugins]]
-merged = 0
-repo = 'skanehira/gh.vim'
+# [[plugins]]
+# merged = 0
+# repo = 'skanehira/gh.vim'
 
 # [[plugins]]
 # repo = 'chentau/marks.nvim'
@@ -1000,5 +968,60 @@ autocmd FileType python let b:openbrowser_default_search = 'python'
 # [[plugins]]
 # merged = 0
 # repo = 'phaazon/hop.nvim'
+[[plugins]]
+repo = 'hrsh7th/vim-searchx'
+hook_add = '''
+autocmd dein Colorscheme iceberg hi link SearchxMarker DiffChange
+" Overwrite / and ?.
+nnoremap g? <Cmd>call searchx#start({ 'dir': 0 })<CR>
+nnoremap g/ <Cmd>call searchx#start({ 'dir': 1 })<CR>
+xnoremap g? <Cmd>call searchx#start({ 'dir': 0 })<CR>
+xnoremap g/ <Cmd>call searchx#start({ 'dir': 1 })<CR>
 
+" Move to next/prev match.
+"nnoremap N <Cmd>call searchx#prev_dir()<CR>
+"nnoremap n <Cmd>call searchx#next_dir()<CR>
+"xnoremap N <Cmd>call searchx#prev_dir()<CR>
+"xnoremap n <Cmd>call searchx#next_dir()<CR>
+nnoremap <silent> n <cmd>call is#auto_nohlsearch(2)<CR>nzvzz
+nnoremap <silent> N <cmd>call is#auto_nohlsearch(2)<CR>Nzvzz
+"nnoremap <C-k> <Cmd>call searchx#prev()<CR>
+"nnoremap <C-j> <Cmd>call searchx#next()<CR>
+""xnoremap <C-k> <Cmd>call searchx#prev()<CR>
+""xnoremap <C-j> <Cmd>call searchx#next()<CR>
+"cnoremap <C-k> <Cmd>call searchx#prev()<CR>
+"cnoremap <C-j> <Cmd>call searchx#next()<CR>
+
+" autocmd dein User SearchxLeave [:/?@-] set iminsert=0
+"" Clear highlights
+"nnoremap <C-l> <Cmd>call searchx#clear()<CR>
+
+let g:searchx = {}
+
+" Auto jump if the recent input matches to any marker.
+let g:searchx.auto_accept = v:true
+
+" The scrolloff value for moving to next/prev.
+let g:searchx.scrolloff = &scrolloff
+
+" To enable scrolling animation.
+let g:searchx.scrolltime = 0
+
+" Marker characters.
+let g:searchx.markers = split('ABCDEFGHIJKLMNOPQRSTUVWXYZ', '.\zs')
+
+" Convert search pattern.
+function g:searchx.convert(input) abort
+  if a:input !~# '\k'
+    return '\V' .. a:input
+  endif
+  "if a:input[0:2] =~# '\\g'
+  let l:input = a:input
+  let l:input = system('cmigemo -v -w "'.l:input.'" -d "'.g:migemodict.'"')
+  return join(split(l:input, ' '), '.\{-}')
+  "else
+  "return a:input
+  "endif
+endfunction
+'''
 # vim:set foldmethod=marker:'

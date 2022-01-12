@@ -16,11 +16,12 @@ hook_source = '''
 call ddc#custom#patch_global('sourceOptions', {
       \ '_': {
           \ 'matchers': ['matcher_fuzzy'],
-          \  'sorters': ['sorter_fuzzy'],
+          \  'sorters': ['sorter_rank'],
           \   'converters': ['converter_remove_overlap', 'converter_truncate'],
           \ 'ignoreCase': v:true,
           \ },
       \ 'skkeleton': {'mark': 'skk', 'matchers': ['skkeleton'], 'sorters': []},
+      \ 'file': { 'matchers': ['matcher_full_fuzzy']},
       \ })
 
 call ddc#custom#patch_global('sourceOptions', {
@@ -47,7 +48,6 @@ call ddc#custom#patch_global('sourceParams', {
 " Customize settings on a filetype
 call ddc#custom#patch_global('sources', [
 \'nvim-lsp',
-\ 'deoppet',
 \ 'file',
 \ 'buffer',
 \ 'around',
@@ -90,7 +90,7 @@ call ddc#custom#patch_global('sourceOptions', {
     \   'mark': 'F',
     \   'isVolatile': v:true,
     \ 'minAutoCompleteLength': 3,
-    \   'forceCompletionPattern': '/\S*',
+    \   'forceCompletionPattern': '\S/\S*',
     \ }})
 call ddc#custom#patch_global('sourceParams', {
       \ 'file': {
@@ -176,9 +176,9 @@ on_source = ['ddc.vim']
 repo = 'matsui54/ddc-buffer'
 on_source = ['ddc.vim']
 
-# [[plugins]]
-# repo = 'matsui54/ddc-matcher_fuzzy'
-# on_source = ['ddc.vim']
+[[plugins]]
+repo = 'matsui54/ddc-matcher_fuzzy'
+on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-nvim-lsp'
@@ -233,6 +233,8 @@ call skkeleton#register_kanatable('rom', {
 	\ 'zm': ['●', ''],
 	\ 'zss': ['▼', ''],
 	\ 'zsu': ['▲', ''],
+	\ 'zha': ['☆', ''],
+	\ 'zhb': ['★', ''],
 	\ 'zds': ['◇', ''],
 	\ 'zdk': ['◆', ''],
 	\ 'z1': ['１', ''],
@@ -265,6 +267,7 @@ call skkeleton#register_kanatable('rom', {
 	\ 'z/': ['・', ''],
 	\ 'z,': ['●', ''],
       \ })
+
 imap <C-j> <Plug>(skkeleton-toggle)
 cmap <C-j> <Plug>(skkeleton-enable)
 autocmd vimrc User skkeleton-enable-post call s:highlight_imesign_on()
@@ -298,17 +301,18 @@ function! s:highlight_imesign_on()
     if mode() is# 'c' | return | endif
     call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
 endfunction
-" au InsertLeave * call sign_unplace('Ins')
 let s:insert_icon = '▶'
 hi InInsertSign gui=bold guifg=#84a0c6
 hi InEskkKanaSign gui=bold guifg=#e2a478
 call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
 call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
 call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 51 })
+
 '''
 
 [[plugins]]
 repo = 'LumaKernel/ddc-file'
+on_source = ['ddc.vim']
 
 # [[plugins]]
 # repo = 'Shougo/pum.vim'
@@ -326,9 +330,32 @@ repo = 'LumaKernel/ddc-file'
 
 [[plugins]]
 repo = 'Shougo/ddc-matcher_length'
-[[plugins]]
-repo = 'tani/ddc-fuzzy'
 on_source = ['ddc.vim']
+
+# [[plugins]]
+# repo = 'tani/ddc-fuzzy'
+# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'matsui54/ddc-converter_truncate'
+on_source = ['ddc.vim']
+
+# [[plugins]]
+# repo = 'matsui54/denops-signature_help'
+# on_source = ['ddc.vim']
+# depends = ['denops.vim']
+# hook_source = '''
+# call signature_help#enable()
+# '''
+
+[[plugins]]
+repo = 'Shougo/ddu.vim'
+
+[[plugins]]
+on_source = ['ddu.vim']
+repo = 'Shougo/ddu-commands.vim'
+hook_source = '''
+call ddu#custom#patch_global({
+    \ 'ui': 'std',
+    \ })
+'''

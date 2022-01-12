@@ -82,6 +82,10 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true;
 --     }
 --   }
 -- end
+local node_root_dir = nvim_lsp.util.root_pattern("package.json", "node_modules")
+local buf_name = vim.api.nvim_buf_get_name(0)
+local current_buf = vim.api.nvim_get_current_buf()
+local is_node_repo = node_root_dir(buf_name, current_buf) ~= nil
 
 lsp_installer.on_server_ready(function(server)
     local default_opts = {
@@ -93,10 +97,11 @@ lsp_installer.on_server_ready(function(server)
     }
     local server_opts = {
         ["tsserver"] = function()
-            default_opts.autostart = false
+            default_opts.autostart = is_node_repo
           end,
         ["denols"] = function()
-            default_opts.autostart = false
+            default_opts.cmd = {'deno',  'lsp'}
+            default_opts.autostart = not(is_node_repo)
           end,
         ["sumneko_lua"] = function()
             default_opts.settings = {

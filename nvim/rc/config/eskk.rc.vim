@@ -1144,9 +1144,8 @@ augroup myeskk
     autocmd InsertLeave * call <SID>eskk_save_status()
     autocmd InsertEnter * call <SID>eskk_insert_status()
     "In neovim inccommand substitute, if statement seems not evaluated. (20210421)
-    autocmd CmdlineLeave [:/?] if exists('*eskk#enable') && eskk#is_enabled() | call eskk#disable() | endif
+    " autocmd CmdlineLeave [:/?] if exists('*eskk#enable') && eskk#is_enabled() | call eskk#disable() | endif
     " autocmd CmdlineLeave [:/?] call <SID>eskk_cmdleave_off()
-    autocmd CmdlineLeave [:/?@-] call skkeleton#request('disable', [])
     " autocmd CmdlineLeave * call s:eskk_restore_cursor()
 augroup END
 

@@ -1,12 +1,10 @@
 "ork's vimrc
 
-        if exists('g:started_by_firenvim')
-            finish
-        endif
 set fileformats=unix,dos,mac
 set encoding=utf-8
-set fileencodings=utf-8,ucs2le,ucs-2,iso-2022-jp,euc-jp,sjis,cp932
+set fileencodings=utf-8,cp932,ucs2le,ucs-2,iso-2022-jp,euc-jp,sjis,latin1
 runtime! C:\Users\t_kuriki\Downloads\nvui-win64\nvui\vim\plugin\*.vim
+set rtp+=~/Downloads/VOoM-5.3
 " ------------------------------------------------------------------------------
 augroup vimrc
   autocmd!
@@ -35,6 +33,9 @@ let g:loaded_node_provider = 0
 let g:loaded_perl_provider = 0
 let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
+
+" let g:do_filetype_lua = 1
+" let g:did_load_filetypes = 0
 
 if executable('win32yank.exe')
 if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
@@ -95,18 +96,15 @@ let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
 let s:exp_toml = '~/dotfiles/nvim/rc/dein_experimental.toml'
 let s:denops_toml = '~/dotfiles/nvim/rc/dein_denops.toml'
 let s:cmp_toml = '~/dotfiles/nvim/rc/dein_cmp.toml'
-let s:no_dependency_toml = '~/dotfiles/nvim/rc/dein_no_dependency.toml'
-let s:lsp_toml = '~/dotfiles/nvim/rc/dein_nvim_lsp.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
     call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:denops_toml])
     if has('nvim')
         call dein#load_toml(s:toml,      {'lazy': 0})
         call dein#load_toml(s:lazy_toml, {'lazy': 1})
-        call dein#load_toml(s:lsp_toml,  {'merged': 0})
-    call dein#load_toml(s:lua_toml,  {'merged': 1})
+        call dein#load_toml(s:lua_toml,  {'merged': 1})
+        call dein#load_toml(s:denops_toml, {'merged': 0})
     endif
-    call dein#load_toml(s:denops_toml, {'merged': 0})
     call dein#end()
     call dein#save_state()
     if !has('vim_starting')
@@ -117,6 +115,15 @@ endif
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
+
+if !v:vim_did_enter
+function! DeinLoader() abort
+    source $MYVIMRC
+    call dein#install()
+    echo "Recache"
+    call dein#recache_runtimepath()
+endfunction
+endif
 " for dein dein#util#_check_vimrcs() bug workaround
 
 au! dein BufWritePost
@@ -296,6 +303,9 @@ nnoremap <C-o> <C-o>zz
 
 nnoremap m '
 nnoremap M m
+vnoremap m '
+vnoremap M m
+vnoremap <C-o> <ESC>m><C-O>m<gvo
 " moving around buffers
 nnoremap <silent><Leader>h <Cmd>bprev!<CR>
 nnoremap <silent><Leader>l <Cmd>bnext!<CR>
@@ -368,6 +378,8 @@ inoremap <C-e> <END>
 nnoremap Y y$
 xnoremap Y y$`]
 xnoremap y y`]
+inoremap <C-R><C-R> <C-R>0
+cnoremap <C-R><C-R> <C-R>*
 " shoot chars deleted by x to blackhole register
 " nnoremap x "_x
 " Create a blank line above/below current line
@@ -383,6 +395,8 @@ cnoremap <expr><F2> strftime("%Y%m%d")
 "improve command completion
 cnoremap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<DOWN>"
 cnoremap <expr> <C-p> pumvisible() ? "\<C-p>" : "\<UP>"
+" cnoremap <C-C> <ESC>
+" cnoremap <M-Q> <C-C>
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
 cnoremap <C-a> <C-b>
@@ -531,6 +545,7 @@ nmap <C-w>z <Plug>(my-zoom-window)
 nmap <C-w><C-z> <Plug>(my-zoom-window)
 " mouse mapping
 nmap <S-LeftMouse> <CR>
+set mousetime=10
 nmap <2-LeftMouse> <CR>
 "{{{
 nnoremap <silent> <Plug>(my-zoom-window)
@@ -632,8 +647,10 @@ endif
 
 " edit fold column
 set background=dark
-colorscheme iceberg
+if exists('g:lightline')
+    colorscheme iceberg
 let g:lightline.colorscheme = 'iceberg'
+endif
 "}}}
 " filetype config {{{
 let g:tex_conceal=''
@@ -645,7 +662,7 @@ function! g:LineCharVCount() range
     for l:linenum in range(a:firstline, a:lastline)
         let l:result += strchars(getline(l:linenum))
     endfor
-    return l:result
+    echo l:result
 endfunction "}}}
 command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
 xnoremap<silent> <C-o> <Cmd>LineCharVCount<CR>
@@ -653,7 +670,6 @@ xnoremap<silent> <C-o> <Cmd>LineCharVCount<CR>
 " Neovim {{{
 if has('nvim')
 
-lua require('lsp_settings')
   set shada=!,'200,<100,s10,h
     autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
   autocmd vimrc TermOpen * startinsert
@@ -805,8 +821,8 @@ endif
 endfunction
 nnoremap <F1> <cmd>call Highlight_dict()<CR>
 nnoremap  <Space>wc <cmd>lua vim.lsp.diagnostic.clear(0)<CR>
-command! VimShowHlItem echo synIDattr(synID(line("."), col("."), 1), "name")
-command! VimShowHlGroup echo synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+command! ShowHlItem echo synIDattr(synID(line("."), col("."), 1), "name")
+command! ShowHlGroup echo synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
 " abbrev の自動生成を行う
 " ref:https://zenn.dev/monaqa/articles/2020-12-22-vim-abbrev
 function! s:make_abbrev_rule(rules)
@@ -1014,28 +1030,25 @@ let koumoku = [
     " edit `=tempname()`
 " else
 split
-edit `=tempname()`
-" let s:id = win_getid()
-" endif
+e 書誌情報
+let bufnr = winbufnr(0)
+call deletebufline(bufnr, 1, '$')
 setlocal filetype=isbn
-  setlocal bufhidden=hide
-  setlocal buftype=nofile
-  setlocal nobuflisted
-  setlocal nofoldenable
-  setlocal nolist
-  setlocal nomodeline
-  setlocal nospell
-  setlocal noswapfile
+setlocal bufhidden=hide
+setlocal buftype=nofile
+setlocal nobuflisted
+setlocal nofoldenable
+setlocal nolist
+setlocal nomodeline
+setlocal nospell
+setlocal noswapfile
 nnoremap <buffer> q :quit<CR>
 for k in koumoku
     if has_key(output, k)
         if match(output[k], '\n') > -1
             call append(line('$'), '')
             call append(line('$'), k .. ': -----')
-            let o = split(output[k], '\n')
-            for l in o
-                call append(line('$'), l)
-            endfor
+            call append(line('$'), split(output[k], '\n'))
             call append(line('$'), '-----')
             call append(line('$'), '')
         else
@@ -1043,6 +1056,9 @@ for k in koumoku
         endif
     endif
 endfor
+if !getline(0)
+    call deletebufline(bufnr, 1)
+endif
 endfunction
 " lua <<EOF
 " require'marks'.setup {
@@ -1098,7 +1114,7 @@ endfunction
 " noremap # #<Cmd>lua require('hlslens').start()<CR>
 " noremap g* g*<Cmd>lua require('hlslens').start()<CR>
 " noremap g# g#<Cmd>lua require('hlslens').start()<CR>
-" nnoremap <silent> gm <cmd>call Isbn()<CR>
+nnoremap <silent> gm <cmd>call Isbn()<CR>
 " hi! default link HlSearchNear Search
 " hi! default link HlSearchLens WildMenu
 " hi! default link HlSearchLensNear Search
@@ -1109,20 +1125,46 @@ endfunction
 
 " set lazyredraw
 nnoremap <silent> ` :call OpenBrowserSearch(input('Search: '))<CR>
-
-lua << EOF
-require'hop'.setup{
-    use_migemo = true;
-    migemo_dict = vim.g.migemodict
-    }
-EOF
-
-nnoremap  , :HopChar2<CR>
-highlight! clear HopUnmatched
-highlight! HopNextKey1 gui=bold guifg=#ff007c guibg=#c6c8d1
-highlight! HopNextKey2 gui=bold guifg=#2b8db3 guibg=#c6c8d1
-highlight! HopNextKey gui=bold guifg=#ff007c guibg=#c6c8d1
 set imsearch=0
-au vimrc CmdlineEnter * setlocal iminsert=0
-au vimrc FileType vim set indentexpr=
+"au vimrc CmdlineEnter * setlocal iminsert=0
+"au vimrc CmdlineLeave * setlocal iminsert=0
+au vimrc FileType vim setlocal indentexpr=
+au vimrc FileType vim setlocal tabstop=2
+let g:voom_tree_width = 40
+au vimrc FileType voomtree nnoremap <buffer> h zc^
+au vimrc FileType voomtree nnoremap <buffer> L zo^
+au vimrc FileType voomtree nnoremap <buffer> H zm^
+au vimrc FileType voomtree nnoremap <buffer> L zr^
+au vimrc FileType voomtree noremap <buffer> [denite]
+au vimrc FileType voomtree setlocal scrolloff=999
+au vimrc FileType voomtree setlocal signcolumn=no
+au vimrc FileType voomtree setlocal nocursorline
+au vimrc FileType voomtree setlocal nonumber
+nnoremap st :Voom txt<CR>
+au vimrc FileType syn match Function /^=.\{-}|\zs.*/
+let g:voom_return_key = "<TAB>"
+let g:voom_tab_key = ""
+let g:switch_custom_definitions =
+    \ [
+    \   ['1	', '①'],
+    \   ['2	', '②'],
+    \   ['3	', '③'],
+    \   ['4	', '④'],
+    \   ['5	', '⑤'],
+    \   ['6	', '⑥'],
+    \   ['7	', '⑦'],
+    \   ['8	', '⑧'],
+    \   ['9	', '⑨'],
+    \   ['0	', '⑩'],
+    \ ]
+    " \   ['1', '①'],
+    " \   ['2', '②'],
+    " \   ['3', '③'],
+    " \   ['4', '④'],
+    " \   ['5', '⑤'],
+    " \   ['6', '⑥'],
+    " \   ['7', '⑦'],
+    " \   ['8', '⑧'],
+    " \   ['9', '⑨'],
+    " \   ['0', '⑩'],
 " vim:set foldmethod=marker:

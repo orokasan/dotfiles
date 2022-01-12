@@ -1,34 +1,3 @@
-[[plugins]]
-repo = 'neovim/nvim-lspconfig'
-# merged = '1'
-# on_lua = ['lspconfig']
-# lazy = '1'
-hook_source = '''
-
-let s:lsptoggle_switch = v:false
-command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
-function! s:lspdefinetoggleaucmd() abort
-    if !s:lsptoggle_switch
-        let s:lsptoggle_switch = v:true
-        augroup lsptoggle
-            au!
-            au BufEnter * LspStop
-        augroup END
-        edit %
-        echom "Lsp OFF"
-    else
-        augroup lsptoggle
-            au!
-        augroup END
-        let s:lsptoggle_switch = v:false
-        echom "Lsp ON"
-    endif
-endfunction
-
-'''
-
-[[plugins]]
-repo = 'williamboman/nvim-lsp-installer'
 
 # [[plugins]]
 # # lazy = '1'

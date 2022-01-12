@@ -141,7 +141,9 @@ hook_add = '''
 nmap <C-e> <Plug>(defx)
 nmap = <cmd>call <SID>defx_tab()<CR>
 nmap <Leader>e <Plug>(defxbufferdir)
+nmap <Leader>E <Plug>(defxsearch)
 nnoremap <silent> <Plug>(defx) <Cmd>Defx -buffer-name=`'defx' . tabpagenr()` -resume<CR>
+nnoremap <Plug>(defxsearch) :Defx -buffer-name=`'defx' . tabpagenr()` -resume 
 nnoremap <silent> <Plug>(defxtab) <Cmd>Defx -buffer-name='defxtab2' -resume -split=tab -listed\|Defx -buffer-name='defxtab' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`\|0tabmove<CR>
 nnoremap <silent> <Plug>(defxbufferdir) <Cmd>Defx `expand('%:p:h')` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
 nnoremap <space>E <cmd>call <SID>defx_auto_open()<CR>
@@ -268,6 +270,11 @@ setlocal signcolumn=no
 setlocal nonumber
 " Define mappings
 " nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
+nnoremap <silent><buffer><expr> l
+\ defx#is_directory() ? defx#do_action('open') :
+\ defx#is_binary() ?
+\ defx#do_action('execute_system') :
+\ defx#do_action('drop')
 nnoremap <silent><buffer><expr> <CR>
 \ defx#is_directory() ? defx#do_action('open') :
 \ defx#is_binary() ?
@@ -277,8 +284,8 @@ nnoremap <silent><buffer> <C-e> <C-w>p
 nnoremap <silent><buffer><expr> c defx#async_action('multi', ['copy','redraw'])
 nnoremap <silent><buffer><expr> m defx#async_action('multi', ['move','redraw'])
 nnoremap <silent><buffer><expr> p defx#async_action('paste')
-nnoremap <silent><buffer><expr> L defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
-nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open_tree', 'nested'). 'j' : defx#do_action('drop')
+" nnoremap <silent><buffer><expr> L defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
+nnoremap <silent><buffer><expr> L defx#is_directory() ? defx#do_action('open_tree', 'nested'). 'j' : defx#do_action('drop')
 nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#is_opened_tree() ? defx#do_action('close_tree') : defx#do_action('open_tree') : <SID>defx_is_plaintxt() ? defx#do_action('drop') : defx#do_action('execute_system')
 "nnoremap <silent><buffer><expr> <2-LeftMouse> <SID>defx_doubleclick()
 function! s:defx_doubleclick() abort
@@ -1096,6 +1103,7 @@ let g:gina#command#status#use_default_mappings=0
 nnoremap <silent> <Leader>gg <Cmd>Gina status<CR>
 nnoremap <silent> ` <Cmd>Gina status<CR>
 nnoremap <silent> <Leader>gA <Cmd>Gina changes HEAD<CR>
+nnoremap <silent> <Leader>ga <Cmd>Gina add %<CR>
 nnoremap <silent> <Leader>gc <Cmd>Gina commit<CR>
 nnoremap <silent> <Leader>gC <Cmd>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb <Cmd>Gina branch -av<CR>

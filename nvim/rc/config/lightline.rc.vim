@@ -241,7 +241,11 @@ function! LLeskk() abort
     if s:ignore_window() || !s:threshold(2)
         return ''
     else
-        return skkeleton#mode()
+        if exists('*skkeleton#mode') && skkeleton#mode()
+            return '[' .. skkeleton#mode() .. ']'
+        else
+            return '[]'
+        endif
     endif
 endfunction
 
@@ -413,23 +417,24 @@ endfunction
 "   let g:lightline_searchcount = printf(' /%s [%d/%d]', @/,
 "   \             result.current, result.total)
 " endfunction
+let s:searchcount = {}
+au dein User SearchxAcceptReturn let s:searchcount = searchcount()
 function! LLsearchres() abort
-  let result = searchcount(#{recompute: 0})
+  let result = s:searchcount
   if empty(result)
     return ''
   endif
-  if result.incomplete ==# 1     " timed out
-    return printf(' /%s [?/??]', @/)
-  elseif result.incomplete ==# 2 " max count exceeded
+  if result.incomplete ==# 2 " max count exceeded
     if result.total > result.maxcount &&
     \  result.current > result.maxcount
-      return printf(' /%s [>%d/>%d]', @/,
+      return printf(' [>%d/>%d]',
       \             result.current, result.total)
     elseif result.total > result.maxcount
-      return printf(' /%s [%d/>%d]', @/,
+      return printf(' [%d/>%d]',
       \             result.current, result.total)
     endif
   endif
-  return printf(' /%s [%d/%d]', @/,
+  return printf('  [%d/%d]',
   \             result.current, result.total)
 endfunction
+

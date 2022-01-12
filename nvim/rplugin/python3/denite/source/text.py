@@ -41,17 +41,16 @@ class Source(Base):
     def _convert(self, context, header):
         mark = context['__mark']
         lnum = str(header['lnum']).ljust(len(str(context['__bufline'])), ' ')
-        abbr = '{} {}'.format(lnum + ':' ,
-                (header['level']-1)*'  ' + header['text'])
+        abbr = '{} {}'.format(lnum + ':',
+                              (header['level']-1)*'  ' + header['text'])
         return {
-                'abbr': abbr,
-                'word': header['text'],
-                'action__path': self.vim.call('bufname', context['__bufnr']),
-                'action__line': header['lnum'],
-                'action__text': header['line'],
-                'action__col': 1
-                }
-
+            'abbr': abbr,
+            'word': header['text'],
+            'action__path': self.vim.call('bufname', context['__bufnr']),
+            'action__line': header['lnum'],
+            'action__text': header['line'],
+            'action__col': 1
+        }
 
     def _find_headers(self, context):
         headers = []
@@ -87,11 +86,12 @@ class Source(Base):
                     'level': level,
                     'text': text,
                     'lnum': i + 1,
-                    })
+                })
         context['__bufline'] = mline
         context['__mark'] = mark
         context['__max_level'] = max_level
         return headers
+
 
 def get_han_count(text):
     count = 0
@@ -102,9 +102,11 @@ def get_han_count(text):
             count += 1
     return count
 
+
 def text_align(text, width, *, align=-1, fill_char=' '):
     fill_count = width - get_han_count(text)
-    if (fill_count <= 0): return text
+    if (fill_count <= 0):
+        return text
     if align < 0:
         return text + fill_char*fill_count
     else:
