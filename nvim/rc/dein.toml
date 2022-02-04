@@ -197,6 +197,9 @@ repo = 'haya14busa/is.vim'
 #TODO:qitta
 hook_add = ''' " {{{
 let g:is#do_default_mapping = 0
+"au vimrc VimEnter * au! plugin-is
+"au CmdlineLeave [/\:] if !v:event.abort <bar>call is#auto_nohlsearch(2) <bar> endif
+
 ''' # }}}
 
 # [[plugins]]
@@ -565,8 +568,6 @@ repo = 'nekowasabi/denite-migemo'
 # repo = 'Shougo/neomru.vim'
 # hook_add = '''
 # '''
-[[plugins]]
- repo = 'bluz71/vim-nightfly-guicolors'
 # [[plugins]]
 #  repo = 'ctrlpvim/ctrlp.vim'
 

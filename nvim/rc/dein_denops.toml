@@ -350,12 +350,44 @@ on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddu.vim'
+hook_add = '''
+'''
 
 [[plugins]]
-on_source = ['ddu.vim']
 repo = 'Shougo/ddu-commands.vim'
-hook_source = '''
-call ddu#custom#patch_global({
-    \ 'ui': 'std',
-    \ })
-'''
+
+[[plugins]]
+repo = 'Shougo/ddu-ui-std'
+[[plugins]]
+repo = 'Shougo/ddu-source-file'
+[[plugins]]
+repo = 'Shougo/ddu-source-file_old'
+[[plugins]]
+repo = 'Shougo/ddu-source-line'
+[[plugins]]
+repo = 'Shougo/ddu-source-file_rec'
+[[plugins]]
+repo = 'Shougo/ddu-kind-file'
+[[plugins]]
+repo = 'Shougo/ddu-filter-matcher_substring'
+[[plugins]]
+repo = 'Shougo/ddu-kind-word'
+
+[[plugins]]
+repo ='shun/ddu-source-buffer'
+
+[[plugins]]
+repo ='kuuote/ddu-source-mr'
+
+[[plugins]]
+repo = 'lambdalisue/mr.vim'
+
+[[plugins]]
+repo = 'yuki-yano/ddu-filter-fzf'
+
+[[plugins]]
+repo = 'matsui54/ddu-source-file_external'
+[[plugins]]
+repo = 'matsui54/ddu-source-help'
+[[plugins]]
+repo = 'shun/ddu-source-rg'

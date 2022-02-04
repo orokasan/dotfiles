@@ -3,8 +3,9 @@
 set fileformats=unix,dos,mac
 set encoding=utf-8
 set fileencodings=utf-8,cp932,ucs2le,ucs-2,iso-2022-jp,euc-jp,sjis,latin1
-runtime! C:\Users\t_kuriki\Downloads\nvui-win64\nvui\vim\plugin\*.vim
+runtime! C:/Users/t_kuriki/Downloads/nvui-win64/nvui/vim/plugin/*.vim
 set rtp+=~/Downloads/VOoM-5.3
+set rtp+=C:/Users/t_kuriki/Downloads/himalaya-windows.tar/himalaya-windows/himalaya/vim
 " ------------------------------------------------------------------------------
 augroup vimrc
   autocmd!
@@ -60,7 +61,7 @@ call  provider#clipboard#Executable()
 endif
 "---------------------------------------------------------------------
 if has('win32')
-    let g:python3_host_prog = expand('~\AppData\Local\Programs\Python\Python39\python.exe')
+    let g:python3_host_prog = expand('~/AppData/Local/Programs/Python/Python39/python.exe')
    " let g:python3_host_prog = 'C:\Python39\python.exe'
     let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 endif
@@ -278,7 +279,7 @@ set completeopt-=preview
 set viewoptions-=options
 set viewoptions-=curdir
 ""}}}
-set imdisable
+" set imdisable
 ""}}}
 "Key map - moving {{{
 nnoremap <CR> o<ESC>
@@ -634,8 +635,8 @@ endif
 "}}}
 
 if !has('nvim')
-    set runtimepath+=~\.cache\dein\repos\github.com\thinca\vim-singleton
-    set runtimepath+=~\.cache\dein\repos\github.com\cocopon/iceberg.vim
+    set runtimepath+=~/.cache/dein/repos/github.com/thinca/vim-singleton
+    set runtimepath+=~/.cache/dein/repos/github.com/cocopon/iceberg.vim
 	call singleton#enable()
     colorscheme iceberg
     set background=light
@@ -705,7 +706,7 @@ command! -nargs=* SearchYank call s:search(<q-args>)
 " for neovide initialize hook
 if exists('neovide') || exists('nvy')
     " フォント変更後に画面を再描画
-set guifont:HackGenNerd:h12
+set guifont:HackGenNerd:h11.9
     let g:neovide_refresh_rate=100
     let g:neovide_transparency=0.90
     " let g:neovide_cursor_antialiasing=v:true
@@ -926,6 +927,7 @@ sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl=
 " autocmd CmdlineLeave [:>/?=@] if get(g:, 'skkeleton#enabled', v:false) | call skkeleton#request('disable', []) | endif
 
 if exists("g:nvui")
+cd ~
 " set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver20-Cursor,r-cr:hor20
 NvuiAnimationsEnabled 0
 set guifont:HackGenNerd:h12
@@ -955,59 +957,62 @@ let g:jupytext_enable = 0
 hi! link TelescopeNormal Pmenu
 
 function! GetRaw()
-let isbn = expand('<cword>')
-let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
-let s = json_decode(raw)[0]
-echom s
-endfunction
+  let isbn = expand('<cword>')
+  let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
+  let s = json_decode(raw)[0]
+  echom s
+  endfunction
 function! Isbn()
-let hankei = {
-\ 'B108': 'A5',
-\ 'B109': 'B5',
-\ 'B110': 'B6',
-\ 'B111': '文庫',
-\ 'B112': '新書',
-\ 'B119': '46',
-\ 'B120': '46変形',
-\ 'B121': 'A4',
-\ 'B122': 'A4変形',
-\ 'B123': 'A5変形',
-\ 'B124': 'B5変形',
-\ 'B125': 'B6変形',
-\ 'B126': 'AB',
-\ 'B127': 'B7',
-\ 'B128': '菊',
-\ 'B129': '菊変形',
-\ 'B130': 'B4',
-\ }
+  let hankei = {
+    \ 'B108': 'A5',
+    \ 'B109': 'B5',
+    \ 'B110': 'B6',
+    \ 'B111': '文庫',
+    \ 'B112': '新書',
+    \ 'B119': '46',
+    \ 'B120': '46変形',
+    \ 'B121': 'A4',
+    \ 'B122': 'A4変形',
+    \ 'B123': 'A5変形',
+    \ 'B124': 'B5変形',
+    \ 'B125': 'B6変形',
+    \ 'B126': 'AB',
+    \ 'B127': 'B7',
+    \ 'B128': '菊',
+    \ 'B129': '菊変形',
+    \ 'B130': 'B4',
+    \ }
 
-let output = {}
-let isbn = expand('<cword>')
-let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
-let s = json_decode(raw)[0]
-if type(s) != v:t_dict
-    echom 'no data'
-    return
-endif
-for i in keys(s.summary)
+    let output = {}
+    let isbn = expand('<cword>')
+    let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
+    let s = json_decode(raw)[0]
+    if type(s) != v:t_dict
+      echom 'no data'
+      return
+    endif
+  for i in keys(s.summary)
     let output[i] = s.summary[i]
-endfor
-try
-let output['Price'] = s.onix.ProductSupply.SupplyDetail.Price[0].PriceAmount
-let output['hankei'] = hankei[s.onix.DescriptiveDetail.ProductFormDetail]
-let output['PageNum'] = s.onix.DescriptiveDetail.Extent[0].ExtentValue
-let output['AuthorBio'] = s.onix.DescriptiveDetail.Contributor[0].BiographicalNote
-catch
-endtry
-try
-let output['見出し'] = s.onix.CollateralDetail.TextContent[0].Text
-let output['概要'] = s.onix.CollateralDetail.TextContent[1].Text
-let output['目次'] = s.onix.CollateralDetail.TextContent[2].Text
-catch
-endtry
-let isbn10 = substitute(isbn,'^978','','')
-let output['Amazon'] = 'https://amazon.co.jp/dp/' .. isbn10
-let koumoku = [
+  endfor
+
+  try
+    let output['Price'] = s.onix.ProductSupply.SupplyDetail.Price[0].PriceAmount
+    let output['hankei'] = hankei[s.onix.DescriptiveDetail.ProductFormDetail]
+    let output['PageNum'] = s.onix.DescriptiveDetail.Extent[0].ExtentValue
+    let output['AuthorBio'] = s.onix.DescriptiveDetail.Contributor[0].BiographicalNote
+  catch
+  endtry
+
+  try
+    let output['見出し'] = s.onix.CollateralDetail.TextContent[0].Text
+    let output['概要'] = s.onix.CollateralDetail.TextContent[1].Text
+    let output['目次'] = s.onix.CollateralDetail.TextContent[2].Text
+  catch
+  endtry
+
+  let isbn10 = substitute(isbn,'^978','','')
+  let output['Amazon'] = 'https://amazon.co.jp/dp/' .. isbn10
+  let koumoku = [
     \ 'isbn',
     \ 'title',
     \ 'author',
@@ -1025,41 +1030,41 @@ let koumoku = [
     \ 'series',
     \ ]
 
-" if exists('s:id')
+    " if exists('s:id')
     " call win_gotoid(s:id)
     " edit `=tempname()`
-" else
-split
-e 書誌情報
+    " else
+    split
+  e 書誌情報
 let bufnr = winbufnr(0)
-call deletebufline(bufnr, 1, '$')
-setlocal filetype=isbn
-setlocal bufhidden=hide
-setlocal buftype=nofile
-setlocal nobuflisted
-setlocal nofoldenable
-setlocal nolist
-setlocal nomodeline
-setlocal nospell
-setlocal noswapfile
-nnoremap <buffer> q :quit<CR>
-for k in koumoku
-    if has_key(output, k)
-        if match(output[k], '\n') > -1
-            call append(line('$'), '')
-            call append(line('$'), k .. ': -----')
-            call append(line('$'), split(output[k], '\n'))
-            call append(line('$'), '-----')
-            call append(line('$'), '')
-        else
-            call append(line('$'), k . ': ' . output[k])
-        endif
-    endif
-endfor
-if !getline(0)
-    call deletebufline(bufnr, 1)
-endif
-endfunction
+  call deletebufline(bufnr, 1, '$')
+  setlocal filetype=isbn
+  setlocal bufhidden=hide
+  setlocal buftype=nofile
+  setlocal nobuflisted
+  setlocal nofoldenable
+  setlocal nolist
+  setlocal nomodeline
+  setlocal nospell
+  setlocal noswapfile
+  nnoremap <buffer> q :quit<CR>
+  for k in koumoku
+if has_key(output, k)
+  if match(output[k], '\n') > -1
+  call append(line('$'), '')
+  call append(line('$'), k .. ': -----')
+  call append(line('$'), split(output[k], '\n'))
+  call append(line('$'), '-----')
+  call append(line('$'), '')
+  else
+  call append(line('$'), k . ': ' . output[k])
+  endif
+  endif
+  endfor
+  if !getline(0)
+call deletebufline(bufnr, 1)
+  endif
+  endfunction
 " lua <<EOF
 " require'marks'.setup {
 "   -- whether to map keybinds or not. default true
@@ -1104,7 +1109,6 @@ endfunction
 " nnoremap sh <cmd>Telescope help_tags<cr>
 " nnoremap sn <cmd>Telescope oldfiles<cr>
 " au FileType TelescopePrompt set signcolumn=no
-
 " noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
 "             \<Cmd>lua require('hlslens').start()<CR>
 " noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
@@ -1125,7 +1129,7 @@ nnoremap <silent> gm <cmd>call Isbn()<CR>
 
 " set lazyredraw
 nnoremap <silent> ` :call OpenBrowserSearch(input('Search: '))<CR>
-set imsearch=0
+" set imsearch=0
 "au vimrc CmdlineEnter * setlocal iminsert=0
 "au vimrc CmdlineLeave * setlocal iminsert=0
 au vimrc FileType vim setlocal indentexpr=
@@ -1145,18 +1149,18 @@ au vimrc FileType syn match Function /^=.\{-}|\zs.*/
 let g:voom_return_key = "<TAB>"
 let g:voom_tab_key = ""
 let g:switch_custom_definitions =
-    \ [
-    \   ['1	', '①'],
-    \   ['2	', '②'],
-    \   ['3	', '③'],
-    \   ['4	', '④'],
-    \   ['5	', '⑤'],
-    \   ['6	', '⑥'],
-    \   ['7	', '⑦'],
-    \   ['8	', '⑧'],
-    \   ['9	', '⑨'],
-    \   ['0	', '⑩'],
-    \ ]
+\ [
+  \ ['1	', '①'],
+  \ ['2	', '②'],
+  \ ['3	', '③'],
+  \ ['4	', '④'],
+  \ ['5	', '⑤'],
+  \ ['6	', '⑥'],
+  \ ['7	', '⑦'],
+  \ ['8	', '⑧'],
+  \ ['9	', '⑨'],
+  \ ['0	', '⑩'],
+  \ ]
     " \   ['1', '①'],
     " \   ['2', '②'],
     " \   ['3', '③'],
@@ -1167,4 +1171,147 @@ let g:switch_custom_definitions =
     " \   ['8', '⑧'],
     " \   ['9', '⑨'],
     " \   ['0', '⑩'],
+inoremap <C-l> <NOP>
+
+autocmd FileType ddu-std call s:ddu_my_settings()
+function! s:ddu_my_settings() abort
+  setlocal scrolloff=5
+  nnoremap <buffer><silent> <CR>
+  \ <Cmd>call ddu#ui#std#do_action('itemAction', {'name' : 'default'})<CR>
+  nnoremap <buffer><silent><nowait> s
+  \ <Cmd>call ddu#ui#std#do_action('itemAction', {'name' : 'split'})<CR>
+  nnoremap <buffer><silent> t
+  \ <Cmd>call ddu#ui#std#do_action('itemAction', {'name' : 'tabopen'})<CR>
+  nnoremap <buffer><silent> a
+  \ <Cmd>call ddu#ui#std#do_action('toggleSelectItem')<CR>
+  nnoremap <buffer><silent> c
+  \ <Cmd>call ddu#ui#std#do_action('itemAction', {'name' : 'cd'})<CR>
+	  nnoremap <buffer><silent> q
+	  \ <Cmd>call ddu#ui#std#do_action('quit')<CR>
+  nnoremap <buffer><silent> i
+	  \ <Cmd>call ddu#ui#std#do_action('openFilterWindow')<CR>
+endfunction
+
+autocmd FileType ddu-std-filter call s:ddu_my_filter_settings()
+function! s:ddu_my_filter_settings() abort
+setlocal winblend=0
+  inoremap <buffer><silent> <CR>
+  \ <Esc><Cmd>close<CR>
+  nnoremap <buffer><silent> <CR>
+  \ <Cmd>close<CR>
+  nnoremap <buffer><silent> q
+  \ <C-w>c
+  inoremap <buffer><silent> <C-c>
+  \ <esc><C-w>c
+  " inoremap <buffer><silent><expr> <C-j> ddu#ui#std#increment_parent_cursor(+1)
+  " inoremap <buffer><silent><expr> <C-k> ddu#ui#std#increment_parent_cursor(-1)
+endfunction
+" let g:denops#debug = 1
+" let g:denops#trace = 1
+function s:save_terminal_mode()
+  let b:term_mode = mode()
+endfunction
+
+function s:restore_terminal_mode()
+  if get(b:, 'term_mode', '') ==# 't'
+    startinsert
+  endif
+endfunction
+
+augroup restore_terminal_mode
+  autocmd!
+  autocmd TermEnter term://* call s:save_terminal_mode()
+  autocmd TermLeave term://* call s:save_terminal_mode()
+  autocmd BufEnter term://* call s:restore_terminal_mode()
+augroup END
+
+function! s:open_volatile_terminal(opts) abort
+  let l:bufnr = bufnr()
+  let l:opts = extend(deepcopy(a:opts), {'on_exit': function('<SID>close_volatile_terminal', [l:bufnr])}, 'force')
+  " 終了時にバッファを消すterminalを開く
+  call termopen(&shell, l:opts)
+endfunction
+
+function! s:close_volatile_terminal(bufnr, job_id, code, event) dict
+  " if a:code is 0
+    call execute('silent! bdelete! ' .. a:bufnr)
+  " endif
+endfunction
+
+function! s:nosplit_volatile_terminal(opts) abort
+  call s:open_volatile_terminal(a:opts)
+endfunction
+
+function! s:split_volatile_terminal(size, mods, opts) abort
+  " 指定方向に画面分割
+  execute a:mods .. ' ' .. 'new'
+  call s:open_volatile_terminal(a:opts)
+  " 指定方向にresize
+  let l:size = v:count
+  if l:size == 0
+    let l:size = a:size
+  end
+  if l:size != 0
+    execute a:mods .. ' resize ' . l:size
+  end
+endfunction
+
+" OpenVolatileTerminal: terminalを開く
+"   - 新しいWindowで:   :NewVolatileTerminal
+"   - 指定のWindowSize: :30NewVolatileTerminal
+"   - 指定の位置:       :vertical NewVolatileTerminal  /  :botright 15NewVolatileTerminal
+command! OpenVolatileTerminal :call s:nosplit_volatile_terminal({})
+command! -count NewVolatileTerminal :call s:split_volatile_terminal(<count>, <q-mods>, {})
+command! OpenVolatileTerminalFromCurrentBuffer :call s:nosplit_volatile_terminal({'cwd': expand('%:p:h')})
+command! -count NewVolatileTerminalFromCurrentBuffer :call s:split_volatile_terminal(<count>, <q-mods>, {'cwd': expand('%:p:h')})
+
+nnoremap <Space>t <cmd>NewVolatileTerminal<CR>
+nnoremap <Space>T <cmd>NewVolatileTerminal<CR>
+nnoremap <silent> sn :Ddu -name=default mr<CR>
+nnoremap <silent> sN :Ddu -name=default mr -source-param-kind='mrw'<CR>
+nnoremap <silent> sb :Ddu -name=buffer buffer<CR>
+nnoremap <silent> ss :Ddu -name=file file -source-param-path=`expand('%:p:h')`<CR>
+nnoremap <silent> sf :Ddu -name=file file_external -source-param-path=`expand('%:p:h')`<CR>
+nnoremap <silent> sF :Ddu -name=file file_external<CR>
+nnoremap <silent> sH :Ddu -name=default help<CR>
+
+call ddu#custom#patch_global('sourceParams', {
+      \ 'file_external': {'cmd': ['rg', '--files', '--color', 'never', '--no-binary']}
+      \ })
+call ddu#custom#patch_global({
+    \ 'ui': 'std',
+    \ })
+call ddu#custom#patch_global({
+    \   'sourceOptions': {
+    \     '_': {
+    \       'matchers': ['matcher_fuzzy'],
+    \     },
+    \   },
+    \ })
+
+call ddu#custom#patch_global({
+    \ 'sourceParams': {
+    \ 'mr': {
+          \ 'current': v:false
+    \ },
+    \ },
+    \ })
+
+call ddu#custom#patch_global({
+  \ 'uiParams': {
+    \ '_': {
+      \ 'filterSplitDirection': 'floating',
+      \ 'winHeight': 12,
+      \ 'prompt': '#',
+      \ 'direction': 'botright',
+      \ 'winWidth': &columns+100
+      \ }
+    \}
+\ })
+call ddu#custom#patch_global({
+  \ 'kindOptions': {
+    \ 'file': {'defaultAction': 'open'},
+    \ 'word': {'defaultAction': 'append'},
+  \ }
+\ })
 " vim:set foldmethod=marker:

@@ -38,35 +38,35 @@ repo = 'williamboman/nvim-lsp-installer'
 repo = 'nvim-telescope/telescope.nvim'
 lazy = 1
 on_lua = 'telescope'
-# hook_add = '''
-# lua <<EOF
-# require('telescope').setup{
-#   defaults = {
-#       border = false,
-#     -- Default configuration for telescope goes here:
-#     -- config_key = value,
-#     -- ..
-#   },
-#   pickers = {
-#     -- Default configuration for builtin pickers goes here:
-#     -- picker_name = {
-#     --   picker_config_key = value,
-#     --   ...
-#     -- }
-#     -- Now the picker_config_key will be applied every time you call this
-#     -- builtin picker
-#   },
-#   extensions = {
-#     -- Your extension configuration goes here:
-#     -- extension_name = {
-#     --   extension_config_key = value,
-#     -- }
-#     -- please take a look at the readme of the extension you want to configure
-#   }
-# }
-# EOF
-# hi! link TelescopeNormal Pmenu
-# '''
+hook_add = '''
+lua <<EOF
+require('telescope').setup{
+  defaults = {
+      border = false,
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    -- ..
+  },
+  pickers = {
+    -- Default configuration for builtin pickers goes here:
+    -- picker_name = {
+    --   picker_config_key = value,
+    --   ...
+    -- }
+    -- Now the picker_config_key will be applied every time you call this
+    -- builtin picker
+  },
+  extensions = {
+    -- Your extension configuration goes here:
+    -- extension_name = {
+    --   extension_config_key = value,
+    -- }
+    -- please take a look at the readme of the extension you want to configure
+  }
+}
+EOF
+hi! link TelescopeNormal Pmenu
+'''
 
 [[plugins]]
 repo = 'nvim-lua/popup.nvim'
@@ -87,12 +87,12 @@ repo = 'lukas-reineke/indent-blankline.nvim'
 lazy = 1
 on_event = 'BufRead'
 hook_add = '''
-let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree']
+let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-std']
 let g:indent_blankline_use_treesitter = v:true
 let g:indent_blankline_show_first_indent_level = v:true
 let g:indent_blankline_char = '|'
 let g:indent_blankline_show_current_context = v:true
-let g:indent_blankline_context_patterns = ['^if','class', 'function', 'method']
+"let g:indent_blankline_context_patterns = ['^if','class', 'function', 'method']
 '''
 
 # [[plugins]]
@@ -372,60 +372,60 @@ EOF
 [[plugins]]
 repo = 'nvim-lua/lsp-status.nvim'
 
-[[plugins]]
-repo = 'delphinus/hop.nvim'
-rev = 'feature/migemo'
-hook_add = '''
-lua << EOF
-require'hop'.setup{
-    use_migemo = true;
-    migemo_dict = vim.g.migemodict
-    }
-EOF
+# [[plugins]]
+# repo = 'delphinus/hop.nvim'
+# rev = 'feature/migemo'
+# hook_add = '''
+# lua << EOF
+# require'hop'.setup{
+#     use_migemo = true;
+#     migemo_dict = vim.g.migemodict
+#     }
+# EOF
 
-nnoremap  , :HopChar2<CR>
-highlight! clear HopUnmatched
-highlight! HopNextKey1 gui=bold guifg=#ff007c guibg=#c6c8d1
-highlight! HopNextKey2 gui=bold guifg=#2b8db3 guibg=#c6c8d1
-highlight! HopNextKey gui=bold guifg=#ff007c guibg=#c6c8d1
-'''
+# nnoremap  , :HopChar2<CR>
+# highlight! clear HopUnmatched
+# highlight! HopNextKey1 gui=bold guifg=#ff007c guibg=#c6c8d1
+# highlight! HopNextKey2 gui=bold guifg=#2b8db3 guibg=#c6c8d1
+# highlight! HopNextKey gui=bold guifg=#ff007c guibg=#c6c8d1
+# '''
 
-[[plugins]]
-repo = 'romgrk/nvim-treesitter-context'
-lazy = 1
-merged = 0
-on_event = 'BufRead'
-depends = ['nvim-treesitter']
-hook_source = '''
-lua <<EOF
-require'treesitter-context'.setup{
-    enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-    throttle = true, -- Throttles plugin updates (may improve performance)
-    max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
-    patterns = { -- Match patterns for TS nodes. These get wrapped to match at word boundaries.
-        -- For all filetypes
-        -- Note that setting an entry here replaces all other patterns for this entry.
-        -- By setting the 'default' entry below, you can control which nodes you want to
-        -- appear in the context window.
-        default = {
-            'class',
-            'function',
-            'method',
-            -- 'for', -- These won't appear in the context
-            -- 'while',
-            -- 'if',
-            -- 'switch',
-            -- 'case',
-        },
-        -- Example for a specific filetype.
-        -- If a pattern is missing, *open a PR* so everyone can benefit.
-        --   rust = {
-        --       'impl_item',
-        --   },
-    },
-}
-EOF
-'''
+# [[plugins]]
+# repo = 'romgrk/nvim-treesitter-context'
+# lazy = 1
+# merged = 0
+# on_event = 'BufRead'
+# depends = ['nvim-treesitter']
+# hook_source = '''
+# lua <<EOF
+# require'treesitter-context'.setup{
+#     enable = disable, -- Enable this plugin (Can be enabled/disabled later via commands)
+#     throttle = true, -- Throttles plugin updates (may improve performance)
+#     max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+#     patterns = { -- Match patterns for TS nodes. These get wrapped to match at word boundaries.
+#         -- For all filetypes
+#         -- Note that setting an entry here replaces all other patterns for this entry.
+#         -- By setting the 'default' entry below, you can control which nodes you want to
+#         -- appear in the context window.
+#         default = {
+#             'class',
+#             'function',
+#             'method',
+#             -- 'for', -- These won't appear in the context
+#             -- 'while',
+#             -- 'if',
+#             -- 'switch',
+#             -- 'case',
+#         },
+#         -- Example for a specific filetype.
+#         -- If a pattern is missing, *open a PR* so everyone can benefit.
+#         --   rust = {
+#         --       'impl_item',
+#         --   },
+#     },
+# }
+# EOF
+# '''
 # [[plugins]]
 # repo = 'f-person/git-blame.nvim'
 # hook_add = '''
@@ -441,5 +441,5 @@ EOF
 # EOF
 # '''
 
-[[plugins]]
-repo = 'delphinus/skkeleton_indicator.nvim'
+# [[plugins]]
+# repo = 'delphinus/skkeleton_indicator.nvim'

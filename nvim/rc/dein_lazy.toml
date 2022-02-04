@@ -111,10 +111,7 @@ imap <silent><buffer> ~ <Plug>(skkeleton-toggle)
 inoremap <silent><buffer><expr> <C-d> denite#do_map('do_action', 'file/rec')
 inoremap <silent><buffer><expr> <C-x> denite#do_map('do_action', 'execute')
 " imap <silent><buffer><nowait> <C-t> <Plug>(denite_filter_update)ri
-inoremap <silent><buffer> <C-t> <Esc>
-  \:call denite#move_to_parent()<CR>
-  \:call denite#call_map('toggle_matchers', 'matcher/migemo', 'matcher/fuzzy')<CR>
-  \:call denite#move_to_filter()<CR>A
+imap <silent><buffer> <C-t> <Plug>(skkeleton-enable)
 inoremap z; ;
 inoremap <silent><buffer><expr> <BS> col('.') == 1 ? "" : "\<BS>"
 inoremap <silent><buffer> <C-a> <cmd>call denite#call_map('choose_action')<CR>
@@ -510,12 +507,12 @@ repo = 'glidenote/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn <Cmd>MemoNew<CR>
-nnoremap <silent><Leader>ml  <Cmd>Denite
-    \ -buffer-name=default
-    \ -sorters=sorter/path,sorter/reverse
-	\ -path=~/GoogleDrive/memo
-    \ file<CR>
 nnoremap <silent> sl  <Cmd>Denite
+    \ -reversed
+    \ -buffer-name=default
+    \ -sorters=sorter/path
+    \ file/rec/txt:~/GoogleDrive/memo<CR>
+nnoremap <silent> ml  <Cmd>Denite
     \ -reversed
     \ -buffer-name=default
     \ -sorters=sorter/path
@@ -528,11 +525,11 @@ let g:memolist_denite = 1
 let g:memolist_memo_suffix = 'md'
 let g:memolist_path = "~/GoogleDrive/memo"
 let g:memolist_template_dir_path = "~/GoogleDrive/template/memolist"
-let g:memolist_memo_date = "%Y-%m-%d[%H:%M]"
- let g:memolist_filename_date = "%y%m%d_"
+let g:memolist_memo_date = "%Y%m%d[%H:%M]"
+let g:memolist_filename_date = "%y-%m-%d-"
 
 " categories prompt (default 0)
-" let g:memolist_prompt_categories = 1
+let g:memolist_prompt_categories = 0
 '''
 
 # [[plugins]]
@@ -1064,30 +1061,30 @@ hook_add = '''
 let g:sonictemplate_vim_template_dir = '~/GoogleDrive/template/'
 '''
 
-[[plugins]]
-repo =  'Shougo/deol.nvim'
-on_cmd = ['Deol']
-hook_add = '''
-nnoremap <Space>t <cmd> Deol -command=cmd.exe -winheight=30 -split=hor<CR>
-nnoremap <Space>T <cmd> Deol -command=wsl.exe -winheight=30 -split=hor<CR>
-" nnoremap <Space>t <cmd>sp term://cmd <CR>
-" nnoremap <Space>T <cmd>sp term://wsl<CR>
-let g:deol#shell_history_path = expand('~/.cache/deol/history')
-let g:deol#prompt_pattern = '% \|%$'
-		let g:deol#custom_map = {
-			\ 'edit': 'e',
-			\ 'start_insert': 'i',
-			\ 'start_insert_first': 'I',
-			\ 'start_append': 'a',
-			\ 'start_append_last': 'A',
-			\ 'execute_line': '<CR>',
-			\ 'previous_prompt': '<C-p>',
-			\ 'next_prompt': '<C-n>',
-			\ 'paste_prompt': '<C-y>',
-			\ 'bg': '<C-z>',
-			\ 'quit': 'q',
-			\ }
-'''
+# [[plugins]]
+# repo =  'Shougo/deol.nvim'
+# on_cmd = ['Deol']
+# hook_add = '''
+# nnoremap <Space>t <cmd> Deol -command=cmd.exe -winheight=30 -split=hor<CR>
+# nnoremap <Space>T <cmd> Deol -command=wsl.exe -winheight=30 -split=hor<CR>
+# " nnoremap <Space>t <cmd>sp term://cmd <CR>
+# " nnoremap <Space>T <cmd>sp term://wsl<CR>
+# let g:deol#shell_history_path = expand('~/.cache/deol/history')
+# let g:deol#prompt_pattern = '% \|%$'
+# 		let g:deol#custom_map = {
+# 			\ 'edit': 'e',
+# 			\ 'start_insert': 'i',
+# 			\ 'start_insert_first': 'I',
+# 			\ 'start_append': 'a',
+# 			\ 'start_append_last': 'A',
+# 			\ 'execute_line': '<CR>',
+# 			\ 'previous_prompt': '<C-p>',
+# 			\ 'next_prompt': '<C-n>',
+# 			\ 'paste_prompt': '<C-y>',
+# 			\ 'bg': '<C-z>',
+# 			\ 'quit': 'q',
+# 			\ }
+# '''
 
 # [[plugins]]
 # repo = 'tpope/vim-fugitive'
