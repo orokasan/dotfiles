@@ -1,9 +1,0 @@
-[[plugins]]
-repo =  'Shougo/deoplete.nvim'
-# on_if = 'has("nvim")'
-on_event = 'InsertEnter'
-hook_source = 'source ~/dotfiles/nvim/rc/config/deoplete.rc.vim'
-
-# [[plugins]]
-# rev = 'dev'
-# repo = 'hrsh7th/nvim-cmp'

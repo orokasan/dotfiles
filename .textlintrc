@@ -1,10 +1,7 @@
 {
     "rules": {
-        "preset-ja-technical-writing": false,
-        "preset-jtf-style": true,
         "prh": {
-            "rulePaths" :["./prh.yml"]
+            "rulePaths" :["prh.yml", "prh_unacceptable_char.yml"]
         }
     }
 }
- // cache : true

@@ -1,60 +1,61 @@
 let g:lightline = {
     \ 'active': {
-        \ 'left': [ ['mode', 'paste'],['git'], [ 'readonly', 'path'] ],
-        \ 'right': [
-            \ ['lineinfo'],
-            \ ['charcount','denitebuffer'],
-            \ ['pomodoro', 'linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus','searchcount']
-        \ ]
+    \ 'left': [ ['mode', 'paste'],['git'], [ 'readonly', 'path'] ],
+    \ 'right': [
+    \ ['lineinfo','lsp_status'],
+    \ ['charcount','denitebuffer'],
+    \ ['linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus','searchcount', 'lsp_info', 'lsp_hints', 'lsp_errors', 'lsp_warnings', 'deniteinput','ddupath' ]
+    \ ]
     \ },
     \ 'inactive': {
-         \ 'left': [['inactivefn']],
-         \ 'right': [[ 'percent' ], [], ['filetype']]
+    \ 'left': [['inactivefn']],
+    \ 'right': [[ 'percent' ], [], ['filetype']]
     \ },
     \ 'tabline' : {
-         \ 'left': [['tab']],
-         \ 'right': [['filetype'], ['fileencoding', 'fileformat'], [] ]
+    \ 'left': [['tab']],
+    \ 'right': [['filetype'], ['fileencoding', 'fileformat'], [] ]
     \ },
     \ 'tab' : {
-         \ 'active': [ 'tabnum', 'filename', 'modified' ],
-         \ 'inactive': [ 'tabnum', 'filename', 'modified' ]
-         \ },
+    \ 'active': [ 'tabnum', 'filename', 'modified' ],
+    \ 'inactive': [ 'tabnum', 'filename', 'modified' ]
+    \ },
     \ 'component':{
-        \ 'lineinfo':'%{LLruler()}%<'
+    \ 'lineinfo':'%{LLruler()}%<'
     \},
     \ 'component_function': {
-        \ 'pomodoro': 'LLpomodoro',
-        \ 'percent' : 'LLpercent',
-        \ 'cd': 'LLcd',
-        \ 'readonly':'LLReadonly',
-        \ 'filetype':'LLfiletype',
-        \ 'inactivefn':'LLInactiveFilename',
-        \ 'path':'LLMyFilepath',
-        \ 'mode': 'LLMode',
-        \ 'charcount':'LLCharcount',
-        \ 'eskk': 'LLeskk',
-        \ 'tabnr': 'LLtabnr',
-        \ 'git':'LLgit',
-        \ 'searchres': 'LLsearchres',
-        \ 'denitebuffer' : 'LLDeniteBuffer',
-        \ 'denitefilter' : 'LLDeniteFilter',
-        \ 'progress': 'LLLspProgress',
-        \ 'quickrun': 'LL_quickrun_running',
-        \ 'searchcount': 'LastSearchCount',
+    \ 'percent' : 'LLpercent',
+    \ 'cd': 'LLcd',
+    \ 'readonly':'LLReadonly',
+    \ 'filetype':'LLfiletype',
+    \ 'inactivefn':'LLInactiveFilename',
+    \ 'path':'LLMyFilepath',
+    \ 'mode': 'LLMode',
+    \ 'charcount':'LLCharcount',
+    \ 'eskk': 'LLeskk',
+    \ 'tabnr': 'LLtabnr',
+    \ 'git':'LLgit',
+    \ 'searchres': 'LLsearchres',
+    \ 'denitebuffer' : 'LLDeniteBuffer',
+    \ 'deniteinput': 'Deniteinput',
+    \ 'denitefilter' : 'LLDeniteFilter',
+    \ 'progress': 'LLLspProgress',
+    \ 'ddupath': 'LLddupath',
+    \ 'quickrun': 'LL_quickrun_running',
+    \ 'searchcount': 'LastSearchCount',
     \ },
     \ 'component_expand': {
-        \ 'buffers': 'lightline#bufferline#buffers',
-        \ 'tab': 'lightline#tabs',
-        \ 'linter_warnings': 'LLLspWarning',
-        \ 'linter_errors': 'LLLspError',
+    \ 'buffers': 'lightline#bufferline#buffers',
+    \ 'tab': 'lightline#tabs',
+    \ 'linter_warnings': 'LLLspWarning',
+    \ 'linter_errors': 'LLLspError',
     \ },
-   \ 'component_type' : {
-        \ 'buffers': 'tabsel',
-        \ 'tab': 'tabsel',
-        \ 'linter_warnings': 'warning',
-        \ 'linter_errors': 'error',
+    \ 'component_type' : {
+    \ 'buffers': 'tabsel',
+    \ 'tab': 'tabsel',
+    \ 'linter_warnings': 'warning',
+    \ 'linter_errors': 'error',
     \ }
-\ }
+    \ }
 
 " workaround for nvim bug
 " https://github.com/neovim/neovim/issues/8796
@@ -63,30 +64,26 @@ let g:lightline = {
 let g:lightline.colorscheme = 'iceberg'
 " autocmd dein ColorScheme,VimEnter * call <SID>lightline_set_colorscheme()
 let g:lightline.tab_component_function = {
-      \ 'modified': 'LLModified',
-      \ 'tabnum': 'LLtabnum' }
+    \ 'modified': 'LLModified',
+    \ 'tabnum': 'LLtabnum' }
 
 " let g:lightline.subseparator= { 'left': '', 'right': '' }
 " let g:lightline.separator= { 'left': '', 'right': '' }
 " let g:lightline.tabline_subseparator= { 'left': '', 'right': '' }
 " let g:lightline.tabline_separator= { 'left': '', 'right': '' }
 let g:component_function_visible_condition = {
-        \ 'readonly': 1,
-        \ 'inactivefn': 1,
-        \ 'path': 1,
-        \ 'mode': 1,
-        \ 'charcount': 1,
-        \ 'git': 1,
-        \ 'lineinfo': 1
-        \ }
-
-function! LLpomodoro() abort
-    return get(g:, 'pomodoro_timer_status', '')
-endfunction
+    \ 'readonly': 1,
+    \ 'inactivefn': 1,
+    \ 'path': 1,
+    \ 'mode': 1,
+    \ 'charcount': 1,
+    \ 'git': 1,
+    \ 'lineinfo': 1
+    \ }
 
 function! LLModified(n) abort
-  let winnr = tabpagewinnr(a:n)
-  return gettabwinvar(a:n, winnr, '&modified') ? '+' : gettabwinvar(a:n, winnr, '&modifiable') ? '' : '<>'
+    let winnr = tabpagewinnr(a:n)
+    return gettabwinvar(a:n, winnr, '&modified') ? '+' : gettabwinvar(a:n, winnr, '&modifiable') ? '' : '<>'
 endfunction
 " if !exists('g:disable_IM_Control') && g:disable_IM_Control is 1
 "     let g:lightline.component += {
@@ -94,8 +91,8 @@ endfunction
 "         \}
 " endif
 if has('nvim')
-   let g:lightline#bufferline#clickable = 1
-   let g:lightline.component_raw = {'buffers': 1}
+    let g:lightline#bufferline#clickable = 1
+    let g:lightline.component_raw = {'buffers': 1}
 endif
 let g:lightline#bufferline#unnamed = ''
 let g:lightline#bufferline#filename_modifier = ':t'
@@ -103,8 +100,8 @@ let g:lightline#bufferline#show_number = 2
 let g:lightline#bufferline#more_buffers = '…'
 let g:lightline#bufferline#number_separator = ''
 let g:lightline#bufferline#number_map = {
-\ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
-\ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
+    \ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
+    \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
 
 nmap <Leader>1 <Plug>lightline#bufferline#go(1)
 nmap <Leader>2 <Plug>lightline#bufferline#go(2)
@@ -129,48 +126,13 @@ nmap <Leader>c0 <Plug>lightline#bufferline#delete(10)
 let s:threshold = 130
 function! s:threshold(n) abort
     let s = s:threshold
-    let w = winwidth(0)
+    let w = winwidth(0) - 40
     return a:n == 0 ? w > s :
         \ a:n == 1 ? w > s*2/3 :
         \ a:n == 2 ? w > s/3 : w > s/4
 endfunction
 let s:diagnostics_counts = {}
-autocmd DiagnosticChanged * call lightline#update()
 " autocmd User LspRequest lightline#update()
-if has('nvim')
-function! LLLspProgress() abort
-    " let p = luaeval('vim.lsp.util.get_progress_messages()')
-    " if empty(p)
-    "     return ''
-    " endif
-    " let p = p[0]
-    " let title = get(p, 'title', '')
-    " let perc = get(p, 'percentage', '')
-    " let mes = get(p, 'message', '')
-    " return title .. '(' .. perc .. '%)' .. ':' .. mes
-    return ''
-endfunction
-" autocmd dein DiagnosticChanged  call lightline#update()
-" autocmd dein BufEnter,CmdlineLeave * call VimLspCacheDiagnosticsCounts() | call lightline#update()
-endif
-" vim-lsp or nvim-lsp
-function! LLLspError() abort
-    if luaeval('vim.lsp.buf.server_ready()')
-        let bufnr = bufnr('%')
-        let e = luaeval("vim.inspect(#vim.diagnostic.get(_A[1], {_A[2]}))", [bufnr, 1])
-        return e ? '' . e : ''
-    else
-        return ''
-    endif
-endfunction
-function! LLLspWarning() abort
-    if luaeval('vim.lsp.buf.server_ready()')
-        let w = luaeval("vim.inspect(#vim.diagnostic.get(_A[1], {_A[2]}))", [bufnr, 2])
-    return  w ? '' . w : ''
-else
-    return ''
-endif
-endfunction
 
 function! LL_quickrun_running()
     if !exists('*quickrun#is_running')
@@ -182,59 +144,66 @@ function! LL_quickrun_running()
     endif
 endfunction
 
+let s:mode_map = {
+    \     'n': 'NORMAL', 'i': 'INSERT', 'R': 'REPLACE', 'v': 'VISUAL', 'V': 'V-LINE', "\<C-v>": 'V-BLOCK',
+    \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL'
+    \   }
 function! LLMode()
     return &filetype is# 'unite' ? 'Unite' :
         \ &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'defx' ? 'Defx' :
         \ &filetype is# 'fern' ? 'Fern' :
         \ &filetype is# 'denite' ? '' :
+        \ &filetype =~# '^ddu' ? '' :
         \ &filetype is# 'undotree' ? 'undotree' :
         \ &filetype is# 'tweetvim' ? 'Tweetvim' :
         \ &previewwindow ? 'preview' :
-        \ lightline#mode()
+        \ s:mode_map[mode()]
 endfunction
 
 function! LLMyFilepath()
-    if &filetype =~# 'denite'
-        if len(denite#get_status('input')) > 0
-            return '#' . denite#get_status('input')
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+        if len(w:ddu_ui_ff_status.input) > 0
+            return '#' . w:ddu_ui_ff_status.input
         else
-            return '# '
+            return '#'
         endif
     elseif &filetype =~# s:ignore_filetype
         return ''
-    " elseif exists('*anzu#search_status') && strwidth(s:llanzu())
-    "     return s:llanzu()
+        " elseif exists('*anzu#search_status') && strwidth(s:llanzu())
+        "     return s:llanzu()
     else
-        if exists('g:loaded_webdevicons')
-            let icon = WebDevIconsGetFileTypeSymbol()
-        else
-            let icon = ''
-        endif
+        " if exists('g:loaded_webdevicons')
+        "     let icon = WebDevIconsGetFileTypeSymbol()
+        " else
+        "     let icon = ''
+        " endif
 
-        let l:filepath = expand('%:~:.')
-        let l:filename = expand('%:t')
-        if s:threshold(0)
-            " let l:fn =  strwidth(l:filepath) < s:threshold*2/3 ? l:filepath : l:filename
-            let l:fn =   l:filepath
-        elseif s:threshold(2)
-            let l:fn = l:filename
-        else
-            return ''
-        endif
-            let l:modified = &modified ? '[+]' : ''
-            return  l:fn . l:modified . ' ' . icon
+        " let l:filepath = expand('%:~:.')
+        " let width = winwidth(0) - 60
+        " let len = strdisplaywidth(l:filepath)
+        " if len > width
+        "     let filepath = '...' .. strpart(filepath,  len - width)
+        " endif
+        " let l:modified = &modified ? '[+]' : ''
+        " return  l:filepath . l:modified . ' ' . icon
+        return fnamemodify(getcwd(),':~')
     endif
 endfunction
 
 "例外filetype
-let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter|fern)'
+let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter|fern|^ddu)'
 function! s:ignore_window() abort
     return &filetype =~# s:ignore_filetype || &previewwindow
 endfunction
 
 function! LLInactiveFilename()
-    return !s:ignore_window() ? expand('%:t') : LLMode()
+    if s:ignore_window()
+        return LLMode()
+    endif
+    return ''
+    " let l:modified = &modified ? '[+]' : ''
+    " return  expand('%:~:.')..l:modified
 endfunction
 
 function! LLeskk() abort
@@ -254,22 +223,39 @@ function! LLfiletype() abort
 endfunction
 
 function! LLruler() abort
-    let col = printf("%3s", col('.'))
-    let line = printf("%3s", line('.'))
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+        " let done = w:ddu_ui_ff_status.done ? '' : '[loading...]'
+        " return '[' .. done .. ']' .. w:ddu_ui_ff_status.name .. ' ' .. w:ddu_ui_ff_status.maxItems
+        return printf('%d/%d[%d]', line('.'), line('$'), w:ddu_ui_ff_status.maxItems)
+    endif
     if !s:ignore_window()
-            return printf('L%s:C%s', line, col)
+        return printf('L%3s:C%3s', line('.'), col('.'))
     else
         return ''
     endif
 endfunction
 
 function! LLCharcount()
+    if match(mode(),"[vV]") !=# -1
+        let width = 0
+        let [lnum1, col1] = getpos("v")[1:2]
+        let [lnum2, col2] = getpos(".")[1:2]
+        let [lnum1, lnum2] = lnum2 < lnum1 ? [lnum2, lnum1] :[lnum1, lnum2]
+        if abs(lnum1 - lnum2) < 1000
+        for l in range(lnum1, lnum2)
+            let width += strwidth(getline(l))
+        endfor
+    else
+        let width = strwidth(getline('.'))
+        endif
+    else
+        let width = strwidth(getline('.'))
+    endif
+    let width = width/2
     if !s:ignore_window()
-        " let abbr = s:threshold(0) ? '' . s:llcharcount . '|' . s:llcharallcount:
-        "     \ s:threshold(1) ? '' . s:llcharcount : ''
         " return abbr
         let ac =  s:llcharallcount > 10000 ? s:llcharallcount/1000 . 'k' : s:llcharallcount
-        return '' . printf('%3S', strchars(getline('.'))) . '| ' . ac
+        return ' ' . printf('%3S', width .. '| ' .. ac)
     else
         return ''
     endif
@@ -291,7 +277,7 @@ function! s:llvarCharAllCount()
 endfunction
 
 function! s:llvarCharCount()
-    let l:count = strchars(getline('.'))
+    let l:count = strwidth(getline('.'))
     let s:llcharcount = l:count < 10 ? '  ' . l:count :
         \ l:count <100 ? ' ' . l:count :
         \ l:count
@@ -299,11 +285,11 @@ endfunction
 "}}}
 
 function! LLpercent() abort
-return &filetype !=# 'denite' ? 100 * line('.') / line('$') . '%«' . line('$') : ''
+    return &filetype !~# '^ddu' ? 100 * line('.') / line('$') . '%«' . line('$') : ''
 endfunction
 
 function! LLReadonly()
-"    return &readonly ? '⭤' : ''
+    "    return &readonly ? '⭤' : ''
     " return &readonly ? '' : ''
     return &readonly ? '' : ''
 endfunction
@@ -319,7 +305,7 @@ function! LLgit() abort
     else
         return len(s:llgitbranch) ? ''. s:llgitbranch : ''
         " return s:threshold(1) ? ' '. s:llgitbranch :
-       " \ s:threshold(2) ? '' :''
+        " \ s:threshold(2) ? '' :''
     endif
 endfunction
 
@@ -358,16 +344,51 @@ function! LLDeniteBuffer() abort
     return s:denite_statusline()
 endfunction
 
-function! s:denite_statusline() abort
-    if &filetype isnot# 'denite'
-        return ''
-    else
-        return s:denitesource()
-   endif
+au FileType ddu-* call <SID>llddustatus()
+let s:ddustatus = {}
+function! s:llddustatus() abort
+    let s:ddustatus = ddu#custom#get_current(b:ddu_ui_name)
+endfunction
+function! LLddupath() abort
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_item') && exists('w:ddu_ui_ff_status')
+        let path = ''
+        if len(w:ddu_ui_ff_item.sources) <= 0
+            return ''
+        endif
+
+        let options = get(w:ddu_ui_ff_item.sources[0],'options', {})
+        let params = get(w:ddu_ui_ff_item.sources[0],'params',{})
+        let path_o = len(options) ? get(options,'path','') : ''
+        let path_p = len(params)  ? get(params,'path','') : ''
+        let path = len(path_p) ? path_p : len(path_o) ? path_o : getcwd()
+
+        let done = w:ddu_ui_ff_status.done ? '' : '[loading...] '
+        return done .. fnamemodify(path, ':~')
+    endif
+    return ''
 endfunction
 
-function! s:deniteinput() abort
-    return denite#get_status('input')
+function! s:denite_statusline() abort
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+        return printf('%s:%s', &filetype, w:ddu_ui_ff_status.name)
+    else
+        return ''
+    endif
+endfunction
+
+function! Deniteinput() abort
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status') && w:ddu_ui_ff_status.done
+
+        " return ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].params.path
+        " let path = get(ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].params, 'path', '') ||
+        " \ get(ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].options.params, 'path', '')
+        " let p = get(ddu#custom#get_current(b:ddu_ui_name).sources[0].options, 'path', '')
+        return ''
+    else
+        return ''
+    endif
+    " return '[' .. done .. ']' .. w:ddu_ui_ff_status.name .. ' ' .. w:ddu_ui_ff_status.maxItems
+
 endfunction
 
 function! s:denitebuf()
@@ -375,18 +396,20 @@ function! s:denitebuf()
 endfunction
 
 function! s:denitesource()
-    let l:sources = denite#get_status('sources')
-    let l:sources = substitute(l:sources, " file:\\['new'\\](\\d\\+/\\d\\+)", '','g')
-    let l:p = denite#get_status('path')
-    let l:path = matchstr(l:p, "\\[\\zs.*\\ze\\]", 'g')
-    let l:path = fnamemodify(l:path,':~')
-    if strwidth(l:path) > 40
-        let path = '.../' . fnamemodify(path,':h:h:t'). '/'
-            \ . fnamemodify(path,':h:t'). '/'. fnamemodify(path, ':t')
+    " let l:sources = denite#get_status('sources')
+    " let l:sources = substitute(l:sources, " file:\\['new'\\](\\d\\+/\\d\\+)", '','g')
+    " let l:p = denite#get_status('path')
+    " let l:path = matchstr(l:p, "\\[\\zs.*\\ze\\]", 'g')
+    " let l:path = fnamemodify(l:path,':~')
+    " if strwidth(l:path) > 40
+    "     let path = '.../' . fnamemodify(path,':h:h:t'). '/'
+    "         \ . fnamemodify(path,':h:t'). '/'. fnamemodify(path, ':t')
+    " endif
+    " let l:path =  '[' . l:path . ']'
+    " let l:sources = substitute(l:sources, "\:\\[.*\\]", '','g')
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+        return printf('[%d/%d]', line('.'),line('$'))
     endif
-    let l:path =  '[' . l:path . ']'
-    let l:sources = substitute(l:sources, "\:\\[.*\\]", '','g')
-    return l:sources . l:path
 endfunction
 
 function! LLcd() abort
@@ -420,21 +443,20 @@ endfunction
 let s:searchcount = {}
 au dein User SearchxAcceptReturn let s:searchcount = searchcount()
 function! LLsearchres() abort
-  let result = s:searchcount
-  if empty(result)
-    return ''
-  endif
-  if result.incomplete ==# 2 " max count exceeded
-    if result.total > result.maxcount &&
-    \  result.current > result.maxcount
-      return printf(' [>%d/>%d]',
-      \             result.current, result.total)
-    elseif result.total > result.maxcount
-      return printf(' [%d/>%d]',
-      \             result.current, result.total)
+    let result = s:searchcount
+    if empty(result)
+        return ''
     endif
-  endif
-  return printf('  [%d/%d]',
-  \             result.current, result.total)
+    if result.incomplete ==# 2 " max count exceeded
+        if result.total > result.maxcount &&
+            \  result.current > result.maxcount
+            return printf(' [>%d/>%d]',
+                \             result.current, result.total)
+        elseif result.total > result.maxcount
+            return printf(' [%d/>%d]',
+                \             result.current, result.total)
+        endif
+    endif
+    return printf('  [%d/%d]',
+        \             result.current, result.total)
 endfunction
-

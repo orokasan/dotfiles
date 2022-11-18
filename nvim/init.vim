@@ -1,11 +1,7 @@
 "ork's vimrc
-
 set fileformats=unix,dos,mac
 set encoding=utf-8
 set fileencodings=utf-8,cp932,ucs2le,ucs-2,iso-2022-jp,euc-jp,sjis,latin1
-runtime! C:/Users/t_kuriki/Downloads/nvui-win64/nvui/vim/plugin/*.vim
-set rtp+=~/Downloads/VOoM-5.3
-set rtp+=C:/Users/t_kuriki/Downloads/himalaya-windows.tar/himalaya-windows/himalaya/vim
 " ------------------------------------------------------------------------------
 augroup vimrc
   autocmd!
@@ -35,16 +31,28 @@ let g:loaded_perl_provider = 0
 let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
 
-" let g:do_filetype_lua = 1
-" let g:did_load_filetypes = 0
+if exists('neovide')
+  set guifont=PlemolJP:h11
+  " let g:neovide_refresh_rate=60
+  let g:neovide_transparency=0.7
+  let g:neovide_profiler = v:false
+  let g:neovide_confirm_quit = v:true
+  cd ~/
+  let g:neovide_cursor_trail_size=0
+  let g:neovide_remember_window_size=v:true
+  let g:neovide_remember_window_position=v:true
+  let g:neovide_cursor_animation_length=0
+  " let g:neovide_scale_factor=1.0
+  let g:neovide_refresh_rate_idle = 5
+endif
 
 if executable('win32yank.exe')
-if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
-  let win32yank = resolve(exepath('win32yank.exe'))
-else
-  let win32yank = 'win32yank.exe'
-endif
-let g:clipboard = {
+  if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
+    let win32yank = resolve(exepath('win32yank.exe'))
+  else
+    let win32yank = 'win32yank.exe'
+  endif
+  let g:clipboard = {
       \   'name': 'myClipboard',
       \   'copy': {
       \      '+': [win32yank, '-i', '--crlf'],
@@ -57,36 +65,39 @@ let g:clipboard = {
       \   'cache_enabled': 0,
       \ }
 else
-call  provider#clipboard#Executable()
+  call  provider#clipboard#Executable()
 endif
+
 "---------------------------------------------------------------------
 if has('win32')
-    let g:python3_host_prog = expand('~/AppData/Local/Programs/Python/Python39/python.exe')
-   " let g:python3_host_prog = 'C:\Python39\python.exe'
-    let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
+  let g:migemo_dict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
+  let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 endif
 let mapleader = "\<Space>"
-if has('nvim')
+let g:dein#install_progress_type = "floating"
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
-" let g:dein#lazy_rplugins=1
+let g:dein#lazy_rplugins=1
+if has('nvim')
 let g:dein#default_options = { 'merged': v:true }
+else
+let g:dein#default_options = { 'merged': v:false }
+endif
 let g:dein#install_max_processes = 8
-let g:dein#install_process_timeout = 300
-" let g:dein#inline_vimrcs=[expand('~/dotfiles/nvim/config.vim')]
+let g:dein#install_process_timeout = 1000
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 let s:dein_is_initializing = 0
 if &runtimepath !~# '/dein.vim'
-      if !isdirectory(s:dein_repo_dir)
-        if !executable('git')
-          echo 'Please install git or update your path to include the git executable!'
-      endif
-        echo 'install dein.vim ...'
-        execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
-        let s:dein_is_initializing = 1
-      endif
+  if !isdirectory(s:dein_repo_dir)
+    if !executable('git')
+      echo 'Please install git or update your path to include the git executable!'
+    endif
+    echo 'install dein.vim ...'
+    execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+    let s:dein_is_initializing = 1
+  endif
 endif
 let s:dein_path =  fnamemodify(s:dein_repo_dir, ':p')
 execute 'set runtimepath+=' . s:dein_path
@@ -94,193 +105,189 @@ execute 'set runtimepath+=' . s:dein_path
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
-let s:exp_toml = '~/dotfiles/nvim/rc/dein_experimental.toml'
 let s:denops_toml = '~/dotfiles/nvim/rc/dein_denops.toml'
-let s:cmp_toml = '~/dotfiles/nvim/rc/dein_cmp.toml'
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
-    call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:denops_toml])
-    if has('nvim')
-        call dein#load_toml(s:toml,      {'lazy': 0})
-        call dein#load_toml(s:lazy_toml, {'lazy': 1})
-        call dein#load_toml(s:lua_toml,  {'merged': 1})
-        call dein#load_toml(s:denops_toml, {'merged': 0})
-    endif
-    call dein#end()
-    call dein#save_state()
-    if !has('vim_starting')
-        call dein#call_hook('source')
-        call dein#call_hook('post_source')
-    endif
+  call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:denops_toml])
+  call dein#load_toml(s:denops_toml)
+  call dein#load_toml(s:toml,      {'lazy': 0})
+  call dein#load_toml(s:lazy_toml, {'lazy': 1})
+  if has('nvim')
+    call dein#load_toml(s:lua_toml)
+  endif
+  call dein#end()
+  call dein#save_state()
+  if !has('vim_starting')
+    call dein#call_hook('source')
+    call dein#call_hook('post_source')
+  endif
 endif
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-
+command! -nargs=? -complete=command UpdateConflictPlugin Gin ++wait stash | Gin ++wait pull | Gin ++wait stash pop
 if !v:vim_did_enter
-function! DeinLoader() abort
+  function! DeinLoader() abort
     source $MYVIMRC
     call dein#install()
     echo "Recache"
     call dein#recache_runtimepath()
-endfunction
+  endfunction
 endif
-" for dein dein#util#_check_vimrcs() bug workaround
 
+" for dein dein#util#_check_vimrcs() bug workaround
 au! dein BufWritePost
 if s:dein_is_initializing
-    call dein#install()
-    let s:dein_is_initializing = 0
-    source $myvimrc
+  call dein#install()
+  let s:dein_is_initializing = 0
+  source $myvimrc
 endif
+autocmd vimrc VimEnter * call s:vimrc_VimEnter_hook()
+function! s:vimrc_VimEnter_hook() abort
+call dein#call_hook('post_source')
+endfunction
 
-endif
 filetype plugin indent on
 syntax on
+
+colorscheme iceberg
+set background=dark
+let g:lightline.colorscheme = 'iceberg'
 
 set notermguicolors
 set swapfile
 set undofile
 if !has('nvim')
-    set directory=~/.backup/vim/swap
-    set undodir=~/.backup/vim/undo " put together undo files
-    set backupdir=~/.backup/vim/backup " put together undo files
+  set directory=~/.backup/vim/swap
+  set undodir=~/.backup/vim/undo
+  set backupdir=~/.backup/vim/backup
 else
-    set directory=~/.backup/nvim/swap
-    set undodir=~/.backup/nvim/undo " put together undo files
-    set backupdir=~/.backup/nvim/backup " put together undo files
+  set directory=~/.backup/nvim/swap
+  set undodir=~/.backup/nvim/undo
+  set backupdir=~/.backup/nvim/backup
 endif
-set autoread                " reload editing file if the file changed externally
+set autoread
 set backup
 "}}}
 " Visual  {{{
 " language C
-set ambiwidth=double
-set shortmess=aAcTtF
-set showtabline=2   " always show tabline
+set ambiwidth=single
+set shortmess=aAcTtFI
+set showtabline=2
 set number
-set signcolumn=number  " show signcolumn
-set laststatus=2    " always show statusline
-set cmdheight=1     " set commandline lines
-set noshowcmd       " don't let show inserting command
-set noshowmode      " don't let show current mode on commandline
-set cursorline      " highlight cursorline
-" autocmd vimrc ColorScheme *  hi clear CursorLine
-set list            " show invisible character
-set listchars=tab:^-,trail:-,extends:»,precedes:«,nbsp:%
+set signcolumn=number
+set laststatus=0
+set cmdheight=1
+set noshowcmd
+set noshowmode
+set cursorline
+set cursorlineopt=screenline,number
+set cinwords=
+set list
+set listchars=tab:^-,trail:␣,extends:»,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
-" set lazyredraw
 set t_Co=256
 set synmaxcol=1500
 set belloff=all
-set fillchars+=vert:\ ,fold:\ ,diff:\ 
-set hidden          " be able to open files when editing other files
+set fillchars+=vert:\ ,fold:\ ,diff:\ ,eob:~
+set diffopt=internal,context:10,algorithm:histogram,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap,closeoff
+set nrformats+=unsigned
+set hidden
 set splitright
 set noruler
-" Display candidates by list.
 set wildmenu
 set wildmode=longest:full,full
-set previewheight=10 " Adjust window size of preview
-set helpheight=15 "and help.
-" max candidate of completion menu
-set pumheight=12 " default
+set previewheight=10
+set helpheight=15
+set helplang=en,ja
+set pumheight=12
 autocmd vimrc ColorScheme * highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 "}}}
 " Editing {{{
-set virtualedit=block     "move cursor to one more char than end of line
+set updatetime=1000
+set virtualedit=block
 set wrap
 " Scroll
 set scrolloff=5
 set sidescrolloff=5
 set sidescroll=1
-" add japanese matchpairs
-set noshowmatch       " highlight matched pairs
-set matchtime=1     " highlighting long
+set noshowmatch
+set matchtime=1
 set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕
 set nojoinspaces
-set textwidth=0             " don't let insert auto indentation
+set textwidth=0
 set updatecount=50
-set tabstop=4               " number of spaces inserted by <TAB>
+set tabstop=4
 set expandtab
 set softtabstop=-1
 let g:vim_indent_cont = 4
 set autoindent
+set smartindent
 set shiftwidth=0
 set formatoptions=mjMcrql
 au vimrc FileType * set fo-=o
 set iskeyword+=-
-" Searching
 set ignorecase
 set smartcase
 set incsearch
-"default global option on :substitute
 set wrapscan
 set hlsearch
-"completion
 set complete=.,w,b,u
-" viminfo
 set history=1000
 set clipboard+=unnamed,unnamedplus
-" mouse in terminal
 set mouse=a
-" Set minimal height for current window.
 set winheight=1
 set winwidth=1
-" Set maximam command line window.
 set cmdwinheight=8
-" equal window size.
 set equalalways
 " for cmdwin
 autocmd vimrc CmdwinEnter * call <SID>cmdwin_settings()
 function! s:cmdwin_settings() abort
-    setlocal signcolumn=no
-    " delete useless commands
-    silent g/^qa\?!\?$/de
-    silent g/^e\?!\?$/de
-    silent g/^wq\?a\?!\?$/de
-    " move to nice position
-    " CmdwinEnter seems not to fire below commands
-    " setlocal signcolumn=no
-    " setlocal scrolloff=0
-    nnoremap <buffer><silent>q <Cmd>close<CR>
-    norm $
-    norm G
-    map <buffer> <CR> <CR>
+  setlocal signcolumn=no
+  " delete useless commands
+  silent g/^qa\?!\?$/de
+  silent g/^e\?!\?$/de
+  silent g/^wq\?a\?!\?$/de
+  nnoremap <buffer><silent>q <Cmd>close<CR>
+  norm $
+  norm G
+  map <buffer> <CR> <CR>
 endfunction
 autocmd vimrc CmdwinLeave * call histdel('/', -1)
+
 set completeopt=menuone,longest
 set completeopt-=preview
+set indentkeys=0{,0},0),0],:,0#,o,O,e
+set backspace=indent,eol,start
+let g:vimsyn_embed='lPr'
 " nicely folding
 "{{{
-    function! s:is_view_available() abort
-      if !&buflisted || &buftype !=# ''
-        return 0
-      elseif !filewritable(expand('%:p'))
-        return 0
-    endif
-      return 1
-     endfunction
-    function! s:mkview() abort
-       if s:is_view_available()
-        silent! mkview
-      endif
-    endfunction
-    function! s:loadview() abort
-      if s:is_view_available()
-        silent! loadview
-      endif
-    endfunction
-    augroup MyAutoCmd
-      autocmd!
-      autocmd MyAutoCmd BufWinLeave * call s:mkview()
-      autocmd MyAutoCmd BufReadPost * call s:loadview()
-    augroup END
+function! s:is_view_available() abort
+  if !&buflisted || &buftype !=# ''
+    return 0
+  elseif !filewritable(expand('%:p'))
+    return 0
+  endif
+  return 1
+endfunction
+function! s:mkview() abort
+  if s:is_view_available()
+    silent! mkview
+  endif
+endfunction
+function! s:loadview() abort
+  if s:is_view_available()
+    silent! loadview
+  endif
+endfunction
+augroup MyAutoCmd
+  autocmd!
+  autocmd MyAutoCmd BufWinLeave * call s:mkview()
+  autocmd MyAutoCmd BufReadPost * call s:loadview()
+augroup END
 set viewoptions-=options
 set viewoptions-=curdir
-""}}}
-" set imdisable
-""}}}
 "Key map - moving {{{
 nnoremap <CR> o<ESC>
 " moving visible lines by j/k
@@ -295,18 +302,20 @@ vnoremap <S-l> g_
 vnoremap <S-h> ^
 onoremap <S-l> $
 onoremap <S-h> ^
-" nnoremap G Gzz
+" bug 221011
 nnoremap <C-f> <C-f>zz
 nnoremap <C-b> <C-b>zz
 nnoremap <C-d> <C-d>
 nnoremap <C-u> <C-u>
-nnoremap <C-o> <C-o>zz
+nnoremap <C-o> <C-o>zz<CR>
 
-nnoremap m '
+nnoremap m `
 nnoremap M m
-vnoremap m '
+vnoremap m `
 vnoremap M m
 vnoremap <C-o> <ESC>m><C-O>m<gvo
+nnoremap S :%s/
+vnoremap S :s/
 " moving around buffers
 nnoremap <silent><Leader>h <Cmd>bprev!<CR>
 nnoremap <silent><Leader>l <Cmd>bnext!<CR>
@@ -316,11 +325,11 @@ nnoremap <silent> <C-L> <Cmd>tabnext<CR>
 nnoremap <silent> <C-H> <Cmd>tabprevious<CR>
 nnoremap <silent>gt <Cmd>call <SID>improved_gt()<CR>
 function! s:improved_gt() abort
-    if tabpagenr('$') == 1
-        execute 'tabnew'
-    else
-        normal! gt
-    endif
+  if tabpagenr('$') == 1
+    execute 'tabnew'
+  else
+    normal! gt
+  endif
 endfunction
 " matchit mapping
 nmap <TAB>  %
@@ -330,203 +339,73 @@ xmap g<TAB> g%
 omap <TAB>  %
 omap g<TAB> g%
 " native <TAB> is useful
-nnoremap <C-p> <C-i>zz
+nnoremap <C-p> <TAB>zz<CR>
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
-" mark
-" nnoremap M m
-" nnoremap m `
 "}}}
 "Key map - shortcuts {{{
-" Convenience key for getting to command mode
 nmap ; :
 vmap ; :
 xmap ; :
-" Enter normal mode
 inoremap jk <esc>
-" make temp file
-command! -nargs=? Otempfile :edit `=tempname()` | setf <args>
-" open location list
 nnoremap <Leader>f <Cmd>lopen<CR>
-" open vimrc quickly
 nnoremap <silent> <leader>v <Cmd>e $MYVIMRC<CR>
 nnoremap <silent> <Leader>sv <Cmd>source $MYVIMRC<CR>
 " source opening vim script
 nnoremap <Leader>ss <Cmd>call <SID>source_script('%')<CR>
-if !exists('*s:source_script')  "{{{
-  function s:source_script(path) abort
-    let path = expand(a:path)
-    if !filereadable(path) || getbufvar(a:path, '&filetype') !=# 'vim'
-      return
-    endif
-    execute 'source' fnameescape(path)
-    echo printf(
-          \ '"%s" has sourced (%s)',
-          \ simplify(fnamemodify(path, ':~:.')),
-          \ strftime('%c'),
-          \)
-  endfunction
-endif  "}}}
+function! s:source_script(path) abort
+  let path = expand(a:path)
+  if !filereadable(path) || getbufvar(a:path, '&filetype') !=# 'vim'
+    return
+  endif
+  execute 'source' fnameescape(path)
+  echo printf(
+      \ '"%s" has sourced (%s)',
+      \ simplify(fnamemodify(path, ':~:.')),
+      \ strftime('%c'),
+      \)
+endfunction
+nnoremap q <nop>
+nnoremap Q q
+" for ahk workaround
+nmap <BS> <C-h>
 nnoremap , @q
+xnoremap , @q
 "}}}
 "Key map - editting {{{
-" emacs like mapping on insert mode
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-a> <HOME>
 inoremap <C-e> <END>
-" yank to end of line
+inoremap <C-l> <NOP>
 nnoremap Y y$
 xnoremap Y y$`]
-xnoremap y y`]
-inoremap <C-R><C-R> <C-R>0
-cnoremap <C-R><C-R> <C-R>*
-" shoot chars deleted by x to blackhole register
-" nnoremap x "_x
-" Create a blank line above/below current line
+xnoremap y ygv<ESC>
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
-" << keeps visual mode
+nnoremap <silent> <C-q> <cmd>close<CR>
 vnoremap < <gv
 vnoremap > >gv
 vnoremap > >gv
-" insert date
 inoremap <expr><F2> strftime("%Y%m%d")
 cnoremap <expr><F2> strftime("%Y%m%d")
-"improve command completion
-cnoremap <expr> <C-n> pumvisible() ? "\<C-n>" : "\<DOWN>"
-cnoremap <expr> <C-p> pumvisible() ? "\<C-p>" : "\<UP>"
-" cnoremap <C-C> <ESC>
-" cnoremap <M-Q> <C-C>
 cnoremap <C-f> <Right>
 cnoremap <C-b> <Left>
 cnoremap <C-a> <C-b>
 cnoremap <C-q> <C-f>
+cnoremap <C-p> <UP>
+cnoremap <C-n> <Down>
 cnoremap <silent> <S-Tab> <C-p>
 tnoremap <expr> <C-n> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<Down>" : "\<C-n>"
 tnoremap <expr> <C-p> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<UP>" : "\<C-p>"
 "}}}
 "Key map - terminal {{{
 "terminal
-" if using iTerm2, map option key to Meta
-" Preference -> Profile -> Keys
 tnoremap <Esc> <C-\><C-n>
-"}}}
-"Key map - folding {{{
-" open folding
-nnoremap <silent>gl zo
-" smart folding closer
-nnoremap <silent>gh <Cmd>silent! call <SID>smart_foldcloser()<CR>
-function! s:smart_foldcloser() "{{{
-    if foldlevel('.') == 0
-    norm! zM
-    return
-    endif
-    let foldc_lnum = foldclosed('.')
-    norm! zc
-    if foldc_lnum == -1
-    return
-    endif
-    if foldclosed('.') != foldc_lnum
-    return
-    endif
-    norm! zM
-endfunction
-"}}}
-" add fold marker
-nnoremap  z[     <Cmd>call <SID>put_foldmarker(0)<CR>
-nnoremap  z]     <Cmd>call <SID>put_foldmarker(1)<CR>
-function! s:put_foldmarker(foldclose_p) "{{{
-    let crrstr = getline('.')
-    let padding = crrstr ==# '' ? '' : crrstr =~# '\s$' ? '' : ' '
-    let [cms_start, cms_end] = ['', '']
-    let outside_a_comment_p = synIDattr(synID(line('.'), col('$')-1, 1), 'name') !~? 'comment'
-    if outside_a_comment_p
-        let cms_start = matchstr(&commentstring,'\V\s\*\zs\.\+\ze%s')
-        let cms_end = matchstr(&commentstring,'\V%s\zs\.\+')
-    endif
-    let fmr = split(&foldmarker, ',')[a:foldclose_p]. (v:count ? v:count : '')
-    exe 'norm! A'. padding. cms_start. fmr. cms_end
-endfunction
-"}}}
-" }}}
 "Key map - window {{{
-" " :close by 'q'
-" nnoremap <silent> q :close<CR>
-" escape 'q'
-" escape 'gq'
-nnoremap <silent> \ <Cmd>cd %:h<Bar>echo 'current directory is changed to ' . getcwd()<CR>
-nnoremap <silent> \| <Cmd>cd ..<Bar>echo 'current directory is changed to ' . getcwd()<CR>
-" nnoremap gQ gq
+nnoremap <silent> \ <Cmd>cd %:h<Bar>echo 'cd: ' . getcwd()<CR>
+nnoremap <silent> \| <Cmd>cd ..<Bar>echo 'cd: ' . getcwd()<CR>
 autocmd FileType help nnoremap <buffer> q <C-w>c
-" don't close window when closing buffer
-nnoremap <silent> Q <Cmd>Bclose<CR>
-xnoremap <silent> Q <Cmd>Bclose<CR>
- function! s:Bclose(bang, buffer) "{{{
-"https://vim.fandom.com/wiki/Deleting_a_buffer_without_closing_the_window
-   if empty(a:buffer)
-     let btarget = bufnr('%')
-   elseif a:buffer =~# '^\d\+$'
-     let btarget = bufnr(str2nr(a:buffer))
-   else
-     let btarget = bufnr(a:buffer)
-   endif
-   if btarget < 0
-     call s:Warn('No matching buffer for '.a:buffer)
-     return
-   endif
-   if empty(a:bang) && getbufvar(btarget, '&modified')
-     call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
-     return
-   endif
-   " Numbers of windows that view target buffer which we will delete.
-   let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
-   if !g:bclose_multiple && len(wnums) > 1
-     call s:Warn('Buffer is in multiple windows (use ":let bclose_multiple=1")')
-     return
-   endif
-   let wcurrent = winnr()
-   for w in wnums
-     execute w.'wincmd w'
-     let prevbuf = bufnr('#')
-     if prevbuf > 0 && buflisted(prevbuf) && prevbuf != btarget
-       buffer #
-     else
-       bprevious
-     endif
-     if btarget == bufnr('%')
-       " Numbers of listed buffers which are not the target to be deleted.
-       let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
-       " Listed, not target, and not displayed.
-       let bhidden = filter(copy(blisted), 'bufwinnr(v:val) < 0')
-       " Take the first buffer, if any (could be more intelligent).
-       let bjump = (bhidden + blisted + [-1])[0]
-       if bjump > 0
-         execute 'buffer '.bjump
-       else
-         execute 'enew'.a:bang
-       endif
-     endif
-   endfor
-   execute 'bdelete'.a:bang.' '.btarget
-   execute wcurrent.'wincmd w'
- endfunction
- let g:bclose_multiple = 1
- command! -bang -complete=buffer -nargs=? Bclose call <SID>Bclose(<q-bang>, <q-args>)
-" Display an error message. {{{
- function! s:Warn(msg)
-   echohl ErrorMsg
-   echomsg a:msg
-   echohl NONE
- endfunction "}}}
-"}}}
-" autocmd vimrc FileType help nnoremap <silent><buffer> q :close<CR>
-" spliting windows
-nnoremap <leader>ws <Cmd>sp<CR>:bprev<CR>
-nnoremap <leader>wv <Cmd>vsp<CR>:bprev<CR>
-nnoremap <leader>wc <Cmd>close<CR>
-nnoremap <leader>wn <Cmd>vne<CR>
-nnoremap <leader>wo <Cmd>only<CR>
 " move between windows
 nnoremap <C-w>w <C-w>p
 nnoremap <C-w><C-w> <C-w>p
@@ -550,768 +429,203 @@ set mousetime=10
 nmap <2-LeftMouse> <CR>
 "{{{
 nnoremap <silent> <Plug>(my-zoom-window)
-      \ <Cmd>call <SID>toggle_window_zoom()<CR>
+    \ <Cmd>call <SID>toggle_window_zoom()<CR>
 function! s:toggle_window_zoom() abort
-    if exists('t:zoom_winrestcmd')
-        execute t:zoom_winrestcmd
-        unlet t:zoom_winrestcmd
-    else
-        let t:zoom_winrestcmd = winrestcmd()
-        resize
-        vertical resize
-    endif
+  if exists('t:zoom_winrestcmd')
+    execute t:zoom_winrestcmd
+    unlet t:zoom_winrestcmd
+  else
+    let t:zoom_winrestcmd = winrestcmd()
+    resize
+    vertical resize
+  endif
 endfunction  "}}}
 "}}}
-" Terminal {{{
-
-" function! s:undo_entry()
-"   let history = get(w:, 'qf_history', [])
-"   if !empty(history)
-"     call setqflist(remove(history, -1), 'r')
-"   endif
-" endfunction
-" function! s:del_entry() range
-"   let qf = getqflist()
-"   let history = get(w:, 'qf_history', [])
-"   call add(history, copy(qf))
-"   let w:qf_history = history
-"   unlet! qf[a:firstline - 1 : a:lastline - 1]
-"   call setqflist(qf, 'r')
-"   execute a:firstline
-" endfunction
-"}}}
 "Quickfix {{{
- autocmd vimrc FileType qf call s:my_qf_setting()
- function! s:my_qf_setting() abort
-     set modifiable
-     " nnoremap <buffer> <CR> :<C-u>.cc<CR>
-     nnoremap <silent><buffer> q <Cmd>close<CR>
-     call <SID>is_loc()
-     noremap <buffer> p  <CR>zz<C-w>p
- endfunction
- function! s:is_loc()
- let wi = getwininfo(win_getid())[0]
- if wi.loclist
-     nnoremap <silent><buffer> <CR> <Cmd>.ll<CR><C-w>p
- elseif wi.quickfix
-     nnoremap <silent><buffer> <CR> <Cmd>.cc<CR><C-w>p
- else
-     echom 'here is not quickfix and location list.'
- endif
- endfunction
-"}}}
-" }}}
-" +GUI {{{
-if has('GUI')
-     let &guioptions = substitute(&guioptions, '[mTlLbeg]', '', 'g')
-    set guioptions+=Mc!
-    """Nm秒後にカーソル点滅開始
-    "set guicursor=n:blinkwait2000
-    "let no_buffers_menu = 1
-    set lines=45 "ウィンドウの縦幅
-    set columns=150 " ウィンドウの横幅
-    winpos 500 10 " ウィンドウの起動時の位置
-    set guifont:HackGenNerd:h12
-    set renderoptions=type:directx,renmode:5,geom:1
-    set imsearch=0
-    set statusline=%<%F\ %h%m%r%=%-14.(%l,%c%V%)\ %P
-endif
-
+autocmd vimrc FileType qf call s:my_qf_setting()
+function! s:my_qf_setting() abort
+  set modifiable
+  " nnoremap <buffer> <CR> :<C-u>.cc<CR>
+  nnoremap <silent><buffer> q <Cmd>close<CR>
+  call <SID>is_loc()
+  noremap <buffer> p  <CR>zz<C-w>p
+endfunction
+function! s:is_loc()
+  let wi = getwininfo(win_getid())[0]
+  if wi.loclist
+    nnoremap <silent><buffer> <CR> <Cmd>.ll<CR><C-w>p
+  elseif wi.quickfix
+    nnoremap <silent><buffer> <CR> <Cmd>.cc<CR><C-w>p
+  else
+    echom 'here is not quickfix and location list.'
+  endif
+endfunction
 "}}}
 "+kaoriya {{{
-if has('kaoriya')
-    "autodate 'Last Change: .'
-    let autodate_format ='%Y/%m/%d-%H:%M:%S'
-    let autodate_lines = 10
-    " fullscreen
-    nnoremap <C-CR> <Cmd>ScreenMode 6<CR>
-    nnoremap <S-CR> <Cmd>ScreenMode 1<CR>
-    " background transparency
-    " autocmd vimrc GUIEnter * set transparency=235
-    " insert date
-    inoremap <F3> Last Change: .
-    set ambiwidth=auto
+if has('GUI')
+  let &guioptions = substitute(&guioptions, '[mTlLbeg]', '', 'g')
+  set guioptions+=Mc!
+  set renderoptions=type:directx,renmode:5,geom:1
+  set guifont:HackGen\ Console\ NFJ:h11
+  set imsearch=0
 endif
 "}}}
 
 if !has('nvim')
-    set runtimepath+=~/.cache/dein/repos/github.com/thinca/vim-singleton
-    set runtimepath+=~/.cache/dein/repos/github.com/cocopon/iceberg.vim
-	call singleton#enable()
-    colorscheme iceberg
-    set background=light
-    finish
+  call singleton#enable()
 endif
-" highlight {{{
-" for foldcolumn
-" hi! link SpecialKey Comment
 
-" edit fold column
-set background=dark
-if exists('g:lightline')
-    colorscheme iceberg
-let g:lightline.colorscheme = 'iceberg'
-endif
-"}}}
-" filetype config {{{
-let g:tex_conceal=''
-"}}}
-" misc {{{
-"選択範囲の行をカウント {{{
-function! g:LineCharVCount() range
-    let l:result = 0
-    for l:linenum in range(a:firstline, a:lastline)
-        let l:result += strchars(getline(l:linenum))
-    endfor
-    echo l:result
-endfunction "}}}
-command! -range LineCharVCount <line1>,<line2>call g:LineCharVCount()
-xnoremap<silent> <C-o> <Cmd>LineCharVCount<CR>
-"}}}
 " Neovim {{{
 if has('nvim')
-
   set shada=!,'200,<100,s10,h
-    autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
+  autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
   autocmd vimrc TermOpen * startinsert
-    hi! PmenuSel blend=0
+  autocmd vimrc TermOpen term://* nnoremap <buffer> q :quit<CR>
+  hi! PmenuSel blend=0
+  set display=lastline,msgsep,truncate
+  set wildoptions=pum
+  set pumblend=30
+  au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
+  set inccommand=nosplit
+  set winblend=20
+  function! s:gethighlight(hi, which) abort
+    let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
+    return bg
+  endfunction
+  call execute('hi HighlightDict gui=bold guifg=' .. s:gethighlight('Error', 'fg'))
+  call execute('hi UnderlineSpace gui=underline guisp=' .. s:gethighlight('Error', 'fg'))
+  nnoremap <F1> <cmd>call vimrc#Highlight_dict()<CR>
+
+  autocmd CmdWinEnter [:>] syntax sync minlines=1 maxlines=1
+  hi! link DiagnosticsVirtualTextError Error
+  hi! link DiagnosticsVirtualTextWarning Question
+  sign define DiagnosticSignError text= texthl=DiagnosticVirtualTextError linehl= numhl=
+  sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl= numhl=
+  set winbar=%F%m
+  CellWidthsAdd 0x2020, 2
 else
   set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
-set rtp+=$VIM/vim82
-    autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
+  set rtp+=C:/tools/vim/vim90
+  packadd! editexisting
+  autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
 endif
-    " show complettion popup in commandline.
-    set display=lastline,msgsep,truncate
-set nrformats+=unsigned
-set wildoptions=pum
-set winblend=20
-set termguicolors
-" remove end of buffer ~~~~~~~~~
-set fillchars+=eob:\ 
-"transparent completions menu
-set pumblend=15
-set inccommand=nosplit
-au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
-"}}}
 
-" yank searched results
-function! s:search(pat)
-let l:cache = []
-execute '%s/' . a:pat . '/\=add(l:cache, submatch(0))/n'
-call setreg(v:register,join(l:cache, "\n"))
-endfunction
-command! -nargs=* SearchYank call s:search(<q-args>)
 "}}}
-" for neovide initialize hook
-if exists('neovide') || exists('nvy')
-    " フォント変更後に画面を再描画
-set guifont:HackGenNerd:h11.9
-    let g:neovide_refresh_rate=100
-    let g:neovide_transparency=0.90
-    " let g:neovide_cursor_antialiasing=v:true
-    " cd ~/
-    " let g:neovide_extra_buffer_frames=4
-    let g:neovide_cursor_trail_size=0
-endif
-
-au BufRead,BufNew * ++once let g:neovide_cursor_trail_length=0 | let g:neovide_cursor_animation_length=0
-set diffopt=internal,context:10,algorithm:minimal,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap
-autocmd FileType text syntax sync minlines=50
-autocmd FileType markdown syntax sync minlines=50
-autocmd FileType lua setlocal tabstop=2
-autocmd FileType typescript setlocal tabstop=2
-nnoremap <silent><C-q> <Cmd>tabclose<CR>
-nnoremap <MiddleMouse> <Cmd>close<CR>
-nnoremap S :%s/
-" /\v(①|②|③|④|⑤|⑥|⑦|⑧|⑨|⑩)/
-set updatetime=1500
-vnoremap y ygv<ESC>
-let g:previm_enable_realtime = 1
-autocmd BufReadPre gina://* set noswapfile
-function! Mdpdf()
-let path = expand('%:p')
-let path = shellescape(path, 1)
-let cmd = 'mdpdf --border=12.7mm ' . path
-execute "!" . cmd
-endfunction
-function! g:Vimrc_select_a_last_modified() abort
-    return ['v', getpos("'["), getpos("']")]
-endfunction
-vnoremap y ygv<ESC>
-" g/\W*\ze \/\//s/^\(\W*\) \/\zs\ze\//\=jautil#convert(submatch(1),'hiragana')
-set smartindent
-" syntax match JISX0208Space "　" display containedin=ALL
-" highlight link JISX0208Space Underlined
-" set conceallevel=2
-" set concealcursor=n
+"
 let s:macromode = 0
 function! MacroModeOn() abort
-if s:macromode ==# 1
+  if s:macromode ==# 1
     return
-endif
-    nnoremap q @q
-    nnoremap w @w
-    nnoremap e @e
-let s:macromode = 1
+  endif
+  nnoremap q @q
+  nnoremap w @w
+  nnoremap e @e
+  let s:macromode = 1
 endfunction
 function! MacroModeOff() abort
-if s:macromode ==# 0
+  if s:macromode ==# 0
     return
-endif
-    unmap q
-    unmap w
-    unmap e
-let s:macromode = 0
+  endif
+  unmap q
+  unmap w
+  unmap e
+  let s:macromode = 0
 endfunction
-function! Set_Font(font) abort
-  execute 'set guifont=' . a:font . ':h10'
-endfunction
+
 function! s:change_lf_dos() abort
-execute('edit ++ff=dos %')
-write
+  execute('edit ++ff=dos %')
+  write
 endfunction
+
 function! s:change_lf_unix() abort
-execute('edit ++ff=unix %')
-execute('%substitute/$//')
-write
+  execute('edit ++ff=unix %')
+  execute('%substitute/\r//')
+  write
 endfunction
 command! -nargs=? -complete=command LFdos call s:change_lf_dos()
 command! -nargs=? -complete=command LFunix call s:change_lf_unix()
 nnoremap <C-6> <C-^>
-augroup lsp_setup
-au!
-augroup END
 
 let s:highlight_id = v:false
 
-function! s:gethighlight(hi, which) abort
-    let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
-    return bg
-endfunction
-call execute('hi HighlightDict gui=bold guifg=' .. s:gethighlight('Error', 'fg'))
-call execute('hi UnderlineSpace gui=underline guisp=' .. s:gethighlight('Error', 'fg'))
-function! Highlight_dict() abort
-if s:highlight_id
-    call clearmatches()
-    let s:highlight_id = v:false
-    return
-endif
-let s:filename="dict.txt"
-let s:dict = expand('%:p:h') .. '\dict.txt'
-if !filereadable(s:dict)
-    let s:dict = expand('~/') .. '\dict.txt'
-    if !filereadable(s:dict)
-        echom 'dict file is not found'
-	return
-endif
-endif
-let s:dict = substitute(s:dict, '\\', '\/', 'g')
-if filereadable(s:dict)
-    let s:lines=readfile(s:dict,1000)
-    for line in s:lines
-	if line !=# ''
-        let word = split(line)
-        call matchadd('HighlightDict',word[0])
-    endif
-    endfor
-    call matchadd('UnderlineSpace', ' ')
-    call matchadd('UnderlineSpace', '　')
-    let s:highlight_id = v:true
-endif
-endfunction
-nnoremap <F1> <cmd>call Highlight_dict()<CR>
-nnoremap  <Space>wc <cmd>lua vim.lsp.diagnostic.clear(0)<CR>
 command! ShowHlItem echo synIDattr(synID(line("."), col("."), 1), "name")
 command! ShowHlGroup echo synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+command! -nargs=? -complete=command ToUtf8Unix call vimrc#ToUtf8Unix()
+command! -nargs=? -complete=command ToShiftJisDos call vimrc#ToShiftJisDos()
 " abbrev の自動生成を行う
 " ref:https://zenn.dev/monaqa/articles/2020-12-22-vim-abbrev
-function! s:make_abbrev_rule(rules)
-  let keys = uniq(sort(map(copy(a:rules), "v:val['from']")))
-  for key in keys
-    let rules_with_key = filter(copy(a:rules), "v:val['from'] ==# '" .. key .. "'")
-    let dict = {}
-    for val in rules_with_key
-      if has_key(val, 'prepose')
-        let dict[val['prepose'] .. ' ' .. key] = (val['to'])
-      else
-        let dict[key] = val['to']
-    endif
-  endfor
-    exec 'cnoreabbrev <expr> ' .. key .. ' '
-    \ .. '(getcmdtype() !=# ":")? "' .. key .. '" : '
-    \ .. 'get(' .. string(dict) .. ', getcmdline(), "' .. key .. '")'
-  endfor
-endfunction
-call s:make_abbrev_rule([
-\   {'from': 'gi', 'to': 'Gina'},
-\   {'from': 'gc', 'to': 'Gina! commit -am'},
-\   {'from': 'gf', 'to': 'Gina! commit --fixup HEAD'},
-\   {'from': 'gp', 'to': 'Gina push'},
-\   {'prepose': 'Gina commit', 'from': 'a', 'to': '--amend'},
-\ ])
 "
-let g:vimsyn_embed='lPr'
 tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+
 function! NumCheckZen()
-g/\v(１|２|３|４|５|６|７|８|９|０)/
+  g/\v(１|２|３|４|５|６|７|８|９|０)/
 endfunction
 function! NumZentohan() abort
-%s/１/1/eg
-%s/２/2/eg
-%s/３/3/eg
-%s/４/4/eg
-%s/５/5/eg
-%s/６/6/eg
-%s/７/7/eg
-%s/８/8/eg
-%s/９/9/eg
-%s/０/0/eg
+  %s/１/1/eg
+  %s/２/2/eg
+  %s/３/3/eg
+  %s/４/4/eg
+  %s/５/5/eg
+  %s/６/6/eg
+  %s/７/7/eg
+  %s/８/8/eg
+  %s/９/9/eg
+  %s/０/0/eg
 endfunction
-"(１|２|３|４|５|６|７|８|９|０)
+" g/\W*\ze \/\//s/^\(\W*\) \/\zs\ze\//\=jautil#convert(submatch(1),'hiragana')
 
-" ++once supported in Nvim 0.4+ and Vim 8.1+
 function! MdToText()
-%s/^#\s/■/
-%s/^##\s/■■/
-" %s/\v^$\n\zs[^■]/　\0
-%s/\v。\zs$\n\ze[^][$]//
-%s/\v(^\s*)[-*]/\1・/
+  %s/^#\s/■/
+  %s/^##\s/■■/
+  " %s/\v^$\n\zs[^■]/　\0
+  %s/\v。\zs$\n\ze[^][$]//
+  %s/\v(^\s*)[-*]/\1・/
 endfunction
-" set noswapfile
-nnoremap q <nop>
-nnoremap Q q
-" for ahk workaround
-nmap <BS> <C-h>
+
 let g:terminal_scrollback_buffer_size = 3000
-" set titlestring=NVIM\ \[\ %{LLcd()}\ \]
 
-"!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t latex
-"!pandoc % --pdf-engine=lualatex -V documentclass=jlreq --template=latex_template.tex -s -t pdf --wrap=preserve --filter=./converter.py -o test.pdf
-
-    " lua require('lsp_settings')
-" ウィンドウを閉じた時一つ前のウィンドウに戻る
-" seems buggy
-" let g:prev_win = [0, 0]
-" function! g:Goto_prev_win()
-" 	call win_gotoid(g:prev_win[1])
-" endfunction
-" function! g:Save_prev_win()
-"     let g:prev_win[1] = g:prev_win[0]
-" 	let g:prev_win[0] = win_getid()
-" endfunction
-" autocmd WinLeave * call g:Goto_prev_win()
-" autocmd WinEnter * call g:Save_prev_win()
-" set packpath+=C:/Users/ork/AppData/Local/nvim-data/site
-" lua <<EOF
-" vim.cmd [[packadd packer.nvim]]
-
-
-" au BufRead * call s:remove_focus_event()
-" function! s:remove_focus_event()
-" au! gitgutter FocusLost *
-" au! gitgutter FocusGained *
-" au! ConflictMarkerDetect FocusLost *
-" au! ConflictMarkerDetect FocusGained *
-" endfunction
-autocmd CmdWinEnter [:>] syntax sync minlines=1 maxlines=1
-
-" imap <C-j> <Plug>(eskk:toggle)
-" cmap <C-j> <Plug>(eskk:toggle)
-
-hi! link DiagnosticsVirtualTextError Error
-hi! link DiagnosticsVirtualTextWarning Question
-sign define DiagnosticSignError text= texthl=DiagnosticVirtualTextError linehl= numhl=
-sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl= numhl=
-
-" autocmd CmdlineLeave [:>/?=@] if get(g:, 'skkeleton#enabled', v:false) | call skkeleton#request('disable', []) | endif
-
-if exists("g:nvui")
-cd ~
-" set guicursor=n-v-c:Cursor-blinkon0,i-ci:ver20-Cursor,r-cr:hor20
-NvuiAnimationsEnabled 0
-set guifont:HackGenNerd:h12
-NvuiOpacity 0.93
-NvuiCursorFrametime 0
-" NvuiFrameless 1
-NvuiTitlebarFontFamily RockWell
-NvuiTitlebarFontSize 11
-NvuiTitlebarSeparator ' - '
-set shortmess+=I
-set notitle
-nnoremap <F1> <cmd>NvuiToggleFullscreen<CR>
-let g:nvui_tb_separator = ' - '
-" NvuiFrameless 1
-" NvuiTitlebarFontFamily Arial
-" NvuiTitlebarFontSize 11
-" NvuiTitlebarFg #5e6482
-" NvuiTitlebarBg #0f1117
-endif
-let g:jupytext_enable = 0
-
-" lua require('gitsigns').setup()
-" lua require('nvim-autopairs').setup{}
-" lua <<EOF
-" require('telescope_config')
-" EOF
-hi! link TelescopeNormal Pmenu
-
-function! GetRaw()
-  let isbn = expand('<cword>')
-  let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
-  let s = json_decode(raw)[0]
-  echom s
-  endfunction
-function! Isbn()
-  let hankei = {
-    \ 'B108': 'A5',
-    \ 'B109': 'B5',
-    \ 'B110': 'B6',
-    \ 'B111': '文庫',
-    \ 'B112': '新書',
-    \ 'B119': '46',
-    \ 'B120': '46変形',
-    \ 'B121': 'A4',
-    \ 'B122': 'A4変形',
-    \ 'B123': 'A5変形',
-    \ 'B124': 'B5変形',
-    \ 'B125': 'B6変形',
-    \ 'B126': 'AB',
-    \ 'B127': 'B7',
-    \ 'B128': '菊',
-    \ 'B129': '菊変形',
-    \ 'B130': 'B4',
-    \ }
-
-    let output = {}
-    let isbn = expand('<cword>')
-    let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
-    let s = json_decode(raw)[0]
-    if type(s) != v:t_dict
-      echom 'no data'
-      return
-    endif
-  for i in keys(s.summary)
-    let output[i] = s.summary[i]
-  endfor
-
-  try
-    let output['Price'] = s.onix.ProductSupply.SupplyDetail.Price[0].PriceAmount
-    let output['hankei'] = hankei[s.onix.DescriptiveDetail.ProductFormDetail]
-    let output['PageNum'] = s.onix.DescriptiveDetail.Extent[0].ExtentValue
-    let output['AuthorBio'] = s.onix.DescriptiveDetail.Contributor[0].BiographicalNote
-  catch
-  endtry
-
-  try
-    let output['見出し'] = s.onix.CollateralDetail.TextContent[0].Text
-    let output['概要'] = s.onix.CollateralDetail.TextContent[1].Text
-    let output['目次'] = s.onix.CollateralDetail.TextContent[2].Text
-  catch
-  endtry
-
-  let isbn10 = substitute(isbn,'^978','','')
-  let output['Amazon'] = 'https://amazon.co.jp/dp/' .. isbn10
-  let koumoku = [
-    \ 'isbn',
-    \ 'title',
-    \ 'author',
-    \ 'publisher',
-    \ 'pubdate',
-    \ 'PageNum',
-    \ 'Price',
-    \ 'hankei',
-    \ 'Amazon',
-    \ '概要',
-    \ '見出し',
-    \ '目次',
-    \ 'AuthorBio',
-    \ 'cover',
-    \ 'series',
-    \ ]
-
-    " if exists('s:id')
-    " call win_gotoid(s:id)
-    " edit `=tempname()`
-    " else
-    split
-  e 書誌情報
-let bufnr = winbufnr(0)
-  call deletebufline(bufnr, 1, '$')
-  setlocal filetype=isbn
-  setlocal bufhidden=hide
-  setlocal buftype=nofile
-  setlocal nobuflisted
-  setlocal nofoldenable
-  setlocal nolist
-  setlocal nomodeline
-  setlocal nospell
-  setlocal noswapfile
-  nnoremap <buffer> q :quit<CR>
-  for k in koumoku
-if has_key(output, k)
-  if match(output[k], '\n') > -1
-  call append(line('$'), '')
-  call append(line('$'), k .. ': -----')
-  call append(line('$'), split(output[k], '\n'))
-  call append(line('$'), '-----')
-  call append(line('$'), '')
-  else
-  call append(line('$'), k . ': ' . output[k])
-  endif
-  endif
-  endfor
-  if !getline(0)
-call deletebufline(bufnr, 1)
-  endif
-  endfunction
-" lua <<EOF
-" require'marks'.setup {
-"   -- whether to map keybinds or not. default true
-"   default_mappings = true,
-"   -- which builtin marks to show. default {}
-"   builtin_marks = {},
-"   -- whether movements cycle back to the beginning/end of buffer. default true
-"   cyclic = true,
-"   -- whether the shada file is updated after modifying uppercase marks. default false
-"   force_write_shada = false,
-"   -- how often (in ms) to redraw signs/recompute mark positions. 
-"   -- higher values will have better performance but may cause visual lag, 
-"   -- while lower values may cause performance penalties. default 150.
-"   refresh_interval = 250,
-"   -- sign priorities for each type of mark - builtin marks, uppercase marks, lowercase
-"   -- marks, and bookmarks.
-"   -- can be either a table with all/none of the keys, or a single number, in which case
-"   -- the priority applies to all marks.
-"   -- default 10.
-"   sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
-"   -- disables mark tracking for specific filetypes. default {}
-"   excluded_filetypes = {},
-"   -- marks.nvim allows you to configure up to 10 bookmark groups, each with its own
-"   -- sign/virttext. Bookmarks can be used to group together positions and quickly move
-"   -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
-"   -- default virt_text is "".
-"   bookmark_0 = {
-"     sign = "⚑",
-"     virt_text = "hello world"
-"   },
-"   mappings = {}
-" }
-" require('hlslens').setup({
-"     calm_down = true,
-"     nearest_only = true,
-" })
-" EOF
-" Find files using Telescope command-line sugar.
-" nnoremap sf <cmd>Telescope find_files<cr>
-" nnoremap sg <cmd>Telescope live_grep<cr>
-" nnoremap sb <cmd>Telescope buffers<cr>
-" nnoremap sh <cmd>Telescope help_tags<cr>
-" nnoremap sn <cmd>Telescope oldfiles<cr>
-" au FileType TelescopePrompt set signcolumn=no
-" noremap <silent> n <Cmd>execute('normal! ' . v:count1 . 'n')<CR>
-"             \<Cmd>lua require('hlslens').start()<CR>
-" noremap <silent> N <Cmd>execute('normal! ' . v:count1 . 'N')<CR>
-
-"             \<Cmd>lua require('hlslens').start()<CR>
-" noremap * *<Cmd>lua require('hlslens').start()<CR>
-" noremap # #<Cmd>lua require('hlslens').start()<CR>
-" noremap g* g*<Cmd>lua require('hlslens').start()<CR>
-" noremap g# g#<Cmd>lua require('hlslens').start()<CR>
-nnoremap <silent> gm <cmd>call Isbn()<CR>
-" hi! default link HlSearchNear Search
-" hi! default link HlSearchLens WildMenu
-" hi! default link HlSearchLensNear Search
-" hi! default link HlSearchFloat Search
-" use : instead of <Cmd>
-" nnoremap <silent> <leader>l :noh<CR>
-" set shortmess+=S
-
-" set lazyredraw
+nnoremap <silent> gm <cmd>call vimrc#isbn()<CR>
 nnoremap <silent> ` :call OpenBrowserSearch(input('Search: '))<CR>
-" set imsearch=0
-"au vimrc CmdlineEnter * setlocal iminsert=0
-"au vimrc CmdlineLeave * setlocal iminsert=0
+nnoremap gM :call vimrc#PostIsbnFromClipboard()<CR>
+" nnoremap gm :call PostIsbnNotion()<CR>
+
+" let g:denops_server_addr = '127.0.0.1:32123'
+
+nnoremap <C-f> <C-f>z.<SID>zz_if_not_near_eof()<CR>
+nnoremap <C-b> <C-b>z.<CR>
+function! s:zz_if_not_near_eof() abort
+  if line('$') - line('.') > winheight(0)/2
+    norm G
+  endif
+endfunction
+
+inoremap zn 〓
+cnoremap zn 〓
+
+hi! FloatBorder guifg=#c6c8d1 guibg=#272c42
+hi! NormalNC ctermfg=252 guifg=#c6c8d1
+
 au vimrc FileType vim setlocal indentexpr=
 au vimrc FileType vim setlocal tabstop=2
-let g:voom_tree_width = 40
-au vimrc FileType voomtree nnoremap <buffer> h zc^
-au vimrc FileType voomtree nnoremap <buffer> L zo^
-au vimrc FileType voomtree nnoremap <buffer> H zm^
-au vimrc FileType voomtree nnoremap <buffer> L zr^
-au vimrc FileType voomtree noremap <buffer> [denite]
-au vimrc FileType voomtree setlocal scrolloff=999
-au vimrc FileType voomtree setlocal signcolumn=no
-au vimrc FileType voomtree setlocal nocursorline
-au vimrc FileType voomtree setlocal nonumber
-nnoremap st :Voom txt<CR>
-au vimrc FileType syn match Function /^=.\{-}|\zs.*/
-let g:voom_return_key = "<TAB>"
-let g:voom_tab_key = ""
-let g:switch_custom_definitions =
-\ [
-  \ ['1	', '①'],
-  \ ['2	', '②'],
-  \ ['3	', '③'],
-  \ ['4	', '④'],
-  \ ['5	', '⑤'],
-  \ ['6	', '⑥'],
-  \ ['7	', '⑦'],
-  \ ['8	', '⑧'],
-  \ ['9	', '⑨'],
-  \ ['0	', '⑩'],
-  \ ]
-    " \   ['1', '①'],
-    " \   ['2', '②'],
-    " \   ['3', '③'],
-    " \   ['4', '④'],
-    " \   ['5', '⑤'],
-    " \   ['6', '⑥'],
-    " \   ['7', '⑦'],
-    " \   ['8', '⑧'],
-    " \   ['9', '⑨'],
-    " \   ['0', '⑩'],
-inoremap <C-l> <NOP>
+au dein FileType toml call dein#toml#syntax()
+au vimrc FileType lua setlocal tabstop=2
 
-autocmd FileType ddu-std call s:ddu_my_settings()
-function! s:ddu_my_settings() abort
-  setlocal scrolloff=5
-  nnoremap <buffer><silent> <CR>
-  \ <Cmd>call ddu#ui#std#do_action('itemAction', {'name' : 'default'})<CR>
-  nnoremap <buffer><silent><nowait> s
-  \ <Cmd>call ddu#ui#std#do_action('itemAction', {'name' : 'split'})<CR>
-  nnoremap <buffer><silent> t
-  \ <Cmd>call ddu#ui#std#do_action('itemAction', {'name' : 'tabopen'})<CR>
-  nnoremap <buffer><silent> a
-  \ <Cmd>call ddu#ui#std#do_action('toggleSelectItem')<CR>
-  nnoremap <buffer><silent> c
-  \ <Cmd>call ddu#ui#std#do_action('itemAction', {'name' : 'cd'})<CR>
-	  nnoremap <buffer><silent> q
-	  \ <Cmd>call ddu#ui#std#do_action('quit')<CR>
-  nnoremap <buffer><silent> i
-	  \ <Cmd>call ddu#ui#std#do_action('openFilterWindow')<CR>
-endfunction
+command! -nargs=* TextobjectOutline call vimrc#textobject_outline(<f-args>)
+xnoremap io <Cmd>TextobjectOutline<CR>
+xnoremap ao <Cmd>TextobjectOutline from_parent<CR>
+xnoremap iO <Cmd>TextobjectOutline with_blank<CR>
+xnoremap aO <Cmd>TextobjectOutline from_parent with_blank<CR>
+onoremap io <Cmd>TextobjectOutline<CR>
+onoremap ao <Cmd>TextobjectOutline from_parent<CR>
+onoremap iO <Cmd>TextobjectOutline with_blank<CR>
+onoremap aO <Cmd>TextobjectOutline from_parent with_blank<CR>
+hi! link Winbar Title
 
-autocmd FileType ddu-std-filter call s:ddu_my_filter_settings()
-function! s:ddu_my_filter_settings() abort
-setlocal winblend=0
-  inoremap <buffer><silent> <CR>
-  \ <Esc><Cmd>close<CR>
-  nnoremap <buffer><silent> <CR>
-  \ <Cmd>close<CR>
-  nnoremap <buffer><silent> q
-  \ <C-w>c
-  inoremap <buffer><silent> <C-c>
-  \ <esc><C-w>c
-  " inoremap <buffer><silent><expr> <C-j> ddu#ui#std#increment_parent_cursor(+1)
-  " inoremap <buffer><silent><expr> <C-k> ddu#ui#std#increment_parent_cursor(-1)
-endfunction
-" let g:denops#debug = 1
-" let g:denops#trace = 1
-function s:save_terminal_mode()
-  let b:term_mode = mode()
-endfunction
+hi! link DiagnosticUnderlineError Error
+au vimrc VimEnter * set laststatus=2
+highlight! link @punctuation.special Comment
+au vimrc BufRead,BufNewFile *.txt setfiletype txt
+" \([下上]\|このよ\|先ほ\|次の\)
 
-function s:restore_terminal_mode()
-  if get(b:, 'term_mode', '') ==# 't'
-    startinsert
-  endif
-endfunction
-
-augroup restore_terminal_mode
-  autocmd!
-  autocmd TermEnter term://* call s:save_terminal_mode()
-  autocmd TermLeave term://* call s:save_terminal_mode()
-  autocmd BufEnter term://* call s:restore_terminal_mode()
-augroup END
-
-function! s:open_volatile_terminal(opts) abort
-  let l:bufnr = bufnr()
-  let l:opts = extend(deepcopy(a:opts), {'on_exit': function('<SID>close_volatile_terminal', [l:bufnr])}, 'force')
-  " 終了時にバッファを消すterminalを開く
-  call termopen(&shell, l:opts)
-endfunction
-
-function! s:close_volatile_terminal(bufnr, job_id, code, event) dict
-  " if a:code is 0
-    call execute('silent! bdelete! ' .. a:bufnr)
-  " endif
-endfunction
-
-function! s:nosplit_volatile_terminal(opts) abort
-  call s:open_volatile_terminal(a:opts)
-endfunction
-
-function! s:split_volatile_terminal(size, mods, opts) abort
-  " 指定方向に画面分割
-  execute a:mods .. ' ' .. 'new'
-  call s:open_volatile_terminal(a:opts)
-  " 指定方向にresize
-  let l:size = v:count
-  if l:size == 0
-    let l:size = a:size
-  end
-  if l:size != 0
-    execute a:mods .. ' resize ' . l:size
-  end
-endfunction
-
-" OpenVolatileTerminal: terminalを開く
-"   - 新しいWindowで:   :NewVolatileTerminal
-"   - 指定のWindowSize: :30NewVolatileTerminal
-"   - 指定の位置:       :vertical NewVolatileTerminal  /  :botright 15NewVolatileTerminal
-command! OpenVolatileTerminal :call s:nosplit_volatile_terminal({})
-command! -count NewVolatileTerminal :call s:split_volatile_terminal(<count>, <q-mods>, {})
-command! OpenVolatileTerminalFromCurrentBuffer :call s:nosplit_volatile_terminal({'cwd': expand('%:p:h')})
-command! -count NewVolatileTerminalFromCurrentBuffer :call s:split_volatile_terminal(<count>, <q-mods>, {'cwd': expand('%:p:h')})
-
-nnoremap <Space>t <cmd>NewVolatileTerminal<CR>
-nnoremap <Space>T <cmd>NewVolatileTerminal<CR>
-nnoremap <silent> sn :Ddu -name=default mr<CR>
-nnoremap <silent> sN :Ddu -name=default mr -source-param-kind='mrw'<CR>
-nnoremap <silent> sb :Ddu -name=buffer buffer<CR>
-nnoremap <silent> ss :Ddu -name=file file -source-param-path=`expand('%:p:h')`<CR>
-nnoremap <silent> sf :Ddu -name=file file_external -source-param-path=`expand('%:p:h')`<CR>
-nnoremap <silent> sF :Ddu -name=file file_external<CR>
-nnoremap <silent> sH :Ddu -name=default help<CR>
-
-call ddu#custom#patch_global('sourceParams', {
-      \ 'file_external': {'cmd': ['rg', '--files', '--color', 'never', '--no-binary']}
-      \ })
-call ddu#custom#patch_global({
-    \ 'ui': 'std',
-    \ })
-call ddu#custom#patch_global({
-    \   'sourceOptions': {
-    \     '_': {
-    \       'matchers': ['matcher_fuzzy'],
-    \     },
-    \   },
-    \ })
-
-call ddu#custom#patch_global({
-    \ 'sourceParams': {
-    \ 'mr': {
-          \ 'current': v:false
-    \ },
-    \ },
-    \ })
-
-call ddu#custom#patch_global({
-  \ 'uiParams': {
-    \ '_': {
-      \ 'filterSplitDirection': 'floating',
-      \ 'winHeight': 12,
-      \ 'prompt': '#',
-      \ 'direction': 'botright',
-      \ 'winWidth': &columns+100
-      \ }
-    \}
-\ })
-call ddu#custom#patch_global({
-  \ 'kindOptions': {
-    \ 'file': {'defaultAction': 'open'},
-    \ 'word': {'defaultAction': 'append'},
-  \ }
-\ })
 " vim:set foldmethod=marker:

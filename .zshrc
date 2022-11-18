@@ -4,7 +4,6 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
-export MDPDF_STYLES=$HOME/dotfiles/mdpdf/style.css
 
 export TEXINPUTS='.//;'
 setopt share_history
@@ -78,10 +77,6 @@ alias gd="git diff"
 # indexにaddしていないファイルを全て元に戻す
 alias wipe="git checkout . && git clean -fd"
 
-# tig
-alias t="tig"
-alias ta="tig --all"
-
 alias -g L='| less'
 alias -g H='| head'
 alias -g G='| grep'
@@ -134,90 +129,43 @@ ls_abbrev() {
     fi
 }
 
+# ヒストリに追加されるコマンド行が古いものと同じなら古いものを削除
+setopt hist_ignore_all_dups
 
-# bindkey
+# スペースで始まるコマンド行はヒストリリストから削除
+setopt hist_ignore_space
 
-# vi-like mapping
- bindkey -v
- bindkey -M viins '\er' history-incremental-pattern-search-forward
- bindkey -M viins '^?'  backward-delete-char
- bindkey -M viins '^A'  beginning-of-line
- bindkey -M viins '^B'  backward-char
- bindkey -M viins '^D'  delete-char-or-list
- bindkey -M viins '^E'  end-of-line
- bindkey -M viins '^F'  forward-char
- bindkey -M viins '^G'  send-break
- bindkey -M viins '^H'  backward-delete-char
- bindkey -M viins '^K'  kill-line
- bindkey -M viins '^N'  down-line-or-history
- bindkey -M viins '^P'  up-line-or-history
- bindkey -M viins '^R'  history-incremental-pattern-search-backward
- bindkey -M viins '^U'  backward-kill-line
- bindkey -M viins '^W'  backward-kill-word
- bindkey -M viins '^Y'  yank
+# ヒストリを呼び出してから実行する間に一旦編集可能
+setopt hist_verify
 
-cdpath=(.. ~)
-autoload -Uz select-word-style
-select-word-style default
-zstyle ':zle:*' word-chars "_-./;@"
-zstyle ':zle:*' word-style unspecified
-zstyle ':completion:*:default' menu select=2
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-zstyle ':completion::complete:*' use-cache true
-bindkey '^r' history-incremental-pattern-search-backward
-bindkey '^s' history-incremental-pattern-search-forward
-# # 例 ls まで打ってCtrl+pでlsコマンドをさかのぼる、Ctrl+bで逆順
-autoload -Uz history-search-end
-zle -N history-beginning-search-backward-end history-search-end
-zle -N history-beginning-search-forward-end history-search-end
-bindkey "^p" history-beginning-search-backward-end
-bindkey "^b" history-beginning-search-forward-end
+# 余分な空白は詰めて記録
+setopt hist_reduce_blanks  
 
-# cdr タブでリストを表示
-autoload -Uz add-zsh-hook
-autoload -Uz chpwd_recent_dirs cdr
-add-zsh-hook chpwd chpwd_recent_dirs
+# 古いコマンドと同じものは無視 
+setopt hist_save_no_dups
 
-alias gg='_gg'
-function _gg () {
-open -a /Applications/Firefox\ Nightly.app \
-    "http://www.google.com/search?q= $1"
-    echo "Now googling $1..."
-}
+# historyコマンドは履歴に登録しない
+setopt hist_no_store
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# 補完時にヒストリを自動的に展開         
+setopt hist_expand
 
-export PATH=$PATH:/home/linuxbrew/.linuxbrew/bin
+# 履歴をインクリメンタルに追加
+setopt inc_append_history
 
-### Added by Zinit's installer
-if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
-    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
-    command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
-    command git clone https://github.com/zdharma/zinit "$HOME/.zinit/bin" && \
-        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
-        print -P "%F{160}▓▒░ The clone has failed.%f%b"
-fi
+# インクリメンタルからの検索
+bindkey "^R" history-incremental-search-backward
+bindkey "^S" history-incremental-search-forward
 
-source "$HOME/.zinit/bin/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
+# history search
+bindkey '^P' history-beginning-search-backward
+bindkey '^N' history-beginning-search-forward
 
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
-zinit light-mode for \
-    zinit-zsh/z-a-rust \
-    zinit-zsh/z-a-as-monitor \
-    zinit-zsh/z-a-patch-dl \
-    zinit-zsh/z-a-bin-gem-node
+autoload -U compinit
+compinit
 
-# A glance at the new for-syntax – load all of the above
-# plugins with a single command. For more information see:
-# https://zdharma.github.io/zinit/wiki/For-Syntax/
-zinit for \
-    light-mode  zsh-users/zsh-autosuggestions \
-    light-mode  zdharma/fast-syntax-highlighting \
-                zdharma/history-search-multi-word \
-    light-mode pick"async.zsh" src"pure.zsh" \
-                sindresorhus/pure
+fpath+=("$(brew --prefix)/share/zsh/site-functions")
+autoload -U promptinit; promptinit
+prompt pure
 
 ### End of Zinit's installer chunk

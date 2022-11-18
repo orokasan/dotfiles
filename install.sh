@@ -1,6 +1,6 @@
 #!/bin/bash
 # https://qiita.com/okamos/items/40966158d0271ae7198bより
-DOTPATH="${HOME}/dotfiles"
+DOTPATH="${HOME}/GoogleDrive/config/dotfiles"
 XDG_CONFIG_HOME="${HOME}/.config"
 DOT_TARBALL="https://github.com/orokasan/dotfiles/tarball/master"
 REMOTE_URL="git@github.com:orokasan/dotfiles.git"
@@ -67,15 +67,12 @@ do
 done
 
 ln -snfv ${DOTPATH}/nvim ${HOME}/.vim
+ln -snfv ${DOTPATH}/nvim ${HOME}/.vim
+ln -snfv ${DOTPATH} ${HOME}/dotfiles
 ln -snfv ${DOTPATH}/nvim ${XDG_CONFIG_HOME}/nvim
 ln -snfv ${DOTPATH}/nvim/init.vim ${HOME}/.vimrc
-ln -snfv ${DOTPATH}/.goneovim ${HOME}/.goneovim
-ln -snfv ${DOTPATH}/efm-langserver ${HOME}/.config/efm-langserver
 ln -snfv ${DOTPATH}/package.json ${HOME}/package.json
-mkdir -pv ${HOME}/.backup/vim/swap
-mkdir -pv ${HOME}/.backup/vim/backup
-mkdir -pv ${HOME}/.backup/vim/undo
-mkdir -pv ${HOME}/.backup/vim/view
+ln -snfv ${DOTPATH}/../.skk/ ${HOME}/.skk
 echo $(tput setaf 2)Deploy dotfiles complete!. ✔︎$(tput sgr0)
 #
 # 引数によって場合分け

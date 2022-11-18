@@ -1,52 +1,43 @@
-[[plugin]]
-repo = 'Shougo/dein.vim'
-merged = 0
-hook_add = '''
-augroup dein
-    autocmd!
-augroup END
-'''
-
-[[plugins]]
-on_if = '!has("nvim")'
-repo =  'roxma/nvim-yarp'
-
-[[plugins]]
-on_if = '!has("nvim")'
-repo =  'roxma/vim-hug-neovim-rpc'
+# [[plugin]]
+# repo = 'Shougo/dein.vim'
+# hook_add = '''
+# augroup dein
+#     autocmd!
+# augroup END
+# '''
 
 [[plugins]]
 repo =  'itchyny/lightline.vim'
 hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 
-# [[plugins]]
-# on_if = '!has("kaoriya")'
-# repo = 'vim-jp/vimdoc-ja'
+[[plugins]]
+depends = ['lightline.vim', 'nvim-lspconfig']
+if = 'has("nvim")'
+repo = 'josa42/nvim-lightline-lsp'
+merged=1
+hook_add = '''
+    "autocmd DiagnosticChanged * call lightline#update()
+    function! LLLspProgress() abort
+        " let p = luaeval('vim.lsp.util.get_progress_messages()')
+        " if empty(p)
+        "     return ''
+        " endif
+        " let p = p[0]
+        " let title = get(p, 'title', '')
+        " let perc = get(p, 'percentage', '')
+        " let mes = get(p, 'message', '')
+        " return title .. '(' .. perc .. '%)' .. ':' .. mes
+        return ''
+    endfunction
 
+    let g:lightline#lsp#indicator_warnings = ' '
+    let g:lightline#lsp#indicator_errors = ' '
+    let g:lightline#lsp#indicator_hints = ' '
+    call lightline#lsp#register()
+'''
 
 [[plugins]]
 repo = 'tyru/skkdict.vim'
-
-[[plugins]]
-repo = 'kana/vim-textobj-user'
-hook_add = '''
-" https://github.com/todesking/dotfiles/blob/master/nvim/plug/plugins.vim
-call textobj#user#plugin('lastmofified', {
-\   'lastmodified': {
-\     'select-a': 'ag',
-\     'select-a-function': 'g:Vimrc_select_a_last_modified',
-\   },
-\ })
-'''
-
-[[plugins]]
-repo = 'AndrewRadev/switch.vim'
-# lazy = 1
-# on_cmd = ['Switch']
-hook_add = '''
-nnoremap ! <cmd>Switch<CR>
-" autocmd FileType txt let b:switch_custom_definitions =
-'''
 
 # [[plugins]]
 # repo =  'orokasan/jasegment.vim'
@@ -66,36 +57,6 @@ nnoremap ! <cmd>Switch<CR>
 # "xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
 # '''# }}} 
 
-[[plugins]]
-on_if = '!has("kaoriya")'
-repo = 'deton/jasentence.vim'
-# repo = 'orokasan/jasentence.vim'
-# lazy = 1
-# on_map = { nox = '<Plug>(JaSentence' }
-hook_add = '''
-let g:jasentence_no_default_key_mappings = 1
-  nmap <silent> ) <Plug>JaSentenceMoveNF
-  nmap <silent> ( <Plug>JaSentenceMoveNB
-  omap <silent> ) <Plug>JaSentenceMoveOF
-  omap <silent> ( <Plug>JaSentenceMoveOB
-  xmap <silent> ) <Plug>JaSentenceMoveVF
-  xmap <silent> ( <Plug>JaSentenceMoveVB
-  omap <silent> as <Plug>JaSentenceTextObjA
-  omap <silent> is <Plug>JaSentenceTextObjI
-  xmap <silent> as <Plug>JaSentenceTextObjVA
-  xmap <silent> is <Plug>JaSentenceTextObjVI
-'''
-
-
-[[plugins]]
-merged = 0
-repo =  'mattn/webapi-vim'
-
-[[plugins]]
-repo = 'cespare/vim-toml'
-lazy = 1
-on_ft = ['toml']
-
 # [[plugins]]
 # repo =  'mengelbrecht/lightline-bufferline'
 # depends = ['lightline.vim']
@@ -104,15 +65,12 @@ on_ft = ['toml']
 repo =  'itchyny/vim-gitbranch'
 depends = ['lightline.vim']
 
-# [[plugins]]
-# repo = 'orokasan/vim-quack-lightline'
-
- [[plugins]]
- repo = 'Shougo/context_filetype.vim'
- lazy = 1
- hook_add = '''
- let g:context_filetype#search_offset = 100
-'''
+ # [[plugins]]
+ # repo = 'Shougo/context_filetype.vim'
+ # lazy = 1
+ # hook_add = '''
+ # let g:context_filetype#search_offset = 100
+# '''
 
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
@@ -125,118 +83,38 @@ autocmd dein ColorScheme iceberg highlight! link Search Title
 autocmd dein ColorScheme iceberg highlight! link Conceal Title
 autocmd dein ColorScheme iceberg highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 autocmd dein ColorScheme iceberg highlight! link WhiteSpace Comment
+if has('nvim')
+autocmd dein ColorScheme iceberg highlight! link @punctuation.special Comment
+autocmd dein ColorScheme iceberg highlight! link @text.title Title
+autocmd dein ColorScheme iceberg highlight! link @text.literal String
+autocmd dein ColorScheme iceberg highlight! @punctuation.delimiter gui=bold guifg=#a093c7
+autocmd dein ColorScheme iceberg highlight! link @punctuation.special Comment
+autocmd dein ColorScheme iceberg highlight! link @text.uri String
+endif
+"autocmd dein ColorScheme iceberg highlight! clear CursorLine
+"autocmd dein ColorScheme iceberg highlight! CursorLine gui=underline guisp=#c6c8d1
 " autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
 
-"autocmd dein Colorscheme iceberg hi link TSFunction Title
-"autocmd dein Colorscheme iceberg hi link TSConstant Constant
-"autocmd dein Colorscheme iceberg hi link TSConstructor Define
-"autocmd dein Colorscheme iceberg hi link TSLavel Number
-"autocmd dein Colorscheme iceberg hi link TSLabel Number
-"autocmd dein Colorscheme iceberg hi link TSNamespace Number
-"autocmd dein Colorscheme iceberg hi link TSOperator Number
-"autocmd dein Colorscheme iceberg hi link TSKeyword Keyword
-"autocmd dein Colorscheme iceberg hi link TSType Define
-"autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineError Error
-"autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineWarning Warning
+" autocmd dein Colorscheme iceberg hi link TSInclude Special
+" autocmd dein Colorscheme iceberg hi link TSProperty String
+
+" autocmd dein Colorscheme iceberg hi link TSConstant Constant
+" autocmd dein Colorscheme iceberg hi link TSConstructor Define
+" autocmd dein Colorscheme iceberg hi link TSLavel Number
+" autocmd dein Colorscheme iceberg hi link TSLabel Number
+" autocmd dein Colorscheme iceberg hi link TSNamespace Number
+" autocmd dein Colorscheme iceberg hi link TSOperator Number
+" autocmd dein Colorscheme iceberg hi link TSKeyword Keyword
+" autocmd dein Colorscheme iceberg hi link TSType Define
+" autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineError Error
+" autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineWarning Warning
 '''
-
-
-# [[plugins]]
-# repo = 'lifepillar/vim-solarized8'
-# hook_add =''' " {{{
-# let g:solarized_old_cursor_style = 1
-# let g:solarized_italics = 0
-# let g:solarized_statusline = 'flat'
-# augroup Solarized8
-# au!
-# au ColorScheme solarized8_flat hi! DiffChange
-#     \ cterm=bold ctermbg=5 gui=bold guifg=#b58900 guibg=#073642 guisp=#b58900
-# au ColorScheme solarized8_flat hi! DiffText
-#     \ cterm=bold ctermbg=9 gui=bold guifg=#268bd2 guibg=#073642 guisp=#268bd2
-# au ColorScheme solarized8_flat hi! DiffAdd
-#     \ cterm=bold ctermbg=4 gui=bold guifg=#859900 guibg=#073642 guisp=#859900
-# au ColorScheme solarized8_flat hi! VertSplit guifg=#05252C guibg=#05252C
-# au ColorScheme solarized8_flat hi! link EndOfBuffer Comment
-# au ColorScheme solarized8_flat hi! NormalFloat guibg=#05252C
-# au ColorScheme solarized8_flat hi clear Underlined
-# au ColorScheme solarized8_flat hi! Underlined gui=underline,bold
-# au ColorScheme solarized8_flat hi! link Vimfunction Type
-# au ColorScheme solarized8_flat hi! link diffSubname Comment
-# au ColorScheme solarized8_flat hi! link diffIndexLine Comment
-# if has('GUI') || has('nvim')
-#     autocmd ColorScheme solarized8_flat hi link Folded NonText
-#     autocmd ColorScheme solarized8_flat hi Folded guifg=bold
-# endif
-# augroup END
-# ''' # }}}
-
-# [[plugins]]
-# repo = 'markonm/traces.vim'
-# hook_add ='''
-# let g:traces_num_range_preview = 1
-# nnoremap S <Cmd>%s/
-# vnoremap S :%s/
-# nnoremap gs :%s///g<Left><Left>
-# vnoremap gs <Cmd>%s///g<Left><Left>
-# '''
-
-[[plugins]]
-repo = 'Shougo/neco-syntax'
-
-[[plugins]]
-repo = 'hrsh7th/vim-neco-calc'
-
-[[plugins]]
-repo = 'ujihisa/neco-look'
-
-# [[plugins]]
-# repo = 'tpope/vim-repeat'
-
-[[plugins]]
-repo = 'haya14busa/is.vim'
-#TODO:qitta
-hook_add = ''' " {{{
-let g:is#do_default_mapping = 0
-"au vimrc VimEnter * au! plugin-is
-"au CmdlineLeave [/\:] if !v:event.abort <bar>call is#auto_nohlsearch(2) <bar> endif
-
-''' # }}}
-
-# [[plugins]]
-# repo = 'osyo-manga/vim-anzu'
-# hook_add = ''' " {{{
-# "nnoremap <silent><expr> <Plug>(anzu-n-zzzv) anzu#mode#mapexpr("n", "", "zzzv")
-# "nnoremap <silent><expr> <Plug>(anzu-N-zzzv) anzu#mode#mapexpr("N", "", "zzzv")
-# "nmap n <Plug>(is-nohl)<Plug>(anzu-n-zzzv)
-# "nmap N <Plug>(is-nohl)<Plug>(anzu-N-zzzv)
-# let g:airline#extensions#anzu#enabled = 0
-# ''' # }}}
 
 [[plugins]]
 repo =  'kana/vim-operator-user'
 
-# [[plugins]]
-# repo = 'deoplete-plugins/deoplete-zsh'
-
-[[plugins]]
-repo =  'Shougo/neosnippet-snippets'
-
-# [[plugins]]
-# # repo = 'chemzqm/unite-location'
-# merged = '0'
-# repo = 'orokasan/unite-location'
-
-[[plugins]]
-on_source = ['vim-quickrun']
-repo = 'itchyny/vim-quickrun-lightline-hooks'
-
 [[plugins]]
 repo =  'kmnk/denite-dirmark'
-
-[[plugins]]
-on_if = 'has("nvim")'
-on_source = ['vim-quickrun']
-repo = 'lambdalisue/vim-quickrun-neovim-job'
 
 [[plugins]]
 repo = 'itchyny/vim-parenmatch'
@@ -244,785 +122,200 @@ hook_add = '''
 hi! link ParenMatch MatchParen
 '''
 
-[[plugins]]
-repo = 'chemzqm/denite-extra'
-
 # [[plugins]]
-# repo =  'Shougo/neoyank.vim'
-# # repo =  'orokasan/neoyank.vim'
-# # on_event = 'TextYankPost'
-# # on_source = ['denite.nvim']
-# hook_add = '''
-# let g:neoyank#save_registers = ['*']
-# " autocmd dein TextYankPost * call neoyank#update()
-# '''
-
-[[plugins]]
-repo = 'airblade/vim-gitgutter'
-lazy = 1
-on_event = 'BufRead'
-hook_add = '''
-let g:gitgutter_sign_added = '++'
-let g:gitgutter_sign_modified = '~~'
-let g:gitgutter_sign_removed = '--'
-let g:gitgutter_sign_removed_first_line = '__'
-let g:gitgutter_sign_modified_removed = '+-'
-let g:gitgutter_sign_priority = 0
-let g:gitgutter_preview_win_floating = 0
-autocmd dein ColorScheme * highlight link GitGutterAdd String
-autocmd dein ColorScheme * highlight link GitGutterChange Constant
-nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
-nmap <Leader>xx <Plug>(GitGutterStageHunk)
-nmap <Leader>xu <Plug>(GitGutterUndoHunk)
-'''
-
-[[plugins]]
-repo = 'glacambre/firenvim'
+# repo = 'glacambre/firenvim'
+# on_event = ['VimEnter']
 # on_if = 'has("nvim")'
-# hook_post_update = 'call firenvim#install(0)'
-hook_add = '''
-'''
-
-# [[plugins]]
-# # colorscheme seagull
-# repo = 'nightsense/seabird'
+# # hook_post_update = 'call firenvim#install(0)'
 # hook_add = '''
-# " au ColorScheme seagull hi NormalFloat guibg=#fbffff
-# au ColorScheme seagull hi! NormalFloat guibg=#f5f5f5
-# au ColorScheme seagull hi! clear Search
-# au ColorScheme seagull hi! link Search IncSearch
-# au ColorScheme seagull hi! clear MatchParen
-# au ColorScheme seagull hi! MatchParen ctermfg=1 ctermbg=NONE guibg=#b4b8bf
-# au ColorScheme seagull hi! Comment cterm=NONE ctermfg=14 guifg=#8d9193 gui=NONE
-# au ColorScheme seagull hi! link SignColumn CursorColumn
+# if exists('g:started_by_firenvim')
+# let g:firenvim_config = { 
+#     \ 'globalSettings': {
+#         \ 'alt': 'all',
+#     \  },
+#     \ 'localSettings': {
+#         \ '.*': {
+#             \ 'cmdline': 'neovim',
+#             \ 'content': 'text',
+#             \ 'priority': 0,
+#             \ 'selector': 'textarea',
+#             \ 'takeover': 'always',
+#         \ },
+#     \ }
+# \ }
+# set showtabline=0
+# set background=light
+# startinsert
+# set guifont:HackGen\ Console\ NFJ:h12
+# endif
 # '''
-# [[plugins]]
-# repo = 'nightsense/snow'
-
-# [[plugins]]
-# repo = 'dstein64/vim-startuptime'
-
-# [[plugins]]
-# repo = 'lambdalisue/fern.vim'
-# hook_add = 'let g:fern#loaded = 1 '
-
-# [[plugins]]
-# repo =  'rhysd/git-messenger.vim'
-
-[[plugins]]
-repo = 'thinca/vim-qfreplace'
-lazy = 1
-on_ft = ['qf']
-[plugins.ftplugin]
-qf = '''
-  nnoremap <buffer> r <Cmd>Qfreplace<CR>
-'''
-
-# [[plugins]]
-# repo = 'tpope/vim-sleuth'
-
-# [[plugins]]
-# merged = '0'
-# repo ='eikendev/denite-fzf'
-
-[[plugins]]
-repo = 'vim-scripts/autodate.vim'
-lazy = 1
-on_event = 'BufRead'
-hook_add = '''
-let g:autodate_format="%Y-%m-%d[%H:%M]"
-'''
-
-# [[plugins]]
-# repo = 'numirias/semshi'
-# # on_ft = 'python'
-# # on_cmd = ['Semshi']
-# hook_add = '''
-# let g:semshi#simplify_markup = v:true
-# let g:semshi#error_sign = v:false
-# function! MyCustomHighlights()
-#   hi semshiLocal           ctermfg=209 guifg=#ff875f
-#   hi semshiGlobal          ctermfg=214 guifg=#ff6200
-#   "hi! link semshiImported   Normal
-#   hi semshiImported   guifg=#9854ff gui=NONE
-#   " hi semshiParameter       ctermfg=75  guifg=#9854ff
-#   hi! link semshiParameter   Special
-#   hi semshiParameterUnused ctermfg=117 guifg=#87d7ff cterm=underline gui=underline
-#   hi semshiFree            ctermfg=218 guifg=#ffafd7
-#   hi! link semshiBuiltin      Type
-#   hi semshiAttribute       ctermfg=49  guifg=#0099ff
-#   hi! link semshiSelf          Comment
-#   hi clear semshiUnresolved
-#   hi clear semshiSelected        gui=underline
-#   hi semshiSelected        gui=underline
-#   hi semshiErrorSign       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
-#   hi semshiErrorChar       ctermfg=231 guifg=#ffffff ctermbg=160 guibg=#d70000
-# endfunction
-# autocmd dein FileType python call MyCustomHighlights()
-# '''
-
-# [[plugins]]
-# # repo = 'haya14busa/incsearch.vim'
-# merged = 0
-# repo = 'orokasan/incsearch.vim'
-# hook_add = 'let g:incsearch#auto_nohlsearch = 1'
-# # TODO vimproc依存をなくす
-
-# [[plugins]]
-# repo = 'heavenshell/vim-textlint' 
-
-[[plugins]]
-lazy = 1
-on_event = 'BufRead'
-repo = 'rhysd/conflict-marker.vim'
-hook_add = '''
-'''
-
-# [[plugins]]
-# depends = ['context_filetype.vim']
-# repo = 'osyo-manga/vim-precious'
-# hook_source = '''
-# " カーソル移動時の自動切り替えを無効化
-# " このオプションは filetype ごとに設定可能
-# " "*" は全ての filetype に影響する
-# " let g:precious_enable_switch_CursorMoved = {
-# " \   "*" : 0
-# " \}
-# " let g:precious_enable_switch_CursorMoved_i = {
-# " \   "*" : 0
-# " \}
-# " " insert に入った時にスイッチし、抜けた時に元に戻す
-# " augroup test
-# "     autocmd!
-# "     autocmd InsertEnter * :PreciousSwitch
-# " augroup END
-# '''
-# [[plugins]]
-# merged = 0
-# repo =  'vim-jp/vital.vim' 
-
-# [[plugins]]
-# repo =  'haya14busa/revital.vim' 
-
-# [[plugins]]
-# repo = 'danilamihailov/beacon.nvim'
-# merged = 0
-# hook_add = '''
-# let g:beacon_fade = 1
-# let g:beacon_size = 15
-# let g:beacon_shrink = 1
-# let g:beacon_show_jumps = 0
-# let g:beacon_timeout=200
-# let g:beacon_minimal_jump = 50
-# " let g:beacon_ignore_buffers = ['\[Command Line\]']
-# au ColorScheme * highlight Beacon guibg=#e2a478 ctermbg=15
-# '''
-
-# [[plugins]]
-# merged = '0'
-# repo =  'twitvim/twitvim' 
-# hook_add = '''
-# '''
-
-# [[plugins]]
-# repo = 'Xuyuanp/scrollbar.nvim'
-
-# [[plugins]]
-# repo = 'Milly/vim-migemo'
-# lazy = 1
-# on_map = { n = '<Plug>(migemo-migemosearch' }
-
-# [[plugins]]
-# repo = 'osyo-manga/vim-operator-stay-cursor'
-# hook_add = '''
-# " TODO: ドットリピートがうまく動かない
-# map y <Plug>(operator-stay-cursor-yank)
-# '''
-
-[[plugins]]
-depends = ['vim-textobj-user']
-# ae, ie
-repo = 'kana/vim-textobj-entire'
-hook_add = '''
-xmap ae <Plug>(textobj-entire-a)
-omap ae <Plug>(textobj-entire-a)
-xmap ie <Plug>(textobj-entire-i)
-omap ie <Plug>(textobj-entire-i)
-'''
-
-[[plugins]]
-depends = ['vim-textobj-user']
-# gb
-repo = 'saaguero/vim-textobj-pastedtext'
-hook_add = '''
-xmap gp <Plug>(textobj-pastedtext-text)
-omap gp <Plug>(textobj-pastedtext-text)
-xmap gp <Plug>(textobj-pastedtext-text)
-omap gp <Plug>(textobj-pastedtext-text)
-'''
-
-# [[plugins]]
-# # ab, ib
-# depends = ['vim-textobj-user']
-# repo = 'rhysd/vim-textobj-anyblock'
-# hook_add = '''
-# let g:textobj#anyblock#blocks = ['(', '{', '[', '"', "'", '<' ,'●','∨','（','f`']
-# xmap ab <Plug>(textobj-anyblock-a)
-# omap ab <Plug>(textobj-anyblock-a)
-# xmap ib <Plug>(textobj-anyblock-i)
-# omap ib <Plug>(textobj-anyblock-i)
-# '''
-
-[[plugins]]
-# ay, iy
-depends = ['vim-textobj-user']
-repo = 'kana/vim-textobj-syntax'
-hook_add = '''
-xmap ay <Plug>(textobj-syntax-a)
-omap ay <Plug>(textobj-syntax-a)
-xmap iy <Plug>(textobj-syntax-i)
-omap iy <Plug>(textobj-syntax-i)
-'''
-
-[[plugins]]
-# al, il
-depends = ['vim-textobj-user']
-repo = 'kana/vim-textobj-line'
-hook_add = '''
-xmap al <Plug>(textobj-line-a)
-omap al <Plug>(textobj-line-a)
-xmap il <Plug>(textobj-line-i)
-omap il <Plug>(textobj-line-i)
-'''
-
-# [[plugins]]
-# # av, iv
-# # aV, iV
-# depends = ['vim-textobj-user']
-# repo = 'rhysd/vim-textobj-word-column'
-# hook_add = '''
-# xmap av <Plug>(textobj-wordcolumn-w-a)
-# omap av <Plug>(textobj-wordcolumn-w-a)
-# xmap iv <Plug>(textobj-wordcolumn-w-i)
-# omap iv <Plug>(textobj-wordcolumn-w-i)
-# xmap aV <Plug>(textobj-wordcolumn-W-a)
-# omap aV <Plug>(textobj-wordcolumn-W-a)
-# xmap iV <Plug>(textobj-wordcolumn-W-i)
-# omap iV <Plug>(textobj-wordcolumn-W-i)
-# '''
-
-[[plugins]]
-repo = 'kana/vim-operator-replace'
-depends = 'vim-operator-user'
-hook_add = '''
-nmap _ <Plug>(operator-replace)
-vmap _ <Plug>(operator-replace)
-'''
-
-[[plugins]]
-repo = 'kana/vim-niceblock'
-lazy = 1
-on_map = {x = '<Plug>(niceblock-'}
-hook_add = '''
-  xmap I  <Plug>(niceblock-I)
-  xmap A  <Plug>(niceblock-A)
-'''
 
 # [[plugins]]
 # repo = 'raghur/vim-ghost'
-[[plugins]]
-lazy = 1
-on_cmd = ['GhostStart']
-repo = 'gamoutatsumi/dps-ghosttext.vim'
-
-[[plugins]]
-repo='Shougo/junkfile.vim'
-lazy = 1
-on_cmd = ['JunkfileOpen']
-hook_add = '''
-nnoremap <silent> <C-T> <Cmd>tabnew<bar>JunkfileOpen txt<CR>
-nnoremap <silent> g<C-T> <Cmd>JunkfileOpen<CR>
-nnoremap <C-S> <Cmd>JunkfileOpen<CR>
-nnoremap <silent> [denite]V <Cmd>Denite -path=~/.cache/junkfile/`strftime('%Y/%m')` file/rec<CR>
-nnoremap <silent> <Plug>(JunkfileGrep) <Cmd>Denite -no-empty -path=~/.cache/junkfile/`strftime('%Y/%m')` grep<CR>
-nmap <silent> [denite]v <Plug>(JunkfileGrep)
-'''
-
-# [[plugins]]
-# repo = 'junegunn/fzf.vim'
-# [[plugins]]
-# merged = 0
-# repo = 'junegunn/fzf'
-
-# [[plugins]]
-# repo =  'hrsh7th/denite-converter-prioritize-basename'
-
-[[plugins]]
-repo = 'nekowasabi/denite-migemo'
-
-# [[plugins]]
-# merged = 0
-# repo = 'neoclide/denite-git'
-
-# [[plugins]]
-# repo = 'Shougo/neomru.vim'
-# hook_add = '''
-# '''
-# [[plugins]]
-#  repo = 'ctrlpvim/ctrlp.vim'
-
-# [[plugins]]
-#  repo = 'sainnhe/sonokai'
-# [[plugins]]
-#  repo = 'Th3Whit3Wolf/onebuddy' 
-# [[plugins]]
-# repo = 'tjdevries/colorbuddy.vim'
-# [[plugins]]
-#  repo = 'lambdalisue/edita.vim'
-# [[plugins]]
-# repo = 'ryanoasis/vim-devicons' 
-
-# [[plugins]]
-# repo = 'wfxr/minimap.vim'
-# [[plugins]]
-# repo = 'RishabhRD/popfix'
-# [[plugins]]
-# repo = 'RishabhRD/nvim-lsputils'
-# [[plugins]]
-# repo = 'rickhowe/diffchar.vim'
-
-# [[plugins]]
-# repo = 'Yggdroot/indentLine'
-
-# [[plugins]]
-# repo = 'lukas-reineke/indent-blankline.nvim'
-
-# [[plugins]]
-# repo = 'kassio/neoterm'
-# [[plugins]]
-# repo = 'thinca/vim-themis'
-
-# " only / and ? are enabled by default
-# call wilder#set_option('modes', ['/','?'])
-# call wilder#set_option('renderer', wilder#popupmenu_renderer({
-#      \ 'highlighter': wilder#basic_highlighter(),
-#      \ 'highlights': {'accent': 'Title', 'selected_accent': 'Title'},
-#      \ 'right': [],
-#      \ 'max_height': 5,
-#      \ 'min_width': 2,
-#      \ 'winblend': 20
-#      \ }))
-# call wilder#set_option('pipeline', [
-#      \   wilder#branch(
-#      \     [
-#      \       wilder#check({_, x -> empty(x)}),
-#      \       wilder#history(100),
-#      \     ],
-#      \     wilder#cmdline_pipeline({
-#      \       'language': 'python',
-#      \       'fuzzy': 1,
-#      \     }),
-#      \     wilder#python_search_pipeline({
-#      \       'fuzzy': 1,
-#      \     }),
-#      \   wilder#search_pipeline(),
-#      \   ),
-#      \ ])
-# endfunction
-# autocmd CmdlineEnter * ++once call s:wilder_init()
-# '''
-# [[plugins]]
-# repo = 'tkmpypy/chowcho.nvim'
-# [[plugins]]
-# repo = 'karb94/neoscroll.nvim'
-
-# [[plugins]]
-# repo = 'kevineato/vim-signature'
-# hook_add = '''
-# nnoremap m `
-# let g:SignatureMarkTextHL = "Exception"
-# let g:SignatureForceRemoveGlobal = 1
-# let g:SignatureMap = {
-#     \ 'Leader'             :  "M",
-#     \ 'PlaceNextMark'      :  "M,",
-#     \ 'ToggleMarkAtLine'   :  "M.",
-#     \ 'PurgeMarksAtLine'   :  "M-",
-#     \ 'DeleteMark'         :  "Mm",
-#     \ 'PurgeMarks'         :  "M<Space>",
-#     \ 'PurgeMarkers'       :  "M<BS>",
-#     \ 'GotoNextLineAlpha'  :  "']",
-#     \ 'GotoPrevLineAlpha'  :  "'[",
-#     \ 'GotoNextSpotAlpha'  :  "`]",
-#     \ 'GotoPrevSpotAlpha'  :  "`[",
-#     \ 'GotoNextLineByPos'  :  "]'",
-#     \ 'GotoPrevLineByPos'  :  "['",
-#     \ 'GotoNextSpotByPos'  :  "]`",
-#     \ 'GotoPrevSpotByPos'  :  "[`",
-#     \ 'GotoNextMarker'     :  "]-",
-#     \ 'GotoPrevMarker'     :  "[-",
-#     \ 'GotoNextMarkerAny'  :  "]=",
-#     \ 'GotoPrevMarkerAny'  :  "[=",
-#     \ 'ListBufferMarks'    :  "m/",
-#     \ 'ListBufferMarkers'  :  "m?"
-#     \ }
-# '''
-
-# [[plugins]]
-# repo = 'hrsh7th/vim-vsnip'
-# hook_add = '''
-# '''
-
-
-# [[plugins]]
-# repo = 'lambdalisue/fern.vim'
-# hook_add = '''
-# let g:fern#render#default#root_symbol = '[in]'
-# let g:fern#drawer_width =35
-# let g:fern#drawer_keep = v:true
-# let g:fern#disable_default_mappings = 1
-# function! s:init_fern() abort
-# nmap <buffer> <C-C> <Plug>(fern-action-cancel)
-# nmap <buffer> <Plug>(fern-action-cd) <Plug>(fern-action-cd:cursor)
-# nmap <buffer> a <Plug>(fern-action-choice)
-# nmap <buffer> C <Plug>(fern-action-clipboard-copy)
-# nmap <buffer> M <Plug>(fern-action-clipboard-move)
-# nmap <buffer> P <Plug>(fern-action-clipboard-paste)
-# nmap <buffer> h <Plug>(fern-action-collapse)
-# nmap <buffer> c <Plug>(fern-action-copy)
-# nmap <buffer> fe <Plug>(fern-action-exclude)
-# nmap <buffer> <Plug>(fern-action-expand) <Plug>(fern-action-expand:in)
-# nmap <buffer> ? <Plug>(fern-action-help)
-# nmap <buffer> ! <Plug>(fern-action-hidden)
-# nmap <buffer> <Plug>(fern-action-hidden) <Plug>(fern-action-hidden:toggle)
-# nmap <buffer> fi <Plug>(fern-action-include)
-# nmap <buffer> <Plug>(fern-action-lcd) <Plug>(fern-action-lcd:cursor)
-# nmap <buffer> <C-H> <Plug>(fern-action-leave)
-# nmap <buffer> i <Plug>(fern-action-mark)
-# nmap <buffer> <Plug>(fern-action-mark) <Plug>(fern-action-mark:toggle)
-# nmap <buffer> m <Plug>(fern-action-move)
-# nmap <buffer> K <Plug>(fern-action-new-dir)
-# nmap <buffer> N <Plug>(fern-action-new-file)
-# nmap <buffer> e <Plug>(fern-action-open)
-# nmap <buffer> <CR> <Plug>(fern-action-open-or-enter)
-# nmap <buffer> l <Plug>(fern-action-open-or-expand)
-# nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:edit)
-# nmap <buffer> <Plug>(fern-action-open:edit) <Plug>(fern-action-open:edit-or-error)
-# "nmap <buffer> s <Plug>(fern-action-open:select)
-# nmap <buffer> E <Plug>(fern-action-open:side)
-# nmap <buffer> x <Plug>(fern-action-open:system)
-# nmap <buffer> t <Plug>(fern-action-open:tabedit)
-# nmap <buffer> <C-L> <Plug>(fern-action-redraw)
-# nmap <buffer> <F5> <Plug>(fern-action-reload)
-# nmap <buffer> <Plug>(fern-action-reload) <Plug>(fern-action-reload:all)
-# nmap <buffer> R <Plug>(fern-action-rename)
-# nmap <buffer> <Plug>(fern-action-rename:edit) <Plug>(fern-action-rename:edit-or-error)
-# nmap <buffer> <Plug>(fern-action-rename) <Plug>(fern-action-rename:split)
-# nmap <buffer> . <Plug>(fern-action-repeat)
-# nmap <buffer> - <Plug>(fern-action-reveal)
-# nmap <buffer> B <Plug>(fern-action-save-as-bookmark)
-# nmap <buffer> <Plug>(fern-action-tcd) <Plug>(fern-action-tcd:cursor)
-# nmap <buffer> <Plug>(fern-action-terminal) <Plug>(fern-action-terminal:edit)
-# nmap <buffer> <Plug>(fern-action-terminal:edit) <Plug>(fern-action-terminal:edit-or-error)
-# nmap <buffer> D <Plug>(fern-action-trash)
-# nmap <buffer> y <Plug>(fern-action-yank)
-# nmap <buffer> <Plug>(fern-action-yank) <Plug>(fern-action-yank:path)
-# nmap <nowait><buffer> z <Plug>(fern-action-zoom)
-# nmap <nowait><buffer> Z <Plug>(fern-action-zoom:reset)
-#   " Write custom code here
-# nmap <buffer><expr><silent>
-#       \ <C-6>
-#       \ fern#smart#scheme(
-#       \   ":\<C-u>Fern bookmark:///\<CR>",
-#       \   {
-#       \     'bookmark': "\<C-^>",
-#       \   },
-#       \ )
-# endfunction
-# nnoremap <Space>e <cmd>Fern bookmark:/// -drawer<CR>
-# nmap <buffer><expr>
-#       \ <Plug>(fern-my-bookmark)
-#       \ fern#smart#drawer(
-#       \   "\<Plug>(fern-action-open)",
-#       \   "\<Plug>(fern-action-enter)",
-#       \ )
-# nnoremap <C-e> <cmd>Fern -drawer -toggle .<CR>
-# augroup my-fern
-#   autocmd! *
-#   autocmd FileType fern call s:init_fern()
-# augroup END
-# '''
-# [[plugins]]
-# repo = 'antoinemadec/FixCursorHold.nvim'
-# [[plugins]]
-# repo = 'lambdalisue/fern-renderer-nerdfont.vim'
-# [[plugins]]
-# repo = 'lambdalisue/nerdfont.vim'
-# [[plugins]]
-# repo = 'lambdalisue/glyph-palette.vim'
-# [[plugins]]
-# merged = 0
-# [[plugins]]
-# repo = 'delphinus/vim-denite-window'
-
-# repo = 'lambdalisue/edita.vim'
-# [[plugins]]
-# repo = 'winston0410/mark-radar.nvim'
-# hook_add = '''
-# '''
-# [[plugins]]
-# repo = 'doums/lsp_status'
-[[plugins]]
-repo = 'goerz/jupytext.vim'
-on_ft = 'ipynb'
-
-[[plugins]]
-repo = 'koron/nyancat-vim'
-lazy = 1
-on_cmd = ['Nyancat','Nyancat2']
-
-[[plugins]]
-repo = 'tyru/capture.vim'
-lazy = 1
-on_cmd = ['Capture']
-
-[[plugins]]
-repo = 'lambdalisue/guise.vim'
-depends = ['denops.vim']
-
-[[plugins]]
-repo = 'lambdalisue/gin.vim'
-lazy = 1
-on_cmd = ['GinStatus']
-# [[plugins]]
-# repo  = 'mfussenegger/nvim-lint'
-# [[plugins]]
-# repo = 'wbthomason/packer.nvim'
-[[plugins]]
-repo = 'sainnhe/edge'
-hook_add = '''
-let g:edge_style = 'neon'
-let g:edge_lightline_disable_bold = 1
-let g:edge_cursor = 'cyan'
-let g:edge_enable_italic = 0
-let g:edge_disable_italic_comment = 1
-
-function! s:edge_custom() abort
-let l:palette = edge#get_palette('aura')
-call edge#highlight('deniteMatchedChar', l:palette.green, l:palette.none, 'bold')
-call edge#highlight('deniteMatchedRange', l:palette.green, l:palette.none, 'bold')
-call edge#highlight('deniteInput', l:palette.green, l:palette.bg1, 'bold')
-call edge#highlight('deniteStatusLineNumber', l:palette.purple, l:palette.bg1)
-call edge#highlight('deniteStatusLinePath', l:palette.fg, l:palette.bg1)
-endfunction
-
-augroup EdgeCustom
-autocmd!
-autocmd ColorScheme edge call s:edge_custom()
-augroup END
-'''
-
-[[plugins]]
-repo =  'machakann/vim-sandwich'
-hook_add = '''
-let g:sandwich_no_default_key_mappings = 1
-let g:operator_sandwich_no_default_key_mappings = 1
-
-silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)
-silent! nmap <unique><silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-silent! nmap <unique><silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-silent! nmap <unique><silent> 'rb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-silent! omap <unique> ib <Plug>(textobj-sandwich-auto-i)
-silent! xmap <unique> ib <Plug>(textobj-sandwich-auto-i)
-silent! omap <unique> ab <Plug>(textobj-sandwich-auto-a)
-silent! xmap <unique> ab <Plug>(textobj-sandwich-auto-a)
-
-silent! omap <unique> i' <Plug>(textobj-sandwich-query-i)
-silent! xmap <unique> i' <Plug>(textobj-sandwich-query-i)
-silent! omap <unique> a' <Plug>(textobj-sandwich-query-a)
-silent! xmap <unique> a' <Plug>(textobj-sandwich-query-a)
-
-" add
-silent! nmap <unique> 'a <Plug>(operator-sandwich-add)
-silent! xmap <unique> 'a <Plug>(operator-sandwich-add)
-silent! omap <unique> 'a <Plug>(operator-sandwich-g@)
-
-" delete
-silent! xmap <unique> 'd <Plug>(operator-sandwich-delete)
-
-" replace
-silent! xmap <unique> 'r <Plug>(operator-sandwich-replace)
-
-let g:textobj#sandwich#stimeoutlen = 100
-let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
-let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['b']}]
-let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['k']}]
-let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['p']}]
-let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['d']}]
-let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}]
-let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
-let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
-let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
-let g:sandwich#recipes += [{'buns' : ['［', '］'], 'nesting':1, 'input':['U']}]
-
-let g:sandwich#recipes += [{'buns' : ['●', '●'], 'nesting':1, 'input':['1']}]
-let g:sandwich#recipes += [{'buns' : ['◆', '◆'], 'nesting':1, 'input':['2']}]
-let g:sandwich#recipes += [{'buns' : ['▲', '▲'], 'nesting':1, 'input':['3']}]
-let g:sandwich#recipes += [{'buns' : ['▼', '▼'], 'nesting':1, 'input':['4']}]
-let g:sandwich#recipes += [{'buns' : ['▽', '▽'], 'nesting':1, 'input':['5']}]
-let g:sandwich#recipes += [{'buns' : ['★', '★'], 'nesting':1, 'input':['6']}]
-let g:sandwich#recipes += [{'buns' : ['☆', '☆'], 'nesting':1, 'input':['7']}]
-let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['8']}]
-let g:sandwich#recipes += [{'buns' : ['<s>', '<\s>'], 'nesting':1, 'input':['s']}]
-let g:sandwich#recipes += [{'buns' : ['□', '□'], 'nesting':1, 'input':['c']}]
-autocmd dein FileType markdown call sandwich#util#addlocal([
-  \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
-  \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
-  \ ])
-call operator#sandwich#set('all', 'all', 'highlight', 2)
-nmap 'dd vab'd
-nmap 'rr vab'r
-'''
-# [[plugins]]
-# repo = 'andymass/vim-matchup'
-# merged = 0
-# # lazy = 1
-# hook_add = '''
-# nmap <TAB> <plug>(matchup-%)
-# xmap <TAB> <plug>(matchup-%)
-# omap <TAB> <plug>(matchup-%)
-# let g:matchup_transmute_enabled = 1
-# autocmd colorscheme * hi! link MatchWord MatchParen
-# autocmd colorscheme * hi! link MatchWordCur MatchParenCur
-#   highlight! OffscreenPopup guibg=red guifg=blue
-# let g:matchup_matchparen_offscreen
-#   \ = {'method': 'popup', 'highlight': 'OffscreenPopup'}
-# let g:matchup_matchparen_deferred = 1
-# '''
 
 # [[plugins]]
 # rtp = 'vim'
 # merged = 0
 # repo = 'soywod/himalaya'
-[[plugins]]
-lazy = 1
-repo = 'thinca/vim-singleton'
-
-# [[plugins]]
-# repo = 'ryanoasis/vim-devicons'
-
-[[plugins]]
-repo = 'kat0h/bufpreview.vim'
 
 [[plugins]]
 repo = 'thinca/vim-jautil'
-# [[plugins]]
-# merged = 0
-# repo = 'skanehira/gh.vim'
 
 # [[plugins]]
-# repo = 'chentau/marks.nvim'
+# repo = 'junegunn/vim-easy-align'
 # hook_add = '''
-
+# vmap ga <Plug>(EasyAlign)
+# nmap ga <Plug>(EasyAlign)
 # '''
 
 [[plugins]]
-repo = 'dstein64/vim-win'
-hook_add='''
-nmap <C-Space> <Plug>WinWin
-" map <C-w> :Win 1<CR>
-let g:win_disable_version_warning = 1
-let g:win_ext_command_map = {
-      \   'c': 'wincmd c',
-      \   'C': 'close!',
-      \   'q': 'Win#exit',
-      \   'Q': 'quit',
-      \   'v': 'wincmd v',
-      \   's': 'wincmd s',
-      \   'n': 'bnext',
-      \   'N': 'bnext!',
-      \   'p': 'bprevious',
-      \   'P': 'bprevious!',
-      \   "\<c-n>": 'tabnext',
-      \   "\<c-p>": 'tabprevious',
-      \   '=': 'wincmd =',
-      \   't': 'tabnew',
-      \   'x': 'Win#exit',
-      \   '\<C-Space>': 'Win#exit',
-      \ }
-'''
+repo = 'https://github.com/vim-jp/autofmt'
+merged = 0
+hook_add = '''
+set formatexpr=autofmt#japanese#formatexpr()
+set textwidth=42
 
+set formatexpr=myfmt.format_normal_mode()
+
+let s:compat = autofmt#compat#import()
+
+let myfmt = {}
+call extend(myfmt, s:compat)
+
+function! myfmt.format_normal_mode(lnum, count) abort
+  let self.textwidth = self.comp_textwidth(1)
+
+  if self.textwidth == 0
+    return
+  endif
+
+  let offset = 0
+
+  let para = []
+  call map(getline(a:lnum, a:lnum + a:count - 1),{ idx, val -> extend(para, [[idx, [val]]]) } )
+  for [i, lines] in para
+    let lnum = a:lnum + i + offset
+    call setline(lnum, self.retab(getline(lnum)))
+
+    let offset += self.format_lines(lnum, len(lines))
+
+    if self.is_comment_enabled()
+      " " * */" -> " */"
+      let lnum = a:lnum + i + (len(lines) - 1) + offset
+      let line = getline(lnum)
+      let [indent, com_str, mindent, text, com_flags] = self.parse_leader(line)
+      if com_flags =~# 'm'
+        let [s, m, e] = self.find_three_piece_comments(&comments, com_flags, com_str)
+        if text == e[1]
+          let line = indent . e[1]
+          call setline(lnum, line)
+        endif
+      endif
+    endif
+
+  endfor
+
+  " The cursor is left on the first non-blank of the last formatted line.
+  let lnum = a:lnum + (a:count - 1) + offset
+  execute printf('keepjumps normal! %dG', lnum)
+endfunction
+'''
 
 [[plugins]]
-repo =  'tyru/open-browser.vim'
-hook_add ='''
-nmap <Leader>o <Plug>(openbrowser-smart-search)
-xmap <Leader>o <Plug>(openbrowser-smart-search)
-omap <Leader>O <Plug>(openbrowser-smart-search)
-let g:openbrowser_message_verbosity = 1
-autocmd FileType php let b:openbrowser_default_search = 'php'
-autocmd FileType python let b:openbrowser_default_search = 'python'
+if = '!has("nvim")'
+merged = 0
+repo = 'thinca/vim-singleton'
+
+[[plugins]]
+repo = 'lambdalisue/nerdfont.vim'
+hook_add = '''
+if !has('nvim')
+au dein VimEnter * call nerdfont#find()
+au dein VimEnter * let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
+au dein VimEnter * let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
+au dein VimEnter * call nerdfont#find('.')
+endif
+let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
+let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
+let g:nerdfont#directory#customs = {
+    \ '': '',
+    \ 'open': '',
+    \ 'close': '',
+    \ 'symlink': '',
+    \}
+let g:nerdfont#path#extension#customs = {
+    \'txt' :  '',
+    \'pdf' :  '',
+    \'docx' :  '',
+    \'doc' :  '',
+    \'xlsx' :  '',
+    \'xlsm' :  '',
+    \'pptx' :  '',
+    \'ppt' :  '',
+    \'tex' :  '',
+    \'zip': ''
+    \}
+augroup my-glyph-palette
+  autocmd! *
+  autocmd FileType ddu-ff,ddu-filer call glyph_palette#apply()
+augroup END
 '''
 
-# [[plugins]]
-# repo = 'dbeniamine/vim-mail'
+[[plugins]]
+repo = 'lambdalisue/glyph-palette.vim'
 
 # [[plugins]]
 # merged = 0
-# repo = 'phaazon/hop.nvim'
+# repo = 'rbtnn/vim-ambiwidth'
+
+# [[plugins]]
+# repo = 'svermeulen/vim-macrobatics'
+
 [[plugins]]
-repo = 'hrsh7th/vim-searchx'
+repo = 'hrsh7th/vim-vsnip-integ'
+
+[[plugins]]
+repo = 'lambdalisue/mr.vim'
 hook_add = '''
-autocmd dein Colorscheme iceberg hi link SearchxMarker DiffChange
-" Overwrite / and ?.
-nnoremap g? <Cmd>call searchx#start({ 'dir': 0 })<CR>
-nnoremap g/ <Cmd>call searchx#start({ 'dir': 1 })<CR>
-xnoremap g? <Cmd>call searchx#start({ 'dir': 0 })<CR>
-xnoremap g/ <Cmd>call searchx#start({ 'dir': 1 })<CR>
-
-" Move to next/prev match.
-"nnoremap N <Cmd>call searchx#prev_dir()<CR>
-"nnoremap n <Cmd>call searchx#next_dir()<CR>
-"xnoremap N <Cmd>call searchx#prev_dir()<CR>
-"xnoremap n <Cmd>call searchx#next_dir()<CR>
-nnoremap <silent> n <cmd>call is#auto_nohlsearch(2)<CR>nzvzz
-nnoremap <silent> N <cmd>call is#auto_nohlsearch(2)<CR>Nzvzz
-"nnoremap <C-k> <Cmd>call searchx#prev()<CR>
-"nnoremap <C-j> <Cmd>call searchx#next()<CR>
-""xnoremap <C-k> <Cmd>call searchx#prev()<CR>
-""xnoremap <C-j> <Cmd>call searchx#next()<CR>
-"cnoremap <C-k> <Cmd>call searchx#prev()<CR>
-"cnoremap <C-j> <Cmd>call searchx#next()<CR>
-
-" autocmd dein User SearchxLeave [:/?@-] set iminsert=0
-"" Clear highlights
-"nnoremap <C-l> <Cmd>call searchx#clear()<CR>
-
-let g:searchx = {}
-
-" Auto jump if the recent input matches to any marker.
-let g:searchx.auto_accept = v:true
-
-" The scrolloff value for moving to next/prev.
-let g:searchx.scrolloff = &scrolloff
-
-" To enable scrolling animation.
-let g:searchx.scrolltime = 0
-
-" Marker characters.
-let g:searchx.markers = split('ABCDEFGHIJKLMNOPQRSTUVWXYZ', '.\zs')
-
-" Convert search pattern.
-function g:searchx.convert(input) abort
-  if a:input !~# '\k'
-    return '\V' .. a:input
-  endif
-  "if a:input[0:2] =~# '\\g'
-  let l:input = a:input
-  let l:input = system('cmigemo -v -w "'.l:input.'" -d "'.g:migemodict.'"')
-  return join(split(l:input, ' '), '.\{-}')
-  "else
-  "return a:input
-  "endif
-endfunction
+let g:mr#threshold = 300
+let g:mr_mrw_disabled = v:true
+let g:mr_mrr_disabled = v:true
+let g:mr#mru#exclude = '\(doc[\\\/].*txt\|COMMIT_EDITMSG\)'
 '''
+
+[[plugins]]
+repo = 'haya14busa/vim-asterisk'
+hook_add = '''
+"let g:asterisk#keeppos = 1
+"map <silent> *  <Plug>(asterisk-*)
+"map <silent> g* <Plug>(asterisk-g*)
+"map <silent> #  <Plug>(asterisk-#)
+"map <silent> g# <Plug>(asterisk-g#)
+'''
+
+[ftplugin]
+
+typescript = '''
+setlocal tabstop=2
+
+'''
+json = '''
+setlocal conceallevel=0
+'''
+markdown = '''
+inoremap <buffer><silent><expr> <C-d> getcurpos()[2] ==# 1 ? "- " :
+    \ match(getline('.'), '^-\s') >=0 ? "<C-u>" : "\<C-d>"
+inoremap <buffer><silent><expr> <C-t> getcurpos()[2] ==# 1 ? "- " : "\<C-t>"
+nnoremap <buffer><silent><expr> o match(getline('.'), '\*\s') >=0 ? "o- " : "o"
+
+setlocal comments=b:*,b:-,b:+,b:1.,nb:>
+setlocal formatoptions-=c formatoptions+=jro
+'''
+
+json = '''
+setlocal nowrap
+nnoremap <buffer> <tab> f<TAB>
+nnoremap <buffer> <S-tab> F<TAB>
+'''
+
 # vim:set foldmethod=marker:'

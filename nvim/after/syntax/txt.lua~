@@ -1,0 +1,108 @@
+vim.api.nvim_exec([[
+" pattern match
+" syntax         match   gihyoSubTitle    '^◎[^◎]*$'
+" syntax         match   gihyoHead        '^◆\ze[^◆]*$'
+" syntax         match   gihyoLead        '^▲（リード）$'
+" syntax         match   gihyoBullet      '^・\ze.*$'
+" syntax         match   gihyoPoint       '^●\ze.*$'
+
+
+" syntax match   gihyoDStrong      '\"..\{-}\"'
+" syntax match   gihyoSStrong      '\'..\{-}\''
+
+syn region  gihyoHeader1    start='^■[^■]' end='$'
+syn region  gihyoHeader2   start='^■■[^■]' end='$'
+syn region  gihyoHeader3    start='^■■■[^■]' end='$'
+syn region  gihyoHeader4    start='^■■■■[^■]' end='$'
+syntax         match   gihyoRuler       "\(=\|-\|+\)\{50,120}"
+syntax         match   gihyoURL         "\(http\|https\|ftp\):[-!#%&+,./0-9:;=?@A-Za-z_~]\+"
+syntax         match   gihyoNotUseChar  '[Ａ-Ｚａ-ｚ０-９]'
+syntax         match  gihyoUnderline '<s>.\{-}<\\s>'
+syntax         match  gihyoUnderline '▽.\{-}▽'
+syntax         match  gihyoUnderlineAlt '∨.\{-}∨'
+syntax         match  gihyoItalic        '◆.\{-}◆'
+syntax         match   gihyoSup '▲.\{-}▲'
+syntax         match   gihyoSub       '▼.\{-}▼'
+syntax         match   gihyoRed          '●.\{-}●'
+
+" syntax         match   textUnderline    '　'
+syntax         match   gihyoSubTitle    '^◎[^◎]*$'
+syntax         match   gihyoSubTitle    '^◎[^◎]*$'
+" syntax         match   gihyoBullet '^・.\{-}$'
+syntax         match   gihyoComment '^☆.\{-}$'
+syn match  gihyoComment    '＠＠.\{-}＠＠'
+" syntax         match  gihyoComment       '^★.\{-}$'
+syntax         match  gihyoHeader1       '^★[^★].\{-}$'
+syn region  gihyoBold    start='◇' end='◇'
+syn region  gihyoInlineComment    start='《' end='》'
+" syn region  gihyoBullet    start='^・' end='$'
+syn region  gihyoBullet    start='^●' end='$'
+syn region  gihyoComment    start='^☆' end='$'
+syntax         match  gihyoComment       '^★★.\{-}$'
+syntax         region   gihyoTodo        start='^TODO' end='$'
+
+syntax         region  gihyoList        start=/\n====リスト/    end=/\n====\n\n/ contains=ALL
+syntax         region  gihyoTable        start=/^▼表/    end=/$/ contains=ALL
+syntax         region  gihyoFigure        start=/^▼図/    end=/$/ contains=ALL
+" syntax         region  gihyoTable       start=/^▼表-----$/     end=/^\{-}-----\n/ contains=ALL
+" syntax         region  gihyoCode        start=/^▼コード-----$/ end=/^\{-}-----\n/ contains=ALL
+" syntax         region  gihyoCode        start=/\n▼リスト/      end=/\n.\{-}\n\n/ contains=ALL
+syntax         region  gihyoCommand     start=/\n==コマンド\n/  end=/\n==.\{-}\n\n/ contains=ALL
+
+" syntax         region  gihyoTable       start=/^▼構文-----$/   end=/^\{-}-----\n/
+
+syntax         region  gihyoBlockSyntax        start=/\n<syntax>-----/    end=/\n-----<syntax>\n/ contains=ALL
+syntax         region  gihyoBlockCode         start=/<code:.*>-----/    end=/\n-----\n/ contains=ALL
+syntax         region  gihyoBlockCode         start=/----->/    end=/\n-----<\n/ contains=ALL
+syntax         region  gihyoBlockMI         start=/<MI>-----/ end=/-----<MI>\n/ contains=ALL
+syntax         region  gihyoBlockTable         start=/\n<table>-----/    end=/\n-----<table>\n/ contains=ALL
+highlight      link    gihyoBlockSyntax       Number
+highlight      link    gihyoBlockCode       Identifier
+highlight      link    gihyoBlockMI       Special
+highlight      link    gihyoBlockTable       Number
+
+" highlight link
+highlight      link    gihyoHeader1 Title
+highlight      link    gihyoHeader2    Constant
+highlight      link    gihyoHeader3 Statement
+highlight      link    gihyoHeader4 Statement
+highlight      link    gihyoSubTitle    Title
+highlight      link    gihyoLead        Special
+highlight      link    gihyoSup        Number
+highlight      link    gihyoSub        Special
+highlight      link    gihyoHead        Statement
+highlight      link    gihyoList        Special
+highlight      link    gihyoRed Error
+highlight      link    gihyoUnderlineAlt Title
+highlight      link    gihyoTable       Special
+highlight      link    gihyoFigure       Special
+highlight      link    gihyoUnderline       Special
+highlight      link    gihyoItalic       String
+highlight      link    gihyoCode        Statement
+highlight       link gihyoBold Statement
+highlight      link    gihyoCommand     PreProc
+highlight      link    gihyoComment     Comment
+highlight      link    gihyoBullet      Identifier
+highlight      link    gihyoInlineComment Function
+highlight      link    gihyoPoint       Identifier
+
+highlight      link    gihyoRuler       Specia
+highlight      link    gihyoURL         Underlined
+highlight      link    gihyoTodo        Todo
+highlight      link    gihyoNotUseChar  Error
+
+highlight      link    gihyoDStrong     PreProc
+highlight      link    gihyoSStrong     PreProc
+function! s:gethighlight(hi, which) abort
+    let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
+    return bg
+endfunction
+" syntax match gihyoZw '　' conceal cchar=□
+highlight link gihyoZw Comment
+call execute('hi textUnderline gui=underline guisp=' .. s:gethighlight('Comment', 'fg'))
+" syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
+" hi link txtDialog Constant
+hi!            link    NonText          Comment
+
+syntax sync minlines=100
+]], false)

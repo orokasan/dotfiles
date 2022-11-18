@@ -1,522 +1,10 @@
 [[plugins]]
-repo =  'Shougo/denite.nvim'
-# repo =  'orokasan/denite.nvim'
-on_source = ['defx.nvim']
-on_cmd = ['Denite', 'DeniteProjectDir', 'DeniteCursorWord']
-hook_add = 'source ~/dotfiles/nvim/rc/config/denite.mapping.rc.vim'
-hook_source = 'source ~/dotfiles/nvim/rc/config/denite.rc.vim'
-[plugins.ftplugin]
-denite = '''
-let g:my_denite_filter_winblend_config = 0
-if has('nvim')
-    let g:my_denite_filter_winblend_config = 1
-    let g:my_denite_filter_winblend_config = b:denite.buffer_name !~#
-    \ '\v(float|menu|relative)' ? 1 : 0
-    setlocal winblend=0
-    setlocal winblend=30
-    setlocal signcolumn=no
-    setlocal nonumber
-endif
-nnoremap <silent><buffer><expr> j
-\ line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr> k
-\ line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> l
-    \ denite#do_map('do_action')
-nnoremap <silent><buffer><expr> <2-LeftMouse>
-    \ denite#do_map('do_action')
-nnoremap <silent><buffer><expr> <TAB>
-    \ denite#do_map('choose_action')
-nnoremap <silent><buffer><expr> <CR>
-    \ denite#do_map('do_action')
-nnoremap <silent><buffer><expr> o
-    \ denite#do_map('do_action', 'open')
-nnoremap <silent><buffer><expr><nowait> t
-    \ denite#do_map('do_action', 'tabswitch')
-nnoremap <silent><buffer><expr><nowait> s
-    \ denite#do_map('do_action', 'split')
-nnoremap <silent><buffer><expr> v
-    \ denite#do_map('do_action', 'vsplit')
-nnoremap <silent><buffer><expr> h
-    \ denite#do_map('move_up_path')
-nnoremap <silent><buffer><expr><nowait> d
-    \ denite#do_map('do_action', 'delete')
-if g:my_denite_filter_winblend_config
-nnoremap <silent><buffer><expr> p
-    \ denite#do_map('do_action', 'preview')
-else
-nnoremap <silent><buffer><expr> p
-    \ denite#do_map('do_action', 'highlight')
-endif
-nnoremap <silent><buffer><expr><nowait> <Leader>
-    \ denite#do_map('do_action', 'highlight')
-nnoremap <silent><buffer><expr> q
-    \ denite#do_map('quit')
-nnoremap <silent><buffer><expr> i
-    \ denite#do_map('open_filter_buffer')
-nnoremap <silent><buffer><expr><nowait> \
-    \ denite#do_map('do_action', 'cd')
-nnoremap <silent><buffer><expr> a
-    \ denite#do_map('toggle_select').'j'
-nnoremap <silent><buffer><expr> A
-    \ denite#do_map('toggle_select_all')
-nnoremap <silent><buffer><expr> <C-r>
-    \ denite#do_map('toggle_matchers', 'matcher/regexp, matcher/fuzzy')
-nnoremap <silent><buffer><expr> r
-    \ denite#do_map('do_action','candidate_file_rec')
-nnoremap <silent><buffer><expr> R
-    \ denite#do_map('do_action','file/rec/txt')
-nnoremap <silent><buffer><expr> e
-    \ denite#do_map('do_action','my_defx')
-nnoremap <silent><buffer><expr> <C-d>
-    \ denite#do_map('do_action','directory/rec')
-nnoremap <silent><buffer><expr> <C-o>
-    \ denite#do_map('restore_sources')
-nnoremap <silent><buffer><expr><nowait> <C-g>
-    \ denite#do_map('do_action','grep')
-nnoremap <silent><buffer><expr> <C-s>
-    \ denite#do_map('change_sorters', 'sorter/rank,sorter/word')
-nnoremap <silent><buffer><expr> x
-    \ denite#do_map('do_action', 'execute')
-
-if b:denite.buffer_name ==# 'combo'
-  nnoremap <silent><buffer><expr> a
-\ denite#do_map('do_action', 'A')
-  nnoremap <nowait><silent><buffer><expr> s
-\ denite#do_map('do_action', 'B')
-  nnoremap <nowait><silent><buffer><expr> d
-\ denite#do_map('do_action', 'C')
-  nnoremap <silent><buffer><expr> p
-\ denite#do_map('do_action', 'prefix')
-  nnoremap <silent><buffer><expr> b
-\ denite#do_map('do_action', 'any')
-  nnoremap <silent><buffer><expr> u
-\ denite#do_map('do_action', 'undo')
-endif
-'''
-denite-filter = '''
-" call lightline#update()
-if has('nvim')
-    if g:my_denite_filter_winblend_config ==# 1
-        setlocal winblend=100
-    else
-        setlocal winblend=0
-    endif
-endif
-inoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
-inoremap <silent><buffer><expr> <C-CR> denite#do_map('do_action')
-inoremap <silent><buffer> <C-b> <cmd>call denite#do_map('move_up_path')<CR><cmd>call denite#move_to_filter()<CR>
-inoremap <silent><buffer><expr> <C-l> denite#do_map('do_action')
-imap <silent><buffer> ~ <Plug>(skkeleton-toggle)
-inoremap <silent><buffer><expr> <C-d> denite#do_map('do_action', 'file/rec')
-inoremap <silent><buffer><expr> <C-x> denite#do_map('do_action', 'execute')
-" imap <silent><buffer><nowait> <C-t> <Plug>(denite_filter_update)ri
-imap <silent><buffer> <C-t> <Plug>(skkeleton-enable)
-inoremap z; ;
-inoremap <silent><buffer><expr> <BS> col('.') == 1 ? "" : "\<BS>"
-inoremap <silent><buffer> <C-a> <cmd>call denite#call_map('choose_action')<CR>
-inoremap <silent><buffer><expr> <C-e> denite#do_map('do_action', 'my_defx')
-imap <silent><buffer> <C-o> <Plug>(denite_filter_update)
-imap <silent><buffer> <ESC> <Plug>(denite_filter_update)
-imap <silent><buffer> <C-c> <Plug>(denite_filter_quit)
-nmap <silent><buffer> q <Plug>(denite_filter_quit)
-inoremap <silent><buffer><expr> <C-j>
-    \ denite#increment_parent_cursor(1)
-inoremap <silent><buffer><expr> <C-k>
-    \ denite#increment_parent_cursor(-1)
-nnoremap <silent><buffer><expr> <C-j>
-    \ denite#increment_parent_cursor(1)
-nnoremap <silent><buffer><expr> <C-k>
-    \ denite#increment_parent_cursor(-1)
-'''
-
-[[plugins]]
-# repo =  'orokasan/defx.nvim'
-repo =  'Shougo/defx.nvim'
-on_cmd = 'Defx'
-hook_add = '''
-nmap <C-e> <Plug>(defx)
-nmap = <cmd>call <SID>defx_tab()<CR>
-nmap <Leader>e <Plug>(defxbufferdir)
-nmap <Leader>E <Plug>(defxsearch)
-nnoremap <silent> <Plug>(defx) <Cmd>Defx -buffer-name=`'defx' . tabpagenr()` -resume<CR>
-nnoremap <Plug>(defxsearch) :Defx -buffer-name=`'defx' . tabpagenr()` -resume 
-nnoremap <silent> <Plug>(defxtab) <Cmd>Defx -buffer-name='defxtab2' -resume -split=tab -listed\|Defx -buffer-name='defxtab' -split=vertical -direction=topleft -winwidth=`winwidth(0)/2`\|0tabmove<CR>
-nnoremap <silent> <Plug>(defxbufferdir) <Cmd>Defx `expand('%:p:h')` -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`<CR>
-nnoremap <space>E <cmd>call <SID>defx_auto_open()<CR>
-function! s:defx_auto_open() abort
-autocmd BufNewFile,BufRead,DirChanged * if filereadable(expand('%')) | execute("Defx `getcwd()` -no-focus -resume -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`") | endif
-Defx `getcwd()` -no-focus -resume -search=`expand('%:p')` -buffer-name=`'defx' . tabpagenr()`
-endfunction
-function! s:defx_tab()
-if bufname(tabpagebuflist(1)[0]) =~# '\v\[defx\] defxtab-\d+'
-    tabnext 1
-else
-    Defx -buffer-name='defxtab' -resume -split=tab -listed|Defx -new -buffer-name='defxtab' -resume -split=vertical -direction=botright -winwidth=`winwidth(0)/2`|0tabmove|wincmd h
-endif
-endfunction
-nnoremap <silent> <Space><Space>e  <Cmd>call <SID>defx_tab()<CR>
-
-function! Defx_archive() abort
-if !has('win32')
-    echo 'This function works in windows only'
-    return
-endif
-let candidate = defx#get_selected_candidates()
-let file_in = ''
-
-let mod = candidate[0]['is_directory'] ==# v:false ? ':r' : ''
-    let file_out = fnamemodify(candidate[0]['action__path'], mod ) . '.zip'
-if len(candidate) > 1
-    let input = input("Input zipfile name. (default:".fnamemodify(file_out, ':t'). "): ", "", "file")
-    if input != ''
-        let file_out = fnamemodify(candidate[0]['action__path'], ':h') . '\' . input . '.zip'
-    endif
-endif
-
-for c in candidate
-    let file_in = file_in . ' ' . c['action__path']
-endfor
-call execute("!7z a " . file_out . ' ' . file_in)
-echo  file_out .' is archived!'
-call defx#redraw()
-endfunction
-au dein BufEnter * if &ft ==# 'defx' | call defx#redraw() | endif
-'''
-hook_source = '''
-let s:defx_ignore_files =
-    \ '.*,ntuser*,desktop.ini,__pycache__,' .
-    \ '*.aux,*.dvi,*.bbl,*.out,*.fdb_latexmk,*.bst,*.blg,*.toc,Icon'
-
-call defx#custom#option('_', {
-    \ 'winwidth': 40,
-    \ 'split': 'vertical',
-    \ 'direction': 'botright',
-    \ 'columns':'mark:indent:icons:filename:size:space:time',
-    \ 'ignored_files': s:defx_ignore_files,
-    \ 'floating_preview': v:true
-    \ })
-
-" call defx#custom#column('filename', { 'max_width': &columns/4 })
-" au dein VimResized * call defx#custom#column('filename', { 'max_width': &columns/4 })
-
-call defx#custom#column('time', {
-      \ 'format': '%y/%m/%d %H:%M',
-      \ })
-call defx#custom#column('file', {
-      \ 'max_width': '-50',
-      \ })
-
-function! s:get_defx_bufferdir(candidate) abort
-    let path_mod = ':~:h'
-    let dir = denite#util#substitute_path_separator(a:candidate)
-    let dir = fnamemodify(dir, path_mod)
-    let fdir = '\"' . l:dir. '\"'
-    return fdir
-endfunction
-
-function! s:get_defx_file_extension(candidate) abort
-    let path_mod = ':e'
-    let dir = defx#get_candidate()
-    let dir = fnamemodify(a:candidate., path_mod)
-    return dir
-endfunction
-
-function! Defx_to_denite_rec(context) abort
-        let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
-        silent! execute('Denite
-        \ -default-action=defx
-        \ -start-filter
-        \ -path=' . narrow_dir .
-        \ ' file/rec')
-endfunction
-function! Defx_to_denite_file(context) abort
-        let narrow_dir = s:get_defx_bufferdir(a:context.targets[0])
-        silent! execute('Denite
-        \ -default-action=defx
-        \ -start-filter
-        \ -path='. narrow_dir . ' file')
-endfunction
-"https://github.com/Shougo/defx.nvim/issues/175
-function! s:open_defx_if_directory()
-  " This throws an error if the buffer name contains unusual characters like
-  " [[buffergator]]. Desired behavior in those scenarios is to consider the
-  " buffer not to be a directory.
-  try
-    let l:full_path = expand(expand('%:p'))
-  catch
-    return
-  endtry
-
-  " If the path is a directory, delete the (useless) buffer and open defx for
-  " that directory instead.
-  if isdirectory(l:full_path)
-    silent! execute "Defx `expand('%:p')` | bd " . expand('%:p')
-  endif
-endfunction
-"autocmd dein BufEnter * call s:open_defx_if_directory()
-'''
-[plugins.ftplugin]
-defx = '''
-nmap <silent><buffer> [denite]d <Plug>(defx) <Cmd>Denite
-    \ -buffer-name=relative
-    \ defx/dirmark<CR>
-nmap <silent><buffer> [denite]H <Plug>(defx) <Cmd>Denite
-    \ defx/history<CR>
-setlocal signcolumn=no
-setlocal nonumber
-" Define mappings
-" nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : <SID>defx_is_plaintxt() ? defx#do_action('drop') :defx#do_action('execute_system')
-nnoremap <silent><buffer><expr> l
-\ defx#is_directory() ? defx#do_action('open') :
-\ defx#is_binary() ?
-\ defx#do_action('execute_system') :
-\ defx#do_action('drop')
-nnoremap <silent><buffer><expr> <CR>
-\ defx#is_directory() ? defx#do_action('open') :
-\ defx#is_binary() ?
-\ defx#do_action('execute_system') :
-\ defx#do_action('drop')
-nnoremap <silent><buffer> <C-e> <C-w>p
-nnoremap <silent><buffer><expr> c defx#async_action('multi', ['copy','redraw'])
-nnoremap <silent><buffer><expr> m defx#async_action('multi', ['move','redraw'])
-nnoremap <silent><buffer><expr> p defx#async_action('paste')
-" nnoremap <silent><buffer><expr> L defx#is_directory() ? defx#do_action('open') : defx#do_action('drop')
-nnoremap <silent><buffer><expr> L defx#is_directory() ? defx#do_action('open_tree', 'nested'). 'j' : defx#do_action('drop')
-nnoremap <silent><buffer><expr> <2-LeftMouse> defx#is_directory() ? defx#is_opened_tree() ? defx#do_action('close_tree') : defx#do_action('open_tree') : <SID>defx_is_plaintxt() ? defx#do_action('drop') : defx#do_action('execute_system')
-"nnoremap <silent><buffer><expr> <2-LeftMouse> <SID>defx_doubleclick()
-function! s:defx_doubleclick() abort
-if defx#is_directory()
-    if defx#is_opened_tree()
-        call defx#do_action('close_tree')
-    else
-        call defx#do_action('open_tree')
-    endif
-else
-    if s:defx_is_plaintxt()
-        call defx#do_action('drop')
-    else
-        call defx#do_action('execute_system')
-    endif
-endif
-endfunction
-nnoremap <silent><buffer><expr> E defx#do_action('drop', 'vsplit')
-nnoremap <silent><buffer><expr> S defx#do_action('drop', 'split')
-nnoremap <silent><buffer><expr> T defx#do_action('open', 'tabnew')
-nnoremap <silent><buffer><expr> t defx#do_action('multi', [['toggle_sort','TIME'],'redraw'])
-nnoremap <silent><buffer><expr> P defx#do_action('preview')
-nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
-nnoremap <silent><buffer><expr> N defx#do_action('new_file')
-nnoremap <silent><buffer><expr> F defx#do_action('new_multiple_files')
-nnoremap <silent><buffer><expr> <C-o> defx#do_action('cd', g:defx#_histories[-1][1])
-nnoremap <silent><buffer> u <Cmd>Denite defx/history -unique<CR>
-nnoremap <silent><buffer> ss <Cmd>Denite list -start-filter -split=floating -winwidth=50 -winrow=1 -wincol=`&columns-60`<CR>
-"nnoremap <silent><buffer> U <Cmd>Denite defx/history -auto-action=default -post-action=jump -unique<CR>
-nnoremap <silent><nowait><buffer> Z <Cmd>call Defx_archive()<CR>
-"need 'pip install Send2Trash'
-nnoremap <silent><buffer><expr><nowait> D defx#async_action('remove_trash')
-nnoremap <silent><buffer><expr> r defx#do_action('rename')
-nnoremap <silent><buffer><expr> x defx#async_action('execute_system')
-nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'recursive')
-nnoremap <silent><buffer><expr> <MiddleMouse> defx#do_action('open_tree', ['recursive', 'nested', 'toggle'])
-nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
-nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
-nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
-nnoremap <silent><buffer><expr> q defx#do_action('quit')
-nnoremap <silent><buffer><expr> i defx#do_action('toggle_select') . 'j'
-nnoremap <silent><buffer><expr> <RightMouse> defx#do_action('toggle_select')
-xnoremap <silent><buffer><expr> i defx#do_action('toggle_select_visual')
-nnoremap <silent><buffer><expr> I defx#do_action('toggle_select_all')
-nnoremap <silent><buffer><expr> * defx#do_action('clear_select_all')
-nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
-nnoremap <silent><buffer><expr> h defx#get_candidate().level > 0 \|\| defx#get_candidate().is_opened_tree ? defx#do_action('close_tree') : defx#do_action('cd', ['file','..'])
-" nnoremap <silent><buffer><expr> a defx#do_action('cd', ['..'])
-" nnoremap <silent><buffer><expr><nowait> w line('.') == 1 ? 'G' : 'k'
-" nnoremap <silent><buffer><expr><nowait> s line('.') == line('$') ? 'gg' : 'j'
-nnoremap <silent><buffer><expr><nowait> <C-g> defx#do_action('print')
-nnoremap <silent><buffer><expr> \ defx#do_action('multi',['change_vim_cwd','print'])
-nnoremap <silent><buffer> <C-j> j:call cursor(search('\v(\|)'), 1)<CR>
-nnoremap <silent><buffer> <C-k> <Cmd>call cursor(search('\v(\|)', 'b'), 1)<CR>
-" nnoremap <silent><buffer><expr> <C-K> defx#get_candidate().level > 0 ? defx#get_candidate().is_directory ? defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':p:h:h')) : defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':p:h')) : 'k'
-nnoremap <silent><buffer><expr> b defx#get_candidate().level > 0 ? defx#get_candidate().is_directory ? defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':p:h:h')) : defx#do_action('search', fnamemodify(defx#get_candidate().action__path, ':p:h')) : 'k'
-nnoremap <silent><buffer><expr> e defx#do_action('call','Defx_to_denite_rec')
-nnoremap <silent><buffer><expr> <space>e defx#do_action('call','Defx_to_denite_file')
-" nnoremap <silent><buffer><expr> S defx#do_action('drop', 'split')
-nnoremap <silent><buffer> sa <Cmd>split<CR>:Defx -new -split=no<CR>
-function! s:defx_is_plaintxt()
-    let file = defx#get_candidate()['action__path']
-    let extension = fnamemodify(file, ':e')
-    let ex = '\v(png|xlsm|jpg|docx|docs|xlsx|pdf|pptx|exe|zip|gdoc)'
-    if (extension =~? '') && (ex =~? extension)
-    return 0
-    else
-    return 1
-    endif
-endfunction
-if b:defx.context.buffer_name ==# 'defxtab'
-nnoremap <silent><buffer><expr> <CR>
-\ defx#is_directory() ? defx#do_action('open') :
-\ defx#is_binary() ?
-\ defx#do_action('execute_system') :
-\ defx#do_action('drop','tab')
-nnoremap <silent><buffer> <tab> <C-w>w
-nnoremap <silent><buffer> L <cmd>call win_execute(win_getid(winnr('$')), "call defx#call_action('cd'," . string(<SID>defx_filer_open_next_win()) .")")\|wincmd w<CR>
-function! s:defx_filer_open_next_win() abort
-   let path = defx#get_candidate()['action__path']
-   return path
-endfunction
-" nnoremap <silent><buffer><expr> L <SID>defx_filer_open_next_win()
-
-endif
-'''
-
-[[plugins]]
-repo = 'kristijanhusak/defx-icons'
-on_source = 'defx.nvim'
-hook_source = '''
-let g:defx_icons_enable_syntax_highlight = 1
-let g:defx_icons_column_length = 0
-let g:defx_icons_directory_icon = ''
-let g:defx_icons_mark_icon = '*'
-let g:defx_icons_copy_icon = ''
-let g:defx_icons_move_icon = ''
-let g:defx_icons_parent_icon = ''
-let g:defx_icons_default_icon = ''
-let g:defx_icons_directory_symlink_icon = ''
-" Options below are applicable only when using "tree" feature
-let g:defx_icons_root_opened_tree_icon = ''
-let g:defx_icons_nested_opened_tree_icon = ''
-let g:defx_icons_nested_closed_tree_icon = ''
-let s:colors = {
-      \ 'brown': '905532',
-      \ 'aqua': '3AFFDB',
-      \ 'blue': '689FB6',
-      \ 'darkBlue': '44788E',
-      \ 'purple': '834F79',
-      \ 'lightPurple': '834F79',
-      \ 'red': 'AE403F',
-      \ 'beige': 'F5C06F',
-      \ 'yellow': 'F09F17',
-      \ 'orange': 'D4843E',
-      \ 'darkOrange': 'F16529',
-      \ 'pink': 'CB6F6F',
-      \ 'salmon': 'EE6E73',
-      \ 'green': '8FAA54',
-      \ 'lightGreen': '31B53E',
-      \ 'white': 'C6C8D1'
-      \ }
-let g:defx_icons_extensions = {
-    \'txt' : { 'icon':'', 'color': s:colors.white},
-    \'pdf' : { 'icon':'', 'color': s:colors.red},
-    \'docx' : { 'icon':'', 'color': s:colors.blue},
-    \'doc' : { 'icon':'', 'color': s:colors.blue},
-    \'xlsx' : { 'icon':'', 'color': s:colors.green},
-    \'xlsm' : { 'icon':'', 'color': s:colors.green},
-    \'pptx' : { 'icon':'', 'color': s:colors.orange},
-    \'ppt' : { 'icon':'', 'color': s:colors.orange},
-    \'tex' : { 'icon':'', 'color': s:colors.orange},
-    \}
-hi default link DefxIconsCopyIcon Error
-hi default link DefxIconsMoveIcon Constant
-hi default link DefxIconsOpenedTreeIcon Title
-hi default link DefxIconsNestedTreeIcon Constant
-hi default link DefxIconsMarkIcon Error
-hi default link DefxIconsParentDirectory Function
-hi default link Defx_filename_directory Function
-
-"NerdFont List{{
-"This list is useful for testing and choosing interesting symbols.
-"Also it's more consistent with current fonts than codepoints shown in README.
-"So, it may worth to add this to the wiki - I've opened issue just to ask is this appropriate. Probably it's better to put it on page with Nerd font loaded.
-"
-"IEC Power Symbols (23FB-23FE,2B58)
-"⏻⏼⏽⏾⭘
-"Font Awesome Extension (moved E000-E0A9 → E200-E2A9)
-"
-"
-"
-"
-"
-"Powerline Extra Symbols (E0A0-E0A3 E0B0-E0BF E0C0-E0C8 E0CC-E0CF E0D0-E0D2 E0D4)
-"
-"Devicons (moved E600-E6C5 → E700-E7C5)
-"
-"
-"
-"
-"
-"Font Awesome (F000-F2E0 with holes)
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"
-"Octicons (2665,26A1, moved F000-F105 with holes → F400-F4A8, moved F27C → F67C)
-"♥⚡
-"
-
-"
-"
-"
-"
-"Pomicons (E000-E00A)
-"
-"Font Linux (moved F100-F115 with holes → F300-F313)
-"
-"Seti-UI + Custom (E5FA-E62B)
-"
-"
-" }}}
-'''
-
-# [[plugins]]
-# # on_if = '!has("nvim")'
-# on_if = '!has("nvim")'
-# depends = ['async.vim']
-# on_event = 'InsertEnter'
-# repo = 'prabirshrestha/asyncomplete.vim'
-
-# [[plugins]]
-# repo = 'Shougo/deol.nvim'
-# on_cmd = ['Deol']
-# hook_add = '''
-# nnoremap <Leader>d :Deol -edit -split='vertical'<CR>
-# '''
-
-[[plugins]]
-repo =  'Shougo/neco-vim'
-# on_source = ['deoplete','neocomplete']
-# on_ft = 'vim'
-
-[[plugins]]
 repo = 'glidenote/memolist.vim'
-# repo = 'orokasan/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
 nnoremap <Leader>mn <Cmd>MemoNew<CR>
-nnoremap <silent> sl  <Cmd>Denite
-    \ -reversed
-    \ -buffer-name=default
-    \ -sorters=sorter/path
-    \ file/rec/txt:~/GoogleDrive/memo<CR>
-nnoremap <silent> ml  <Cmd>Denite
-    \ -reversed
-    \ -buffer-name=default
-    \ -sorters=sorter/path
-    \ file/rec/txt:~/GoogleDrive/memo<CR>
+nnoremap <silent> sl <cmd>call ddu#start({'sources': [{'name': 'file_external', 'params': {'path': expand('~/GoogleDrive/memo')}}]})<CR>
+nnoremap <silent> ml <cmd>call ddu#start({'sources': [{'name': 'file_external', 'params': {'path': expand('~/GoogleDrive/memo')}}]})<CR>
 nnoremap <silent><Leader>mg  <Cmd>Denite 
     \ -buffer-name=default
     \ grep:~/GoogleDrive/memo::<CR>
@@ -526,210 +14,19 @@ let g:memolist_memo_suffix = 'md'
 let g:memolist_path = "~/GoogleDrive/memo"
 let g:memolist_template_dir_path = "~/GoogleDrive/template/memolist"
 let g:memolist_memo_date = "%Y%m%d[%H:%M]"
-let g:memolist_filename_date = "%y-%m-%d-"
+let g:memolist_filename_date = "%y%m%d"
 
-" categories prompt (default 0)
 let g:memolist_prompt_categories = 0
-'''
-
-# [[plugins]]
-# repo =  'tyru/eskk.vim'
-# on_event = ['InsertEnter', 'CmdlineEnter']
-# # repo =  'orokasan/eskk.vim'
-# # on_map = {icrtn = '<Plug>(eskk:'}
-# hook_add = '''
-# "let g:eskk#marker_okuri = '*'
-# let g:eskk#rom_input_style = 'msime'
-# let g:eskk#egg_like_newline = 1
-# let g:eskk#egg_like_newline_completion = 1
-# let g:eskk#tab_select_completion = 1
-# let g:eskk#max_candidates = 20
-# let g:eskk#auto_save_dictionary_at_exit = 0
-# let g:eskk#start_completion_length = 2
-# let g:eskk#revert_henkan_style = 'okuri'
-# " backspaceで確定
-# let g:eskk#delete_implies_kakutei = 1
-# let g:eskk#dictionary = {
-#     \    'path': "~/.skk/.skk-jisyo",
-#     \    'sorted': 0,
-#     \    'encoding': 'utf-8'
-#     \ }
-# let g:eskk#large_dictionary = {'path': '~/.skk/SKK-JISYO.L', 'sorted': 1, 'encoding': 'euc-jp', }
-# "let g:eskk#cursor_color = {
-# "    \   'ascii': '#b4be82',
-# "    \   'hira': '#e28878',
-# "    \   'kata': '#84a0c6',
-# "    \   'abbrev': '#4169e1',
-# "    \   'zenei': '#ffd700',
-# "    \}
-# '''
-# hook_source = 'source ~/dotfiles/nvim/rc/config/eskk.rc.vim'
-
-
-# [[plugins]]
-# repo =  't9md/vim-choosewin'
-# on_cmd = 'ChooseWin'
-# hook_add = '''
-# nmap - <Cmd>ChooseWin<CR>
-# " tmap - <C-\><C-n><Plug>(choosewin)
-# " let g:choosewin_overlay_font_size = 'small'
-# " let g:choosewin_overlay_clear_multibyte = 1
-# " let g:choosewin_overlay_enable = 1
-# " let g:choosewin_color_overlay = {
-# "    \ 'gui': ['#839496']
-# "    \ }
-# " let g:choosewin_color_overlay_current = {
-# "    \ 'gui': ['#859900']
-# "    \ }
-# '''
-# hook_source = '''
-# function! s:gethighlight(hi, which) abort
-#     let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
-#     return bg
-# endfunction
-# "function! s:set_choosewin_color() abort
-# "let g:choosewin_color_label_current = {
-# "    \ 'gui': [ s:gethighlight('Title', 'fg'), s:gethighlight('Normal', 'bg'), 'bold']
-# "      \ }
-# "let g:choosewin_color_label = {
-# "    \ 'gui': [ s:gethighlight('StatusLine', 'fg'), s:gethighlight('StatusLine', 'bg'), 'bold']
-# "      \ }
-# "" let g:choosewin_color_other = {
-# ""       \ 'gui': [s:gethighlight('LightlineLeft_command_0', 'bg'), s:gethighlight('LightlineLeft_command_1', 'bg')]
-# ""       \ }
-# "let g:choosewin_color_other = {
-# "      \ 'gui': [ s:gethighlight('Normal', 'bg'), s:gethighlight('Normal', 'fg'),],
-# "      \ 'cterm': [ 40, 40 ] 
-# "      \ }
-# "let g:choosewin_color_land = {
-# "      \ 'gui': [ s:gethighlight('Title', 'fg'), s:gethighlight('Title', 'bg'),],
-# "      \ 'cterm': [ 40, 40 ] 
-# "      \ }
-# "endfunction
-# " let g:choosewin_label_fill = 1
-# let g:choosewin_tabline_replace = 1
-# let g:choosewin_statusline_replace = 1
-# "let g:choosewin_label_padding = 8
-# " let g:choosewin_color_land = 1
-# " let g:choosewin_return_on_single_win = 1
-# let s:keymap = {
-#       \ '0':     'tab_first',
-#       \ '[':     'tab_prev',
-#       \ ']':     'tab_next',
-#       \ '$':     'tab_last',
-#       \ 'x':     'tab_close',
-#       \ ';':     'win_land',
-#       \ '-':     'previous',
-#       \ 's':     'swap',
-#       \ 'S':     'swap_stay',
-#       \ "\<CR>": 'win_land',
-#       \ }
-# let g:choosewin_keymap = s:keymap
-# let g:choosewin_label = 'ASDFGHJKL'
-# let g:choosewin_blink_on_land = 1
-# "call s:set_choosewin_color()
-# '''
-
-# [[plugins]]
-# repo =  'rhysd/vim-operator-surround'
-# depends = 'vim-operator-user'
-# on_map = {nv= '<Plug>'}
-# hook_add = '''
-# map <silent>'a <Plug>(operator-surround-append)
-# map <silent>'d <Plug>(operator-surround-delete)
-# map <silent>'r <Plug>(operator-surround-replace)
-# " if you use vim-textobj-anyblock
-# nmap <silent>'dd <Plug>(operator-surround-delete)<Plug>(textobj-anyblock-a)
-# nmap <silent>'rr <Plug>(operator-surround-replace)<Plug>(textobj-anyblock-a)
-# '''
-# hook_source = '''
-# " let g:operator#surround#recognizes_both_ends_as_surround = v:false
-# " let g:operator#surround#uses_input_if_no_block = v:false
-# "2バイト括弧を追加
-# let g:operator#surround#blocks = {}
-# let g:operator#surround#blocks['-'] = [
-# \   { 'block' : ['（', '）'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['P'] },
-# \   { 'block' : ['「', '」'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['B'] },
-# \   { 'block' : ['『', '』'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['D'] },
-# \   { 'block' : ['●', '●'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['R'] },
-# \   { 'block' : ['∨', '∨'], 'motionwise' : ['char', 'line', 'block'], 'keys' : ['U'] },
-# \ ]
-# '''
-
-# [[plugins]]
-# repo = 'thinca/vim-ambicmd'
-# on_event = ['CmdwinEnter', 'CmdlineEnter']
-# hook_add = '''
-# set wildcharm=<TAB>
-# let g:ambicmd#show_completion_menu = 1
-# augroup init_ambicmd
-#   autocmd!
-#   autocmd CmdwinEnter * call s:init_cmdwin()
-# augroup END
-# function! s:init_cmdwin()
-#   inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
-#   inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
-# endfunction
-# '''
-# hook_source = '''
-# " sourceできた時のみマップする
-# " `ambicmd#expand`が無いときcmdlineでまともに入力できなくなる
-# cnoremap <expr> <Space> ambicmd#expand("\<Space>")
-# cnoremap <expr> <CR>    ambicmd#expand("\<CR>")
-# '''
-
-# [[plugins]]
-# repo = 'itchyny/vim-cursorword'
-# on_map = {nv='<Plug>'}
-# hook_add = '''
-# let g:cursorword = 0
-# function! s:toggle_vim_cursorword() abort
-#   let g:cursorword = g:cursorword ? 0 : 1
-#   call cursorword#matchadd()
-# endfunction
-# nnoremap <silent> <Plug>(cursorword-toggle)
-#       \ <Cmd>call <SID>toggle_vim_cursorword()<CR>
-# nmap <C-g>c     <Plug>(cursorword-toggle)
-# nmap <C-g><C-c> <Plug>(cursorword-toggle)
-# '''
-
-# [[plugins]]
-# repo = 'mattn/benchvimrc-vim'
-# on_cmd = 'BenchVimrc'
-
-# [[plugins]]
-# repo = 'junegunn/goyo.vim'
-# on_cmd = 'Goyo'
-# hook_add = '''
-# nnoremap <F4> <Cmd>Goyo<CR>
-# let g:goyo_width = 80
-# let g:goyo_height = '60%'
-# function! s:goyo_enter()
-#   set scrolloff=999
-#   Limelight
-# endfunction
-# function! s:goyo_leave()
-#   set scrolloff=3
-#   Limelight!
-# endfunction
-# autocmd! User GoyoEnter nested call <SID>goyo_enter()
-# autocmd! User GoyoLeave nested call <SID>goyo_leave()
-# '''
-
-[[plugins]]
-repo = 'junegunn/vim-easy-align'
-on_map = '<Plug>(EasyAlign)'
-hook_add = '''
-vmap <Leader>ga <Plug>(EasyAlign)
-nmap <Leader>ga <Plug>(EasyAlign)
 '''
 
 [[plugins]]
 repo =  'cohama/lexima.vim'
-on_if = 'has("nvim")'
+if = 'has("nvim")'
+on_source = ['ddc.nvim']
 on_event = ['InsertEnter', 'CmdlineEnter']
 hook_source = '''
 let g:lexima_ctrlh_as_backspace = v:true
+let g:lexima_enable_endwise_rules = v:false
 let g:lexima_accept_pum_with_enter = v:false
 let g:lexima_no_default_rules = v:true
 call lexima#set_default_rules()
@@ -738,84 +35,37 @@ let s:lexima_my_rules = [
 \ { 'char': '"', 'input': '"', 'filetype': 'toml' },
 \ ]
 
-" \ { 'char': '<Tab>', 'at': '\%#)',   'leave': ')' },
-" \ { 'char': '<Tab>', 'at': '\%#\}',  'leave': '}' },
-" \ { 'char': '<Tab>', 'at': '\%#\]',  'leave': ']' },
-" \ { 'char': '<Tab>', 'at': '\%#>',   'leave': '>' },
-" \ { 'char': '<Tab>', 'at': '\%#`',   'leave': '`' },
-" \ { 'char': '<Tab>', 'at': '\%#"',   'leave': '"' },
-
-" let g:lexima_enable_endwise_rules = v:false
-" let g:lexima_enable_space_rules = v:false
 for rule in s:lexima_my_rules
   call lexima#add_rule(rule)
 endfor
 '''
 
-# [[plugins]]
-# # repo = 'orokasan/clever-f.vim'
-# repo = 'rhysd/clever-f.vim'
-# on_map = { nxo = '<Plug>(clever-f' }
-# hook_add = '''
-# "mapping for lazy load
-# nmap f <Plug>(clever-f-f)
-# xmap f <Plug>(clever-f-f)
-# omap f <Plug>(clever-f-f)
-# nmap F <Plug>(clever-f-F)
-# xmap F <Plug>(clever-f-F)
-# omap F <Plug>(clever-f-F)
-# nmap t <Plug>(clever-f-t)
-# xmap t <Plug>(clever-f-t)
-# omap t <Plug>(clever-f-t)
-# nmap T <Plug>(clever-f-T)
-# xmap T <Plug>(clever-f-T)
-# omap T <Plug>(clever-f-T)
-# " let g:clever_f_show_prompt = 1
-# let g:clever_f_mark_cursor = 0
-# let g:clever_f_mark_char = 0
-# " let g:clever_f_mark_char_color = "Underlined"
-# let g:clever_f_hide_cursor_on_cmdline = 1
-# let g:clever_f_smart_case = 1
-# let g:clever_f_across_no_line = 1
-# let g:clever_f_use_migemo = 1
-# '''
-
 [[plugins]]
-repo = 'haya14busa/vim-asterisk'
-on_map = { nx = '<Plug>(asterisk'}
-depends = 'is.vim'
+repo = 'rhysd/clever-f.vim'
+on_map = { nxo = '<Plug>(clever-f' }
 hook_add = '''
-"let g:asterisk#keeppos = 1
-map <silent> *  <Plug>(asterisk-z*)<Plug>(is-nohl-1)
-map <silent> g* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)
-map <silent> #  <Plug>(asterisk-z#)<Plug>(is-nohl-1)
-map <silent> g# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)
+"mapping for lazy load
+nmap f <Plug>(clever-f-f)
+xmap f <Plug>(clever-f-f)
+omap f <Plug>(clever-f-f)
+nmap F <Plug>(clever-f-F)
+xmap F <Plug>(clever-f-F)
+omap F <Plug>(clever-f-F)
+nmap t <Plug>(clever-f-t)
+xmap t <Plug>(clever-f-t)
+omap t <Plug>(clever-f-t)
+nmap T <Plug>(clever-f-T)
+xmap T <Plug>(clever-f-T)
+omap T <Plug>(clever-f-T)
+" let g:clever_f_show_prompt = 1
+let g:clever_f_mark_cursor = 0
+let g:clever_f_mark_char = 0
+" let g:clever_f_mark_char_color = "Underlined"
+let g:clever_f_hide_cursor_on_cmdline = 1
+let g:clever_f_smart_case = 1
+let g:clever_f_across_no_line = 1
+let g:clever_f_use_migemo = 1
 '''
-
-# [[plugins]]
-# on_map = { nxi = '<Plug>(easymotion'}
-# repo = 'easymotion/vim-easymotion'
-# hook_add = '''
-# let g:EasyMotion_do_mapping = 0
-# " nmap m <Plug>(easymotion-overwin-f2)
-# "nmap <C-s> <Plug>(easymotion-s2)
-# "xmap <C-s> <Plug>(easymotion-s2)
-# "omap <C-s> <Plug>(easymotion-s2)
-# " Jump to first match with enter & space
-# let g:EasyMotion_use_upper = 1
-# let g:EasyMotion_keys = 'ASDFGHJKLQWERTYUIOPZXCVBNM'
-# let g:EasyMotion_smartcase = 1
-# let g:EasyMotion_space_jump_first = 1
-# let g:EasyMotion_use_migemo = 1
-# let g:EasyMotion_prompt = '{n}>>> '
-# let g:EasyMotion_verbose = 0
-# hi link EasyMotionTarget Type
-# hi link EasyMotionShade  Comment
-# hi link EasyMotionTarget2First MatchParen
-# hi link EasyMotionTarget2Second MatchParen
-# hi link EasyMotionMoveHL Search
-# hi link EasyMotionIncSearch Search
-# '''
 
 [[plugins]]
 repo = 'thinca/vim-quickrun'
@@ -847,26 +97,12 @@ let g:quickrun_config = {
         \ "outputter/buffer/close_on_empty" : 1
         \ }
 \ }
-"let g:quickrun_config['python'] = {
-"    \ 'command': 'python',
-"        \   'hook/output_encode/encoding': 'cp932',
-"    \ }
-  " let g:quickrun_config['cpp/clang++11'] = {
-  "     \ 'cmdopt': '--std=c++11 --stdlib=libc++',
-  "     \ 'type': 'cpp/clang++'
-  "   \ }
+let g:quickrun_config['python'] = {
+    \ 'command': 'python',
+        \   'hook/output_encode/encoding': 'utf-8',
+    \ }
+let g:quickrun_config['cpp'] = {'type': 'cpp/clang++zz'}
 
-" let g:quickrun_config.cpp = {
-" \   'command': 'g++',
-" \   'cmdopt': '-std=c++11'
-" \ }
-  let g:quickrun_config['cpp'] = {'type': 'cpp/clang++zz'}
-" if has('nvim')
-"   " Use 'neovim_job' in Neovim
-" elseif exists('*ch_close_in')
-"   " Use 'job' in Vim which support job feature
-"   let g:quickrun_config._.runner = 'job'
-" endif
 let g:quickrun_config['tex'] = {
             \   'command' : 'lualatex',
             \ 'runner' : 'shell',
@@ -904,11 +140,16 @@ let g:quickrun_config['text'] = {
             \   'cmdopt': 'textlint',
             \   'exec': ['%c %o %s']
             \ }
+let g:quickrun_config['typescript'] = {
+            \   'command' : 'deno',
+            \   'outputter' : 'buffer',
+            \   'cmdopt': 'run --allow-read',
+            \   'exec': ['%c %o %s']
+            \ }
 '''
 
 [[plugins]]
 repo = 'mbbill/undotree'
-#TODO:qitta
 on_cmd = ['UndotreeToggle']
 hook_add = '''
 nnoremap U <Cmd>UndotreeToggle<CR>
@@ -929,80 +170,6 @@ xmap <C-l> <Plug>(textmanip-move-right)
 " xmap <F10> <Plug>(textmanip-toggle-mode)
 '''
 
-# [[plugins]]
-# repo = 'kassio/neoterm'
-# on_cmd = ['T', 'Ttoggle']
-# hook_add = '''
-# '''
-# hook_source = '''
-# tnoremap <C-d> <C-\><C-n><Cmd>Tclose<CR>'
-# nnoremap '' <Cmd>Ttoggle<CR>
-# let g:neoterm_repl_python = ''
-# let g:neoterm_auto_repl_cmd = v:false
-# let g:neoterm_default_mod='aboveleft'
-# let g:neoterm_autoscroll = v:true
-# let g:neoterm_size=15
-# let g:neoterm_autoinsert = v:false
-# let g:neoterm_autojump = v:true
-# '''
-
-# [[plugins]]
-# repo = 'majutsushi/tagbar'
-# on_cmd = ['Tagbar']
-# 
-
-#[[plugins]]
-#repo = 'voldikss/vim-translator'
-##TODO:qitta
-#on_map = { nx = '<Plug>Translate' }
-#on_cmd = ['Translate', 'TranslateV']
-#hook_add = '''
-#" コマンドが-rangeに対応してないため<Plug>側で:Translate!を実装
-#nmap <silent> <Plug>TranslateB   :call translator#translate('-w ' . expand('<cword>'), 'echo', v:false, '!')<CR>
-#vmap <silent> <Plug>TranslateBV  :<C-U>call translator#translate('', 'echo', v:true, '!')<CR>
-#nmap <silent> <Leader>t <Plug>Translate
-#vmap <silent> <Leader>t <Plug>TranslateV
-#nmap <silent> <Leader>T <Plug>TranslateB
-#vmap <silent> <Leader>T <Plug>TranslateBV
-#" nmap <silent> <Leader>T :Translate -tl 'en'<CR>
-#" vmap <silent> <Leader>T :TranslateV -tl 'en'<CR>
-#let g:translator_target_lang = 'ja'
-#let g:translator_source_lang = 'auto'
-#let g:translator_default_engines = ['google']
-#let g:translator_window_borderchars = v:null
-#'''
-
-# [[plugins]]
-# repo = 'lervag/vimtex'
-# on_ft = ['tex']
-# hook_source = '''
-# let g:vimtex_quickfix_open_on_warning = 1
-# let g:vimtex_view_method = 'skim'
-# let g:tex_flavor = 'latex'
-# let g:vimtex_matchparen_enabled = 0
-# let g:vimtex_compiler_latexmk = {
-#       \ 'options': [
-#       \    '-pdfdvi',
-#       \],
-#       \}
-
-# # call deoplete#custom#var('omni', 'input_patterns', {
-# #     \ 'tex': g:vimtex#re#deoplete
-# #     \})
-# '''
-
-[[plugins]]
-repo = 'liuchengxu/vista.vim'
-on_cmd = ['Vista']
-hook_add ='''
-let g:vista_icon_indent = ["▸ ", ""]
-let g:vista_echo_cursor = 1
-let g:vista_cursor_delay = 200
-let g:vista_echo_cursor_strategy = 'floating_win'
-let g:vista_finder_alternative_executives = ['vim_lsp']
-let g:vista#renderer#enable_icon = 0
-'''
-
 [[plugins]]
 on_map = {nxo = '<Plug>Commentary'}
 repo = 'tpope/vim-commentary'
@@ -1019,84 +186,46 @@ if !hasmapto('<Plug>Commentary') || maparg('gc','n') ==# ''
 endif
 '''
 
-# [[plugins]]
-# on_ft = 'go'
-# repo = 'mattn/vim-goimports'
-
-# [[plugins]]
-# repo = 'fatih/vim-go'
-# on_ft = ['go']
-# hook_add = '''
-# let g:go_snippet_engine = "neosnippet"
-# let g:go_gopls_enabled = 0
-# " highlight
-# let g:go_highlight_functions = 1
-# let g:go_highlight_function_parameters = 1
-# let g:go_highlight_types = 1
-# " let g:go_highlight_fields = 1
-# " let g:go_highlight_build_constraints = 1
-# let g:go_highlight_generate_tags = 1
-# let g:go_highlight_variable_declarations = 1
-# '''
-
-[[plugins]]
-repo =  'Shougo/unite.vim'
-on_cmd = ['Unite']
-
 [[plugins]]
 repo = 'previm/previm'
 depends = 'open-browser.vim'
 on_cmd = ['PrevimOpen']
-on_ft = 'markdown'
 hook_add = '''
 " let g:previm_open_cmd = 'open -a FireFox\ Nightly'
 nnoremap <silent><Leader>mp <Cmd>PrevimOpen<CR>
+let g:previm_enable_realtime = 1
 '''
-
-
-[[plugins]]
-repo =  'mattn/vim-sonictemplate'
-on_cmd = ['Template']
-hook_add = '''
-let g:sonictemplate_vim_template_dir = '~/GoogleDrive/template/'
-'''
-
-# [[plugins]]
-# repo =  'Shougo/deol.nvim'
-# on_cmd = ['Deol']
-# hook_add = '''
-# nnoremap <Space>t <cmd> Deol -command=cmd.exe -winheight=30 -split=hor<CR>
-# nnoremap <Space>T <cmd> Deol -command=wsl.exe -winheight=30 -split=hor<CR>
-# " nnoremap <Space>t <cmd>sp term://cmd <CR>
-# " nnoremap <Space>T <cmd>sp term://wsl<CR>
-# let g:deol#shell_history_path = expand('~/.cache/deol/history')
-# let g:deol#prompt_pattern = '% \|%$'
-# 		let g:deol#custom_map = {
-# 			\ 'edit': 'e',
-# 			\ 'start_insert': 'i',
-# 			\ 'start_insert_first': 'I',
-# 			\ 'start_append': 'a',
-# 			\ 'start_append_last': 'A',
-# 			\ 'execute_line': '<CR>',
-# 			\ 'previous_prompt': '<C-p>',
-# 			\ 'next_prompt': '<C-n>',
-# 			\ 'paste_prompt': '<C-y>',
-# 			\ 'bg': '<C-z>',
-# 			\ 'quit': 'q',
-# 			\ }
-# '''
-
-# [[plugins]]
-# repo = 'tpope/vim-fugitive'
-# on_cmd = ['Git', 'G']
-# hook_add = '''
-# '''
 
 [[plugins]]
 on_cmd = ['Gina']
 repo =  'lambdalisue/gina.vim'
 hook_add = '''
+autocmd BufReadPre gina://* set noswapfile
 let g:gina#command#status#use_default_mappings=0
+function! s:make_abbrev_rule(rules)
+  let keys = uniq(sort(map(copy(a:rules), "v:val['from']")))
+  for key in keys
+    let rules_with_key = filter(copy(a:rules), "v:val['from'] ==# '" .. key .. "'")
+    let dict = {}
+    for val in rules_with_key
+      if has_key(val, 'prepose')
+        let dict[val['prepose'] .. ' ' .. key] = (val['to'])
+      else
+        let dict[key] = val['to']
+      endif
+    endfor
+    exec 'cnoreabbrev <expr> ' .. key .. ' '
+        \ .. '(getcmdtype() !=# ":")? "' .. key .. '" : '
+        \ .. 'get(' .. string(dict) .. ', getcmdline(), "' .. key .. '")'
+  endfor
+endfunction
+call s:make_abbrev_rule([
+    \   {'from': 'gi', 'to': 'Gina'},
+    \   {'from': 'gc', 'to': 'Gina! commit -am'},
+    \   {'from': 'gf', 'to': 'Gina! commit --fixup HEAD'},
+    \   {'from': 'gp', 'to': 'Gina push'},
+    \   {'prepose': 'Gina commit', 'from': 'a', 'to': '--amend'},
+    \ ])
 nnoremap <silent> <Leader>gg <Cmd>Gina status<CR>
 nnoremap <silent> ` <Cmd>Gina status<CR>
 nnoremap <silent> <Leader>gA <Cmd>Gina changes HEAD<CR>
@@ -1116,6 +245,7 @@ nnoremap <silent> <Leader>gf <Cmd>Gina ls<CR>
 nnoremap <silent> <Leader>gp <Cmd>Gina!! add -p<CR>
 let g:gina#core#spinner#delaytime = 10
 '''
+
 hook_source = '''
 call gina#custom#command#alias('branch', 'br')
 call gina#custom#command#alias('diff', 'df')
@@ -1269,8 +399,344 @@ repo = 'mattn/vim-maketable'
 on_cmd = ['MakeTable']
 
 [[plugins]]
-repo = 'fuenor/JpFormat.vim'
+on_ft = ['vim']
+repo = 'rbtnn/vim-vimscript_indentexpr'
+
+[[plugins]]
+on_source = ['ddc.nvim']
+repo = 'hrsh7th/vim-vsnip'
 hook_add = '''
+let g:vsnip_choice_delay = 10
+let g:popup_preview_config = {
+    \ 'supportVsnip' : v:true
+      \ }
+'''
+[[plugins]]
+repo =  'mattn/vim-sonictemplate'
+on_map = { inox = '<Plug>sonictemplate' }
+hook_add = '''
+let g:sonictemplate_vim_template_dir = '~/GoogleDrive/config/template/'
 '''
 
+[[plugins]]
+repo = 'kana/vim-textobj-user'
+on_event = ["BufRead"]
+hook_source = '''
+" https://github.com/todesking/dotfiles/blob/master/nvim/plug/plugins.vim
+call textobj#user#plugin('lastmofified', {
+\   'lastmodified': {
+\     'select-a': 'ag',
+\     'select-a-function': 'g:Vimrc_select_a_last_modified',
+\   },
+\ })
+'''
+
+[[plugins]]
+depends = ['vim-textobj-user']
+on_event = ["BufRead"]
+# ae, ie
+repo = 'kana/vim-textobj-entire'
+hook_source = '''
+xmap ae <Plug>(textobj-entire-a)
+omap ae <Plug>(textobj-entire-a)
+xmap ie <Plug>(textobj-entire-i)
+omap ie <Plug>(textobj-entire-i)
+'''
+
+[[plugins]]
+depends = ['vim-textobj-user']
+on_event = ["BufRead"]
+# gb
+repo = 'saaguero/vim-textobj-pastedtext'
+hook_source = '''
+let g:pastedtext_select_key = 'gb'
+'''
+
+[[plugins]]
+# ay, iy
+depends = ['vim-textobj-user']
+on_event = ["BufRead"]
+repo = 'kana/vim-textobj-syntax'
+hook_source = '''
+xmap ay <Plug>(textobj-syntax-a)
+omap ay <Plug>(textobj-syntax-a)
+xmap iy <Plug>(textobj-syntax-i)
+omap iy <Plug>(textobj-syntax-i)
+'''
+
+[[plugins]]
+# al, il
+depends = ['vim-textobj-user']
+on_event = ["BufRead"]
+repo = 'kana/vim-textobj-line'
+hook_source = '''
+xmap al <Plug>(textobj-line-a)
+omap al <Plug>(textobj-line-a)
+xmap il <Plug>(textobj-line-i)
+omap il <Plug>(textobj-line-i)
+'''
+
+[[plugins]]
+repo = 'kana/vim-operator-replace'
+on_event = ["BufRead"]
+depends = 'vim-operator-user'
+hook_add = '''
+nmap _ <Plug>(operator-replace)
+vmap _ <Plug>(operator-replace)
+'''
+
+# [[plugins]]
+# # av, iv
+# # aV, iV
+# depends = ['vim-textobj-user']
+# repo = 'rhysd/vim-textobj-word-column'
+# hook_add = '''
+# xmap av <Plug>(textobj-wordcolumn-w-a)
+# omap av <Plug>(textobj-wordcolumn-w-a)
+# xmap iv <Plug>(textobj-wordcolumn-w-i)
+# omap iv <Plug>(textobj-wordcolumn-w-i)
+# xmap aV <Plug>(textobj-wordcolumn-W-a)
+# omap aV <Plug>(textobj-wordcolumn-W-a)
+# xmap iV <Plug>(textobj-wordcolumn-W-i)
+# omap iV <Plug>(textobj-wordcolumn-W-i)
+# '''
+
+[[plugins]]
+repo =  'machakann/vim-sandwich'
+on_event = ["BufRead"]
+hook_source = '''
+let g:sandwich_no_default_key_mappings = 1
+let g:operator_sandwich_no_default_key_mappings = 1
+
+silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)
+silent! nmap <unique><silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+silent! nmap <unique><silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+silent! nmap <unique><silent> 'rb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+silent! omap <unique> ib <Plug>(textobj-sandwich-auto-i)
+silent! xmap <unique> ib <Plug>(textobj-sandwich-auto-i)
+silent! omap <unique> ab <Plug>(textobj-sandwich-auto-a)
+silent! xmap <unique> ab <Plug>(textobj-sandwich-auto-a)
+
+silent! omap <unique> i' <Plug>(textobj-sandwich-query-i)
+silent! xmap <unique> i' <Plug>(textobj-sandwich-query-i)
+silent! omap <unique> a' <Plug>(textobj-sandwich-query-a)
+silent! xmap <unique> a' <Plug>(textobj-sandwich-query-a)
+
+" add
+silent! nmap <unique> 'a <Plug>(operator-sandwich-add)
+silent! xmap <unique> 'a <Plug>(operator-sandwich-add)
+silent! omap <unique> 'a <Plug>(operator-sandwich-g@)
+
+" delete
+silent! xmap <unique> 'd <Plug>(operator-sandwich-delete)
+
+" replace
+silent! xmap <unique> 'r <Plug>(operator-sandwich-replace)
+
+let g:textobj#sandwich#stimeoutlen = 100
+let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
+let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['b']}]
+let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['k']}]
+let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['p']}]
+let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['d']}]
+let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['B']}]
+let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}]
+let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
+let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
+let g:sandwich#recipes += [{'buns' : ['［', '］'], 'nesting':1, 'input':['U']}]
+
+let g:sandwich#recipes += [{'buns' : ['〓赤〓', '〓/赤〓'], 'nesting':1, 'input':['1']}]
+let g:sandwich#recipes += [{'buns' : ['〓等幅〓', '〓/等幅〓'], 'nesting':1, 'input':['2']}]
+let g:sandwich#recipes += [{'buns' : ['〓太〓', '〓/太〓'], 'nesting':1, 'input':['3']}]
+let g:sandwich#recipes += [{'buns' : ['〓ルビ〓', '〓/ルビ〓'], 'nesting':1, 'input':['4']}]
+let g:sandwich#recipes += [{'buns' : ['〓リ/〓', '〓/リ〓'], 'nesting':1, 'input':['5']}]
+let g:sandwich#recipes += [{'buns' : ['〓リ注白〓', '〓/リ注白〓'], 'nesting':1, 'input':['6']}]
+let g:sandwich#recipes += [{'buns' : ['〓リ白/〓', '〓/リ白〓'], 'nesting':1, 'input':['7']}]
+let g:sandwich#recipes += [{'buns' : ['〓リ注黒〓', '〓/リ注黒〓'], 'nesting':1, 'input':['8']}]
+let g:sandwich#recipes += [{'buns' : ['〓箇条中〓', ''], 'nesting':1, 'input':['9']}]
+let g:sandwich#recipes += [{'buns' : ['〓数式/〓', '〓/数式〓'], 'nesting':1, 'input':['0']}]
+" let g:sandwich#recipes += [{'buns' : ['●', '●'], 'nesting':1, 'input':['1']}]
+" let g:sandwich#recipes += [{'buns' : ['◆', '◆'], 'nesting':1, 'input':['2']}]
+" let g:sandwich#recipes += [{'buns' : ['▲', '▲'], 'nesting':1, 'input':['3']}]
+" let g:sandwich#recipes += [{'buns' : ['▼', '▼'], 'nesting':1, 'input':['4']}]
+" let g:sandwich#recipes += [{'buns' : ['▽', '▽'], 'nesting':1, 'input':['5']}]
+" let g:sandwich#recipes += [{'buns' : ['★', '★'], 'nesting':1, 'input':['6']}]
+" let g:sandwich#recipes += [{'buns' : ['☆', '☆'], 'nesting':1, 'input':['7']}]
+" let g:sandwich#recipes += [{'buns' : ['◇', '◇'], 'nesting':1, 'input':['8']}]
+" let g:sandwich#recipes += [{'buns' : ['<s>', '<\s>'], 'nesting':1, 'input':['s']}]
+let g:sandwich#recipes += [{'buns' : ['□', '□'], 'nesting':1, 'input':['c']}]
+let g:sandwich#recipes += [{'buns' : ['〓', '〓'], 'nesting':1, 'input':['n']}]
+autocmd dein FileType markdown call sandwich#util#addlocal([
+  \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
+  \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
+  \ ])
+call operator#sandwich#set('all', 'all', 'highlight', 0)
+nmap 'dd vab'd
+nmap 'rr vab'r
+'''
+
+[[plugins]]
+repo = 'AndrewRadev/switch.vim'
+on_cmd = ['Switch']
+hook_add = '''
+nnoremap ! <cmd>Switch<CR>
+nnoremap gs <cmd>Switch<CR>
+let g:switch_custom_definitions =
+    \ [
+    \ ['1	', '①'],
+    \ ['2	', '②'],
+    \ ['3	', '③'],
+    \ ['4	', '④'],
+    \ ['5	', '⑤'],
+    \ ['6	', '⑥'],
+    \ ['7	', '⑦'],
+    \ ['8	', '⑧'],
+    \ ['9	', '⑨'],
+    \ ['0	', '⑩'],
+    \ ]
+'''
+
+[[plugins]]
+if = '!has("kaoriya")'
+repo = 'deton/jasentence.vim'
+# repo = 'orokasan/jasentence.vim'
+on_map = { nox = '<Plug>JaSentence' }
+hook_add = '''
+let g:jasentence_no_default_key_mappings = 1
+  nmap <silent> ) <Plug>JaSentenceMoveNF
+  nmap <silent> ( <Plug>JaSentenceMoveNB
+  omap <silent> ) <Plug>JaSentenceMoveOF
+  omap <silent> ( <Plug>JaSentenceMoveOB
+  xmap <silent> ) <Plug>JaSentenceMoveVF
+  xmap <silent> ( <Plug>JaSentenceMoveVB
+  omap <silent> as <Plug>JaSentenceTextObjA
+  omap <silent> is <Plug>JaSentenceTextObjI
+  xmap <silent> as <Plug>JaSentenceTextObjVA
+  xmap <silent> is <Plug>JaSentenceTextObjVI
+'''
+
+[[plugins]]
+on_source = ['vim-quickrun']
+repo = 'itchyny/vim-quickrun-lightline-hooks'
+
+[[plugins]]
+if = 'has("nvim")'
+on_source = ['vim-quickrun']
+repo = 'lambdalisue/vim-quickrun-neovim-job'
+
+[[plugins]]
+repo = 'airblade/vim-gitgutter'
+on_event = ['BufRead']
+hook_add = '''
+let g:gitgutter_sign_added = '++'
+let g:gitgutter_sign_modified = '~~'
+let g:gitgutter_sign_removed = '--'
+let g:gitgutter_sign_removed_first_line = '__'
+let g:gitgutter_sign_modified_removed = '+-'
+let g:gitgutter_sign_priority = 0
+let g:gitgutter_preview_win_floating = 0
+autocmd dein ColorScheme * highlight link GitGutterAdd String
+autocmd dein ColorScheme * highlight link GitGutterChange Constant
+nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
+nmap <Leader>xx <Plug>(GitGutterStageHunk)
+nmap <Leader>xu <Plug>(GitGutterUndoHunk)
+'''
+
+[[plugins]]
+repo = 'thinca/vim-qfreplace'
+on_ft = ['qf']
+[plugins.ftplugin]
+qf = '''
+  nnoremap <buffer> r <Cmd>Qfreplace<CR>
+'''
+
+[[plugins]]
+on_event = 'BufRead'
+repo = 'rhysd/conflict-marker.vim'
+hook_add = '''
+'''
+# [[plugins]]
+# repo = 'Milly/vim-migemo'
+# on_map = { n = '<Plug>(migemo-migemosearch' }
+
+[[plugins]]
+repo = 'kana/vim-niceblock'
+on_map = {x = '<Plug>(niceblock-'}
+hook_add = '''
+  xmap I  <Plug>(niceblock-I)
+  xmap A  <Plug>(niceblock-A)
+'''
+
+[[plugins]]
+repo='Shougo/junkfile.vim'
+on_cmd = ['JunkfileOpen']
+hook_add = '''
+nnoremap <silent> <C-T> <Cmd>tabnew<bar>JunkfileOpen txt<CR>
+nnoremap <silent> g<C-T> <Cmd>JunkfileOpen<CR>
+nnoremap <C-S> <Cmd>JunkfileOpen<CR>
+'''
+
+[[plugins]]
+repo = 'goerz/jupytext.vim'
+on_ft = 'ipynb'
+hook_add = '''
+let g:jupytext_enable = 1
+'''
+
+[[plugins]]
+repo = 'koron/nyancat-vim'
+on_cmd = ['Nyancat','Nyancat2']
+
+[[plugins]]
+repo = 'tyru/capture.vim'
+on_cmd = ['Capture']
+
+[[plugins]]
+repo = 'dstein64/vim-win'
+on_cmd = ["WinWin"]
+hook_add='''
+nmap <C-Space> <Plug>WinWin
+" map <C-w> :Win 1<CR>
+let g:win_disable_version_warning = 1
+let g:win_ext_command_map = {
+      \   'c': 'wincmd c',
+      \   'C': 'close!',
+      \   'q': 'Win#exit',
+      \   'Q': 'quit',
+      \   'V': 'wincmd v',
+      \   'S': 'wincmd s',
+      \   'n': 'bnext',
+      \   'N': 'bnext!',
+      \   'p': 'bprevious',
+      \   'P': 'bprevious!',
+      \   "\<c-n>": 'tabnext',
+      \   "\<c-p>": 'tabprevious',
+      \   '=': 'wincmd =',
+      \   't': 'tabnew',
+      \   'x': 'Win#exit',
+      \   '\<C-Space>': 'Win#exit',
+      \ }
+'''
+
+[[plugins]]
+repo =  'tyru/open-browser.vim'
+on_map = "<Plug>(openbrowser-"
+hook_add ='''
+nmap <Leader>o <Plug>(openbrowser-smart-search)
+xmap <Leader>o <Plug>(openbrowser-smart-search)
+omap <Leader>O <Plug>(openbrowser-smart-search)
+let g:openbrowser_message_verbosity = 1
+autocmd FileType php let b:openbrowser_default_search = 'php'
+autocmd FileType python let b:openbrowser_default_search = 'python'
+'''
+
+[plugins.ftplugin]
+json = '''
+setlocal conceallevel=0
+'''
+
+[plugins.ftplugin]
+json = '''
+setlocal conceallevel=0
+'''
 # vim:set foldmethod=marker:

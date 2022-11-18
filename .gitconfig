@@ -47,3 +47,5 @@
     tool = vimdiff
     conflictstyle = diff3
     prompt = false
+[rebase]
+	autostash = true

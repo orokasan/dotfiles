@@ -9,12 +9,13 @@ function! searchres#getsearchresult(pattern)
         break
       endif
       call add(result, pos)
-      if len(result) >= 1000
-        break
-      endif
     endwhile
   finally
     call winrestview(old_pos)
   endtry
+  for i in result
+    call extend(i, [getline(i[0])])
+  endfor
+  " echom result
   return result
 endfunction
