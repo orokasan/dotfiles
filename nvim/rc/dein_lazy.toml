@@ -413,14 +413,15 @@ let g:popup_preview_config = {
 '''
 [[plugins]]
 repo =  'mattn/vim-sonictemplate'
-on_map = { inox = '<Plug>sonictemplate' }
+on_cmd = ['Template']
+on_event = ['InsertEnter']
 hook_add = '''
 let g:sonictemplate_vim_template_dir = '~/GoogleDrive/config/template/'
 '''
 
 [[plugins]]
 repo = 'kana/vim-textobj-user'
-on_event = ["BufRead"]
+on_event = ["VimEnter"]
 hook_source = '''
 " https://github.com/todesking/dotfiles/blob/master/nvim/plug/plugins.vim
 call textobj#user#plugin('lastmofified', {
@@ -433,10 +434,11 @@ call textobj#user#plugin('lastmofified', {
 
 [[plugins]]
 depends = ['vim-textobj-user']
-on_event = ["BufRead"]
+# on_event = ["BufRead"]
+on_map = { ox = '<Plug>(textobj-entire' }
 # ae, ie
 repo = 'kana/vim-textobj-entire'
-hook_source = '''
+hook_add = '''
 xmap ae <Plug>(textobj-entire-a)
 omap ae <Plug>(textobj-entire-a)
 xmap ie <Plug>(textobj-entire-i)
@@ -448,16 +450,16 @@ depends = ['vim-textobj-user']
 on_event = ["BufRead"]
 # gb
 repo = 'saaguero/vim-textobj-pastedtext'
-hook_source = '''
+hook_add = '''
 let g:pastedtext_select_key = 'gb'
 '''
 
 [[plugins]]
 # ay, iy
 depends = ['vim-textobj-user']
-on_event = ["BufRead"]
+on_map = { ox = '<Plug>(textobj-syntax' }
 repo = 'kana/vim-textobj-syntax'
-hook_source = '''
+hook_add = '''
 xmap ay <Plug>(textobj-syntax-a)
 omap ay <Plug>(textobj-syntax-a)
 xmap iy <Plug>(textobj-syntax-i)
@@ -467,9 +469,9 @@ omap iy <Plug>(textobj-syntax-i)
 [[plugins]]
 # al, il
 depends = ['vim-textobj-user']
-on_event = ["BufRead"]
+on_map = { ox = '<Plug>(textobj-line' }
 repo = 'kana/vim-textobj-line'
-hook_source = '''
+hook_add = '''
 xmap al <Plug>(textobj-line-a)
 omap al <Plug>(textobj-line-a)
 xmap il <Plug>(textobj-line-i)
@@ -478,7 +480,7 @@ omap il <Plug>(textobj-line-i)
 
 [[plugins]]
 repo = 'kana/vim-operator-replace'
-on_event = ["BufRead"]
+on_map = { ox = '<Plug>(operator-replace' }
 depends = 'vim-operator-user'
 hook_add = '''
 nmap _ <Plug>(operator-replace)
@@ -504,7 +506,8 @@ vmap _ <Plug>(operator-replace)
 [[plugins]]
 repo =  'machakann/vim-sandwich'
 on_event = ["BufRead"]
-hook_source = '''
+on_map = { ox = '<Plug>(operator-sandwich-', ox = '<Plug>(textobj-sandwich-'}
+hook_add = '''
 let g:sandwich_no_default_key_mappings = 1
 let g:operator_sandwich_no_default_key_mappings = 1
 
@@ -544,7 +547,6 @@ let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
 let g:sandwich#recipes += [{'buns' : ['［', '］'], 'nesting':1, 'input':['U']}]
-
 let g:sandwich#recipes += [{'buns' : ['〓赤〓', '〓/赤〓'], 'nesting':1, 'input':['1']}]
 let g:sandwich#recipes += [{'buns' : ['〓等幅〓', '〓/等幅〓'], 'nesting':1, 'input':['2']}]
 let g:sandwich#recipes += [{'buns' : ['〓太〓', '〓/太〓'], 'nesting':1, 'input':['3']}]
@@ -574,7 +576,6 @@ call operator#sandwich#set('all', 'all', 'highlight', 0)
 nmap 'dd vab'd
 nmap 'rr vab'r
 '''
-
 [[plugins]]
 repo = 'AndrewRadev/switch.vim'
 on_cmd = ['Switch']
@@ -598,10 +599,12 @@ let g:switch_custom_definitions =
 
 [[plugins]]
 if = '!has("kaoriya")'
-repo = 'deton/jasentence.vim'
-# repo = 'orokasan/jasentence.vim'
+# repo = 'deton/jasentence.vim'
+repo = 'orokasan/jasentence.vim'
 on_map = { nox = '<Plug>JaSentence' }
 hook_add = '''
+
+let g:jasentence_endpat = '[、。，．？！$]\+'
 let g:jasentence_no_default_key_mappings = 1
   nmap <silent> ) <Plug>JaSentenceMoveNF
   nmap <silent> ( <Plug>JaSentenceMoveNB

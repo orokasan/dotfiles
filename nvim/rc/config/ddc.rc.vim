@@ -88,7 +88,6 @@ snoremap <silent><expr> <S-TAB>
 
 inoremap <silent><expr> <C-n> pum#visible() ? pum#map#insert_relative(+1) : ddc#map#manual_complete()
 inoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
-inoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
 inoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
 
 call pum#set_option({

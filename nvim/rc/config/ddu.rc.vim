@@ -223,8 +223,8 @@ function! s:ddu_file_rec(context) abort
     return
   endif
   " call ddu#redraw(a:context.options.name,{'input':'','updateOptions':{'sources':[{'name':'file_external'}],'sourceOptions':{'_':{'path':action.path}}},'name': a:context.options.name, 'refreshItems': v:true})
-  " let config.uiParams.ff.startFilter = v:true
-  if &filetype =~# ('ddu-ff' || 'ddu-ff-filter')
+  let startF = mode() ==# 'i'
+  if &filetype =~# '\v(ddu-ff|ddu-ff-filter)'
     call ddu#ui#ff#close()
     call ddu#start({
         \ 'input': '',
@@ -234,7 +234,7 @@ function! s:ddu_file_rec(context) abort
         \ ],
         \ 'uiParams':{
         \ 'ff': {
-        \ 'startFilter': v:true
+        \ 'startFilter': startF
         \ }
         \ }
         \})

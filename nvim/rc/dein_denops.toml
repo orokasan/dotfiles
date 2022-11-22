@@ -71,12 +71,22 @@ hook_post_source = '''
 call skkeleton#config({
 \ 'globalJisyo': expand('~/.skk/SKK-JISYO.L'),
 \ 'userJisyo': expand('~/.skk/.skk-jisyo'),
+\ 'completionRankFile': expand('~/.skk/.skkeleton_rank'),
 \ 'eggLikeNewline': v:true,
 \ 'registerConvertResult': v:true,
 \ 'showCandidatesCount': 3,
 \ 'immediatelyCancel': v:false,
 \ 'keepState': v:false,
 \})
+
+" inoremap <expr> <C-o> skkeleton#is_enabled() ? <SID>skk_c_o() : "\<C-o>"
+" let key = nvim_replace_termcodes("<C-o>", v:true, v:false, v:true)
+" function! s:skk_c_o() abort
+" if skkeleton#is_enabled()
+"     let key = nvim_replace_termcodes("<C-o>", v:true, v:false, v:true)
+"     call nvim_feedkeys(key, 'n', v:false)
+" endif
+" endfunction
 
 call skkeleton#register_kanatable('rom', {
 \ '\<C-w>': 'deleteChar',
@@ -298,6 +308,8 @@ repo = 'tani/ddc-fuzzy'
 repo = 'vim-denops/denops-shared-server.vim'
 [[plugins]]
 repo = 'mikanIchinose/ddu-source-markdown'
+[[plugins]]
+repo = 'Milly/ddc-source-register'
 # [[plugins]]
 # if = 'executable("gh")'
 # repo = 'skanehira/denops-gh.vim'

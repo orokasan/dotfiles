@@ -107,7 +107,7 @@ mason_lspconfig.setup_handlers({ function(server_name)
       {
         single_file_support = true,
         init_options = {
-          enable = true,
+          enable = false,
           lint = true,
           unstable = true,
         },
@@ -153,6 +153,7 @@ mason_lspconfig.setup_handlers({ function(server_name)
         },
         filetypes = {
           'javascript',
+          'typescript'
         }
       })
 
@@ -226,6 +227,7 @@ mason_lspconfig.setup_handlers({ function(server_name)
           'txt',
           'json',
           'html',
+          'typescript',
           'css',
         }
       })
@@ -482,26 +484,26 @@ xnoremap <silent> m :lua require('tsht').nodes()<CR>
 # [[plugins]]
 # repo = 'nvim-treesitter/nvim-treesitter-textobjects'
 
-[[plugins]]
-repo = 'akinsho/toggleterm.nvim'
-lazy = 1
-on_cmd = ["ToggleTerm"]
-hook_add = '''
-nnoremap <Space>t <cmd>ToggleTerm<CR>
-nnoremap <Space>T <cmd>ToggleTermSendCurrentLine<CR>
-'''
-lua_source = '''
-require 'toggleterm'.setup {
-  size = function(term)
-    if term.direction == "horizontal" then
-      return 20
-    elseif term.direction == "vertical" then
-      return vim.o.columns * 0.4
-    end
-  end,
-  shade_terminals = true
-}
-'''
+# [[plugins]]
+# repo = 'akinsho/toggleterm.nvim'
+# lazy = 1
+# on_cmd = ["ToggleTerm"]
+# hook_add = '''
+# nnoremap <Space>t <cmd>ToggleTerm<CR>
+# nnoremap <Space>T <cmd>ToggleTermSendCurrentLine<CR>
+# '''
+# lua_source = '''
+# require 'toggleterm'.setup {
+#   size = function(term)
+#     if term.direction == "horizontal" then
+#       return 20
+#     elseif term.direction == "vertical" then
+#       return vim.o.columns * 0.4
+#     end
+#   end,
+#   shade_terminals = true
+# }
+# '''
 # [[plugins]]
 # repo = 'levouh/tint.nvim'
 

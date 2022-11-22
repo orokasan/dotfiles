@@ -172,7 +172,7 @@ set backup
 " Visual  {{{
 " language C
 set ambiwidth=single
-set shortmess=aAcTtFI
+set shortmess=aActTFOo
 set showtabline=2
 set number
 set signcolumn=number
@@ -383,7 +383,7 @@ xnoremap Y y$`]
 xnoremap y ygv<ESC>
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
-nnoremap <silent> <C-q> <cmd>close<CR>
+nnoremap <silent> <C-q> <cmd>tabclose<CR>
 vnoremap < <gv
 vnoremap > >gv
 vnoremap > >gv
@@ -626,6 +626,6 @@ hi! link DiagnosticUnderlineError Error
 au vimrc VimEnter * set laststatus=2
 highlight! link @punctuation.special Comment
 au vimrc BufRead,BufNewFile *.txt setfiletype txt
-" \([下上]\|このよ\|先ほ\|次の\)
 
+" \([下上]\|このよ\|先ほ\|次の\)
 " vim:set foldmethod=marker:

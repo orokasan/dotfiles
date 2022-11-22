@@ -13,7 +13,7 @@
     "neovim": "^4.9.0",
     "prh": "^5.4.4",
     "sudachi-synonyms-dictionary": "^4.1.0",
-    "textlint": "^11.7.6",
+    "textlint": "^11.9.1",
     "textlint-filter-rule-whitelist": "^2.0.0",
     "textlint-plugin-latex2e": "^0.3.4",
     "textlint-rule-apostrophe": "^1.0.0",
