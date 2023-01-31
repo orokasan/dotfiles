@@ -35,7 +35,7 @@ syn region sdItalic start='〓斜体〓' end='〓/斜体〓'
 " syn region sdBullet start='\(〓箇条中〓\|〓箇条太〓\)' end='$'
 syn region sdComment start='^★' end='$'
 syntax match sdCaptionChar '^○'
-syn region sdCaption start=/^○図\d\+　/ end=/$/ contains=ALL
+syn region sdCaption start=/^○[図表]\d\+　/ end=/$/ contains=ALL
 
 " syntax region sdList start=/\n〓リ\/〓/ end=/〓\/リ〓$/ contains=ALL
 " syntax region sdTable start=/^〓表〓$/ end=/^〓\/表〓$/ contains=ALL

@@ -9,7 +9,7 @@ call ddc#custom#patch_global('sourceOptions', {
 \ 'ignoreCase': v:true,
 \ 'converters': ['converter_fuzzy']
 \ },
-\ 'skkeleton': {'mark': 'skk', 'matchers': ['skkeleton'], 'sorters': [], 'isVolatile': v:true, 'autoCompleteDelay': 0},
+\ 'skkeleton': {'mark': 'skk', 'matchers': ['skkeleton'], 'sorters': [], 'isVolatile': v:true, },
 \ })
 call ddc#custom#patch_global('sourceOptions', {
 \ 'nvim-lsp': {
@@ -33,33 +33,38 @@ call ddc#custom#patch_global('sourceParams', {
 \ })
 
 " Customize settings on a filetype
+call pum#set_option({
+\ 'use_complete': v:false,
+\ 'scrollbar_char': ' ',
+\ 'highlight_scrollbar': 'WildMenu',
+\ 'highlight_selected': 'PmenuSelected',
+\ })
 
 if has('nvim')
 call ddc#custom#patch_global('sources', [
+\'skkeleton',
 \ 'nvim-lsp',
 \ 'vsnip',
-\ 'buffer',
 \ 'around',
-\ 'file',
+\ 'buffer',
 \ ])
 else
 call ddc#custom#patch_global('sources', [
-\ 'file',
 \ 'buffer',
 \ 'around',
 \ ])
 endif
-autocmd dein User skkeleton-enable-pre call s:skkeleton_pre()
-function! s:skkeleton_pre() abort
-  " Overwrite sources
-  let s:prev_buffer_config = ddc#custom#get_buffer()
-  call ddc#custom#patch_buffer('sources', ['skkeleton'])
-endfunction
-autocmd User dein skkeleton-disable-pre call s:skkeleton_post()
-function! s:skkeleton_post() abort
-  " Restore sources
-  call ddc#custom#set_buffer(s:prev_buffer_config)
-endfunction
+" autocmd dein User skkeleton-enable-pre call s:skkeleton_pre()
+" function! s:skkeleton_pre() abort
+"   " Overwrite sources
+"   let s:prev_buffer_config = ddc#custom#get_buffer()
+"   call ddc#custom#patch_buffer('sources', ['skkeleton'])
+" endfunction
+" autocmd User dein skkeleton-disable-pre call s:skkeleton_post()
+" function! s:skkeleton_post() abort
+"   " Restore sources
+"   call ddc#custom#set_buffer(s:prev_buffer_config)
+" endfunction
 
 inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
 
@@ -96,7 +101,10 @@ call pum#set_option({
 \ })
 
 call ddc#custom#patch_global('filterParams', {
-\ 'converter_truncate': {'maxMenuWidth': 35},
+\ 'converter_truncate': {
+    \ 'maxMenuWidth': 35,
+  \ 'maxAbbrWidth': 60,
+    \ },
 \   'matcher_fuzzy': {
 \     'splitMode': 'character'
 \   }
@@ -133,8 +141,6 @@ call ddc#custom#patch_filetype(
 \{'sources':[]})
 
 " 
-" let g:vsnip_filetypes.deno = ['typescript']
-" let g:vsnip_snippet_dir = expand('~/GoogleDrive/config/.vsnip')
 let g:popup_preview_config = { "border": v:false ,
 	      \ 'maxWidth': 60,
 	      \ 'maxHeight': 30,
@@ -147,13 +153,18 @@ let g:popup_preview_config = { "border": v:false ,
 	nnoremap :       <Cmd>call CommandlinePre()<CR>:
 	nnoremap /       <Cmd>call CommandlinePre()<CR>/
 	nnoremap ?       <Cmd>call CommandlinePre()<CR>?
+	nnoremap g/    <Cmd>call CommandlineUnmap()<CR>
+  function! CommandlineUnmap() abort
+    nunmap :
+    nunmap /
+    nunmap ?
+  endfunction
 	
 	function! CommandlinePre() abort
 	  " cnoremap <C-n>   <Cmd>call pum#map#insert_relative(-1)<CR>
 cnoremap <silent><expr> <TAB> pum#visible() ? pum#map#insert_relative(+1) : ddc#map#manual_complete()
 cnoremap <silent><expr> <S-TAB> pum#visible() ? pum#map#insert_relative(-1) : ddc#map#manual_complete()
-	  cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
-	  cnoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
+cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
   call pum#set_option({
   \ 'padding': v:false,
   \ 'reversed': v:true,
@@ -183,8 +194,6 @@ cnoremap <silent><expr> <S-TAB> pum#visible() ? pum#map#insert_relative(-1) : dd
 	function! CommandlinePost() abort
 	  silent! cunmap <Tab>
 	  silent! cunmap <S-Tab>
-	  silent! cunmap <C-n>
-	  silent! cunmap <C-p>
 	  silent! cunmap <C-y>
 	  silent! cunmap <C-e>
   call pum#set_option({
@@ -204,8 +213,16 @@ cnoremap <silent><expr> <S-TAB> pum#visible() ? pum#map#insert_relative(-1) : dd
 	" Change source options
 	call ddc#custom#patch_global('sourceOptions', {
 	\   'cmdline': {
-	\     'mark': 'cmdline',
+	\     'mark': '',
+    \   'forceCompletionPattern': '\S[\\/]\S*|^e\s+',
 	\   }
 	\ })
 " call signature_help#enable()
 call ddc#enable()
+
+au User DenopsStarted call Restore_ddc_config()
+
+let s:backup = ddc#custom#get_global()
+function! Restore_ddc_config()
+  call ddc#custom#patch_global(s:backup)
+endfunction

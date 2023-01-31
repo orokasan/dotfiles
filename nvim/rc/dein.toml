@@ -12,24 +12,12 @@ hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
 
 [[plugins]]
 depends = ['lightline.vim', 'nvim-lspconfig']
+on_source = ['nvim-lspconfig']
+lazy = 1
 if = 'has("nvim")'
 repo = 'josa42/nvim-lightline-lsp'
-merged=1
-hook_add = '''
+hook_source = '''
     "autocmd DiagnosticChanged * call lightline#update()
-    function! LLLspProgress() abort
-        " let p = luaeval('vim.lsp.util.get_progress_messages()')
-        " if empty(p)
-        "     return ''
-        " endif
-        " let p = p[0]
-        " let title = get(p, 'title', '')
-        " let perc = get(p, 'percentage', '')
-        " let mes = get(p, 'message', '')
-        " return title .. '(' .. perc .. '%)' .. ':' .. mes
-        return ''
-    endfunction
-
     let g:lightline#lsp#indicator_warnings = ' '
     let g:lightline#lsp#indicator_errors = ' '
     let g:lightline#lsp#indicator_hints = ' '
@@ -82,14 +70,15 @@ autocmd dein ColorScheme iceberg highlight! clear Search
 autocmd dein ColorScheme iceberg highlight! link Search Title
 autocmd dein ColorScheme iceberg highlight! link Conceal Title
 autocmd dein ColorScheme iceberg highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
+autocmd dein ColorScheme iceberg highlight! PmenuSelected gui=bold guifg=#e2a478 guibg=#3d425b blend=0
 autocmd dein ColorScheme iceberg highlight! link WhiteSpace Comment
 if has('nvim')
-autocmd dein ColorScheme iceberg highlight! link @punctuation.special Comment
-autocmd dein ColorScheme iceberg highlight! link @text.title Title
-autocmd dein ColorScheme iceberg highlight! link @text.literal String
-autocmd dein ColorScheme iceberg highlight! @punctuation.delimiter gui=bold guifg=#a093c7
-autocmd dein ColorScheme iceberg highlight! link @punctuation.special Comment
-autocmd dein ColorScheme iceberg highlight! link @text.uri String
+autocmd dein ColorScheme iceberg highlight! link @text.diff.add DiffAdd
+autocmd dein ColorScheme iceberg highlight! link @text.diff.change DiffChange
+autocmd dein ColorScheme iceberg highlight! link @text.diff.delete DiffDelete
+"autocmd dein ColorScheme iceberg highlight! @punctuation.delimiter gui=bold guifg=#a093c7
+"autocmd dein ColorScheme iceberg highlight! link @punctuation.special Comment
+"autocmd dein ColorScheme iceberg highlight! link @text.uri String
 endif
 "autocmd dein ColorScheme iceberg highlight! clear CursorLine
 "autocmd dein ColorScheme iceberg highlight! CursorLine gui=underline guisp=#c6c8d1
@@ -111,9 +100,6 @@ endif
 '''
 
 [[plugins]]
-repo =  'kana/vim-operator-user'
-
-[[plugins]]
 repo =  'kmnk/denite-dirmark'
 
 [[plugins]]
@@ -124,30 +110,9 @@ hi! link ParenMatch MatchParen
 
 # [[plugins]]
 # repo = 'glacambre/firenvim'
-# on_event = ['VimEnter']
-# on_if = 'has("nvim")'
+# if = 'has("nvim")'
 # # hook_post_update = 'call firenvim#install(0)'
 # hook_add = '''
-# if exists('g:started_by_firenvim')
-# let g:firenvim_config = { 
-#     \ 'globalSettings': {
-#         \ 'alt': 'all',
-#     \  },
-#     \ 'localSettings': {
-#         \ '.*': {
-#             \ 'cmdline': 'neovim',
-#             \ 'content': 'text',
-#             \ 'priority': 0,
-#             \ 'selector': 'textarea',
-#             \ 'takeover': 'always',
-#         \ },
-#     \ }
-# \ }
-# set showtabline=0
-# set background=light
-# startinsert
-# set guifont:HackGen\ Console\ NFJ:h12
-# endif
 # '''
 
 # [[plugins]]
@@ -170,7 +135,7 @@ repo = 'thinca/vim-jautil'
 
 [[plugins]]
 repo = 'https://github.com/vim-jp/autofmt'
-merged = 0
+# merged = 0
 hook_add = '''
 set formatexpr=autofmt#japanese#formatexpr()
 set textwidth=42
@@ -271,8 +236,6 @@ repo = 'lambdalisue/glyph-palette.vim'
 # [[plugins]]
 # repo = 'svermeulen/vim-macrobatics'
 
-[[plugins]]
-repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
 repo = 'lambdalisue/mr.vim'
@@ -280,25 +243,14 @@ hook_add = '''
 let g:mr#threshold = 300
 let g:mr_mrw_disabled = v:true
 let g:mr_mrr_disabled = v:true
-let g:mr#mru#exclude = '\(doc[\\\/].*txt\|COMMIT_EDITMSG\)'
-'''
-
-[[plugins]]
-repo = 'haya14busa/vim-asterisk'
-hook_add = '''
-"let g:asterisk#keeppos = 1
-"map <silent> *  <Plug>(asterisk-*)
-"map <silent> g* <Plug>(asterisk-g*)
-"map <silent> #  <Plug>(asterisk-#)
-"map <silent> g# <Plug>(asterisk-g#)
+let g:mr#mru#predicates = [{ filename -> filename !~# '\(doc[\\\/].*txt\|COMMIT_EDITMSG\|mail.google.*\)' }]
 '''
 
 [ftplugin]
-
 typescript = '''
 setlocal tabstop=2
-
 '''
+
 json = '''
 setlocal conceallevel=0
 '''
@@ -310,12 +262,20 @@ nnoremap <buffer><silent><expr> o match(getline('.'), '\*\s') >=0 ? "o- " : "o"
 
 setlocal comments=b:*,b:-,b:+,b:1.,nb:>
 setlocal formatoptions-=c formatoptions+=jro
-'''
-
-json = '''
 setlocal nowrap
 nnoremap <buffer> <tab> f<TAB>
 nnoremap <buffer> <S-tab> F<TAB>
 '''
 
+txt = '''
+setlocal textwidth=42
+setlocal noexpandtab
+'''
+
+# [[plugins]]
+# repo = 'rakr/vim-one'
+
+# [[plugins]]
+# merged = 0
+# repo = 'simnalamburt/vim-mundo'
 # vim:set foldmethod=marker:'

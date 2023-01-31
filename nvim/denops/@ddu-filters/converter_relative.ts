@@ -2,8 +2,8 @@ import {
   BaseFilter,
   DduItem,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v0.14/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v0.14/deps.ts";
+} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
+import { Denops } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
 import { relative } from "https://deno.land/std@0.145.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts#^";
 import { fn } from "https://deno.land/x/ddu_vim@v1.8.7/deps.ts";
@@ -23,7 +23,11 @@ export class Filter extends BaseFilter<Params> {
       const action = item.action as ActionData;
       if (!action.path) return false;
       const relpath = relative(dir, action.path);
-      if (item.word == action.path) item.word = relpath;
+      if (item.word == action.path) 
+      {
+      item.word = relpath;
+      item.matcherKey = relpath;
+      }
     });
     return Promise.resolve(items);
   }

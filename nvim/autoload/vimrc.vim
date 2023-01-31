@@ -57,14 +57,14 @@ function! vimrc#isbn()
   let isbn10 = substitute(isbn,'^978','','')
   let output['Amazon'] = 'https://amazon.co.jp/dp/' .. isbn10
   let koumoku = [
-      \ 'isbn',
       \ 'title',
       \ 'author',
+      \ 'hankei',
+      \ 'PageNum',
+      \ 'isbn',
+      \ 'Price',
       \ 'publisher',
       \ 'pubdate',
-      \ 'PageNum',
-      \ 'Price',
-      \ 'hankei',
       \ 'Amazon',
       \ '概要',
       \ '見出し',
@@ -88,6 +88,23 @@ function! vimrc#isbn()
   setlocal nospell
   setlocal noswapfile
   nnoremap <buffer> q :quit<CR>
+
+  let c = [ 'title',
+  \ 'author',
+  \ 'hankei',
+  \ 'PageNum',
+  \ 'Price',
+  \ 'publisher',
+  \ 'isbn',
+  \ ]
+  let l =  map(c, {i,v -> has_key(output, v) ?
+        \ v ==# 'author' ? substitute(output[v], "／", ' ', 'g') :
+        \ v ==# 'hankei' ? output[v] .. '／' :
+        \ v ==# 'PageNum' ? substitute(output[v], '\v(\d)(\d{3})', {m -> m[1] .. ',' .. m[2]}, '') .. 'ページ' :
+      \ v ==# 'isbn' ? "ISBN＝" .. substitute(output[v], '\v(\d{3})(\d)(\d{3})(\d{5})(\d{1})', {m -> m[1] .. '-' .. m[2] ..'-'.. m[3] ..'-' .. m[4] .. '-' .. m[5]}, '') :
+        \ v ==# 'Price' ? substitute(output[v], '\v(\d+)(\d{3})', {m -> m[1] .. ',' .. m[2]}, '') ..  '円＋税' : output[v] : ''
+      \ })
+  call filter(l, {i,v -> append(line('$'), v)})
   for k in koumoku
     if has_key(output, k)
       if match(output[k], '\n') > -1

@@ -2,9 +2,9 @@ import {
   BaseColumn,
   DduItem,
   ItemHighlight,
-} from "https://deno.land/x/ddu_vim@v1.13.0/types.ts";
-import { GetTextResult } from "https://deno.land/x/ddu_vim@v1.13.0/base/column.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v1.13.0/deps.ts";
+} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
+import { GetTextResult } from "https://deno.land/x/ddu_vim@v2.2.0/base/column.ts";
+import { Denops } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
 import { basename, extname } from "https://deno.land/std@0.149.0/path/mod.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.1/file.ts";
 
@@ -54,6 +54,7 @@ export class Column extends BaseColumn<Params> {
     endCol: number;
     item: DduItem;
   }): Promise<GetTextResult> {
+
     const highlights: ItemHighlight[] = args.item.highlights ?? [];
 
     const word = args.item.display ?? args.item.word;

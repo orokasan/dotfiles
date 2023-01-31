@@ -1,8 +1,4 @@
 "ork's vimrc
-set fileformats=unix,dos,mac
-set encoding=utf-8
-set fileencodings=utf-8,cp932,ucs2le,ucs-2,iso-2022-jp,euc-jp,sjis,latin1
-" ------------------------------------------------------------------------------
 augroup vimrc
   autocmd!
 augroup END
@@ -30,11 +26,23 @@ let g:loaded_node_provider = 0
 let g:loaded_perl_provider = 0
 let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
+let g:did_indent_on             = 1
+let g:did_load_filetypes        = 1
+let g:loaded_2html_plugin       = 1
+let g:loaded_man                = 1
+let g:loaded_matchit            = 1
+let g:loaded_remote_plugins     = 1
+let g:loaded_shada_plugin       = 1
+let g:loaded_spellfile_plugin   = 1
+let g:loaded_tutor_mode_plugin  = 1
 
+if exists('nvy')
+  set guifont:HackGen\ Console\ NFJ:h11
+endif
 if exists('neovide')
-  set guifont=PlemolJP:h11
-  " let g:neovide_refresh_rate=60
-  let g:neovide_transparency=0.7
+  set guifont=PlemolJP:h12
+  let g:neovide_refresh_rate=60
+  " let g:neovide_transparency=0.95
   let g:neovide_profiler = v:false
   let g:neovide_confirm_quit = v:true
   cd ~/
@@ -69,16 +77,15 @@ else
 endif
 
 "---------------------------------------------------------------------
-if has('win32')
-  let g:migemo_dict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
-  let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
-endif
+" if has('win32')
+"   let g:migemo_dict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
+"   let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
+" endif
 let mapleader = "\<Space>"
 let g:dein#install_progress_type = "floating"
 "}}}
 " dein.vim {{{
 " let g:dein#auto_recache = 1
-let g:dein#lazy_rplugins=1
 if has('nvim')
 let g:dein#default_options = { 'merged': v:true }
 else
@@ -89,6 +96,7 @@ let g:dein#install_process_timeout = 1000
 let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 let s:dein_is_initializing = 0
+
 if &runtimepath !~# '/dein.vim'
   if !isdirectory(s:dein_repo_dir)
     if !executable('git')
@@ -113,7 +121,7 @@ if dein#load_state(s:dein_dir)
   call dein#load_toml(s:toml,      {'lazy': 0})
   call dein#load_toml(s:lazy_toml, {'lazy': 1})
   if has('nvim')
-    call dein#load_toml(s:lua_toml)
+    call dein#load_toml(s:lua_toml, {'lazy': 1})
   endif
   call dein#end()
   call dein#save_state()
@@ -150,6 +158,9 @@ endfunction
 filetype plugin indent on
 syntax on
 
+set fileformats=unix,dos,mac
+set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis
+
 colorscheme iceberg
 set background=dark
 let g:lightline.colorscheme = 'iceberg'
@@ -176,7 +187,7 @@ set shortmess=aActTFOo
 set showtabline=2
 set number
 set signcolumn=number
-set laststatus=0
+set laststatus=2
 set cmdheight=1
 set noshowcmd
 set noshowmode
@@ -350,7 +361,7 @@ xmap ; :
 inoremap jk <esc>
 nnoremap <Leader>f <Cmd>lopen<CR>
 nnoremap <silent> <leader>v <Cmd>e $MYVIMRC<CR>
-nnoremap <silent> <Leader>sv <Cmd>source $MYVIMRC<CR>
+nnoremap <silent> <Leader>sv <Cmd>source $MYVIMRC<bar>echom 'vimrc reloaded'<CR>
 " source opening vim script
 nnoremap <Leader>ss <Cmd>call <SID>source_script('%')<CR>
 function! s:source_script(path) abort
@@ -398,6 +409,83 @@ cnoremap <C-n> <Down>
 cnoremap <silent> <S-Tab> <C-p>
 tnoremap <expr> <C-n> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<Down>" : "\<C-n>"
 tnoremap <expr> <C-p> fnamemodify(b:term_title, ':t') == "cmd.exe" ? "\<UP>" : "\<C-p>"
+
+inoremap zn 〓
+inoremap zb ■
+inoremap zm ●
+inoremap zss ▼
+inoremap zsu ▲
+inoremap zha ☆
+inoremap zv ★
+inoremap zx ○
+inoremap zds ◇
+inoremap zdk ◆
+inoremap z1 １
+inoremap z2 ２
+inoremap z3 ３
+inoremap z4 ４
+inoremap z5 ５
+inoremap z6 ６
+inoremap z7 ７
+inoremap z8 ８
+inoremap z9 ９
+inoremap z0 ０
+inoremap zz0 ⓪
+inoremap zz1 ①
+inoremap zz2 ②
+inoremap zz3 ③
+inoremap zz4 ④
+inoremap zz5 ⑤
+inoremap zz6 ⑥
+inoremap zz7 ⑦
+inoremap zz8 ⑧
+inoremap zz9 ⑨
+inoremap z( （
+inoremap z) ）
+inoremap z[ 「
+inoremap z] 」
+inoremap z. …
+inoremap z/ ・
+inoremap z, ●
+inoremap z<space>  　
+
+cnoremap zn 〓
+cnoremap zb ■
+cnoremap zm ●
+cnoremap zha ☆
+cnoremap zv ★
+cnoremap zx ○
+cnoremap zds ◇
+cnoremap zdk ◆
+cnoremap z1 １
+cnoremap z2 ２
+cnoremap z3 ３
+cnoremap z4 ４
+cnoremap z5 ５
+cnoremap z6 ６
+cnoremap z7 ７
+cnoremap z8 ８
+cnoremap z9 ９
+cnoremap z0 ０
+cnoremap zz0 ⓪
+cnoremap zz1 ①
+cnoremap zz2 ②
+cnoremap zz3 ③
+cnoremap zz4 ④
+cnoremap zz5 ⑤
+cnoremap zz6 ⑥
+cnoremap zz7 ⑦
+cnoremap zz8 ⑧
+cnoremap zz9 ⑨
+cnoremap z( （
+cnoremap z) ）
+cnoremap z[ 「
+cnoremap z] 」
+cnoremap z. …
+cnoremap z/ ・
+cnoremap z, ●
+cnoremap z<space>  　
+
 "}}}
 "Key map - terminal {{{
 "terminal
@@ -484,7 +572,7 @@ if has('nvim')
   hi! PmenuSel blend=0
   set display=lastline,msgsep,truncate
   set wildoptions=pum
-  set pumblend=30
+  set pumblend=5
   au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
   set inccommand=nosplit
   set winblend=20
@@ -502,7 +590,6 @@ if has('nvim')
   sign define DiagnosticSignError text= texthl=DiagnosticVirtualTextError linehl= numhl=
   sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl= numhl=
   set winbar=%F%m
-  CellWidthsAdd 0x2020, 2
 else
   set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
   set rtp+=C:/tools/vim/vim90
@@ -600,9 +687,6 @@ function! s:zz_if_not_near_eof() abort
   endif
 endfunction
 
-inoremap zn 〓
-cnoremap zn 〓
-
 hi! FloatBorder guifg=#c6c8d1 guibg=#272c42
 hi! NormalNC ctermfg=252 guifg=#c6c8d1
 
@@ -623,9 +707,110 @@ onoremap aO <Cmd>TextobjectOutline from_parent with_blank<CR>
 hi! link Winbar Title
 
 hi! link DiagnosticUnderlineError Error
-au vimrc VimEnter * set laststatus=2
 highlight! link @punctuation.special Comment
 au vimrc BufRead,BufNewFile *.txt setfiletype txt
+let g:hitori_debug = v:false  " debug console.log
+let g:hitori_enable = v:true  " enable or disable this plugin.
+let g:hitori_quit = v:true    " whether to exit after attaching
+if exists('g:started_by_firenvim')
+let g:hitori_enable = v:false  " enable or disable this plugin.
+let g:firenvim_config = {
+    \ 'globalSettings': {
+        \ 'alt': 'all',
+    \  },
+    \ 'localSettings': {
+        \ '.*': {
+                \ 'cmdline': 'neovim',
+                \ 'takeover': 'never',
+            \ },
+        \ 'mail.google.com*': {
+            \ 'cmdline': 'neovim',
+            \ 'takeover': 'once',
+            \ 'priority': 1,
+        \ },
+    \ }
+\ }
+set showtabline=0
+set winbar=
+set background=light
+set guifont:HackGen\ Console\ NFJ:h12
+set laststatus=0
+nnoremap <Esc><Esc> :call firenvim#focus_page()<CR>
+nnoremap <C-z> <Cmd>write<CR><Cmd>call firenvim#hide_frame()<CR>
+inoremap <C-z> <Cmd>write<CR><Cmd>call firenvim#hide_frame()<CR>
+colorscheme one
+startinsert
+endif
+set imdisable
+let g:undotree_DiffAutoOpen = v:false
+let @m = "＊"
+function! s:move_to_char_pos(char)
+  if search(a:char, 'cW', line("w$"))
+    norm! "_x
+    startinsert
+  endif
+endfunction
+inoremap <silent> <c-l> <C-g>u<ESC><cmd>call <SID>move_to_char_pos('★')<CR>
+" lua << EOF
 
+" local ns = vim.api.nvim_create_namespace("skkeleton")
+" local id = 1234321
+
+" local function line()
+"   return vim.fn.line(".") - 1
+" end
+
+" local function col()
+"   return vim.fn.col(".") - 1
+" end
+" local mode_table = {
+"   hira = "あ",
+"   kata = "ア",
+"   abbrev = "/",
+"   zenkaku = "Ａ",
+" }
+" vim.api.nvim_create_autocmd("User", {
+"   pattern = "skkeleton-enable-post",
+"   callback = function()
+"     vim.api.nvim_create_autocmd("CursorMovedI", {
+"       pattern = "*",
+"       group = "skkeleton",
+"       callback = function()
+"         vim.api.nvim_buf_set_extmark(0, ns, line() - (line() == 0 and 0 or 1) , 0, {
+"           id = id,
+"           virt_text = { { mode_table[vim.fn["skkeleton#mode"]()], "PMenuSel" } },
+"           virt_text_pos = (line() == 0 and "eol" or "overlay"),
+"         virt_text_win_col = col()
+"         })
+"       end
+"     })
+"       vim.api.nvim_buf_set_extmark(0, ns, line() - (line() == 0 and 0 or 1) , 0, {
+"         id = id,
+"         virt_text = { { mode_table[vim.fn["skkeleton#mode"]()], "PMenuSel" } },
+"         virt_text_pos = (line() == 0 and "eol" or "overlay"),
+"         virt_text_win_col = col()
+"       })
+"   end,
+" })
+" function set_skkeleton_mode_hover()
+" vim.api.nvim_buf_set_extmark(0, ns, line() - (line() == -1 and 0 or 1) , col(), {
+"   id = id,
+"   virt_text = { { mode_table[vim.fn["skkeleton#mode"]()], "PMenuSel" } },
+"   virt_text_pos = (line() == 1 and "eol" or "overlay")
+" })
+" end
+
+" vim.api.nvim_create_autocmd("User", {
+"   pattern = "skkeleton-disable-post",
+"   callback = function()
+"     vim.api.nvim_create_augroup("skkeleton", { clear = true })
+"     vim.api.nvim_buf_del_extmark(0, ns, id)
+"   end
+" })
+" EOF
 " \([下上]\|このよ\|先ほ\|次の\)
+" おたよりページ エクセルデータから誌面用のフォーマットに変換（改行なし、タブ区切り）
+" %s/\v^(.{-})\t.{-}\t(.{-})\t.{-}\t.{-}\t.{-}\t.{-}\d{7}\t(.{-}[都|道|府|県]).{-}\t.{-}\t(.{-})\t(.*)$/\=submatch(4) .. '	' .. submatch(5) .. '	' .. (submatch(1) != ''? submatch(1) : submatch(2)) .. 'さん／' .. submatch(3).. ''
+let g:denops#debug = v:false
+let g:denops#trace = v:false
 " vim:set foldmethod=marker:

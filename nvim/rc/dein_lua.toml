@@ -1,7 +1,17 @@
 [[plugins]]
+on_source = ['nvim-lspconfig']
+repo = 'williamboman/mason.nvim'
+
+[[plugins]]
+repo = 'williamboman/mason-lspconfig.nvim'
+on_source = ['nvim-lspconfig']
+
+[[plugins]]
+on_event = ['BufRead']
 repo = 'neovim/nvim-lspconfig'
-depend = ['mason.nvim', 'mason-lspconfig.nvim']
-hook_add = '''
+# depend = ['mason.nvim', 'mason-lspconfig.nvim']
+# plugins = ['mason.nvim', 'mason-lspconfig.nvim', 'nvim-lspconfig']
+hook_source = '''
 let s:lsptoggle_switch = v:false
 command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
 function! s:lspdefinetoggleaucmd() abort
@@ -21,8 +31,7 @@ function! s:lspdefinetoggleaucmd() abort
         echom "Lsp ON"
     endif
 endfunction
-'''
-lua_add = '''
+lua << EOF
 local vim = vim
 
 local nvim_lsp = require('lspconfig')
@@ -107,7 +116,7 @@ mason_lspconfig.setup_handlers({ function(server_name)
       {
         single_file_support = true,
         init_options = {
-          enable = false,
+          enable = true,
           lint = true,
           unstable = true,
         },
@@ -153,7 +162,6 @@ mason_lspconfig.setup_handlers({ function(server_name)
         },
         filetypes = {
           'javascript',
-          'typescript'
         }
       })
 
@@ -264,26 +272,19 @@ mason_lspconfig.setup_handlers({ function(server_name)
     config
   )
 end })
+EOF
 '''
-
-[[plugins]]
-repo = 'williamboman/mason.nvim'
-[[plugins]]
-repo = 'williamboman/mason-lspconfig.nvim'
 
 # [[plugins]]
 # repo = 'nvim-lua/popup.nvim'
-# lazy = 1
 # on_lua = 'popup'
 
 [[plugins]]
 repo = 'nvim-lua/plenary.nvim'
-lazy = 1
 on_lua = ["plenary"]
 
 [[plugins]]
 repo = 'lukas-reineke/indent-blankline.nvim'
-lazy = 1
 on_event = ["BufRead"]
 hook_add = '''
 let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-ff']
@@ -294,7 +295,7 @@ let g:indent_blankline_show_current_context = v:true
 let g:indent_blankline_show_current_context_start = v:true
 "let g:indent_blankline_context_patterns = ['^if','class', 'function', 'method']
 '''
-lua_add = '''
+lua_source = '''
 require("indent_blankline").setup {
   -- for example, context is off by default, use this to turn it on
   show_current_context = true,
@@ -305,12 +306,10 @@ require("indent_blankline").setup {
 
 [[plugins]]
 repo = 'norcalli/nvim-colorizer.lua'
-lazy = 1
 on_cmd = ['ColorizerToggle']
 
 [[plugins]]
 repo = 'bfredl/nvim-miniyank'
-lazy = 1
 on_map = ['<Plug>(miniyank']
 on_event = ["FocusLost"]
 hook_add = '''
@@ -343,7 +342,8 @@ au dein FocusGained * call To_miniyank_on_focused()
 [[plugins]]
 if = 'executable("gcc")'
 repo = 'nvim-treesitter/nvim-treesitter'
-lua_add = '''
+on_event = ['BufRead']
+lua_source = '''
 local ts_path = vim.fn.stdpath('data') .. '/treesitter'
 vim.api.nvim_set_option('runtimepath', vim.api.nvim_get_option('runtimepath') .. ',' .. ts_path)
 
@@ -370,11 +370,10 @@ require 'nvim-treesitter.configs'.setup {
 }
 '''
 
-[[plugins]]
-repo = 'nvim-lua/lsp-status.nvim'
+# [[plugins]]
+# repo = 'nvim-lua/lsp-status.nvim'
 
 [[plugins]]
-lazy = 1
 repo = 'delphinus/hop.nvim'
 rev = 'feature/migemo'
 on_cmd = ["HopChar2"]
@@ -395,27 +394,8 @@ require 'hop'.setup {
 
 [[plugins]]
 repo = 'kevinhwang91/nvim-hlslens'
-lazy = 1
 on_lua = ['hlslens']
-lua_add = '''
-local kopts = { noremap = true, silent = true }
-
-vim.api.nvim_set_keymap('n', 'n',
-  [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
-  kopts)
-vim.api.nvim_set_keymap('n', 'N',
-  [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
-  kopts)
-
-vim.api.nvim_set_keymap('x', '*', [[<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>]], {})
-vim.api.nvim_set_keymap('x', '#', [[<Plug>(asterisk-z#)<Cmd>lua require('hlslens').start()<CR>]], {})
-vim.api.nvim_set_keymap('x', 'g*', [[<Plug>(asterisk-gz*)<Cmd>lua require('hlslens').start()<CR>]], {})
-vim.api.nvim_set_keymap('x', 'g#', [[<Plug>(asterisk-gz#)<Cmd>lua require('hlslens').start()<CR>]], {})
-vim.api.nvim_set_keymap('n', '*', [[<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>]], {})
-vim.api.nvim_set_keymap('n', '#', [[<Plug>(asterisk-z#)<Cmd>lua require('hlslens').start()<CR>]], {})
-vim.api.nvim_set_keymap('n', 'g*', [[<Plug>(asterisk-gz*)<Cmd>lua require('hlslens').start()<CR>]], {})
-vim.api.nvim_set_keymap('n', 'g#', [[<Plug>(asterisk-gz#)<Cmd>lua require('hlslens').start()<CR>]], {})
-
+lua_source = '''
 require('hlslens').setup({
   calm_down = true,
   nearest_only = true,
@@ -423,12 +403,15 @@ require('hlslens').setup({
 })
 '''
 [[plugins]]
-lazy = 1
 on_cmd = ["Linediff"]
 repo = 'AndrewRadev/linediff.vim'
 
 [[plugins]]
+on_event = ['CmdlineEnter']
 repo = 'yutkat/history-ignore.vim'
+lua_source = '''
+require('history-ignore').setup{}
+'''
 
 # [[plugins]]
 # repo = 'zsugabubus/crazy8.nvim'
@@ -441,10 +424,11 @@ repo = 'yutkat/history-ignore.vim'
 # [[plugins]]
 # repo = 'rcarriga/nvim-notify'
 
-[[plugins]]
-repo = 'nvim-treesitter/nvim-treesitter-context'
+# [[plugins]]
+# repo = 'nvim-treesitter/nvim-treesitter-context'
 
 [[plugins]]
+on_source = ['nvim-lspconfig']
 repo = 'lvimuser/lsp-inlayhints.nvim'
 # [[plugins]]
 # repo = 'mfussenegger/nvim-dap'
@@ -471,22 +455,26 @@ repo = 'lvimuser/lsp-inlayhints.nvim'
 
 [[plugins]]
 repo = 'mfussenegger/nvim-ts-hint-textobject'
+on_lua = ['tsht']
+hook_add = '''
+onoremap <silent> m :<C-U>lua require('tsht').nodes()<CR>
+xnoremap <silent> m :lua require('tsht').nodes()<CR>
+'''
+
 [[plugins]]
 repo = 'David-Kunz/treesitter-unit'
+on_lua = ['treesitter-unit']
 hook_add = '''
 xnoremap iu :lua require"treesitter-unit".select()<CR>
 xnoremap au :lua require"treesitter-unit".select(true)<CR>
 onoremap iu :<c-u>lua require"treesitter-unit".select()<CR>
 onoremap au :<c-u>lua require"treesitter-unit".select(true)<CR>
-onoremap <silent> m :<C-U>lua require('tsht').nodes()<CR>
-xnoremap <silent> m :lua require('tsht').nodes()<CR>
 '''
 # [[plugins]]
 # repo = 'nvim-treesitter/nvim-treesitter-textobjects'
 
 # [[plugins]]
 # repo = 'akinsho/toggleterm.nvim'
-# lazy = 1
 # on_cmd = ["ToggleTerm"]
 # hook_add = '''
 # nnoremap <Space>t <cmd>ToggleTerm<CR>
@@ -508,11 +496,16 @@ xnoremap <silent> m :lua require('tsht').nodes()<CR>
 # repo = 'levouh/tint.nvim'
 
 [[plugins]]
-lazy = 1
 on_cmd = ["AerialOpen"]
 repo = 'stevearc/aerial.nvim'
 lua_add = '''
 vim.api.nvim_set_keymap('n', '-', '<cmd>AerialOpen<CR>', { noremap = true, silent = true })
+-- vim.api.nvim_create_autocmd({ "FileType" }, {
+--   pattern = { "markdown" },
+--   command = "Aerial!",
+--   group = 'vimrc'
+-- 
+-- })
 '''
 lua_source = '''
 vim.api.nvim_create_autocmd({ "Filetype" }, {
@@ -585,12 +578,9 @@ require('aerial').setup({
 '''
 
 [[plugins]]
-merged = 0
-repo = 'rafamadriz/friendly-snippets'
-
-[[plugins]]
 repo = 'ray-x/lsp_signature.nvim'
-lua_add = '''
+on_source = ['nvim-lspconfig']
+lua_source = '''
 local cfg = {
   debug = false, -- set to true to enable debug logging
   log_path = vim.fn.stdpath("cache") .. "/lsp_signature.log", -- log dir when debug is on
@@ -651,19 +641,23 @@ require 'lsp_signature'.setup(cfg) -- no need to specify bufnr if you don't use 
 
 [[plugins]]
 repo = 'delphinus/cellwidths.nvim'
-lua_add = '''
+on_event = ['BufRead']
+lua_source = '''
 require("cellwidths").setup {
   name = "user/custom",
+  -- log_level = 'DEBUG',
   fallback = function(cw)
     -- 特定のテンプレートから追加・削除を行いたい場合は最初に load() を呼んで下さい。
     -- cw.load "default"
     cw.load "default"
     -- 好きな設定を追加します。以下のどの書式でも構いません。
-    cw.add(0x2020, 2)
     cw.add {
+      { 0x00d7, 0x00d7, 2 },
+      { 0x03b1, 0x03c9, 2 },
       { 0x201c, 0x201d, 2 },
       { 0x2015, 0x2015, 2 },
       { 0x2018, 0x2018, 2 },
+      { 0x2020, 0x2020, 2 },
       { 0x2024, 0x203f, 2 },
       { 0x2100, 0x2103, 2 },
       { 0x2120, 0x2123, 2 },
@@ -672,6 +666,7 @@ require("cellwidths").setup {
       { 0x2190, 0x2193, 2 },
       { 0x21d2, 0x21d2, 2 },
       { 0x21d4, 0x21d4, 2 },
+      { 0x2212, 0x2212, 2 },
       { 0x2252, 0x2252, 2 },
       { 0x2266, 0x2267, 2 },
       { 0x2460, 0x24ff, 2 },
@@ -680,6 +675,7 @@ require("cellwidths").setup {
       { 0x25bc, 0x25bd, 2 },
       { 0x25c6, 0x25c7, 2 },
       { 0x25cb, 0x25cf, 2 },
+      { 0x25ef, 0x25ef, 2 },
       { 0x2600, 0x267f, 2 },
       { 0x2690, 0x269c, 2 },
       { 0x26a0, 0x26ad, 2 },
@@ -714,7 +710,8 @@ require("cellwidths").setup {
 
 [[plugins]]
 repo = 'onsails/lspkind.nvim'
-lua_add = '''
+on_source = ['aerial.nvim']
+lua_source = '''
 require('lspkind').init({
   -- DEPRECATED (use mode instead): enables text annotations
   --
@@ -763,3 +760,135 @@ require('lspkind').init({
   },
 })
 '''
+
+[[plugins]]
+repo = 'monaqa/dial.nvim'
+on_map = ["<Plug>(dial-"]
+hook_add = '''
+nnoremap  <C-a>  <Plug>(dial-increment)
+nnoremap  <C-x>  <Plug>(dial-decrement)
+vnoremap  <C-a>  <Plug>(dial-increment)
+vnoremap  <C-x>  <Plug>(dial-decrement)
+vnoremap g<C-a> g<Plug>(dial-increment)
+vnoremap g<C-x> g<Plug>(dial-decrement)
+'''
+lua_source = '''
+local augend = require("dial.augend")
+require("dial.config").augends:register_group{
+  default = {
+    augend.integer.alias.decimal,
+--    augend.integer.alias.hex,
+--    augend.date.alias["%Y/%m/%d"],
+-- augend.date.alias["%Y年%-m月%-d日(%J)"],
+--    augend.date.alias["%Y年%-m月%-d日"],
+-- augend.constant.alias.ja_weekday,
+-- augend.constant.alias.ja_weekday_full,
+-- augend.constant.alias.bool,
+augend.misc.alias.markdown_header,
+augend.constant.new{
+    elements = {"[ ]", "[x]"},
+    word = false,
+    cyclic = true,
+    },},
+}
+'''
+# [[plugins]]
+# repo = 'kristijanhusak/line-notes.nvim'
+# lua_add = '''
+# require'line-notes'.setup({
+# })
+# '''
+
+[[plugins]]
+repo = 'lewis6991/gitsigns.nvim'
+on_event = ['BufRead']
+hook_source = '''
+hi! GitsignsAdd guifg=#8a8a67 guibg=#1e2132
+hi! GitsignsChange guifg=#54909c guibg=#1e2132
+hi! GitSignsDelete guifg=#9c4848 guibg=#1e2132
+'''
+lua_source = '''
+require('gitsigns').setup{
+signs = {
+    -- add          = { hl = 'GitSignsAdd'   , text = '│', numhl='DiffChange'   , linehl='GitSignsAddLn'    },
+    -- change       = { hl = 'GitSignsChange', text = '│', numhl='Identifier', linehl='GitSignsChangeLn' },
+    -- delete       = { hl = 'GitSignsDelete', text = '_', numhl='DiffDelete', linehl='GitSignsDeleteLn' },
+  },
+  signcolumn = false,  -- Toggle with `:Gitsigns toggle_signs`
+  numhl      = true, -- Toggle with `:Gitsigns toggle_numhl`
+  linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
+  word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+on_attach = function(bufnr)
+    local gs = package.loaded.gitsigns
+
+    local function map(mode, l, r, opts)
+      opts = opts or {}
+      opts.buffer = bufnr
+      vim.keymap.set(mode, l, r, opts)
+    end
+
+    -- Navigation
+    map('n', ']c', function()
+      if vim.wo.diff then return ']c' end
+      vim.schedule(function() gs.next_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    map('n', '[c', function()
+      if vim.wo.diff then return '[c' end
+      vim.schedule(function() gs.prev_hunk() end)
+      return '<Ignore>'
+    end, {expr=true})
+
+    -- Actions
+    map({'n', 'v'}, '<leader>xs', ':Gitsigns stage_hunk<CR>')
+    map({'n', 'v'}, '<leader>xr', ':Gitsigns reset_hunk<CR>')
+    map('n', '<leader>xS', gs.stage_buffer)
+    map('n', '<leader>xu', gs.undo_stage_hunk)
+    map('n', '<leader>xR', gs.reset_buffer)
+    map('n', '<leader>xp', gs.preview_hunk)
+    map('n', '<leader>xb', function() gs.blame_line{full=true} end)
+    map('n', '<leader>xb', gs.toggle_current_line_blame)
+    map('n', '<leader>xd', gs.diffthis)
+    map('n', '<leader>xD', function() gs.diffthis('~') end)
+    map('n', '<leader>td', gs.toggle_deleted)
+
+    -- Text object
+    map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+  end
+}
+'''
+
+[[plugins]]
+repo = 'Decodetalkers/csv-tools.lua'
+on_ft = ['csv', 'tsv']
+lua_source = '''
+require("csvtools").setup({
+    before = 10,
+    after = 10,
+    clearafter = true,
+    -- this will clear the highlight of buf after move
+    showoverflow = false,
+    -- this will provide a overflow show
+    titelflow = true,
+    -- add an alone title
+
+})
+'''
+
+# [[plugins]]
+# lazy = 0
+# require = ['promise-async']
+# hook_post_update = "lua require('fundo').install()"
+# repo = 'kevinhwang91/nvim-fundo'
+# lua_add = '''
+# require('fundo').setup({
+#     opt = {
+#         archives_dir = vim.fn.stdpath('data') .. require('fundo.fs.path').sep .. 'fundo'
+#     },
+# })
+# '''
+
+# [[plugins]]
+# lazy = 0
+# repo = 'kevinhwang91/promise-async'

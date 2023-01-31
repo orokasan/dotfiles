@@ -25,14 +25,20 @@ if = 'has("nvim")'
 on_source = ['ddc.nvim']
 on_event = ['InsertEnter', 'CmdlineEnter']
 hook_source = '''
+
 let g:lexima_ctrlh_as_backspace = v:true
 let g:lexima_enable_endwise_rules = v:false
 let g:lexima_accept_pum_with_enter = v:false
 let g:lexima_no_default_rules = v:true
+
 call lexima#set_default_rules()
 
 let s:lexima_my_rules = [
 \ { 'char': '"', 'input': '"', 'filetype': 'toml' },
+\ { 'char': '"', 'input': '"', 'filetype': 'toml' },
+\ { 'char': '[', 'at': '^\s*[\*-]\%#', 'input': ' [ ] ', 'filetype': 'markdown' },
+\ { 'char': '[', 'at': '[\*-]\s\%#', 'input': '[ ] ', 'filetype': 'markdown' },
+\ { 'char': "'", 'at': "\%#'", 'input': "'",'input_after': "'", 'syntax': 'String' },
 \ ]
 
 for rule in s:lexima_my_rules
@@ -395,6 +401,26 @@ let g:git_messenger_always_into_popup = v:true
 '''
 
 [[plugins]]
+on_event = ['InsertEnter']
+# on_source = ['ddc.nvim']
+repo = 'hrsh7th/vim-vsnip'
+hook_add = '''
+let g:vsnip_snippet_dir = expand('~/GoogleDrive/config/.vsnip')
+let g:vsnip_choice_delay = 10
+let g:popup_preview_config = {
+    \ 'supportVsnip' : v:true
+      \ }
+'''
+
+[[plugins]]
+on_event = ['InsertEnter']
+repo = 'hrsh7th/vim-vsnip-integ'
+
+[[plugins]]
+on_source = ['vim-vsnip-integ']
+repo = 'rafamadriz/friendly-snippets'
+
+[[plugins]]
 repo = 'mattn/vim-maketable'
 on_cmd = ['MakeTable']
 
@@ -402,15 +428,6 @@ on_cmd = ['MakeTable']
 on_ft = ['vim']
 repo = 'rbtnn/vim-vimscript_indentexpr'
 
-[[plugins]]
-on_source = ['ddc.nvim']
-repo = 'hrsh7th/vim-vsnip'
-hook_add = '''
-let g:vsnip_choice_delay = 10
-let g:popup_preview_config = {
-    \ 'supportVsnip' : v:true
-      \ }
-'''
 [[plugins]]
 repo =  'mattn/vim-sonictemplate'
 on_cmd = ['Template']
@@ -420,8 +437,35 @@ let g:sonictemplate_vim_template_dir = '~/GoogleDrive/config/template/'
 '''
 
 [[plugins]]
+repo = 'haya14busa/vim-asterisk'
+on_map = { nx = '<Plug>(asterisk-' }
+lua_add = '''
+local kopts = { noremap = true, silent = true }
+
+vim.api.nvim_set_keymap('n', 'n',
+  [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
+  kopts)
+vim.api.nvim_set_keymap('n', 'N',
+  [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
+  kopts)
+
+vim.api.nvim_set_keymap('x', '*', [[<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>]], {})
+vim.api.nvim_set_keymap('x', '#', [[<Plug>(asterisk-z#)<Cmd>lua require('hlslens').start()<CR>]], {})
+vim.api.nvim_set_keymap('x', 'g*', [[<Plug>(asterisk-gz*)<Cmd>lua require('hlslens').start()<CR>]], {})
+vim.api.nvim_set_keymap('x', 'g#', [[<Plug>(asterisk-gz#)<Cmd>lua require('hlslens').start()<CR>]], {})
+vim.api.nvim_set_keymap('n', '*', [[<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>]], {})
+vim.api.nvim_set_keymap('n', '#', [[<Plug>(asterisk-z#)<Cmd>lua require('hlslens').start()<CR>]], {})
+vim.api.nvim_set_keymap('n', 'g*', [[<Plug>(asterisk-gz*)<Cmd>lua require('hlslens').start()<CR>]], {})
+vim.api.nvim_set_keymap('n', 'g#', [[<Plug>(asterisk-gz#)<Cmd>lua require('hlslens').start()<CR>]], {})
+'''
+
+[[plugins]]
+repo =  'kana/vim-operator-user'
+on_event = ["BufRead"]
+
+[[plugins]]
 repo = 'kana/vim-textobj-user'
-on_event = ["VimEnter"]
+on_event = ["BufRead"]
 hook_source = '''
 " https://github.com/todesking/dotfiles/blob/master/nvim/plug/plugins.vim
 call textobj#user#plugin('lastmofified', {
@@ -480,11 +524,12 @@ omap il <Plug>(textobj-line-i)
 
 [[plugins]]
 repo = 'kana/vim-operator-replace'
-on_map = { ox = '<Plug>(operator-replace' }
+on_map = { nox = '<Plug>(operator-replace' }
 depends = 'vim-operator-user'
 hook_add = '''
 nmap _ <Plug>(operator-replace)
 vmap _ <Plug>(operator-replace)
+omap _ <Plug>(operator-replace)
 '''
 
 # [[plugins]]
@@ -505,37 +550,39 @@ vmap _ <Plug>(operator-replace)
 
 [[plugins]]
 repo =  'machakann/vim-sandwich'
-on_event = ["BufRead"]
-on_map = { ox = '<Plug>(operator-sandwich-', ox = '<Plug>(textobj-sandwich-'}
+lazy = 1
+on_map = { nox = ['<Plug>(operator-sandwich-', '<Plug>(textobj-sandwich-']}
 hook_add = '''
 let g:sandwich_no_default_key_mappings = 1
 let g:operator_sandwich_no_default_key_mappings = 1
 
-silent! nmap <unique><silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)
-silent! nmap <unique><silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-silent! nmap <unique><silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-silent! nmap <unique><silent> 'rb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-silent! omap <unique> ib <Plug>(textobj-sandwich-auto-i)
-silent! xmap <unique> ib <Plug>(textobj-sandwich-auto-i)
-silent! omap <unique> ab <Plug>(textobj-sandwich-auto-a)
-silent! xmap <unique> ab <Plug>(textobj-sandwich-auto-a)
-
-silent! omap <unique> i' <Plug>(textobj-sandwich-query-i)
-silent! xmap <unique> i' <Plug>(textobj-sandwich-query-i)
-silent! omap <unique> a' <Plug>(textobj-sandwich-query-a)
-silent! xmap <unique> a' <Plug>(textobj-sandwich-query-a)
+nnoremap <silent> 'd <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)
+nnoremap <silent> 'r <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+nnoremap <silent> 'db <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+nnoremap <silent> 'rb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+onoremap  ib <Plug>(textobj-sandwich-auto-i)
+xnoremap  ib <Plug>(textobj-sandwich-auto-i)
+onoremap  ab <Plug>(textobj-sandwich-auto-a)
+xnoremap  ab <Plug>(textobj-sandwich-auto-a)
+onoremap  i' <Plug>(textobj-sandwich-query-i)
+xnoremap  i' <Plug>(textobj-sandwich-query-i)
+onoremap  a' <Plug>(textobj-sandwich-query-a)
+xnoremap  a' <Plug>(textobj-sandwich-query-a)
 
 " add
-silent! nmap <unique> 'a <Plug>(operator-sandwich-add)
-silent! xmap <unique> 'a <Plug>(operator-sandwich-add)
-silent! omap <unique> 'a <Plug>(operator-sandwich-g@)
+nnoremap  'a <Plug>(operator-sandwich-add)
+xnoremap  'a <Plug>(operator-sandwich-add)
+onoremap  'a <Plug>(operator-sandwich-g@)
 
 " delete
-silent! xmap <unique> 'd <Plug>(operator-sandwich-delete)
+xnoremap  'd <Plug>(operator-sandwich-delete)
+"replace
+xnoremap  'r <Plug>(operator-sandwich-replace)
+nmap 'dd vab'd
+nmap 'rr vab'r
+'''
 
-" replace
-silent! xmap <unique> 'r <Plug>(operator-sandwich-replace)
-
+hook_post_source = '''
 let g:textobj#sandwich#stimeoutlen = 100
 let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
 let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['b']}]
@@ -568,13 +615,11 @@ let g:sandwich#recipes += [{'buns' : ['〓数式/〓', '〓/数式〓'], 'nestin
 " let g:sandwich#recipes += [{'buns' : ['<s>', '<\s>'], 'nesting':1, 'input':['s']}]
 let g:sandwich#recipes += [{'buns' : ['□', '□'], 'nesting':1, 'input':['c']}]
 let g:sandwich#recipes += [{'buns' : ['〓', '〓'], 'nesting':1, 'input':['n']}]
+call operator#sandwich#set('all', 'all', 'highlight', 0)
 autocmd dein FileType markdown call sandwich#util#addlocal([
   \   {'buns': ['**', '**'], 'nesting': 1, 'input': ['B']},
   \   {'buns': ['*', '*'], 'nesting': 1, 'input': ['I']},
   \ ])
-call operator#sandwich#set('all', 'all', 'highlight', 0)
-nmap 'dd vab'd
-nmap 'rr vab'r
 '''
 [[plugins]]
 repo = 'AndrewRadev/switch.vim'
@@ -627,23 +672,21 @@ if = 'has("nvim")'
 on_source = ['vim-quickrun']
 repo = 'lambdalisue/vim-quickrun-neovim-job'
 
-[[plugins]]
-repo = 'airblade/vim-gitgutter'
-on_event = ['BufRead']
-hook_add = '''
-let g:gitgutter_sign_added = '++'
-let g:gitgutter_sign_modified = '~~'
-let g:gitgutter_sign_removed = '--'
-let g:gitgutter_sign_removed_first_line = '__'
-let g:gitgutter_sign_modified_removed = '+-'
-let g:gitgutter_sign_priority = 0
-let g:gitgutter_preview_win_floating = 0
-autocmd dein ColorScheme * highlight link GitGutterAdd String
-autocmd dein ColorScheme * highlight link GitGutterChange Constant
-nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
-nmap <Leader>xx <Plug>(GitGutterStageHunk)
-nmap <Leader>xu <Plug>(GitGutterUndoHunk)
-'''
+# repo = 'airblade/vim-gitgutter'
+# hook_add = '''
+# let g:gitgutter_sign_added = '++'
+# let g:gitgutter_sign_modified = '~~'
+# let g:gitgutter_sign_removed = '--'
+# let g:gitgutter_sign_removed_first_line = '__'
+# let g:gitgutter_sign_modified_removed = '+-'
+# let g:gitgutter_sign_priority = 0
+# let g:gitgutter_preview_win_floating = 0
+# autocmd dein ColorScheme * highlight link GitGutterAdd String
+# autocmd dein ColorScheme * highlight link GitGutterChange Constant
+# nmap <Leader>xp <Plug>(GitGutterPreviewHunk)
+# nmap <Leader>xx <Plug>(GitGutterStageHunk)
+# nmap <Leader>xu <Plug>(GitGutterUndoHunk)
+# '''
 
 [[plugins]]
 repo = 'thinca/vim-qfreplace'
@@ -722,6 +765,13 @@ let g:win_ext_command_map = {
 '''
 
 [[plugins]]
+on_func = ['magic#expr()']
+repo = 'kawarimidoll/magic.vim'
+hook_add = '''
+cnoremap <expr> <C-x> magic#expr()
+'''
+
+[[plugins]]
 repo =  'tyru/open-browser.vim'
 on_map = "<Plug>(openbrowser-"
 hook_add ='''
@@ -733,13 +783,18 @@ autocmd FileType php let b:openbrowser_default_search = 'php'
 autocmd FileType python let b:openbrowser_default_search = 'python'
 '''
 
-[plugins.ftplugin]
-json = '''
-setlocal conceallevel=0
+[[plugins]]
+on_cmd = ['Crunch']
+on_map = { nx = ['<Plug>(crunch','<Plug>(visual-crunch']  }
+repo = 'arecarn/vim-crunch'
+hook_add = '''
+nnoremap  g= <Plug>(crunch-operator)
+xnoremap g= <Plug>(visual-crunch-operator)
+nnoremap g== <Plug>(crunch-operator-line)
 '''
 
-[plugins.ftplugin]
-json = '''
-setlocal conceallevel=0
-'''
+[[plugins]]
+on_source = ['vim-crunch']
+repo = 'arecarn/vim-selection'
+
 # vim:set foldmethod=marker:

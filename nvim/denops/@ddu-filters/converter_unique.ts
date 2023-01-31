@@ -16,7 +16,7 @@ export class Filter extends BaseFilter<Params> {
   }): Promise<DduItem[]> {
     return Promise.resolve([
       ...(new Map(args.items.map((o) => [o.word, o]))).values(),
-    ].reverse());
+    ]);
   }
 
   params(): Params {

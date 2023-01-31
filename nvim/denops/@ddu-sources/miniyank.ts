@@ -2,8 +2,8 @@ import {
   BaseSource,
   Context,
   Item,
-} from "https://deno.land/x/ddu_vim@v1.2.0/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v1.2.0/deps.ts";
+} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
+import { Denops } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
 import type { ActionData } from "https://raw.githubusercontent.com/Shougo/ddu-kind-word/master/denops/@ddu-kinds/word.ts";
 import { StringReader } from "https://deno.land/x/std@0.110.0/io/readers.ts";
 
@@ -59,8 +59,8 @@ export class Source extends BaseSource<Params> {
             highlights: [
               {
                 name: "word",
-                hl_group: "Constant",
-                col: 4,
+                hl_group: "Function",
+                col: 0,
                 width: i[1] == "v" ? (new StringReader(word).length) : 0,
               },
             ],

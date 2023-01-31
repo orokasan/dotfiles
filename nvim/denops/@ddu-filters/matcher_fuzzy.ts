@@ -1,36 +1,68 @@
-import { BaseFilter, DduItem, SourceOptions } from "https://deno.land/x/ddu_vim@v0.1.0/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v0.1.0/deps.ts";
+import {
+  BaseFilter,
+  DduItem,
+  SourceOptions,
+} from "https://deno.land/x/ddu_vim@v0.13/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v0.13/deps.ts";
 
-export function fuzzyEscape(str: string): string {
-  // escape special letters
-  let p = str.replaceAll(/[.*+?^=!:${}()|[\]\/\\]/g, "\\$&");
-  p = p.replaceAll(/([a-zA-Z0-9])/g, "$1.*");
-  p = p.replaceAll(/\s/g, "");
-  p = p.replaceAll(/([a-zA-Z0-9_])\.\*/g, "$1[^$1]*");
-  return p;
-}
-
-type Params = Record<never, never>;
+type Params = {
+  highlightMatched: string;
+};
 
 export class Filter extends BaseFilter<Params> {
-  filter(args: {
+  async filter(args: {
     denops: Denops;
     sourceOptions: SourceOptions;
+    filterParams: Params;
     input: string;
     items: DduItem[];
   }): Promise<DduItem[]> {
     const input = args.input;
-    let pattern: RegExp;
-    pattern = new RegExp(
-      fuzzyEscape(input),
+    if (!input) {
+      return Promise.resolve(args.items);
+    }
+    const items = await args.denops.call(
+      "matchfuzzypos",
+      args.items,
+      args.input,
+      { "key": "matcherKey" },
     );
 
-    return Promise.resolve(args.items.filter(
-      (item) => item.matcherKey.toLowerCase().search(pattern) != -1,
-    ));
+    const inputWidth = await fn.strwidth(args.denops, input) as number;
+    return Promise.resolve(
+      items[0].map(
+        (item) => {
+          const display = item.display ?? item.word;
+          const matcherKey = args.sourceOptions.ignoreCase
+            ? display.toLowerCase()
+            : display;
+          const start = matcherKey.indexOf(input);
+
+          if (start >= 0) {
+            const highlights = item.highlights?.filter((hl) =>
+              hl.name != "matched"
+            ) ?? [];
+            highlights.push({
+              name: "matched",
+              "hl_group": args.filterParams.highlightMatched,
+              col: start + 1,
+              width: inputWidth,
+            });
+            return {
+              ...item,
+              highlights: highlights,
+            };
+          } else {
+            return item;
+          }
+        },
+      ),
+    );
   }
 
   params(): Params {
-    return {};
+    return {
+      highlightMatched: "Title",
+    };
   }
 }

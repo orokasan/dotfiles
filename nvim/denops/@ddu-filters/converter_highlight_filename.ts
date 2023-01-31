@@ -37,14 +37,14 @@ export class Filter extends BaseFilter<Params> {
             name: "hl_dirname",
             hl_group: "Function",
             col: 1,
-            width: get_string_byte_count(v.word) -
-              get_string_byte_count(basename(v.word)),
+            width: get_string_byte_count(v.display ?? v.word) -
+              get_string_byte_count(basename(v.display ?? v.word)),
           }
           : {
             name: "hl_dirname",
             hl_group: "Function",
             col: 1,
-            width: get_string_byte_count(v.word),
+            width: get_string_byte_count(v.display ?? v.word),
           },
       );
       return true;
