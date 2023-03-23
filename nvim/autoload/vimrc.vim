@@ -73,9 +73,11 @@ function! vimrc#isbn()
       \ 'cover',
       \ 'series',
       \ ]
+  if !bufexists('書誌情報')
+    split
+  endif
 
-  split
-  e 書誌情報
+  drop 書誌情報
   let bufnr = winbufnr(0)
   call deletebufline(bufnr, 1, '$')
   setlocal filetype=isbn
@@ -101,7 +103,13 @@ function! vimrc#isbn()
         \ v ==# 'author' ? substitute(output[v], "／", ' ', 'g') :
         \ v ==# 'hankei' ? output[v] .. '／' :
         \ v ==# 'PageNum' ? substitute(output[v], '\v(\d)(\d{3})', {m -> m[1] .. ',' .. m[2]}, '') .. 'ページ' :
-      \ v ==# 'isbn' ? "ISBN＝" .. substitute(output[v], '\v(\d{3})(\d)(\d{3})(\d{5})(\d{1})', {m -> m[1] .. '-' .. m[2] ..'-'.. m[3] ..'-' .. m[4] .. '-' .. m[5]}, '') :
+      \ v ==# 'isbn' ? "ISBN＝" .. substitute(output[v],
+      \ output[v][4:5] < 20 ? '\v(\d{3})(\d)(\d{2})(\d{6})(\d{1})' :
+      \ output[v][4:5] < 70 ? '\v(\d{3})(\d)(\d{3})(\d{5})(\d{1})' :
+      \ output[v][4:5] < 85 ? '\v(\d{3})(\d)(\d{4})(\d{4})(\d{1})' :
+      \ output[v][4:5] < 90 ? '\v(\d{3})(\d)(\d{5})(\d{3})(\d{1})' :
+      \ '\v(\d{3})(\d)(\d{6})(\d{2})(\d{1})',
+    \ {m -> m[1] .. '-' .. m[2] ..'-'.. m[3] ..'-' .. m[4] .. '-' .. m[5]}, '') :
         \ v ==# 'Price' ? substitute(output[v], '\v(\d+)(\d{3})', {m -> m[1] .. ',' .. m[2]}, '') ..  '円＋税' : output[v] : ''
       \ })
   call filter(l, {i,v -> append(line('$'), v)})

@@ -22,7 +22,6 @@ let g:memolist_prompt_categories = 0
 [[plugins]]
 repo =  'cohama/lexima.vim'
 if = 'has("nvim")'
-on_source = ['ddc.nvim']
 on_event = ['InsertEnter', 'CmdlineEnter']
 hook_source = '''
 
@@ -44,6 +43,19 @@ let s:lexima_my_rules = [
 for rule in s:lexima_my_rules
   call lexima#add_rule(rule)
 endfor
+
+" Simple usage
+LeximaAlterCommand ee e!
+
+" With atom ( Read `:h \%[]` )
+LeximaAlterCommand cap\%[ture] Capture
+LeximaAlterCommand r\%[un]     QuickRun
+LeximaAlterCommand s\%[et] set
+'''
+[[plugins]]
+lazy = 1
+repo = 'yuki-yano/lexima-alter-command.vim'
+hook_source = '''
 '''
 
 [[plugins]]
@@ -402,7 +414,7 @@ let g:git_messenger_always_into_popup = v:true
 
 [[plugins]]
 on_event = ['InsertEnter']
-# on_source = ['ddc.nvim']
+on_source = ['ddc.nvim']
 repo = 'hrsh7th/vim-vsnip'
 hook_add = '''
 let g:vsnip_snippet_dir = expand('~/GoogleDrive/config/.vsnip')
@@ -581,8 +593,7 @@ xnoremap  'r <Plug>(operator-sandwich-replace)
 nmap 'dd vab'd
 nmap 'rr vab'r
 '''
-
-hook_post_source = '''
+hook_source = '''
 let g:textobj#sandwich#stimeoutlen = 100
 let g:sandwich#recipes = deepcopy(g:sandwich#default_recipes)
 let g:sandwich#recipes += [{'buns' : ['「', '」'], 'nesting':1, 'input':['b']}]
@@ -594,6 +605,7 @@ let g:sandwich#recipes += [{'buns' : ['【', '】'], 'nesting':1, 'input':['K']}
 let g:sandwich#recipes += [{'buns' : ['（', '）'], 'nesting':1, 'input':['P']}]
 let g:sandwich#recipes += [{'buns' : ['『', '』'], 'nesting':1, 'input':['D']}]
 let g:sandwich#recipes += [{'buns' : ['［', '］'], 'nesting':1, 'input':['U']}]
+let g:sandwich#recipes += [{'buns' : ['“', '”'], 'nesting':1, 'input':['q']}]
 let g:sandwich#recipes += [{'buns' : ['〓赤〓', '〓/赤〓'], 'nesting':1, 'input':['1']}]
 let g:sandwich#recipes += [{'buns' : ['〓等幅〓', '〓/等幅〓'], 'nesting':1, 'input':['2']}]
 let g:sandwich#recipes += [{'buns' : ['〓太〓', '〓/太〓'], 'nesting':1, 'input':['3']}]
@@ -603,7 +615,7 @@ let g:sandwich#recipes += [{'buns' : ['〓リ注白〓', '〓/リ注白〓'], 'n
 let g:sandwich#recipes += [{'buns' : ['〓リ白/〓', '〓/リ白〓'], 'nesting':1, 'input':['7']}]
 let g:sandwich#recipes += [{'buns' : ['〓リ注黒〓', '〓/リ注黒〓'], 'nesting':1, 'input':['8']}]
 let g:sandwich#recipes += [{'buns' : ['〓箇条中〓', ''], 'nesting':1, 'input':['9']}]
-let g:sandwich#recipes += [{'buns' : ['〓数式/〓', '〓/数式〓'], 'nesting':1, 'input':['0']}]
+let g:sandwich#recipes += [{'buns' : ['〓斜〓', '〓/斜〓'], 'nesting':1, 'input':['0']}]
 " let g:sandwich#recipes += [{'buns' : ['●', '●'], 'nesting':1, 'input':['1']}]
 " let g:sandwich#recipes += [{'buns' : ['◆', '◆'], 'nesting':1, 'input':['2']}]
 " let g:sandwich#recipes += [{'buns' : ['▲', '▲'], 'nesting':1, 'input':['3']}]
@@ -714,15 +726,6 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo='Shougo/junkfile.vim'
-on_cmd = ['JunkfileOpen']
-hook_add = '''
-nnoremap <silent> <C-T> <Cmd>tabnew<bar>JunkfileOpen txt<CR>
-nnoremap <silent> g<C-T> <Cmd>JunkfileOpen<CR>
-nnoremap <C-S> <Cmd>JunkfileOpen<CR>
-'''
-
-[[plugins]]
 repo = 'goerz/jupytext.vim'
 on_ft = 'ipynb'
 hook_add = '''
@@ -797,4 +800,40 @@ nnoremap g== <Plug>(crunch-operator-line)
 on_source = ['vim-crunch']
 repo = 'arecarn/vim-selection'
 
+[[plugins]]
+repo = 'lambdalisue/nerdfont.vim'
+on_event = ['BufRead']
+hook_source = '''
+if !has('nvim')
+au dein VimEnter * call nerdfont#find()
+au dein VimEnter * let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
+au dein VimEnter * let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
+au dein VimEnter * call nerdfont#find('.')
+endif
+let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
+let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
+let g:nerdfont#directory#customs = {
+    \ '': '',
+    \ 'open': '',
+    \ 'close': '',
+    \ 'symlink': '',
+    \}
+let g:nerdfont#path#extension#customs = {
+    \'txt' :  '',
+    \'pdf' :  '',
+    \'docx' :  '',
+    \'doc' :  '',
+    \'xlsx' :  '',
+    \'xlsm' :  '',
+    \'pptx' :  '',
+    \'ppt' :  '',
+    \'tex' :  '',
+    \'zip': ''
+    \}
+augroup my-glyph-palette
+  autocmd! *
+  autocmd FileType ddu-ff,ddu-filer call glyph_palette#apply()
+augroup END
+
+'''
 # vim:set foldmethod=marker:

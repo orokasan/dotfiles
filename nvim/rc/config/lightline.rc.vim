@@ -31,12 +31,10 @@ let g:lightline = {
     \ 'path':'LLMyFilepath',
     \ 'mode': 'LLMode',
     \ 'charcount':'LLCharcount',
-    \ 'eskk': 'LLeskk',
     \ 'tabnr': 'LLtabnr',
     \ 'git':'LLgit',
     \ 'searchres': 'LLsearchres',
     \ 'denitebuffer' : 'LLDeniteBuffer',
-    \ 'deniteinput': 'Deniteinput',
     \ 'denitefilter' : 'LLDeniteFilter',
     \ 'progress': 'LLLspProgress',
     \ 'ddupath': 'LLddupath',
@@ -103,26 +101,6 @@ let g:lightline#bufferline#number_map = {
     \ 0: '⁰', 1: '¹', 2: '²', 3: '³', 4: '⁴',
     \ 5: '⁵', 6: '⁶', 7: '⁷', 8: '⁸', 9: '⁹'}
 
-nmap <Leader>1 <Plug>lightline#bufferline#go(1)
-nmap <Leader>2 <Plug>lightline#bufferline#go(2)
-nmap <Leader>3 <Plug>lightline#bufferline#go(3)
-nmap <Leader>4 <Plug>lightline#bufferline#go(4)
-nmap <Leader>5 <Plug>lightline#bufferline#go(5)
-nmap <Leader>6 <Plug>lightline#bufferline#go(6)
-nmap <Leader>7 <Plug>lightline#bufferline#go(7)
-nmap <Leader>8 <Plug>lightline#bufferline#go(8)
-nmap <Leader>9 <Plug>lightline#bufferline#go(9)
-nmap <Leader>0 <Plug>lightline#bufferline#go(10)
-nmap <Leader>c1 <Plug>lightline#bufferline#delete(1)
-nmap <Leader>c2 <Plug>lightline#bufferline#delete(2)
-nmap <Leader>c3 <Plug>lightline#bufferline#delete(3)
-nmap <Leader>c4 <Plug>lightline#bufferline#delete(4)
-nmap <Leader>c5 <Plug>lightline#bufferline#delete(5)
-nmap <Leader>c6 <Plug>lightline#bufferline#delete(6)
-nmap <Leader>c7 <Plug>lightline#bufferline#delete(7)
-nmap <Leader>c8 <Plug>lightline#bufferline#delete(8)
-nmap <Leader>c9 <Plug>lightline#bufferline#delete(9)
-nmap <Leader>c0 <Plug>lightline#bufferline#delete(10)
 let s:threshold = 130
 function! s:threshold(n) abort
     let s = s:threshold
@@ -149,50 +127,23 @@ let s:mode_map = {
     \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL'
     \   }
 function! LLMode()
-    return &filetype is# 'unite' ? 'Unite' :
-        \ &filetype is# 'help' ? 'Help' :
-        \ &filetype is# 'defx' ? 'Defx' :
+    return &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'fern' ? 'Fern' :
-        \ &filetype is# 'denite' ? '' :
-        \ &filetype =~# '^ddu' ? '' :
         \ &filetype is# 'undotree' ? 'undotree' :
-        \ &filetype is# 'tweetvim' ? 'Tweetvim' :
         \ &previewwindow ? 'preview' :
         \ s:mode_map[mode()]
 endfunction
 
 function! LLMyFilepath()
-    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
-        if len(w:ddu_ui_ff_status.input) > 0
-            return '#' . w:ddu_ui_ff_status.input
-        else
-            return '#'
-        endif
-    elseif &filetype =~# s:ignore_filetype
+    if &filetype =~# s:ignore_filetype
         return ''
-        " elseif exists('*anzu#search_status') && strwidth(s:llanzu())
-        "     return s:llanzu()
     else
-        " if exists('g:loaded_webdevicons')
-        "     let icon = WebDevIconsGetFileTypeSymbol()
-        " else
-        "     let icon = ''
-        " endif
-
-        " let l:filepath = expand('%:~:.')
-        " let width = winwidth(0) - 60
-        " let len = strdisplaywidth(l:filepath)
-        " if len > width
-        "     let filepath = '...' .. strpart(filepath,  len - width)
-        " endif
-        " let l:modified = &modified ? '[+]' : ''
-        " return  l:filepath . l:modified . ' ' . icon
         return fnamemodify(getcwd(),':~')
     endif
 endfunction
 
 "例外filetype
-let s:ignore_filetype = '\v(vimfiler|gundo|defx|tweetvim|denite|denite-filter|fern|^ddu)'
+let s:ignore_filetype = '\v(^ddu)'
 function! s:ignore_window() abort
     return &filetype =~# s:ignore_filetype || &previewwindow
 endfunction
@@ -202,8 +153,6 @@ function! LLInactiveFilename()
         return LLMode()
     endif
     return ''
-    " let l:modified = &modified ? '[+]' : ''
-    " return  expand('%:~:.')..l:modified
 endfunction
 
 function! LLeskk() abort
@@ -242,20 +191,21 @@ function! LLCharcount()
         let [lnum2, col2] = getpos(".")[1:2]
         let [lnum1, lnum2] = lnum2 < lnum1 ? [lnum2, lnum1] :[lnum1, lnum2]
         if abs(lnum1 - lnum2) < 1000
-        for l in range(lnum1, lnum2)
-            let width += strwidth(getline(l))
-        endfor
-    else
-        let width = strwidth(getline('.'))
+            for l in range(lnum1, lnum2)
+                let width += strwidth(getline(l))
+            endfor
+        else
+            let width = strwidth(getline('.'))
         endif
     else
         let width = strwidth(getline('.'))
     endif
+
     let width = width/2
     if !s:ignore_window()
         " return abbr
         let ac =  s:llcharallcount > 10000 ? s:llcharallcount/1000 . 'k' : s:llcharallcount
-        return ' ' . printf('%3S', width .. '| ' .. ac)
+        return ' ' . printf('%2S| %S', width , ac)
     else
         return ''
     endif
@@ -322,14 +272,6 @@ function! s:llgitcache() abort
     endif
 endfunction
 
-" 検索ステータスを表示 (vim-anzuを利用) {{{
-" autocmd dein InsertEnter,BufEnter,CursorMoved,CmdlineEnter * if exists('*anzu#clear_search_status')
-"     \| call anzu#clear_search_status() | endif
-
-
-" autocmd dein CmdlineLeave /,\? :call timer_start(0, {-> execute('AnzuUpdateSearchStatus') } )
-" autocmd dein User IncSearchExecute if exists(':AnzuUpdateSearchStatus') | call execute('AnzuUpdateSearchStatus') | endif
-
 function! s:llanzu()
     let s:anzu = substitute(anzu#search_status(), '\v^(\\v|\\V)', "" , "")
     return strwidth(s:anzu) < 30 ? s:anzu : matchstr(s:anzu,'(\d\+\/\d\+)')
@@ -350,20 +292,12 @@ function! s:llddustatus() abort
     let s:ddustatus = ddu#custom#get_current(b:ddu_ui_name)
 endfunction
 function! LLddupath() abort
-    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_item') && exists('w:ddu_ui_ff_status')
-        let path = ''
-        if len(w:ddu_ui_ff_item.sources) <= 0
-            return ''
-        endif
-
-        let options = get(w:ddu_ui_ff_item.sources[0],'options', {})
-        let params = get(w:ddu_ui_ff_item.sources[0],'params',{})
-        let path_o = len(options) ? get(options,'path','') : ''
-        let path_p = len(params)  ? get(params,'path','') : ''
-        let path = len(path_p) ? path_p : len(path_o) ? path_o : getcwd()
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+        " let options = get(w:ddu_ui_ff_item.sources[0],'options', {})
+        " let path = len(options) ? get(options,'path','') : getcwd()
 
         let done = w:ddu_ui_ff_status.done ? '' : '[loading...] '
-        return done .. fnamemodify(path, ':~')
+        return done
     endif
     return ''
 endfunction
@@ -376,37 +310,26 @@ function! s:denite_statusline() abort
     endif
 endfunction
 
-function! Deniteinput() abort
-    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status') && w:ddu_ui_ff_status.done
+" function! Deniteinput() abort
+"     if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status') && w:ddu_ui_ff_status.done
 
-        " return ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].params.path
-        " let path = get(ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].params, 'path', '') ||
-        " \ get(ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].options.params, 'path', '')
-        " let p = get(ddu#custom#get_current(b:ddu_ui_name).sources[0].options, 'path', '')
-        return ''
-    else
-        return ''
-    endif
-    " return '[' .. done .. ']' .. w:ddu_ui_ff_status.name .. ' ' .. w:ddu_ui_ff_status.maxItems
+"         " return ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].params.path
+"         " let path = get(ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].params, 'path', '') ||
+"         " \ get(ddu#custom#get_current(w:ddu_ui_ff_status.name).sources[0].options.params, 'path', '')
+"         " let p = get(ddu#custom#get_current(b:ddu_ui_name).sources[0].options, 'path', '')
+"         return ''
+"     else
+"         return ''
+"     endif
+"     " return '[' .. done .. ']' .. w:ddu_ui_ff_status.name .. ' ' .. w:ddu_ui_ff_status.maxItems
 
-endfunction
+" endfunction
 
-function! s:denitebuf()
-    return denite#get_status('buffer_name')
-endfunction
+" function! s:denitebuf()
+"     return denite#get_status('buffer_name')
+" endfunction
 
 function! s:denitesource()
-    " let l:sources = denite#get_status('sources')
-    " let l:sources = substitute(l:sources, " file:\\['new'\\](\\d\\+/\\d\\+)", '','g')
-    " let l:p = denite#get_status('path')
-    " let l:path = matchstr(l:p, "\\[\\zs.*\\ze\\]", 'g')
-    " let l:path = fnamemodify(l:path,':~')
-    " if strwidth(l:path) > 40
-    "     let path = '.../' . fnamemodify(path,':h:h:t'). '/'
-    "         \ . fnamemodify(path,':h:t'). '/'. fnamemodify(path, ':t')
-    " endif
-    " let l:path =  '[' . l:path . ']'
-    " let l:sources = substitute(l:sources, "\:\\[.*\\]", '','g')
     if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
         return printf('[%d/%d]', line('.'),line('$'))
     endif

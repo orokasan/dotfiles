@@ -93,7 +93,7 @@ M.fetch_symbols_sync = function(bufnr)
   end
   -- This sets the proper end_lnum and end_col
   postprocess_symbols(bufnr, items)
-  backends.set_symbols("txt", bufnr, items)
+  backends.set_symbols(bufnr, items, {backend_name = "txt"} )
 end
 
 M.fetch_symbols = M.fetch_symbols_sync

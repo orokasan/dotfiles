@@ -1,4 +1,5 @@
 "ork's vimrc
+"
 augroup vimrc
   autocmd!
 augroup END
@@ -28,7 +29,7 @@ let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
 let g:did_indent_on             = 1
 let g:did_load_filetypes        = 1
-let g:loaded_2html_plugin       = 1
+" let g:loaded_2html_plugin       = 1
 let g:loaded_man                = 1
 let g:loaded_matchit            = 1
 let g:loaded_remote_plugins     = 1
@@ -36,13 +37,18 @@ let g:loaded_shada_plugin       = 1
 let g:loaded_spellfile_plugin   = 1
 let g:loaded_tutor_mode_plugin  = 1
 
+" set guifont:HackGen\ Console\ NFJ:h11
 if exists('nvy')
-  set guifont:HackGen\ Console\ NFJ:h11
 endif
 if exists('neovide')
-  set guifont=PlemolJP:h12
+  set guifont=PlemolJP:h12:#e-subpixelantialias
+  set linespace=1
+  let g:neovide_padding_top = 0
+  let g:neovide_padding_bottom = 0
+  let g:neovide_padding_right = 0
+  let g:neovide_padding_left = 0
   let g:neovide_refresh_rate=60
-  " let g:neovide_transparency=0.95
+  let g:neovide_transparency=0.95
   let g:neovide_profiler = v:false
   let g:neovide_confirm_quit = v:true
   cd ~/
@@ -87,7 +93,7 @@ let g:dein#install_progress_type = "floating"
 " dein.vim {{{
 " let g:dein#auto_recache = 1
 if has('nvim')
-let g:dein#default_options = { 'merged': v:true }
+let g:dein#default_options = { 'merged': v:false }
 else
 let g:dein#default_options = { 'merged': v:false }
 endif
@@ -164,6 +170,9 @@ set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis
 colorscheme iceberg
 set background=dark
 let g:lightline.colorscheme = 'iceberg'
+" colorscheme snowtrek
+" set background=light
+" let g:lightline.colorscheme = 'one'
 
 set notermguicolors
 set swapfile
@@ -183,7 +192,7 @@ set backup
 " Visual  {{{
 " language C
 set ambiwidth=single
-set shortmess=aActTFOo
+set shortmess=aActTFOoI
 set showtabline=2
 set number
 set signcolumn=number
@@ -359,11 +368,10 @@ nmap ; :
 vmap ; :
 xmap ; :
 inoremap jk <esc>
-nnoremap <Leader>f <Cmd>lopen<CR>
 nnoremap <silent> <leader>v <Cmd>e $MYVIMRC<CR>
-nnoremap <silent> <Leader>sv <Cmd>source $MYVIMRC<bar>echom 'vimrc reloaded'<CR>
+nnoremap <silent> <Leader><leader>v <Cmd>source $MYVIMRC<bar>echom 'vimrc reloaded'<CR>
 " source opening vim script
-nnoremap <Leader>ss <Cmd>call <SID>source_script('%')<CR>
+nnoremap <Leader><leader>s <Cmd>call <SID>source_script('%')<CR>
 function! s:source_script(path) abort
   let path = expand(a:path)
   if !filereadable(path) || getbufvar(a:path, '&filetype') !=# 'vim'
@@ -808,9 +816,18 @@ inoremap <silent> <c-l> <C-g>u<ESC><cmd>call <SID>move_to_char_pos('★')<CR>
 "   end
 " })
 " EOF
-" \([下上]\|このよ\|先ほ\|次の\)
-" おたよりページ エクセルデータから誌面用のフォーマットに変換（改行なし、タブ区切り）
-" %s/\v^(.{-})\t.{-}\t(.{-})\t.{-}\t.{-}\t.{-}\t.{-}\d{7}\t(.{-}[都|道|府|県]).{-}\t.{-}\t(.{-})\t(.*)$/\=submatch(4) .. '	' .. submatch(5) .. '	' .. (submatch(1) != ''? submatch(1) : submatch(2)) .. 'さん／' .. submatch(3).. ''
 let g:denops#debug = v:false
 let g:denops#trace = v:false
+
+function! s:change_textwidth()
+let &tw = input('Input textwidth value: ')
+endfunction
+
+nnoremap <leader>u <Cmd>call <SID>change_textwidth()<CR>
+" if has('win32') || has('win64')
+"     let g:quickrun_config['python'] = { 
+"     \   "hook/output_encode/enable" : 1,
+"     \   "hook/output_encode/encoding" : "cp932",
+"     \}
+" endif
 " vim:set foldmethod=marker:

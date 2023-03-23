@@ -34,7 +34,7 @@ export class Column extends BaseColumn<Params> {
   private directoryPalette: IconList = {};
 
   async onInit(args: { denops: Denops }): Promise<void> {
-    await args.denops.eval("nerdfont#find()")
+    await args.denops.eval("nerdfont#find()");
     this.extensionPalette = (await args.denops.eval(
       "extend(copy(g:nerdfont#path#extension#defaults), g:nerdfont#path#extension#customs,)",
     )) as IconList;
@@ -54,73 +54,38 @@ export class Column extends BaseColumn<Params> {
     endCol: number;
     item: DduItem;
   }): Promise<GetTextResult> {
-
     const highlights: ItemHighlight[] = args.item.highlights ?? [];
+    if (args.item.display && (args.item.word != args.item.display)) {
+      return Promise.resolve({
+        text: args.item.display ?? args.item.word,
+        highlights: highlights
+      });
+    }
 
-    const word = args.item.display ?? args.item.word;
     const isDir = isDirectory(args.item);
-
-    if (!args.columnParams.kind.includes(args.item.kind ?? "base")) {
-      return Promise.resolve({ text: word, highlights: highlights });
-    }
-
-    const mergin = this.iconWidth + this.span +
-      args.columnParams.padding;
-
-    const initialized = highlights.some((hi) => hi.name == "column-icon");
-
-    // 既存のハイライトの位置を、アイコンの分だけずらす
-    if (!initialized) {
-      highlights?.filter((p) => {
-        p.col += mergin;
-      });
-    } else {
-      // 処理済みアイテムがある場合スキップ
-      highlights?.filter((p) => {
-        // 一部のハイライトは動的に位置が変化する
-        if (args.columnParams.ignoreMatcherHighlight.includes(p.name)) {
-          p.col += mergin;
-        }
-      });
-      return Promise.resolve({ text: word, highlights: highlights });
-    }
-
     const prefix = this.makePrefix(args.item, args.columnParams);
 
-    let text: string;
+    const text = prefix + (args.item.display ?? args.item.word);
+    if (args.item.__level > 0) {
+      highlights.push({
+        name: "column-icon-padding",
+        hl_group: "Comment",
+        col: args.startCol + args.item.__level + args.columnParams.padding + 1,
+        width: 1,
+      });
+    }
 
-    if (args.columnParams.filer) {
-      text = prefix + args.item.word;
-      if (args.item.__level > 0) {
-        highlights.push({
-          name: "column-icon-padding",
-          hl_group: "Comment",
-          col: args.startCol + args.item.__level + args.columnParams.padding + 1,
-          width: 1,
-        });
-      }
-
-      if (isDir) {
-        const userHighlights = args.columnParams.highlights;
-        highlights.push({
-          name: "column-icon",
-          hl_group: userHighlights.directoryName ?? "function",
-          col: args.startCol +
-            args.item.__level +
-            args.columnParams.padding +
-            this.iconWidth +
-            1,
-          width: charposToBytepos(text, -1),
-        });
-      }
-    } else {
-      text = prefix + (args.item.display ?? args.item.word);
-
+    if (isDir) {
+      const userHighlights = args.columnParams.highlights;
       highlights.push({
         name: "column-icon",
-        hl_group: "",
-        col: 0,
-        width: 0,
+        hl_group: userHighlights.directoryName ?? "function",
+        col: args.startCol +
+          args.item.__level +
+          args.columnParams.padding +
+          this.iconWidth +
+          1,
+        width: charposToBytepos(text, -1),
       });
     }
 

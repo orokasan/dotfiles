@@ -63,23 +63,29 @@ depends = ['lightline.vim']
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
 hook_add = '''
-autocmd dein ColorScheme iceberg highlight! PmenuSel ctermbg=236 guibg=#3d425b
-autocmd dein ColorScheme iceberg highlight! Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd dein ColorScheme iceberg highlight! NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
-autocmd dein ColorScheme iceberg highlight! clear Search
-autocmd dein ColorScheme iceberg highlight! link Search Title
-autocmd dein ColorScheme iceberg highlight! link Conceal Title
-autocmd dein ColorScheme iceberg highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
-autocmd dein ColorScheme iceberg highlight! PmenuSelected gui=bold guifg=#e2a478 guibg=#3d425b blend=0
-autocmd dein ColorScheme iceberg highlight! link WhiteSpace Comment
-if has('nvim')
-autocmd dein ColorScheme iceberg highlight! link @text.diff.add DiffAdd
-autocmd dein ColorScheme iceberg highlight! link @text.diff.change DiffChange
-autocmd dein ColorScheme iceberg highlight! link @text.diff.delete DiffDelete
+autocmd dein ColorScheme iceberg call My_iceberg_highlight()
+function! My_iceberg_highlight()
+highlight! PmenuSel ctermbg=236 guibg=#3d425b
+highlight! Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+highlight! NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+highlight! clear Search
+highlight! link Search Title
+highlight! link Conceal Title
+highlight! link WinBarNC Comment
+highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
+highlight! PmenuSelected gui=bold guifg=#e2a478 guibg=#3d425b blend=0
+highlight! link WhiteSpace Comment
+
+highlight! link @text.diff.add DiffAdd
+highlight! link @text.diff.change DiffChange
+highlight! link @text.diff.delete DiffDelete
+hi! GitsignsAdd guifg=#8a8a67 guibg=#1e2132
+hi! GitsignsChange guifg=#54909c guibg=#1e2132
+hi! GitSignsDelete guifg=#9c4848 guibg=#1e2132
 "autocmd dein ColorScheme iceberg highlight! @punctuation.delimiter gui=bold guifg=#a093c7
 "autocmd dein ColorScheme iceberg highlight! link @punctuation.special Comment
 "autocmd dein ColorScheme iceberg highlight! link @text.uri String
-endif
+endfunction
 "autocmd dein ColorScheme iceberg highlight! clear CursorLine
 "autocmd dein ColorScheme iceberg highlight! CursorLine gui=underline guisp=#c6c8d1
 " autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
@@ -192,39 +198,7 @@ merged = 0
 repo = 'thinca/vim-singleton'
 
 [[plugins]]
-repo = 'lambdalisue/nerdfont.vim'
-hook_add = '''
-if !has('nvim')
-au dein VimEnter * call nerdfont#find()
-au dein VimEnter * let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
-au dein VimEnter * let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
-au dein VimEnter * call nerdfont#find('.')
-endif
-let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
-let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
-let g:nerdfont#directory#customs = {
-    \ '': '',
-    \ 'open': '',
-    \ 'close': '',
-    \ 'symlink': '',
-    \}
-let g:nerdfont#path#extension#customs = {
-    \'txt' :  '',
-    \'pdf' :  '',
-    \'docx' :  '',
-    \'doc' :  '',
-    \'xlsx' :  '',
-    \'xlsm' :  '',
-    \'pptx' :  '',
-    \'ppt' :  '',
-    \'tex' :  '',
-    \'zip': ''
-    \}
-augroup my-glyph-palette
-  autocmd! *
-  autocmd FileType ddu-ff,ddu-filer call glyph_palette#apply()
-augroup END
-'''
+repo = 'machakann/vim-colorscheme-snowtrek'
 
 [[plugins]]
 repo = 'lambdalisue/glyph-palette.vim'
@@ -246,6 +220,14 @@ let g:mr_mrr_disabled = v:true
 let g:mr#mru#predicates = [{ filename -> filename !~# '\(doc[\\\/].*txt\|COMMIT_EDITMSG\|mail.google.*\)' }]
 '''
 
+[[plugins]]
+repo='Shougo/junkfile.vim'
+hook_add = '''
+nnoremap <silent> <C-T> <Cmd>tabnew<bar>JunkfileOpen txt<CR>
+nnoremap <silent> g<C-T> <Cmd>JunkfileOpen<CR>
+nnoremap <C-S> <Cmd>JunkfileOpen<CR>
+'''
+
 [ftplugin]
 typescript = '''
 setlocal tabstop=2
@@ -259,7 +241,9 @@ inoremap <buffer><silent><expr> <C-d> getcurpos()[2] ==# 1 ? "- " :
     \ match(getline('.'), '^-\s') >=0 ? "<C-u>" : "\<C-d>"
 inoremap <buffer><silent><expr> <C-t> getcurpos()[2] ==# 1 ? "- " : "\<C-t>"
 nnoremap <buffer><silent><expr> o match(getline('.'), '\*\s') >=0 ? "o- " : "o"
+'''
 
+tsv = '''
 setlocal comments=b:*,b:-,b:+,b:1.,nb:>
 setlocal formatoptions-=c formatoptions+=jro
 setlocal nowrap

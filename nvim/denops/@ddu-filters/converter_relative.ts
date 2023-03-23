@@ -23,10 +23,18 @@ export class Filter extends BaseFilter<Params> {
       const action = item.action as ActionData;
       if (!action.path) return false;
       const relpath = relative(dir, action.path);
-      if (item.word == action.path) 
-      {
-      item.word = relpath;
-      item.matcherKey = relpath;
+      if (item.word == action.path) {
+        item.word = relpath;
+        item.matcherKey = relpath;
+        if (item.display) {
+          const prevHighlightLength = item.display.length
+          item.display = item.display.replace(action.path, relpath);
+          const CurHighlightLength = item.display.length
+          item.highlights?.filter( (i) => {
+            const highlight_col = i.col - (prevHighlightLength - CurHighlightLength)
+            i.col = highlight_col >= 0 ? highlight_col : 0
+          } )
+        }
       }
     });
     return Promise.resolve(items);

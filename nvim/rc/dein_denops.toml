@@ -80,31 +80,45 @@ autocmd dein ColorScheme * hi InEskkKanaSign gui=bold guifg=#e2a478
 let s:insertpos = 0
 let s:insert_icon = '▶'
 
-call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
-call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
-call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 51 })
+"call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
+"call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
+"call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 51 })
 
-au vimrc InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()
-au vimrc CursorMovedI * if s:insertpos != line('.') | call s:insert_highlight() | let s:insertpos = line('.') | endif
+"au vimrc InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()
+"au vimrc CursorMovedI * if s:insertpos != line('.') | call s:insert_highlight() | let s:insertpos = line('.') | endif
+"
+"if has('nvim')
+"au vimrc InsertLeavePre * call sign_unplace('Ins')
+"else
+"au vimrc InsertLeave * call sign_unplace('Ins')
+"endif
+"
+"function! s:insert_highlight() abort
+"call sign_unplace('Ins')
+"if &l:iminsert
+"call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
+"else
+"call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
+"endif
+"endfunction
 
-if has('nvim')
-au vimrc InsertLeavePre * call sign_unplace('Ins')
-else
-au vimrc InsertLeave * call sign_unplace('Ins')
-endif
+autocmd vimrc User skkeleton-enable-post call s:highlight_imesign_on()
+autocmd vimrc User skkeleton-disable-post call s:highlight_imesign_off()
 
-function! s:insert_highlight() abort
-call sign_unplace('Ins')
-if &l:iminsert
-call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
-else
-call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
-endif
+function! s:highlight_imesign_off()
+if mode() is# 'c' | return | endif
+lua vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
 endfunction
 
+function! s:highlight_imesign_on()
+if mode() is# 'c' | return | endif
+lua vim.api.nvim_set_hl(0, 'SmoothCursor', { link = "InEskkKanaSign" })
+endfunction
+
+
 call skkeleton#config({
-\ 'globalJisyo': expand('~/.skk/SKK-JISYO.L'),
-\ 'userJisyo': expand('~/.skk/.skk-jisyo'),
+\ 'globalJisyo': expand('~/GoogleDrive/config/.skk/SKK-JISYO.L'),
+\ 'userJisyo': expand('~/GoogleDrive/config/.skk/.skk-jisyo'),
 \ 'completionRankFile': expand('~/.skk/.skkeleton_rank'),
 \ 'eggLikeNewline': v:true,
 \ 'registerConvertResult': v:true,
@@ -175,22 +189,12 @@ call skkeleton#register_kanatable('rom', {
 
 call skkeleton#register_keymap('input', ';', 'henkanPoint')
 
-autocmd vimrc User skkeleton-enable-post call s:highlight_imesign_on()
-autocmd vimrc User skkeleton-disable-post call s:highlight_imesign_off()
-
-function! s:highlight_imesign_off()
-if mode() is# 'c' | return | endif
-call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
-endfunction
-
 nnoremap i <cmd>setlocal iminsert=0<CR>i
 
-function! s:highlight_imesign_on()
-if mode() is# 'c' | return | endif
-call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
-endfunction
 
 '''
+[[plugins]]
+repo ='kat0h/bufpreview.vim'
 
 [[plugins]]
 repo = 'LumaKernel/ddc-file'
@@ -235,9 +239,9 @@ lazy = 1
 on_func = 'ddu#start'
 hook_add = '''
 source ~/dotfiles/nvim/rc/config/ddu_mapping.rc.vim
+source ~/dotfiles/nvim/rc/config/ddu.rc.vim
 '''
 hook_source = '''
-source ~/dotfiles/nvim/rc/config/ddu.rc.vim
 '''
 
 [[plugins]]

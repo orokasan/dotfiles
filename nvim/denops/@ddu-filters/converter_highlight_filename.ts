@@ -22,13 +22,6 @@ export class Filter extends BaseFilter<Params> {
     items: DduItem[];
   }): Promise<DduItem[]> {
     return Promise.resolve(args.items.filter((v) => {
-      const done = v.highlights?.filter((h) => h.name === "hl_dirname");
-      if (done) {
-        done.map((p)=> {
-          p.col = 1
-        })
-        return true;
-      }
       const action = v.action as ActionData;
       if (!v.highlights) v.highlights = [];
       v.highlights.push(

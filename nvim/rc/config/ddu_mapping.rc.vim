@@ -18,10 +18,15 @@ function! s:ddu_mapping() abort
       \ -ui-param-split=floating
       \ -ui-param-autoResize
       \ jump<CR>
-  nnoremap <silent> sS <cmd>Ddu
+
+  nnoremap <silent> ss <cmd>Ddu
       \ -name=file
       \ file -source-option-path=`expand('%:p:h')`<CR>
-  nnoremap <silent> ss <cmd>Ddu file -source-option-path=`getcwd()`<CR>
+  nnoremap <silent> <leader>s <cmd>Ddu
+      \ -name=file
+      \ -searchPath=`expand('%:p')`
+      \ file -source-option-path=`expand('%:p:h')`<CR>
+  nnoremap <silent> sS <cmd>Ddu file -source-option-path=`getcwd()`<CR>
   nnoremap <silent> s/ <cmd>Ddu searchres<CR>
   nnoremap <silent> sy <cmd>Ddu
       \ -name=word
@@ -39,8 +44,8 @@ function! s:ddu_mapping() abort
   nnoremap <silent> s* <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': expand('<cword>')}}]})<CR>
   nnoremap <silent> sG <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'input': input('Pattern: ')}}]})<CR>
   nnoremap <silent> sG <cmd>call ddu#start({'sources': [{'name': 'grep_all', 'params': {'input': input('Pattern: ')}}]})<CR>
-  nnoremap <silent> sF <cmd>Ddu file_external -source-option-path=`<SID>find_gitdir()` -ui-param-startFilter=v:true<CR>
-  nnoremap <silent> sf <cmd>Ddu file_external -source-option-path=`getcwd()`<CR>
+  nnoremap <silent> sf <cmd>Ddu file_external -source-option-path=`<SID>find_gitdir()` -ui-param-startFilter=v:true<CR>
+  nnoremap <silent> sF <cmd>Ddu file_external -source-option-path=`getcwd()`<CR>
   nnoremap <silent> sp <cmd>call ddu#start({'name': 'default', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}, 'params':{}}]})<CR>
   nnoremap <silent> sj <cmd>Ddu dirmark<CR>
   nnoremap <silent> s- <cmd>Ddu -ui-param-startFilter=v:true dein<CR>
@@ -57,9 +62,9 @@ function! s:ddu_mapping() abort
   nnoremap <silent> <space>e <cmd>call ddu#start({'name': 'filer', 'searchPath': expand('%:p'), 'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}]})<CR>
   nnoremap <silent> <space>E <cmd>call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}}]})<CR>
   " nnoremap <silent> <space>e <cmd>Ddu -name=filer -path=`expand('%:h:p')` file<CR>
-  nnoremap <silent> st <cmd> call ddu#start({'name': 'tree', 'focus': v:true, 'options':{'searchPath': ''}, 'sources': [{'name': 'text'}],'resume': v:true, 'refresh':v:true}})<CR>
+  nnoremap <silent> st <cmd> call ddu#start({'name': 'tree',  'options':{'searchPath': ''}, 'sources': [{'name': 'text'}],'resume': v:true, 'refresh':v:true}})<CR>
 
-  nnoremap <silent> <C-e> <cmd> call ddu#start({'name': 'filer', 'focus': v:true,'resume': v:true})<CR>
+  nnoremap <silent> <C-e> <cmd> call ddu#start({'name': 'filer', 'resume': v:true})<CR>
   " echom 'Denops Ready!'
 endfunction
 

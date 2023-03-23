@@ -7,7 +7,7 @@ repo = 'williamboman/mason-lspconfig.nvim'
 on_source = ['nvim-lspconfig']
 
 [[plugins]]
-on_event = ['BufRead']
+on_event = ['BufRead','BufNew']
 repo = 'neovim/nvim-lspconfig'
 # depend = ['mason.nvim', 'mason-lspconfig.nvim']
 # plugins = ['mason.nvim', 'mason-lspconfig.nvim', 'nvim-lspconfig']
@@ -110,21 +110,45 @@ mason_lspconfig.setup({
 })
 mason_lspconfig.setup_handlers({ function(server_name)
   local config = default_config
+  local node_root_dir = nvim_lsp.util.root_pattern("package.json")
+  local is_node_repo = node_root_dir(vim.api.nvim_buf_get_name(0)) ~= nil
 
-  if server_name == 'denols' then
-    config = vim.tbl_extend('force', default_config,
-      {
-        single_file_support = true,
-        init_options = {
-          enable = true,
-          lint = true,
-          unstable = true,
-        },
-        filetypes = {
-          'typescript'
-        }
-      })
-  end
+  -- if server_name == "tsserver" then
+  --   print(is_node_repo)
+  --   if not is_node_repo then
+  --     return
+  --   end
+  --   end
+
+  --  config.root_dir = node_root_dir
+  if server_name == "denols" then
+    if is_node_repo then
+      return
+    end
+      config.root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc", "deps.ts", "import_map.json")
+      config = vim.tbl_extend('force', default_config,
+        {
+          single_file_support = true,
+          root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc", "deps.ts", "import_map.json"),
+          init_options = {
+            enable = true,
+            lint = true,
+            unstable = true,
+          },
+          suggest = {
+            imports = {
+              hosts = {
+                ["https://deno.land"] = true,
+                ["https://cdn.nest.land"] = true,
+                ["https://crux.land"] = true
+              }
+            }
+          },
+          filetypes = {
+            'typescript'
+          }
+        })
+      end
   if server_name == 'marksman' then
     config = vim.tbl_extend('force', default_config,
       {
@@ -342,7 +366,7 @@ au dein FocusGained * call To_miniyank_on_focused()
 [[plugins]]
 if = 'executable("gcc")'
 repo = 'nvim-treesitter/nvim-treesitter'
-on_event = ['BufRead']
+on_event = ['BufRead','BufNew']
 lua_source = '''
 local ts_path = vim.fn.stdpath('data') .. '/treesitter'
 vim.api.nvim_set_option('runtimepath', vim.api.nvim_get_option('runtimepath') .. ',' .. ts_path)
@@ -352,7 +376,7 @@ require 'nvim-treesitter.configs'.setup {
   tree_docs = { enable = true },
   highlight = {
     enable = true,
-    disable = { "cpp", "toml", "help", },
+    disable = { "cpp", "toml", "help", 'markdown'},
     -- additional_vim_regex_highlighting = {'markdown'},
   },
   indent = {
@@ -395,6 +419,11 @@ require 'hop'.setup {
 [[plugins]]
 repo = 'kevinhwang91/nvim-hlslens'
 on_lua = ['hlslens']
+hook_source = '''
+hi! default link HlSearchNear Title
+hi! default link HlSearchLens Function
+hi! default link HlSearchLensNear Constant
+'''
 lua_source = '''
 require('hlslens').setup({
   calm_down = true,
@@ -424,8 +453,101 @@ require('history-ignore').setup{}
 # [[plugins]]
 # repo = 'rcarriga/nvim-notify'
 
-# [[plugins]]
-# repo = 'nvim-treesitter/nvim-treesitter-context'
+[[plugins]]
+on_source = ['nvim-treesitter']
+repo = 'nvim-treesitter/nvim-treesitter-context'
+lua_source = '''
+require'treesitter-context'.setup{}
+--     enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+--     max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+--     trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+--     min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+--     patterns = { -- Match patterns for TS nodes. These get wrapped to match at word boundaries.
+--         -- For all filetypes
+--         -- Note that setting an entry here replaces all other patterns for this entry.
+--         -- By setting the 'default' entry below, you can control which nodes you want to
+--         -- appear in the context window.
+--         default = {
+--             'class',
+--             'function',
+--             'method',
+--             'for',
+--             'while',
+--             'if',
+--             'switch',
+--             'case',
+--             'interface',
+--             'struct',
+--             'enum',
+--         },
+--         -- Patterns for specific filetypes
+--         -- If a pattern is missing, *open a PR* so everyone can benefit.
+--         tex = {
+--             'chapter',
+--             'section',
+--             'subsection',
+--             'subsubsection',
+--         },
+--         haskell = {
+--             'adt'
+--         },
+--         rust = {
+--             'impl_item',
+-- 
+--         },
+--         terraform = {
+--             'block',
+--             'object_elem',
+--             'attribute',
+--         },
+--         scala = {
+--             'object_definition',
+--         },
+--         vhdl = {
+--             'process_statement',
+--             'architecture_body',
+--             'entity_declaration',
+--         },
+--         markdown = {
+--             'section',
+--         },
+--         elixir = {
+--             'anonymous_function',
+--             'arguments',
+--             'block',
+--             'do_block',
+--             'list',
+--             'map',
+--             'tuple',
+--             'quoted_content',
+--         },
+--         json = {
+--             'pair',
+--         },
+--         typescript = {
+--             'export_statement',
+--         },
+--         yaml = {
+--             'block_mapping_pair',
+--         },
+--     },
+--     exact_patterns = {
+--         -- Example for a specific filetype with Lua patterns
+--         -- Treat patterns.rust as a Lua pattern (i.e "^impl_item$" will
+--         -- exactly match "impl_item" only)
+--         -- rust = true,
+--     },
+-- 
+--     -- [!] The options below are exposed but shouldn't require your attention,
+--     --     you can safely ignore them.
+-- 
+--     zindex = 20, -- The Z-index of the context window
+--     mode = 'cursor',  -- Line used to calculate context. Choices: 'cursor', 'topline'
+--     -- Separator between context and content. Should be a single character string, like '-'.
+--     -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+--     separator = nil,
+-- }
+'''
 
 [[plugins]]
 on_source = ['nvim-lspconfig']
@@ -489,6 +611,7 @@ onoremap au :<c-u>lua require"treesitter-unit".select(true)<CR>
 #       return vim.o.columns * 0.4
 #     end
 #   end,
+#   start_in_insert = true,
 #   shade_terminals = true
 # }
 # '''
@@ -641,7 +764,7 @@ require 'lsp_signature'.setup(cfg) -- no need to specify bufnr if you don't use 
 
 [[plugins]]
 repo = 'delphinus/cellwidths.nvim'
-on_event = ['BufRead']
+on_event = ['BufRead','BufNew']
 lua_source = '''
 require("cellwidths").setup {
   name = "user/custom",
@@ -695,6 +818,7 @@ require("cellwidths").setup {
       { 0xe62e, 0xe62e, 2 },
       { 0xf315, 0xf316, 2 },
       { 0xf31b, 0xf31c, 2 },
+      { 0xf62e, 0xf62e, 2 },
       { 0xe0a0, 0xe0a3, 2 },
       { 0xe0b0, 0xe0c8, 2 },
       { 0xe0ca, 0xe0ca, 2 },
@@ -767,7 +891,7 @@ on_map = ["<Plug>(dial-"]
 hook_add = '''
 nnoremap  <C-a>  <Plug>(dial-increment)
 nnoremap  <C-x>  <Plug>(dial-decrement)
-vnoremap  <C-a>  <Plug>(dial-increment)
+inoremap  <C-a>  <Plug>(dial-increment)
 vnoremap  <C-x>  <Plug>(dial-decrement)
 vnoremap g<C-a> g<Plug>(dial-increment)
 vnoremap g<C-x> g<Plug>(dial-decrement)
@@ -801,11 +925,8 @@ augend.constant.new{
 
 [[plugins]]
 repo = 'lewis6991/gitsigns.nvim'
-on_event = ['BufRead']
+on_event = ['BufRead','BufNew']
 hook_source = '''
-hi! GitsignsAdd guifg=#8a8a67 guibg=#1e2132
-hi! GitsignsChange guifg=#54909c guibg=#1e2132
-hi! GitSignsDelete guifg=#9c4848 guibg=#1e2132
 '''
 lua_source = '''
 require('gitsigns').setup{
@@ -888,6 +1009,44 @@ require("csvtools").setup({
 #     },
 # })
 # '''
+[[plugins]]
+repo = 'gen740/SmoothCursor.nvim'
+on_event = ['BufRead','BufNew']
+lua_source = '''
+vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1'})
+require('smoothcursor').setup({
+    autostart = true,
+    cursor = "▶",              -- cursor shape (need nerd font)
+    texthl = "SmoothCursor",   -- highlight group, default is { bg = nil, fg = "#FFD400" }
+    linehl = nil,              -- highlight sub-cursor line like 'cursorline', "CursorLine" recommended
+    type = "default",          -- define cursor movement calculate function, "default" or "exp" (exponential).
+    flyin_effect = "bottom",        -- "bottom" or "top"
+    speed = 30,                -- max is 100 to stick to your current position
+    intervals = 20,            -- tick interval
+    priority = 1,             -- set marker priority
+    timeout = 3000,            -- timout for animation
+    threshold = 3,             -- animate if threshold lines jump
+    disable_float_win = false, -- disable on float window
+    enabled_filetypes = nil,   -- example: { "lua", "vim" }
+    disabled_filetypes = nil,  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
+})
+local autocmd = vim.api.nvim_create_autocmd
+local augroup = vim.api.nvim_create_augroup
+autocmd({ 'ModeChanged' }, {
+  group = 'dein',
+  callback = function()
+    local current_mode = vim.fn.mode()
+    if current_mode == 'n' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
+      -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
+    elseif current_mode == 'v' or current_mode == 'V' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#b4be82' })
+    elseif current_mode == 'i' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#84a0c6' })
+    end
+  end,
+})
+'''
 
 # [[plugins]]
 # lazy = 0
