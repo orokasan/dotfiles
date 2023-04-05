@@ -1,5 +1,5 @@
 "ork's vimrc
-"
+lua if vim.loader then vim.loader.enable() end
 augroup vimrc
   autocmd!
 augroup END
@@ -37,9 +37,6 @@ let g:loaded_shada_plugin       = 1
 let g:loaded_spellfile_plugin   = 1
 let g:loaded_tutor_mode_plugin  = 1
 
-" set guifont:HackGen\ Console\ NFJ:h11
-if exists('nvy')
-endif
 if exists('neovide')
   set guifont=PlemolJP:h12:#e-subpixelantialias
   set linespace=1
@@ -89,9 +86,7 @@ endif
 " endif
 let mapleader = "\<Space>"
 let g:dein#install_progress_type = "floating"
-"}}}
-" dein.vim {{{
-" let g:dein#auto_recache = 1
+
 if has('nvim')
 let g:dein#default_options = { 'merged': v:false }
 else
@@ -169,10 +164,6 @@ set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis
 
 colorscheme iceberg
 set background=dark
-let g:lightline.colorscheme = 'iceberg'
-" colorscheme snowtrek
-" set background=light
-" let g:lightline.colorscheme = 'one'
 
 set notermguicolors
 set swapfile
@@ -188,8 +179,7 @@ else
 endif
 set autoread
 set backup
-"}}}
-" Visual  {{{
+
 " language C
 set ambiwidth=single
 set shortmess=aActTFOoI
@@ -222,9 +212,7 @@ set previewheight=10
 set helpheight=15
 set helplang=en,ja
 set pumheight=12
-autocmd vimrc ColorScheme * highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
-"}}}
-" Editing {{{
+
 set updatetime=1000
 set virtualedit=block
 set wrap
@@ -282,7 +270,7 @@ set indentkeys=0{,0},0),0],:,0#,o,O,e
 set backspace=indent,eol,start
 let g:vimsyn_embed='lPr'
 " nicely folding
-"{{{
+
 function! s:is_view_available() abort
   if !&buflisted || &buftype !=# ''
     return 0
@@ -291,6 +279,7 @@ function! s:is_view_available() abort
   endif
   return 1
 endfunction
+
 function! s:mkview() abort
   if s:is_view_available()
     silent! mkview
@@ -308,7 +297,7 @@ augroup MyAutoCmd
 augroup END
 set viewoptions-=options
 set viewoptions-=curdir
-"Key map - moving {{{
+
 nnoremap <CR> o<ESC>
 " moving visible lines by j/k
 nnoremap <silent>j gj
@@ -322,7 +311,7 @@ vnoremap <S-l> g_
 vnoremap <S-h> ^
 onoremap <S-l> $
 onoremap <S-h> ^
-" bug 221011
+
 nnoremap <C-f> <C-f>zz
 nnoremap <C-b> <C-b>zz
 nnoremap <C-d> <C-d>
@@ -334,23 +323,15 @@ nnoremap M m
 vnoremap m `
 vnoremap M m
 vnoremap <C-o> <ESC>m><C-O>m<gvo
+
 nnoremap S :%s/
 vnoremap S :s/
 " moving around buffers
 nnoremap <silent><Leader>h <Cmd>bprev!<CR>
 nnoremap <silent><Leader>l <Cmd>bnext!<CR>
-nnoremap <silent><Leader>l <Cmd>bnext!<CR>
 " moving around tabpages
 nnoremap <silent> <C-L> <Cmd>tabnext<CR>
 nnoremap <silent> <C-H> <Cmd>tabprevious<CR>
-nnoremap <silent>gt <Cmd>call <SID>improved_gt()<CR>
-function! s:improved_gt() abort
-  if tabpagenr('$') == 1
-    execute 'tabnew'
-  else
-    normal! gt
-  endif
-endfunction
 " matchit mapping
 nmap <TAB>  %
 nmap g<TAB> g%
@@ -362,8 +343,7 @@ omap g<TAB> g%
 nnoremap <C-p> <TAB>zz<CR>
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
-"}}}
-"Key map - shortcuts {{{
+
 nmap ; :
 vmap ; :
 xmap ; :
@@ -384,14 +364,14 @@ function! s:source_script(path) abort
       \ strftime('%c'),
       \)
 endfunction
+
 nnoremap q <nop>
 nnoremap Q q
 " for ahk workaround
 nmap <BS> <C-h>
 nnoremap , @q
 xnoremap , @q
-"}}}
-"Key map - editting {{{
+
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-a> <HOME>
@@ -494,11 +474,9 @@ cnoremap z/ ・
 cnoremap z, ●
 cnoremap z<space>  　
 
-"}}}
-"Key map - terminal {{{
 "terminal
 tnoremap <Esc> <C-\><C-n>
-"Key map - window {{{
+
 nnoremap <silent> \ <Cmd>cd %:h<Bar>echo 'cd: ' . getcwd()<CR>
 nnoremap <silent> \| <Cmd>cd ..<Bar>echo 'cd: ' . getcwd()<CR>
 autocmd FileType help nnoremap <buffer> q <C-w>c
@@ -516,28 +494,12 @@ nnoremap <Left>  <C-w>h
 nnoremap <Right> <C-w>l
 nnoremap <Up>    <C-w>k
 nnoremap <Down>  <C-w>j
-" maximize buffer window size temporally
-nmap <C-w>z <Plug>(my-zoom-window)
-nmap <C-w><C-z> <Plug>(my-zoom-window)
 " mouse mapping
 nmap <S-LeftMouse> <CR>
 set mousetime=10
 nmap <2-LeftMouse> <CR>
-"{{{
-nnoremap <silent> <Plug>(my-zoom-window)
-    \ <Cmd>call <SID>toggle_window_zoom()<CR>
-function! s:toggle_window_zoom() abort
-  if exists('t:zoom_winrestcmd')
-    execute t:zoom_winrestcmd
-    unlet t:zoom_winrestcmd
-  else
-    let t:zoom_winrestcmd = winrestcmd()
-    resize
-    vertical resize
-  endif
-endfunction  "}}}
-"}}}
-"Quickfix {{{
+
+
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
   set modifiable
@@ -556,8 +518,7 @@ function! s:is_loc()
     echom 'here is not quickfix and location list.'
   endif
 endfunction
-"}}}
-"+kaoriya {{{
+
 if has('GUI')
   let &guioptions = substitute(&guioptions, '[mTlLbeg]', '', 'g')
   set guioptions+=Mc!
@@ -565,19 +526,12 @@ if has('GUI')
   set guifont:HackGen\ Console\ NFJ:h11
   set imsearch=0
 endif
-"}}}
 
-if !has('nvim')
-  call singleton#enable()
-endif
-
-" Neovim {{{
 if has('nvim')
   set shada=!,'200,<100,s10,h
   autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
   autocmd vimrc TermOpen * startinsert
   autocmd vimrc TermOpen term://* nnoremap <buffer> q :quit<CR>
-  hi! PmenuSel blend=0
   set display=lastline,msgsep,truncate
   set wildoptions=pum
   set pumblend=5
@@ -606,8 +560,6 @@ else
   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
 endif
 
-"}}}
-"
 let s:macromode = 0
 function! MacroModeOn() abort
   if s:macromode ==# 1
@@ -648,9 +600,6 @@ command! ShowHlItem echo synIDattr(synID(line("."), col("."), 1), "name")
 command! ShowHlGroup echo synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
 command! -nargs=? -complete=command ToUtf8Unix call vimrc#ToUtf8Unix()
 command! -nargs=? -complete=command ToShiftJisDos call vimrc#ToShiftJisDos()
-" abbrev の自動生成を行う
-" ref:https://zenn.dev/monaqa/articles/2020-12-22-vim-abbrev
-"
 tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 
 function! NumCheckZen()
@@ -683,9 +632,6 @@ let g:terminal_scrollback_buffer_size = 3000
 nnoremap <silent> gm <cmd>call vimrc#isbn()<CR>
 nnoremap <silent> ` :call OpenBrowserSearch(input('Search: '))<CR>
 nnoremap gM :call vimrc#PostIsbnFromClipboard()<CR>
-" nnoremap gm :call PostIsbnNotion()<CR>
-
-" let g:denops_server_addr = '127.0.0.1:32123'
 
 nnoremap <C-f> <C-f>z.<SID>zz_if_not_near_eof()<CR>
 nnoremap <C-b> <C-b>z.<CR>
@@ -694,9 +640,6 @@ function! s:zz_if_not_near_eof() abort
     norm G
   endif
 endfunction
-
-hi! FloatBorder guifg=#c6c8d1 guibg=#272c42
-hi! NormalNC ctermfg=252 guifg=#c6c8d1
 
 au vimrc FileType vim setlocal indentexpr=
 au vimrc FileType vim setlocal tabstop=2
@@ -712,122 +655,25 @@ onoremap io <Cmd>TextobjectOutline<CR>
 onoremap ao <Cmd>TextobjectOutline from_parent<CR>
 onoremap iO <Cmd>TextobjectOutline with_blank<CR>
 onoremap aO <Cmd>TextobjectOutline from_parent with_blank<CR>
-hi! link Winbar Title
-
-hi! link DiagnosticUnderlineError Error
-highlight! link @punctuation.special Comment
-au vimrc BufRead,BufNewFile *.txt setfiletype txt
-let g:hitori_debug = v:false  " debug console.log
-let g:hitori_enable = v:true  " enable or disable this plugin.
-let g:hitori_quit = v:true    " whether to exit after attaching
-if exists('g:started_by_firenvim')
-let g:hitori_enable = v:false  " enable or disable this plugin.
-let g:firenvim_config = {
-    \ 'globalSettings': {
-        \ 'alt': 'all',
-    \  },
-    \ 'localSettings': {
-        \ '.*': {
-                \ 'cmdline': 'neovim',
-                \ 'takeover': 'never',
-            \ },
-        \ 'mail.google.com*': {
-            \ 'cmdline': 'neovim',
-            \ 'takeover': 'once',
-            \ 'priority': 1,
-        \ },
-    \ }
-\ }
-set showtabline=0
-set winbar=
-set background=light
-set guifont:HackGen\ Console\ NFJ:h12
-set laststatus=0
-nnoremap <Esc><Esc> :call firenvim#focus_page()<CR>
-nnoremap <C-z> <Cmd>write<CR><Cmd>call firenvim#hide_frame()<CR>
-inoremap <C-z> <Cmd>write<CR><Cmd>call firenvim#hide_frame()<CR>
-colorscheme one
-startinsert
-endif
+" au vimrc BufRead,BufNewFile *.txt setfiletype txt
 set imdisable
-let g:undotree_DiffAutoOpen = v:false
-let @m = "＊"
 function! s:move_to_char_pos(char)
   if search(a:char, 'cW', line("w$"))
     norm! "_x
     startinsert
   endif
 endfunction
+
 inoremap <silent> <c-l> <C-g>u<ESC><cmd>call <SID>move_to_char_pos('★')<CR>
-" lua << EOF
 
-" local ns = vim.api.nvim_create_namespace("skkeleton")
-" local id = 1234321
-
-" local function line()
-"   return vim.fn.line(".") - 1
-" end
-
-" local function col()
-"   return vim.fn.col(".") - 1
-" end
-" local mode_table = {
-"   hira = "あ",
-"   kata = "ア",
-"   abbrev = "/",
-"   zenkaku = "Ａ",
-" }
-" vim.api.nvim_create_autocmd("User", {
-"   pattern = "skkeleton-enable-post",
-"   callback = function()
-"     vim.api.nvim_create_autocmd("CursorMovedI", {
-"       pattern = "*",
-"       group = "skkeleton",
-"       callback = function()
-"         vim.api.nvim_buf_set_extmark(0, ns, line() - (line() == 0 and 0 or 1) , 0, {
-"           id = id,
-"           virt_text = { { mode_table[vim.fn["skkeleton#mode"]()], "PMenuSel" } },
-"           virt_text_pos = (line() == 0 and "eol" or "overlay"),
-"         virt_text_win_col = col()
-"         })
-"       end
-"     })
-"       vim.api.nvim_buf_set_extmark(0, ns, line() - (line() == 0 and 0 or 1) , 0, {
-"         id = id,
-"         virt_text = { { mode_table[vim.fn["skkeleton#mode"]()], "PMenuSel" } },
-"         virt_text_pos = (line() == 0 and "eol" or "overlay"),
-"         virt_text_win_col = col()
-"       })
-"   end,
-" })
-" function set_skkeleton_mode_hover()
-" vim.api.nvim_buf_set_extmark(0, ns, line() - (line() == -1 and 0 or 1) , col(), {
-"   id = id,
-"   virt_text = { { mode_table[vim.fn["skkeleton#mode"]()], "PMenuSel" } },
-"   virt_text_pos = (line() == 1 and "eol" or "overlay")
-" })
-" end
-
-" vim.api.nvim_create_autocmd("User", {
-"   pattern = "skkeleton-disable-post",
-"   callback = function()
-"     vim.api.nvim_create_augroup("skkeleton", { clear = true })
-"     vim.api.nvim_buf_del_extmark(0, ns, id)
-"   end
-" })
-" EOF
 let g:denops#debug = v:false
 let g:denops#trace = v:false
+" let g:denops_server_addr = '127.0.0.1:32123'
 
 function! s:change_textwidth()
 let &tw = input('Input textwidth value: ')
 endfunction
 
 nnoremap <leader>u <Cmd>call <SID>change_textwidth()<CR>
-" if has('win32') || has('win64')
-"     let g:quickrun_config['python'] = { 
-"     \   "hook/output_encode/enable" : 1,
-"     \   "hook/output_encode/encoding" : "cp932",
-"     \}
-" endif
+set laststatus=0
 " vim:set foldmethod=marker:

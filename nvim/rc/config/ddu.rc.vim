@@ -1,4 +1,3 @@
-" autocmd User DenopsReady call <SID>ddu_mapping()
 function! s:ddu_change_to_filer(context)
   let action = a:context.items[0].action
   let config = {}
@@ -8,14 +7,9 @@ function! s:ddu_change_to_filer(context)
   else
     let dir = path
   endif
-  " let dir = substitute(dir, ' ', '\\ ', 'g')
-  " let dir = substitute(dir, '\\', '/', 'g')
-  " call ddu#ui#do_action('quit')
-  ",'uiParams':{'filer':{'search': path}}
   let config.uiParams = {'filer':{'search': path}}
   let config.sources = [{'name':'file','options':{'path': dir}}]
   let config.name = 'filer'
-  " let config.sourceOptions._.path = action.path
   call ddu#start(config)
 endfunction
 
@@ -30,11 +24,8 @@ function! s:ddu_change_to_ff(context)
   endif
   let dir = substitute(dir, ' ', '\\ ', 'g')
   let dir = substitute(dir, '\\', '/', 'g')
-  " call ddu#ui#do_action('quit')
   let config.sources = [{'name':'file','options':{'path': dir},'params':{}}]
   let config.name = 'ff'
-  " let config.uiParams.ff.startFilter = v:true
-  " let config.sourceOptions._.path = action.path
   call ddu#start(config)
 endfunction
 
@@ -43,47 +34,14 @@ call ddu#custom#action('kind', 'file', 'to_filer',
 call ddu#custom#action('kind', 'file', 'to_ff',
     \  function('s:ddu_change_to_ff'))
 
-function! s:ddu_change_source(context) abort
-  let action = a:context.items[0].action
-  let config = ddu#custom#get_current(a:context.options.name)
-
-  if config.sources[0].name ==# 'file'
-    call ddu#ui#do_action('itemAction', {'name' : 'narrow'})
-  else
-    let config.sources = [{'name':'file','options':{'path': action.path},'params':{}}]
-    let config.input = ''
-    let config.name = a:context.options.name
-    " let config.sourceOptions._.path = action.path
-    call ddu#start(config)
-  endif
-endfunction
-call ddu#custom#action('kind', 'file', 'change_source_file',
-    \  function('s:ddu_change_source'))
-
 function! s:ddu_my_open(context) abort
-  "echom a:context
   let action = a:context.items[0].action
   let config = ddu#custom#get_current(a:context.options.name)
-  " let startF = v:false
-  " if &filetype ==# 'ddu-ff-filter'
-  "   let startF = v:true
-  "   call ddu#ui#do_action('closeFilterWindow')
-  " endif
-
   if isdirectory(action.path)
     if config.sources[0].name ==# 'file'
       call ddu#ui#do_action('itemAction', {'name' : 'narrow'})
-      " if startF
-      "   call ddu#ui#do_action('openFilterWindow')
-      "   silent call deletebufline('%', 1, '$')
-      " endif
     else
-      " let config.sources = [{'name':'file','options':{'path': action.path},'params':{}}]
-      call ddu#ui#do_action('updateOptions',{'sources':[{'name':'file','options':{'path': expand(action.path,':p')}}],'input': ''})
-      " let config.input = ''
-      " let config.uiParams.ff.startFilter = startF
-      " let config.name = a:context.options.name
-      " call ddu#start(config)
+      call ddu#ui#do_action('updateOptions',{'sources':[{'name':'file','options':{'path': expand(action.path,':p')}}]})
       return
     endif
   else
@@ -101,13 +59,11 @@ call ddu#custom#patch_global({
     \ 'to_filer': {'quit': v:true},
     \ 'my_open': {'quit': v:false},
     \ 'narrow': {'quit': v:false},
-    \ 'change_source_file': {'quit': v:false},
     \ 'cd': {'quit': v:false},
     \ 'replace': {'quit': v:false},
     \ }
     \ })
 function! s:ddu_grep(context) abort
-  " echom a:context
   let action = a:context.items[0].action
   let path = action.path
   if !isdirectory(path)
@@ -136,22 +92,8 @@ function! s:ddu_file_rec(context) abort
   if !isdirectory(action.path)
     return
   endif
-  " call ddu#redraw(a:context.options.name,{'input':'','updateOptions':{'sources':[{'name':'file_external'}],'sourceOptions':{'_':{'path':action.path}}},'name': a:context.options.name, 'refreshItems': v:true})
-  let startF = mode() ==# 'i'
   if &filetype =~# '\v(ddu-ff|ddu-ff-filter)'
-    call ddu#ui#do_action('closeFilterWindow')
-    call ddu#start({
-        \ 'input': '',
-        \ 'sources':[
-        \ {'name':'file_external',
-        \ 'options': {'path': action.path},'params': {} },
-        \ ],
-        \ 'uiParams':{
-        \ 'ff': {
-        \ 'startFilter': startF
-        \ }
-        \ }
-        \})
+      call ddu#ui#do_action('updateOptions',{'sources':[{'name':'file_external','options':{'path': expand(action.path,':p')}}]})
     return
   endif
   if &filetype ==# 'ddu-filer'
@@ -299,6 +241,11 @@ call ddu#custom#patch_global({
     \    ],
     \    'unique': v:true,
     \  },
+    \   'filterParams': {
+    \     'matcher_fzy': {
+    \       'threshold': 0.1,
+    \     },
+    \   }
     \ },
     \ 'columnParams': {
     \ 'filename': {
@@ -424,38 +371,6 @@ call ddu#custom#patch_global({
     \     },
     \   }
     \ })
-"call ddu#custom#patch_global({
-"\ 'sourceOptions':{
-"    \ 'file': {'defaultAction': 'my_open'},
-"    \ 'dein': {'defaultAction': 'my_open'},
-"    \ 'dirmark': {'defaultAction': 'my_open'},
-"\ }})
-
-" function! s:ddu_ff_back() abort
-"   if getline('.') == ''
-"   if &filetype ==# 'ddu-ff-filter'
-"     call ddu#ui#ff#close()
-"     call ddu#ui#do_action('itemAction', {'name' : 'narrow', 'params': { 'path': '..'}})
-"     call ddu#ui#do_action('openFilterWindow')
-"   endif
-"   else
-"     call feedkeys('<C-h>')
-"   endif
-"   " else
-"   "   let config = ddu#custom#get_current(b:ddu_ui_name)
-"   "   if mode() ==# 'i'
-"   "     let config.uiParams.ff.startFilter = v:true
-"   "     stopinsert
-"   "   endif
-"   "   if has_key(config.sources[0].params, 'path')
-"   "     let config.sources[0].params.path = fnamemodify(config.sources[0].params.path, ':h')
-"   "   elseif has_key(config.sources[0].options, 'path')
-"   "     let config.sources[0].options.path = fnamemodify(config.sources[0].options.path, ':h')
-"   "   endif
-"   "   " let config.sourceOptions._.path = action.path
-"   "   call ddu#start(config)
-"   " endif
-" endfunction
 
 function! s:make_preview_git(s)   abort
   " echom globpath(a:s, '.git')
@@ -477,6 +392,7 @@ endfunction
 
 au! BufEnter,BufReadPost,WinClosed *  call s:ddu_set_cursorline(v:false)
 autocmd FileType ddu-ff call s:ddu_my_settings()
+
 function! s:ddu_my_settings() abort
   if has('nvim')
     setlocal winbar=%!MyDduWinbarInput()
@@ -492,9 +408,7 @@ function! s:ddu_my_settings() abort
         endif
       endif
   endfunction
-  " hi! link CursorLine DduUnderlined | lua require("tint").refresh()
 
-  " au BufReadPost,BufNew,WinEnter,WinNew * if &ft =~# 'ddu.*' | hi! link CursorLine DduUnderlined | else | hi! link CursorLine SvCursorLine |endif
   call s:ddu_set_cursorline(v:true)
   setlocal scrolloff=5
   nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
@@ -510,7 +424,7 @@ function! s:ddu_my_settings() abort
   nnoremap <buffer><silent><nowait> V
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'vsplit'}})<CR>
   nnoremap <buffer><silent><nowait> <tab>
-      \ <Cmd>call ddu#ui#do_action('chooseAction') \| call ddu#ui#do_action('openFilterWindow')<CR>
+      \ <Cmd>call ddu#ui#filer#do_action('inputAction')<CR>
   nnoremap <buffer><silent><nowait> T
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'tabedit'}})<CR>
   nnoremap <buffer><silent> a
@@ -543,8 +457,6 @@ function! s:ddu_my_settings() abort
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR>
   nnoremap <buffer><silent><nowait> <C-g>
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'grep'})<CR>
-  " nnoremap <buffer><silent> T
-  " \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'get_context'})<CR>
   nnoremap <buffer><silent> q
       \ <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer><silent> i
@@ -590,15 +502,8 @@ function! s:ddu_my_settings() abort
     nnoremap <buffer><silent> P
         \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'insert'})<CR>
   endif
-  nnoremap <buffer> ff
-  \ <Cmd>call ddu#ui#do_action('updateOptions', #{
-  \   sources: [
-  \     #{ name: 'file' },
-  \   ],
-  \ })<CR>
 
 endfunction
-
 
 function! s:execute(expr) abort
   if !exists('g:ddu#ui#ff#_filter_parent_winid')
@@ -617,8 +522,6 @@ function! s:ddu_my_filter_settings() abort
       \ <Esc><Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
   inoremap <buffer><silent> <C-l>
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
-  " inoremap <buffer><silent><expr> <C-h>
-  " \ !getline('.') ? <SID>ddu_ff_back() : "\<C-h>"
   inoremap <buffer><silent> <C-h> <cmd>call <SID>ddu_ff_back()<CR>
   inoremap <silent><buffer> <C-i> <Plug>(skkeleton-enable)
   inoremap <silent><buffer> <CR>
@@ -643,18 +546,12 @@ function! s:ddu_my_filter_settings() abort
       \ <Cmd>call ddu#ui#do_action('quit')<CR>
   inoremap <buffer><silent><nowait> <C-g>
       \ <Cmd>call ddu#ui#do_action('chooseAction')<CR>
-  " inoremap <nowait><buffer><silent> <C-j> <Cmd>call <SID>execute('normal! j')<CR>
-  " inoremap <nowait><buffer><silent> <C-k> <Cmd>call <SID>execute('normal! k')<CR>
   inoremap <buffer> <C-j>
       \ <Cmd>call ddu#ui#ff#execute(
-      \ "call cursor(line('.')+1,0)")<CR>
+      \ "call cursor(line('.')+1,0)<Bar>redraw")<CR>
   inoremap <buffer> <C-k>
       \ <Cmd>call ddu#ui#ff#execute(
-      \ "call cursor(line('.')-1,0)")<CR>
-  " inoremap <buffer><silent><expr> <C-h>
-  " \ !len(getline('.')) ? <SID>ddu_ff_back() : "\<C-h>"
-  " inoremap <buffer><silent><expr> <C-j> ddu#ui#ff#increment_parent_cursor(+1)
-  " inoremap <buffer><silent><expr> <C-k> ddu#ui#ff#increment_parent_cursor(-1)
+      \ "call cursor(line('.')-1,0)<Bar>redraw")<CR>
 endfunction
 
 autocmd FileType ddu-filer call s:ddu_filer_my_settings()
@@ -672,7 +569,7 @@ function! s:ddu_filer_my_settings() abort
   nnoremap <buffer> q
       \ <Cmd>call ddu#ui#filer#do_action('quit')<CR>
   nnoremap <buffer><silent><nowait> <tab>
-      \ <Cmd>call ddu#ui#filer#do_action('chooseAction')<CR>
+      \ <Cmd>call ddu#ui#filer#do_action('inputAction')<CR>
   nnoremap <buffer> o
       \ <Cmd>call ddu#ui#filer#do_action('expandItem',{'mode': 'toggle', 'maxLevel': 0})<CR>
   nnoremap <buffer> O
@@ -722,12 +619,6 @@ function! s:ddu_filer_my_settings() abort
   " \ ddu#ui#filer#get_item().__level > 0 ?
   nnoremap <silent><buffer> ss
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'to_ff'})<CR>
-  " ddu#start({
-  " 	\ 'sources': [{'name': 'file', 'options': {'path': expand(b:ddu_ui_filer_path)}}],
-  " 	\ 'uiParams': {'ff': {'startFilter': v:false}},
-  " 	\ 'kindOptions': {'file': {'defaultAction': 'to_filer'}}
-  " 	\})
-
   nnoremap <buffer><silent> .
       \ <Cmd>call <SID>swap_converter('matchers','matcher_hidden', '')<CR>
   nnoremap <buffer><expr> <CR>
@@ -739,7 +630,6 @@ function! s:ddu_filer_my_settings() abort
       \ "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow'})<CR>" :
       \ "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'open'})<CR>"
 endfunction
-
 
 function! s:swap_converter(type, before, after) abort
   let item = ddu#ui#get_item()
@@ -760,30 +650,16 @@ function! s:swap_converter(type, before, after) abort
   call ddu#ui#do_action('updateOptions',option)
 endfunction
 
-function! ToggleHidden()
-  let current = ddu#custom#get_current(b:ddu_ui_name)
-  let source_options = get(current, 'sourceOptions', {})
-  let source_options_all = get(source_options, '_', {})
-  let matchers = get(source_options_all, 'matchers', [])
-  return empty(matchers) ? ['matcher_hidden'] : []
-endfunction
-
-" autocmd dein TabEnter,CursorHold,FocusGained <buffer>
-" 	\ call ddu#ui#filer#do_action('checkItems')
-
 highlight! DduUnderlined cterm=underline gui=underline guifg=NONE
 au ColorScheme * highlight! DduUnderlined cterm=underline gui=underline guifg=NONE
-
+"
 " iceberg
 function! s:ddu_set_cursorline(enter) abort
   if a:enter
-    hi! link CursorLine DduUnderlined "  | lua require("tint").refresh() "for tint.nvim
-    " hi! Cursor NONE
+    hi! link CursorLine DduUnderlined
   else
     if &ft !~# 'ddu-*'
       hi! link CursorLine SvCursorLine
-      " hi! link Cursor SvCursor
-      " lua require("tint").refresh()
     endif
   endif
 
@@ -791,14 +667,7 @@ endfunction
 
 function! s:gethighlight(hi) abort
 let bg = synIDattr(synIDtrans(hlID(a:hi)), "bg")
-" let fg = synIDattr(synIDtrans(hlID(a:hi)), "fg")
-" hi! default SvCursorLine ctermbg=235 gui=NONE guibg=#1e2132
     execute('hi! default SvCursorLine gui=NONE guibg=' .. bg)
     return
 endfunction
-let s:SvCursorLine =s:gethighlight('CursorLine')
-" let s:SvCursor =s:gethighlight('Cursor')
-" autocmd ColorScheme * let s:SvCursorLine =s:gethighlight('CursorLine') | execute('hi! default SvCursor ' .. s:SvCursor )
-
-" let g:denops#debug=1
-" let g:denops#trace=1
+au dein ColorScheme * let s:SvCursorLine =s:gethighlight('CursorLine')

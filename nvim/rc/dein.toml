@@ -1,57 +1,23 @@
-# [[plugin]]
-# repo = 'Shougo/dein.vim'
-# hook_add = '''
-# augroup dein
-#     autocmd!
-# augroup END
+[[plugin]]
+repo = 'Shougo/dein.vim'
+hook_add = '''
+augroup dein
+    autocmd!
+augroup END
+'''
+
+# [[plugins]]
+# repo = 'rebelot/heirline.nvim'
+# hook_post_source = '''
+# lua <<EOF
+# local conditions = require("heirline.conditions")
+
+# local utils = require("heirline.utils")
+# EOF
 # '''
 
 [[plugins]]
-repo =  'itchyny/lightline.vim'
-hook_add = 'source ~/dotfiles/nvim/rc/config/lightline.rc.vim'
-
-[[plugins]]
-depends = ['lightline.vim', 'nvim-lspconfig']
-on_source = ['nvim-lspconfig']
-lazy = 1
-if = 'has("nvim")'
-repo = 'josa42/nvim-lightline-lsp'
-hook_source = '''
-    "autocmd DiagnosticChanged * call lightline#update()
-    let g:lightline#lsp#indicator_warnings = ' '
-    let g:lightline#lsp#indicator_errors = ' '
-    let g:lightline#lsp#indicator_hints = ' '
-    call lightline#lsp#register()
-'''
-
-[[plugins]]
 repo = 'tyru/skkdict.vim'
-
-# [[plugins]]
-# repo =  'orokasan/jasegment.vim'
-# hook_add = ''' "{{{
-# let g:jasegment#model='knbc_bunsetu'
-# let g:jasegment_no_default_key_mappings = 1
-# let g:jasegment#highlight = 1
-# nmap <silent> E <Plug>JaSegmentMoveNE
-# nmap <silent> W <Plug>JaSegmentMoveNW
-# nmap <silent> B <Plug>JaSegmentMoveNB
-# xmap <silent> E <Plug>JaSegmentMoveVE
-# xmap <silent> W <Plug>JaSegmentMoveVW
-# xmap <silent> B <Plug>JaSegmentMoveVB
-# "omap <silent><buffer> aW <Plug>JaSegmentTextObjA
-# "omap <silent><buffer> iW <Plug>JaSegmentTextObjI
-# "xmap <silent><buffer> aW <Plug>JaSegmentTextObjVA
-# "xmap <silent><buffer> iW <Plug>JaSegmentTextObjVI
-# '''# }}} 
-
-# [[plugins]]
-# repo =  'mengelbrecht/lightline-bufferline'
-# depends = ['lightline.vim']
-
-[[plugins]]
-repo =  'itchyny/vim-gitbranch'
-depends = ['lightline.vim']
 
  # [[plugins]]
  # repo = 'Shougo/context_filetype.vim'
@@ -65,7 +31,7 @@ repo = 'cocopon/iceberg.vim'
 hook_add = '''
 autocmd dein ColorScheme iceberg call My_iceberg_highlight()
 function! My_iceberg_highlight()
-highlight! PmenuSel ctermbg=236 guibg=#3d425b
+highlight! PmenuSel ctermbg=236 guibg=#3d425b blend=0
 highlight! Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 highlight! NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 highlight! clear Search
@@ -82,27 +48,13 @@ highlight! link @text.diff.delete DiffDelete
 hi! GitsignsAdd guifg=#8a8a67 guibg=#1e2132
 hi! GitsignsChange guifg=#54909c guibg=#1e2132
 hi! GitSignsDelete guifg=#9c4848 guibg=#1e2132
-"autocmd dein ColorScheme iceberg highlight! @punctuation.delimiter gui=bold guifg=#a093c7
-"autocmd dein ColorScheme iceberg highlight! link @punctuation.special Comment
-"autocmd dein ColorScheme iceberg highlight! link @text.uri String
+hi! link Winbar Title
+hi! link DiagnosticUnderlineError Error
+highlight! link @punctuation.special Comment
+hi! FloatBorder guifg=#c6c8d1 guibg=#272c42
+hi! NormalNC ctermfg=252 guifg=#c6c8d1
+
 endfunction
-"autocmd dein ColorScheme iceberg highlight! clear CursorLine
-"autocmd dein ColorScheme iceberg highlight! CursorLine gui=underline guisp=#c6c8d1
-" autocmd dein ColorScheme iceberg highlight CursorLine guibg=#1e2132
-
-" autocmd dein Colorscheme iceberg hi link TSInclude Special
-" autocmd dein Colorscheme iceberg hi link TSProperty String
-
-" autocmd dein Colorscheme iceberg hi link TSConstant Constant
-" autocmd dein Colorscheme iceberg hi link TSConstructor Define
-" autocmd dein Colorscheme iceberg hi link TSLavel Number
-" autocmd dein Colorscheme iceberg hi link TSLabel Number
-" autocmd dein Colorscheme iceberg hi link TSNamespace Number
-" autocmd dein Colorscheme iceberg hi link TSOperator Number
-" autocmd dein Colorscheme iceberg hi link TSKeyword Keyword
-" autocmd dein Colorscheme iceberg hi link TSType Define
-" autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineError Error
-" autocmd dein Colorscheme iceberg hi link LspDiagnosticsUnderlineWarning Warning
 '''
 
 [[plugins]]
@@ -118,26 +70,39 @@ hi! link ParenMatch MatchParen
 # repo = 'glacambre/firenvim'
 # if = 'has("nvim")'
 # # hook_post_update = 'call firenvim#install(0)'
-# hook_add = '''
+# hook_post_source = '''
+# if exists('g:started_by_firenvim')
+# let g:firenvim_config = {
+#     \ 'globalSettings': {
+#         \ 'alt': 'all',
+#     \  },
+#     \ 'localSettings': {
+#         \ '.*': {
+#                 \ 'cmdline': 'neovim',
+#                 \ 'takeover': 'never',
+#             \ },
+#         \ 'mail.google.com*': {
+#             \ 'cmdline': 'neovim',
+#             \ 'takeover': 'once',
+#             \ 'priority': 1,
+#         \ },
+#     \ }
+# \ }
+# set showtabline=0
+# set winbar=
+# set background=light
+# set guifont:HackGen\ Console\ NFJ:h12
+# set laststatus=0
+# nnoremap <Esc><Esc> :call firenvim#focus_page()<CR>
+# nnoremap <C-z> <Cmd>write<CR><Cmd>call firenvim#hide_frame()<CR>
+# inoremap <C-z> <Cmd>write<CR><Cmd>call firenvim#hide_frame()<CR>
+# colorscheme one
+# startinsert
+# endif
 # '''
-
-# [[plugins]]
-# repo = 'raghur/vim-ghost'
-
-# [[plugins]]
-# rtp = 'vim'
-# merged = 0
-# repo = 'soywod/himalaya'
 
 [[plugins]]
 repo = 'thinca/vim-jautil'
-
-# [[plugins]]
-# repo = 'junegunn/vim-easy-align'
-# hook_add = '''
-# vmap ga <Plug>(EasyAlign)
-# nmap ga <Plug>(EasyAlign)
-# '''
 
 [[plugins]]
 repo = 'https://github.com/vim-jp/autofmt'
@@ -196,20 +161,15 @@ endfunction
 if = '!has("nvim")'
 merged = 0
 repo = 'thinca/vim-singleton'
+hook_post_source = '''
+call singleton#enable()
+'''
 
 [[plugins]]
 repo = 'machakann/vim-colorscheme-snowtrek'
 
 [[plugins]]
 repo = 'lambdalisue/glyph-palette.vim'
-
-# [[plugins]]
-# merged = 0
-# repo = 'rbtnn/vim-ambiwidth'
-
-# [[plugins]]
-# repo = 'svermeulen/vim-macrobatics'
-
 
 [[plugins]]
 repo = 'lambdalisue/mr.vim'
@@ -218,6 +178,42 @@ let g:mr#threshold = 300
 let g:mr_mrw_disabled = v:true
 let g:mr_mrr_disabled = v:true
 let g:mr#mru#predicates = [{ filename -> filename !~# '\(doc[\\\/].*txt\|COMMIT_EDITMSG\|mail.google.*\)' }]
+'''
+
+[[plugins]]
+repo = 'lambdalisue/nerdfont.vim'
+hook_post_source = '''
+if !has('nvim')
+au dein VimEnter * call nerdfont#find()
+au dein VimEnter * let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
+au dein VimEnter * let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
+au dein VimEnter * call nerdfont#find('.')
+endif
+let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
+let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
+let g:nerdfont#directory#customs = {
+    \ '': '',
+    \ 'open': '',
+    \ 'close': '',
+    \ 'symlink': '',
+    \}
+let g:nerdfont#path#extension#customs = {
+    \'txt' :  '',
+    \'pdf' :  '',
+    \'docx' :  '',
+    \'doc' :  '',
+    \'xlsx' :  '',
+    \'xlsm' :  '',
+    \'pptx' :  '',
+    \'ppt' :  '',
+    \'tex' :  '',
+    \'zip': ''
+    \}
+augroup my-glyph-palette
+  autocmd! *
+  autocmd FileType ddu-ff,ddu-filer call glyph_palette#apply()
+augroup END
+
 '''
 
 [[plugins]]
@@ -256,10 +252,4 @@ setlocal textwidth=42
 setlocal noexpandtab
 '''
 
-# [[plugins]]
-# repo = 'rakr/vim-one'
-
-# [[plugins]]
-# merged = 0
-# repo = 'simnalamburt/vim-mundo'
 # vim:set foldmethod=marker:'

@@ -53,30 +53,21 @@ function! s:ddu_mapping() abort
 
   nnoremap <silent> sv <cmd>Ddu junkfile -name=prev -ui-param-cursorPos=2<CR>
   nnoremap <silent> sV <cmd>call ddu#start({'sources': [{'name': 'file_external', 'option': {'path': '~/.cache/junkfile/' .. strftime('%Y/%m'),'input': ''}}]})<CR>
-  " nnoremap <silent> sV <cmd>Ddu junkfile -name=prev<CR>
 
   nnoremap <silent> sK <cmd>Ddu nvim_lsp_diagnostic_all<CR>
   nnoremap <silent> sk <cmd>Ddu nvim_lsp_diagnostic_buffer<CR>
   autocmd dein FileType txt,markdown nnoremap <silent><buffer> sk <cmd>Ddu textlint<CR>
 
-  nnoremap <silent> <space>e <cmd>call ddu#start({'name': 'filer', 'searchPath': expand('%:p'), 'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}]})<CR>
+  nnoremap <silent> <leader>e <cmd>Ddu
+      \ -name=filer
+      \ -searchPath=`expand('%:p')`
+      \ file -source-option-path=`expand('%:p:h')`<CR>
   nnoremap <silent> <space>E <cmd>call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}}]})<CR>
   " nnoremap <silent> <space>e <cmd>Ddu -name=filer -path=`expand('%:h:p')` file<CR>
   nnoremap <silent> st <cmd> call ddu#start({'name': 'tree',  'options':{'searchPath': ''}, 'sources': [{'name': 'text'}],'resume': v:true, 'refresh':v:true}})<CR>
 
   nnoremap <silent> <C-e> <cmd> call ddu#start({'name': 'filer', 'resume': v:true})<CR>
-  " echom 'Denops Ready!'
 endfunction
-
-
-call s:ddu_mapping()
-" let iconlist = defx_icons#get()
-" let ext = iconlist.icons.extensions
-" for i in keys(ext)
-"   let color = ext[i].color[0] ==# '#' ? substitute(ext[i].color, '#', '', '') : ext[i].color
-"   call execute('highlight! ' .. 'ddu_icon_hl_' .. i .. ' guifg=#' .. color)
-" endfor
-
 
 function! s:find_gitdir() abort
   if finddir('.git', '.;') != ''
@@ -97,3 +88,5 @@ nnoremap <silent> sl :Ddu
 nnoremap <silent> sH :Ddu
     \ -name=default
     \ help<CR>
+
+call s:ddu_mapping()

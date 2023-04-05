@@ -239,9 +239,9 @@ lazy = 1
 on_func = 'ddu#start'
 hook_add = '''
 source ~/dotfiles/nvim/rc/config/ddu_mapping.rc.vim
-source ~/dotfiles/nvim/rc/config/ddu.rc.vim
 '''
 hook_source = '''
+source ~/dotfiles/nvim/rc/config/ddu.rc.vim
 '''
 
 [[plugins]]
@@ -339,6 +339,10 @@ repo = 'Milly/ddc-source-register'
 [[plugins]]
 merged = 0
 repo = 'yukimemi/dps-hitori'
+hook_add = '''
+let g:hitori_debug = v:false  " debug console.log
+let g:hitori_quit = v:true    " whether to exit after attaching
+'''
 
 [[plugins]]
 repo = 'Milly/ddu-filter-kensaku'
@@ -354,3 +358,7 @@ repo = 'lambdalisue/kensaku-command.vim'
 [[plugins]]
 merged = 0
 repo = 'Milly/ddu-filter-merge'
+
+[[plugins]]
+repo = 'hasundue/ddu-filter-zf'
+build = 'deno task build'

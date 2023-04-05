@@ -89,6 +89,8 @@ local on_attach = function(client, bufnr)
   hi! link DiagnosticError Error
   hi! link DiagnosticWarning Warning
   ]], false)
+
+  client.server_capabilities.semanticTokensProvider = nil
 end
 
 local lspinstaller = require("mason")
@@ -419,10 +421,10 @@ require 'hop'.setup {
 [[plugins]]
 repo = 'kevinhwang91/nvim-hlslens'
 on_lua = ['hlslens']
-hook_source = '''
-hi! default link HlSearchNear Title
-hi! default link HlSearchLens Function
-hi! default link HlSearchLensNear Constant
+hook_add = '''
+au dein ColorScheme * hi! default link HlSearchNear Title
+au dein ColorScheme * hi! default link HlSearchLens Function
+au dein ColorScheme * hi! default link HlSearchLensNear Constant
 '''
 lua_source = '''
 require('hlslens').setup({
@@ -442,138 +444,16 @@ lua_source = '''
 require('history-ignore').setup{}
 '''
 
-# [[plugins]]
-# repo = 'zsugabubus/crazy8.nvim'
-
-# [[plugins]]
-# repo = 'petertriho/nvim-scrollbar'
-
-# [[plugins]]
-# repo = 'nvim-treesitter/nvim-tree-docs'
-# [[plugins]]
-# repo = 'rcarriga/nvim-notify'
-
 [[plugins]]
 on_source = ['nvim-treesitter']
 repo = 'nvim-treesitter/nvim-treesitter-context'
 lua_source = '''
 require'treesitter-context'.setup{}
---     enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
---     max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
---     trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
---     min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
---     patterns = { -- Match patterns for TS nodes. These get wrapped to match at word boundaries.
---         -- For all filetypes
---         -- Note that setting an entry here replaces all other patterns for this entry.
---         -- By setting the 'default' entry below, you can control which nodes you want to
---         -- appear in the context window.
---         default = {
---             'class',
---             'function',
---             'method',
---             'for',
---             'while',
---             'if',
---             'switch',
---             'case',
---             'interface',
---             'struct',
---             'enum',
---         },
---         -- Patterns for specific filetypes
---         -- If a pattern is missing, *open a PR* so everyone can benefit.
---         tex = {
---             'chapter',
---             'section',
---             'subsection',
---             'subsubsection',
---         },
---         haskell = {
---             'adt'
---         },
---         rust = {
---             'impl_item',
--- 
---         },
---         terraform = {
---             'block',
---             'object_elem',
---             'attribute',
---         },
---         scala = {
---             'object_definition',
---         },
---         vhdl = {
---             'process_statement',
---             'architecture_body',
---             'entity_declaration',
---         },
---         markdown = {
---             'section',
---         },
---         elixir = {
---             'anonymous_function',
---             'arguments',
---             'block',
---             'do_block',
---             'list',
---             'map',
---             'tuple',
---             'quoted_content',
---         },
---         json = {
---             'pair',
---         },
---         typescript = {
---             'export_statement',
---         },
---         yaml = {
---             'block_mapping_pair',
---         },
---     },
---     exact_patterns = {
---         -- Example for a specific filetype with Lua patterns
---         -- Treat patterns.rust as a Lua pattern (i.e "^impl_item$" will
---         -- exactly match "impl_item" only)
---         -- rust = true,
---     },
--- 
---     -- [!] The options below are exposed but shouldn't require your attention,
---     --     you can safely ignore them.
--- 
---     zindex = 20, -- The Z-index of the context window
---     mode = 'cursor',  -- Line used to calculate context. Choices: 'cursor', 'topline'
---     -- Separator between context and content. Should be a single character string, like '-'.
---     -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
---     separator = nil,
--- }
 '''
 
 [[plugins]]
 on_source = ['nvim-lspconfig']
 repo = 'lvimuser/lsp-inlayhints.nvim'
-# [[plugins]]
-# repo = 'mfussenegger/nvim-dap'
-# lua_add = '''
-# local function map(mode, lhs, rhs, opts)
-#   local options = { noremap = true }
-#   if opts then options = vim.tbl_extend('force', options, opts) end
-#   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
-# end
-
-# map("n", "<leader>d", ":lua require'dapui'.toggle()<CR>", { silent = true })
-# map("n", "<leader><leader>df", ":lua require'dapui'.eval()<CR>", { silent = true })
-# map("n", "<F5>", ":lua require'dap'.continue()<CR>", { silent = true })
-# map("n", "<F10>", ":lua require'dap'.step_over()<CR>", { silent = true })
-# map("n", "<F11>", ":lua require'dap'.step_into()<CR>", { silent = true })
-# map("n", "<F12>", ":lua require'dap'.step_out()<CR>", { silent = true })
-# map("n", "<leader>b", ":lua require'dap'.toggle_breakpoint()<CR>", { silent = true })
-# map("n", "<leader>bc", ":lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>", { silent = true })
-# map("n", "<leader>l", ":lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>",
-#   { silent = true })
-# '''
-# [[plugins]]
-# repo = 'rcarriga/nvim-dap-ui'
 
 [[plugins]]
 repo = 'mfussenegger/nvim-ts-hint-textobject'
@@ -592,43 +472,12 @@ xnoremap au :lua require"treesitter-unit".select(true)<CR>
 onoremap iu :<c-u>lua require"treesitter-unit".select()<CR>
 onoremap au :<c-u>lua require"treesitter-unit".select(true)<CR>
 '''
-# [[plugins]]
-# repo = 'nvim-treesitter/nvim-treesitter-textobjects'
-
-# [[plugins]]
-# repo = 'akinsho/toggleterm.nvim'
-# on_cmd = ["ToggleTerm"]
-# hook_add = '''
-# nnoremap <Space>t <cmd>ToggleTerm<CR>
-# nnoremap <Space>T <cmd>ToggleTermSendCurrentLine<CR>
-# '''
-# lua_source = '''
-# require 'toggleterm'.setup {
-#   size = function(term)
-#     if term.direction == "horizontal" then
-#       return 20
-#     elseif term.direction == "vertical" then
-#       return vim.o.columns * 0.4
-#     end
-#   end,
-#   start_in_insert = true,
-#   shade_terminals = true
-# }
-# '''
-# [[plugins]]
-# repo = 'levouh/tint.nvim'
 
 [[plugins]]
 on_cmd = ["AerialOpen"]
 repo = 'stevearc/aerial.nvim'
 lua_add = '''
 vim.api.nvim_set_keymap('n', '-', '<cmd>AerialOpen<CR>', { noremap = true, silent = true })
--- vim.api.nvim_create_autocmd({ "FileType" }, {
---   pattern = { "markdown" },
---   command = "Aerial!",
---   group = 'vimrc'
--- 
--- })
 '''
 lua_source = '''
 vim.api.nvim_create_autocmd({ "Filetype" }, {
@@ -772,7 +621,6 @@ require("cellwidths").setup {
   fallback = function(cw)
     -- 特定のテンプレートから追加・削除を行いたい場合は最初に load() を呼んで下さい。
     -- cw.load "default"
-    cw.load "default"
     -- 好きな設定を追加します。以下のどの書式でも構いません。
     cw.add {
       { 0x00d7, 0x00d7, 2 },
@@ -837,24 +685,8 @@ repo = 'onsails/lspkind.nvim'
 on_source = ['aerial.nvim']
 lua_source = '''
 require('lspkind').init({
-  -- DEPRECATED (use mode instead): enables text annotations
-  --
-  -- default: true
-  -- with_text = true,
-
-  -- defines how annotations are shown
-  -- default: symbol
-  -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
   mode = 'symbol_text',
-  -- default symbol map
-  -- can be either 'default' (requires nerd-fonts font) or
-  -- 'codicons' for codicon preset (requires vscode-codicons font)
-  --
-  -- default: 'default'
   preset = 'codicons',
-  -- override preset symbols
-  --
-  -- default: {}
   symbol_map = {
     Text = "",
     Method = "",
@@ -887,41 +719,47 @@ require('lspkind').init({
 
 [[plugins]]
 repo = 'monaqa/dial.nvim'
-on_map = ["<Plug>(dial-"]
-hook_add = '''
-nnoremap  <C-a>  <Plug>(dial-increment)
-nnoremap  <C-x>  <Plug>(dial-decrement)
-inoremap  <C-a>  <Plug>(dial-increment)
-vnoremap  <C-x>  <Plug>(dial-decrement)
-vnoremap g<C-a> g<Plug>(dial-increment)
-vnoremap g<C-x> g<Plug>(dial-decrement)
+on_lua = ["dial"]
+lua_add = '''
+vim.keymap.set("n", "<C-a>", function()
+	require("dial.map").manipulate("increment", "normal")
+end)
+vim.keymap.set("n", "<C-x>", function()
+	require("dial.map").manipulate("decrement", "normal")
+end)
+vim.keymap.set("v", "<C-a>", function()
+	require("dial.map").manipulate("increment", "visual")
+end)
+vim.keymap.set("v", "<C-x>", function()
+	require("dial.map").manipulate("decrement", "visual")
+end)
+vim.keymap.set("v", "g<C-a>", function()
+	require("dial.map").manipulate("increment", "gvisual")
+end)
+vim.keymap.set("v", "g<C-x>", function()
+	require("dial.map").manipulate("decrement", "gvisual")
+end)
 '''
 lua_source = '''
 local augend = require("dial.augend")
 require("dial.config").augends:register_group{
   default = {
     augend.integer.alias.decimal,
---    augend.integer.alias.hex,
---    augend.date.alias["%Y/%m/%d"],
--- augend.date.alias["%Y年%-m月%-d日(%J)"],
---    augend.date.alias["%Y年%-m月%-d日"],
--- augend.constant.alias.ja_weekday,
--- augend.constant.alias.ja_weekday_full,
--- augend.constant.alias.bool,
-augend.misc.alias.markdown_header,
-augend.constant.new{
-    elements = {"[ ]", "[x]"},
-    word = false,
-    cyclic = true,
-    },},
+   augend.integer.alias.hex,
+   augend.date.alias["%Y/%m/%d"],
+    augend.date.alias["%Y年%-m月%-d日(%ja)"],
+   augend.date.alias["%Y年%-m月%-d日"],
+    augend.constant.alias.ja_weekday,
+    augend.constant.alias.ja_weekday_full,
+    augend.constant.alias.bool,
+    augend.misc.alias.markdown_header,
+    augend.constant.new{
+        elements = {"[ ]", "[x]"},
+        word = false,
+        cyclic = true,
+        },},
 }
 '''
-# [[plugins]]
-# repo = 'kristijanhusak/line-notes.nvim'
-# lua_add = '''
-# require'line-notes'.setup({
-# })
-# '''
 
 [[plugins]]
 repo = 'lewis6991/gitsigns.nvim'
@@ -930,11 +768,6 @@ hook_source = '''
 '''
 lua_source = '''
 require('gitsigns').setup{
-signs = {
-    -- add          = { hl = 'GitSignsAdd'   , text = '│', numhl='DiffChange'   , linehl='GitSignsAddLn'    },
-    -- change       = { hl = 'GitSignsChange', text = '│', numhl='Identifier', linehl='GitSignsChangeLn' },
-    -- delete       = { hl = 'GitSignsDelete', text = '_', numhl='DiffDelete', linehl='GitSignsDeleteLn' },
-  },
   signcolumn = false,  -- Toggle with `:Gitsigns toggle_signs`
   numhl      = true, -- Toggle with `:Gitsigns toggle_numhl`
   linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
@@ -962,19 +795,18 @@ on_attach = function(bufnr)
     end, {expr=true})
 
     -- Actions
-    map({'n', 'v'}, '<leader>xs', ':Gitsigns stage_hunk<CR>')
-    map({'n', 'v'}, '<leader>xr', ':Gitsigns reset_hunk<CR>')
+    map({'n', 'v'}, '<leader>xa', gs.stage_hunk)
+    map({'n', 'v'}, '<leader>xu', gs.reset_hunk)
     map('n', '<leader>xS', gs.stage_buffer)
-    map('n', '<leader>xu', gs.undo_stage_hunk)
+    map('n', '<leader>xA', gs.undo_stage_hunk)
     map('n', '<leader>xR', gs.reset_buffer)
     map('n', '<leader>xp', gs.preview_hunk)
     map('n', '<leader>xb', function() gs.blame_line{full=true} end)
-    map('n', '<leader>xb', gs.toggle_current_line_blame)
+    map('n', '<leader>xB', gs.toggle_current_line_blame)
     map('n', '<leader>xd', gs.diffthis)
     map('n', '<leader>xD', function() gs.diffthis('~') end)
     map('n', '<leader>td', gs.toggle_deleted)
 
-    -- Text object
     map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
   end
 }
@@ -997,22 +829,11 @@ require("csvtools").setup({
 })
 '''
 
-# [[plugins]]
-# lazy = 0
-# require = ['promise-async']
-# hook_post_update = "lua require('fundo').install()"
-# repo = 'kevinhwang91/nvim-fundo'
-# lua_add = '''
-# require('fundo').setup({
-#     opt = {
-#         archives_dir = vim.fn.stdpath('data') .. require('fundo.fs.path').sep .. 'fundo'
-#     },
-# })
-# '''
 [[plugins]]
 repo = 'gen740/SmoothCursor.nvim'
 on_event = ['BufRead','BufNew']
 lua_source = '''
+vim.o.signcolumn = 'yes'
 vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1'})
 require('smoothcursor').setup({
     autostart = true,
@@ -1047,7 +868,3 @@ autocmd({ 'ModeChanged' }, {
   end,
 })
 '''
-
-# [[plugins]]
-# lazy = 0
-# repo = 'kevinhwang91/promise-async'

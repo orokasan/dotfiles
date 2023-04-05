@@ -44,7 +44,6 @@ if has('nvim')
 call ddc#custom#patch_global('sources', [
 \'skkeleton',
 \ 'nvim-lsp',
-\ 'vsnip',
 \ 'around',
 \ 'buffer',
 \ ])

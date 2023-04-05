@@ -1,4 +1,35 @@
 [[plugins]]
+lazy = 1
+repo =  'itchyny/lightline.vim'
+hook_add = '''
+autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
+'''
+hook_source = '''
+source ~/dotfiles/nvim/rc/config/lightline.rc.vim
+let &laststatus = has('nvim') ? 2 : 2
+'''
+
+[[plugins]]
+depends = ['lightline.vim', 'nvim-lspconfig']
+on_source = ['nvim-lspconfig']
+lazy = 1
+if = 'has("nvim")'
+repo = 'josa42/nvim-lightline-lsp'
+hook_source = '''
+    "autocmd DiagnosticChanged * call lightline#update()
+    let g:lightline#lsp#indicator_warnings = ' '
+    let g:lightline#lsp#indicator_errors = ' '
+    let g:lightline#lsp#indicator_hints = ' '
+    call lightline#lsp#register()
+'''
+
+[[plugins]]
+lazy = 1
+repo =  'itchyny/vim-gitbranch'
+on_source = ['lightline.vim']
+depends = ['lightline.vim']
+
+[[plugins]]
 repo = 'glidenote/memolist.vim'
 on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
 hook_add = '''
@@ -115,10 +146,18 @@ let g:quickrun_config = {
         \ "outputter/buffer/close_on_empty" : 1
         \ }
 \ }
+
+if has('win32') || has('win64')
+    let g:quickrun_config['python'] = { 
+    \   "hook/output_encode/enable" : 1,
+    \   "hook/output_encode/encoding" : "cp932",
+    \}
+else
 let g:quickrun_config['python'] = {
-    \ 'command': 'python',
-        \   'hook/output_encode/encoding': 'utf-8',
+    \   "hook/output_encode/enable" : 1,
+    \   'hook/output_encode/encoding': 'utf-8',
     \ }
+endif
 let g:quickrun_config['cpp'] = {'type': 'cpp/clang++zz'}
 
 let g:quickrun_config['tex'] = {
@@ -172,6 +211,7 @@ on_cmd = ['UndotreeToggle']
 hook_add = '''
 nnoremap U <Cmd>UndotreeToggle<CR>
 let g:undotree_SetFocusWhenToggle = 1
+let g:undotree_DiffAutoOpen = v:false
 let g:undotree_WindowLayout = 2
 '''
 
@@ -800,40 +840,4 @@ nnoremap g== <Plug>(crunch-operator-line)
 on_source = ['vim-crunch']
 repo = 'arecarn/vim-selection'
 
-[[plugins]]
-repo = 'lambdalisue/nerdfont.vim'
-on_event = ['BufRead']
-hook_source = '''
-if !has('nvim')
-au dein VimEnter * call nerdfont#find()
-au dein VimEnter * let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
-au dein VimEnter * let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
-au dein VimEnter * call nerdfont#find('.')
-endif
-let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
-let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
-let g:nerdfont#directory#customs = {
-    \ '': '',
-    \ 'open': '',
-    \ 'close': '',
-    \ 'symlink': '',
-    \}
-let g:nerdfont#path#extension#customs = {
-    \'txt' :  '',
-    \'pdf' :  '',
-    \'docx' :  '',
-    \'doc' :  '',
-    \'xlsx' :  '',
-    \'xlsm' :  '',
-    \'pptx' :  '',
-    \'ppt' :  '',
-    \'tex' :  '',
-    \'zip': ''
-    \}
-augroup my-glyph-palette
-  autocmd! *
-  autocmd FileType ddu-ff,ddu-filer call glyph_palette#apply()
-augroup END
-
-'''
 # vim:set foldmethod=marker:
