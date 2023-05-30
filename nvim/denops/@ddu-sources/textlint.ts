@@ -49,7 +49,7 @@ export type ActionData = {
 export class Source extends BaseSource<Params> {
   kind = "file";
   actions: Actions<Params> = {
-    preview: async (args: { denops: Denops; items: DduItem[] }) => {
+    highlight: async (args: { denops: Denops; items: DduItem[] }) => {
       const action = args.items[0]?.action as ActionData
       const lineNr = action.lineNr
       await args.denops.call("cursor", lineNr, 0);

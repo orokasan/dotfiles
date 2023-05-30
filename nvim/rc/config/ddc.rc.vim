@@ -1,4 +1,6 @@
 call ddc#custom#patch_global('ui', 'pum')
+" call ddc#custom#patch_global('ui', 'inline')
+" inoremap <expr><C-t>       ddc#map#insert_item(0, "\<C-e>")
 call ddc#custom#patch_global({
 \ 'backspaceCompletion': v:true,
 \})
@@ -34,7 +36,7 @@ call ddc#custom#patch_global('sourceParams', {
 
 " Customize settings on a filetype
 call pum#set_option({
-\ 'use_complete': v:false,
+\ 'use_complete': v:true,
 \ 'scrollbar_char': ' ',
 \ 'highlight_scrollbar': 'WildMenu',
 \ 'highlight_selected': 'PmenuSelected',
@@ -42,7 +44,8 @@ call pum#set_option({
 
 if has('nvim')
 call ddc#custom#patch_global('sources', [
-\'skkeleton',
+\ 'skkeleton',
+\ 'vsnip',
 \ 'nvim-lsp',
 \ 'around',
 \ 'buffer',
@@ -81,19 +84,32 @@ endfunction "}}}
 " <TAB>: completion.
 imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
 smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-inoremap <silent><expr> <TAB> pum#visible() ?
-\ (vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#insert_relative(+1) ): lexima#expand('<TAB>', 'i')
-inoremap <silent><expr> <S-TAB>
-\ pum#visible()  ?  vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)' : pum#map#insert_relative(-1) : "\<BS>"
-snoremap <silent><expr> <TAB> pum#visible() ? 
+" inoremap <silent><expr> <TAB> pum#visible() ? pum#map#insert_relative(+1) ): lexima#expand('<TAB>', 'i')
+" inoremap <silent><expr> <S-TAB> pum#visible()  ? pum#map#insert_relative(-1) : "\<BS>"
+snoremap <silent><expr> <TAB> pum#visible() ?
 \ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#insert_relative(+1) : lexima#expand('<TAB>', 'i')
 snoremap <silent><expr> <S-TAB>
 \ pum#visible()  ?  vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)' : pum#map#insert_relative(-1) : "\<BS>"
 
-inoremap <silent><expr> <C-n> pum#visible() ? pum#map#insert_relative(+1) : ddc#map#manual_complete()
-inoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
-inoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
-
+inoremap <silent> <C-n> <Cmd>call <SID>my_pum_select('below', 0)<CR>
+inoremap <silent> <C-p> <Cmd>call <SID>my_pum_select('above', 0)<CR>
+inoremap <silent> <tab> <Cmd>call <SID>my_pum_select('below', 1)<CR>
+inoremap <silent> <S-tab> <Cmd>call <SID>my_pum_select('above', 1)<CR>
+function! s:my_pum_select(direction, tab) abort
+if pum#visible()
+  call pum#map#insert_relative(a:direction ==# 'below' ? +1 : -1)
+else
+  if a:tab
+    call lexima#expand('<TAB>', 'i')
+  endif
+  if a:direction ==# 'below'
+    call ddc#map#manual_complete()
+  endif
+endif
+endfunction
+" inoremap <C-n> <Cmd>call pum#map#insert_relative(+1)<CR>
+" inoremap <silent><expr> <C-p> pum#map#insert_relative(-1)
+inoremap <C-y>   <Cmd>call pum#map#cancel()<CR>
 call pum#set_option({
 \ 'padding': v:false,
 \ 'reversed': v:false,
@@ -139,14 +155,12 @@ call ddc#custom#patch_filetype(
 \['ddu-ff-filter'],
 \{'sources':[]})
 
-" 
 let g:popup_preview_config = { "border": v:false ,
 	      \ 'maxWidth': 60,
 	      \ 'maxHeight': 30,
 	      \ }
 " call popup_preview#enable()
 	" Use cmdline source.
-	call ddc#custom#patch_global('ui', 'pum')
 	call ddc#custom#patch_global('autoCompleteEvents', [
 	\ 'InsertEnter', 'TextChangedI', 'TextChangedP', 'CmdlineChanged'])
 	nnoremap :       <Cmd>call CommandlinePre()<CR>:
@@ -160,15 +174,14 @@ let g:popup_preview_config = { "border": v:false ,
   endfunction
 	
 	function! CommandlinePre() abort
-	  " cnoremap <C-n>   <Cmd>call pum#map#insert_relative(-1)<CR>
+call ddc#custom#patch_global('ui', 'pum')
 cnoremap <silent><expr> <TAB> pum#visible() ? pum#map#insert_relative(+1) : ddc#map#manual_complete()
 cnoremap <silent><expr> <S-TAB> pum#visible() ? pum#map#insert_relative(-1) : ddc#map#manual_complete()
 cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
   call pum#set_option({
   \ 'padding': v:false,
-  \ 'reversed': v:true,
+  \ 'reversed': v:false,
   \ })
-	
 	  " Overwrite sources
 	  if !exists('b:prev_buffer_config')
 	    let b:prev_buffer_config = ddc#custom#get_buffer()

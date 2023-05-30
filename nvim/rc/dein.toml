@@ -232,11 +232,8 @@ setlocal tabstop=2
 json = '''
 setlocal conceallevel=0
 '''
+
 markdown = '''
-inoremap <buffer><silent><expr> <C-d> getcurpos()[2] ==# 1 ? "- " :
-    \ match(getline('.'), '^-\s') >=0 ? "<C-u>" : "\<C-d>"
-inoremap <buffer><silent><expr> <C-t> getcurpos()[2] ==# 1 ? "- " : "\<C-t>"
-nnoremap <buffer><silent><expr> o match(getline('.'), '\*\s') >=0 ? "o- " : "o"
 '''
 
 tsv = '''
@@ -250,6 +247,34 @@ nnoremap <buffer> <S-tab> F<TAB>
 txt = '''
 setlocal textwidth=42
 setlocal noexpandtab
+nnoremap ]] <Cmd>call search('^\s*\(■\)', "W")<CR>
+nnoremap [[ <Cmd>call search('^\s*\(■\)', "bW")<CR>
 '''
+
+[[plugins]]
+repo = 'eihigh/vim-aomi-grayscale'
+
+[[plugins]]
+repo = 'farmergreg/vim-lastplace'
+
+# [[plugins]]
+# repo = 'theHamsta/nvim-treesitter-pairs'
+# lua_post_source = '''
+# '''
+
+[[plugins]]
+repo = "rcarriga/nvim-notify"
+
+[[plugins]]
+repo = "IwasakiYuuki/ai-assistant.nvim"
+lua_add = '''
+vim.keymap.set('n', '<leader>c', "<cmd>AIAssistantToggle<cr>")
+'''
+
+[[plugins]]
+lazy = 1
+on_cmd = ['Ask', 'Review']
+repo ='CoderCookE/vim-chatgpt'
+
 
 # vim:set foldmethod=marker:'

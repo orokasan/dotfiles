@@ -2,6 +2,10 @@
 lazy = 1
 repo =  'itchyny/lightline.vim'
 hook_add = '''
+if v:vim_did_enter
+  set laststatus=0
+endif
+autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
 autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
 '''
 hook_source = '''
@@ -55,7 +59,6 @@ repo =  'cohama/lexima.vim'
 if = 'has("nvim")'
 on_event = ['InsertEnter', 'CmdlineEnter']
 hook_source = '''
-
 let g:lexima_ctrlh_as_backspace = v:true
 let g:lexima_enable_endwise_rules = v:false
 let g:lexima_accept_pum_with_enter = v:false
@@ -75,13 +78,15 @@ for rule in s:lexima_my_rules
   call lexima#add_rule(rule)
 endfor
 
-" Simple usage
+"qqq Simple usage
+LeximaAlterCommand ee e!
 LeximaAlterCommand ee e!
 
 " With atom ( Read `:h \%[]` )
 LeximaAlterCommand cap\%[ture] Capture
 LeximaAlterCommand r\%[un]     QuickRun
 LeximaAlterCommand s\%[et] set
+cnoremap <CR> <Plug>(kensaku-search-replace)<CR>
 '''
 [[plugins]]
 lazy = 1
@@ -107,9 +112,10 @@ nmap T <Plug>(clever-f-T)
 xmap T <Plug>(clever-f-T)
 omap T <Plug>(clever-f-T)
 " let g:clever_f_show_prompt = 1
-let g:clever_f_mark_cursor = 0
-let g:clever_f_mark_char = 0
+let g:clever_f_mark_cursor = 1
+" let g:clever_f_mark_char = 1
 " let g:clever_f_mark_char_color = "Underlined"
+let g:clever_f_chars_match_any_signs = ';:'
 let g:clever_f_hide_cursor_on_cmdline = 1
 let g:clever_f_smart_case = 1
 let g:clever_f_across_no_line = 1
@@ -495,10 +501,10 @@ lua_add = '''
 local kopts = { noremap = true, silent = true }
 
 vim.api.nvim_set_keymap('n', 'n',
-  [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
+  [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>zz]],
   kopts)
 vim.api.nvim_set_keymap('n', 'N',
-  [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
+  [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>zz]],
   kopts)
 
 vim.api.nvim_set_keymap('x', '*', [[<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>]], {})
@@ -630,7 +636,7 @@ onoremap  'a <Plug>(operator-sandwich-g@)
 xnoremap  'd <Plug>(operator-sandwich-delete)
 "replace
 xnoremap  'r <Plug>(operator-sandwich-replace)
-nmap 'dd vab'd
+nmap 'dd 'db
 nmap 'rr vab'r
 '''
 hook_source = '''
@@ -649,7 +655,7 @@ let g:sandwich#recipes += [{'buns' : ['“', '”'], 'nesting':1, 'input':['q']}
 let g:sandwich#recipes += [{'buns' : ['〓赤〓', '〓/赤〓'], 'nesting':1, 'input':['1']}]
 let g:sandwich#recipes += [{'buns' : ['〓等幅〓', '〓/等幅〓'], 'nesting':1, 'input':['2']}]
 let g:sandwich#recipes += [{'buns' : ['〓太〓', '〓/太〓'], 'nesting':1, 'input':['3']}]
-let g:sandwich#recipes += [{'buns' : ['〓ルビ〓', '〓/ルビ〓'], 'nesting':1, 'input':['4']}]
+let g:sandwich#recipes += [{'buns' : ['〓下〓', '〓/下〓'], 'nesting':1, 'input':['4']}]
 let g:sandwich#recipes += [{'buns' : ['〓リ/〓', '〓/リ〓'], 'nesting':1, 'input':['5']}]
 let g:sandwich#recipes += [{'buns' : ['〓リ注白〓', '〓/リ注白〓'], 'nesting':1, 'input':['6']}]
 let g:sandwich#recipes += [{'buns' : ['〓リ白/〓', '〓/リ白〓'], 'nesting':1, 'input':['7']}]
@@ -681,16 +687,16 @@ nnoremap ! <cmd>Switch<CR>
 nnoremap gs <cmd>Switch<CR>
 let g:switch_custom_definitions =
     \ [
-    \ ['1	', '①'],
-    \ ['2	', '②'],
-    \ ['3	', '③'],
-    \ ['4	', '④'],
-    \ ['5	', '⑤'],
-    \ ['6	', '⑥'],
-    \ ['7	', '⑦'],
-    \ ['8	', '⑧'],
-    \ ['9	', '⑨'],
-    \ ['0	', '⑩'],
+    \ ['一' ,'1', '①'],
+    \ ['二' ,'2', '②'],
+    \ ['三' ,'3', '③'],
+    \ ['四' ,'4', '④'],
+    \ ['五' ,'5', '⑤'],
+    \ ['六' ,'6', '⑥'],
+    \ ['七' ,'7', '⑦'],
+    \ ['八' ,'8', '⑧'],
+    \ ['九' ,'9', '⑨'],
+    \ ['零' ,'0', '⑩'],
     \ ]
 '''
 
@@ -700,7 +706,6 @@ if = '!has("kaoriya")'
 repo = 'orokasan/jasentence.vim'
 on_map = { nox = '<Plug>JaSentence' }
 hook_add = '''
-
 let g:jasentence_endpat = '[、。，．？！$]\+'
 let g:jasentence_no_default_key_mappings = 1
   nmap <silent> ) <Plug>JaSentenceMoveNF
@@ -840,4 +845,14 @@ nnoremap g== <Plug>(crunch-operator-line)
 on_source = ['vim-crunch']
 repo = 'arecarn/vim-selection'
 
+[[plugins]]
+repo = 'andymass/vim-matchup'
+on_event = ["BufRead", "BufNew"]
+hook_add = '''
+let g:matchup_matchparen_offscreen = { "method":"popup" }
+let g:matchup_matchparen_enabled = 0
+let g:matchup_surround_enabled = 0
+let g:matchup_matchparen_deferred = 0
+"lvim.builtin.treesitter.matchup.enable = true
+'''
 # vim:set foldmethod=marker:

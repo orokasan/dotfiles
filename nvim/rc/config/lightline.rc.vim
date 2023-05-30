@@ -216,7 +216,6 @@ endfunction
 " lightlineに渡す変数の設定
 augroup CharCounter
     autocmd!
-    " autocmd BufNew,BufEnter,TextChanged,CursorMoved,CursorMovedI * call <SID>llvarCharCount()
     autocmd BufNew,BufEnter,FileWritePre,BufWrite,InsertLeave * call <SID>llvarCharAllCount()
 augroup END
 
@@ -226,13 +225,6 @@ let s:llcharallcount = ''
 function! s:llvarCharAllCount()
     let l:count = wordcount().chars
     let s:llcharallcount = printf('%4S', l:count)
-endfunction
-
-function! s:llvarCharCount()
-    let l:count = strwidth(getline('.'))
-    let s:llcharcount = l:count < 10 ? '  ' . l:count :
-        \ l:count <100 ? ' ' . l:count :
-        \ l:count
 endfunction
 "}}}
 

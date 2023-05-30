@@ -29,10 +29,10 @@ export class Filter extends BaseFilter<Params> {
         if (item.display) {
           const prevHighlightLength = item.display.length
           item.display = item.display.replace(action.path, relpath);
-          const CurHighlightLength = item.display.length
+          const curHighlightLength = item.display.length
           item.highlights?.filter( (i) => {
-            const highlight_col = i.col - (prevHighlightLength - CurHighlightLength)
-            i.col = highlight_col >= 0 ? highlight_col : 0
+            const highlight_col = i.col - (prevHighlightLength - curHighlightLength)
+            i.col = highlight_col >= 1 ? highlight_col : 1
           } )
         }
       }

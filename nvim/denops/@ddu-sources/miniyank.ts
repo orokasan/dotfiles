@@ -2,10 +2,10 @@ import {
   BaseSource,
   Context,
   Item,
-} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
+} from "https://deno.land/x/ddu_vim@v2.7.1/types.ts";
+import { Denops } from "https://deno.land/x/ddu_vim@v2.7.1/deps.ts";
 import type { ActionData } from "https://raw.githubusercontent.com/Shougo/ddu-kind-word/master/denops/@ddu-kinds/word.ts";
-import { StringReader } from "https://deno.land/x/std@0.110.0/io/readers.ts";
+import { StringReader } from "https://deno.land/std@0.110.0/io/readers.ts";
 
 type Params = {
   "reg": string;
@@ -53,15 +53,15 @@ export class Source extends BaseSource<Params> {
             word: word,
             display: `${reg}${regtype}: ${word}`,
             action: {
-              text: i[0],
+              text: i[0].join("\n"),
               regType: i[1],
             },
             highlights: [
               {
                 name: "word",
                 hl_group: "Function",
-                col: 0,
-                width: i[1] == "v" ? (new StringReader(word).length) : 0,
+                col: 1,
+                width: i[1] == "v" ? (new StringReader(word).length) + 3 : 0,
               },
             ],
           });

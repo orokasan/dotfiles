@@ -4,6 +4,7 @@ augroup vimrc
   autocmd!
 augroup END
 " don't load unused default plugins
+let g:did_load_ftplugin         = 1
 let g:skip_loading_mswin        = 1
 let g:did_install_default_menus = 1
 let g:did_install_syntax_menu   = 1
@@ -23,23 +24,26 @@ let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
 let g:loaded_matchparen = 0
-let g:loaded_node_provider = 0
-let g:loaded_perl_provider = 0
+let g:loaded_node_provider = 1
+let g:loaded_perl_provider = 1
 let g:loaded_python_provider = 0
-let g:loaded_ruby_provider = 0
+let g:loaded_ruby_provider = 1
 let g:did_indent_on             = 1
 let g:did_load_filetypes        = 1
 " let g:loaded_2html_plugin       = 1
 let g:loaded_man                = 1
-let g:loaded_matchit            = 1
-let g:loaded_remote_plugins     = 1
+let g:loaded_matchit            = 0
+let g:loaded_remote_plugins     = 0
 let g:loaded_shada_plugin       = 1
 let g:loaded_spellfile_plugin   = 1
 let g:loaded_tutor_mode_plugin  = 1
 
+silent! call execute('source ' .. expand('~/local_vimrc'))
+
 if exists('neovide')
-  set guifont=PlemolJP:h12:#e-subpixelantialias
-  set linespace=1
+  set guifont=PlemolJP\ Console\ NF:h13:#e-subpixelantialias
+  " set guifont:HackGen\ Console\ NFJ:h11
+  set linespace=0
   let g:neovide_padding_top = 0
   let g:neovide_padding_bottom = 0
   let g:neovide_padding_right = 0
@@ -56,6 +60,7 @@ if exists('neovide')
   " let g:neovide_scale_factor=1.0
   let g:neovide_refresh_rate_idle = 5
 endif
+let g:python3_host_prog = expand('AppData\Local\Programs\Python\Python39\python.EXE')
 
 if executable('win32yank.exe')
   if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
@@ -85,10 +90,28 @@ endif
 "   let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
 " endif
 let mapleader = "\<Space>"
+
+let $CACHE = expand('~/.cache')
+if !isdirectory($CACHE)
+  call mkdir($CACHE, 'p')
+endif
+if &runtimepath !~# '/dein.vim'
+  let s:dein_dir = fnamemodify('dein.vim', ':p')
+  if !isdirectory(s:dein_dir)
+    let s:dein_dir = $CACHE .. '/dein/repos/github.com/Shougo/dein.vim'
+    if !isdirectory(s:dein_dir)
+      execute '!git clone https://github.com/Shougo/dein.vim' s:dein_dir
+    endif
+    let s:dein_is_initializing = 1
+  endif
+  execute 'set runtimepath^=' .. substitute(
+        \ fnamemodify(s:dein_dir, ':p') , '[/\\]$', '', '')
+endif
+
 let g:dein#install_progress_type = "floating"
 
 if has('nvim')
-let g:dein#default_options = { 'merged': v:false }
+let g:dein#default_options = { 'merged': v:true }
 else
 let g:dein#default_options = { 'merged': v:false }
 endif
@@ -98,23 +121,11 @@ let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 let s:dein_is_initializing = 0
 
-if &runtimepath !~# '/dein.vim'
-  if !isdirectory(s:dein_repo_dir)
-    if !executable('git')
-      echo 'Please install git or update your path to include the git executable!'
-    endif
-    echo 'install dein.vim ...'
-    execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
-    let s:dein_is_initializing = 1
-  endif
-endif
-let s:dein_path =  fnamemodify(s:dein_repo_dir, ':p')
-execute 'set runtimepath+=' . s:dein_path
-
 let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
 let s:denops_toml = '~/dotfiles/nvim/rc/dein_denops.toml'
+let g:dein#auto_remote_plugins = v:true
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
   call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:denops_toml])
@@ -126,10 +137,10 @@ if dein#load_state(s:dein_dir)
   endif
   call dein#end()
   call dein#save_state()
-  if !has('vim_starting')
-    call dein#call_hook('source')
-    call dein#call_hook('post_source')
-  endif
+endif
+if !has('vim_starting')
+  call dein#call_hook('source')
+  call dein#call_hook('post_source')
 endif
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
@@ -161,6 +172,7 @@ syntax on
 
 set fileformats=unix,dos,mac
 set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis
+
 
 colorscheme iceberg
 set background=dark
@@ -226,7 +238,7 @@ set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕
 set nojoinspaces
 set textwidth=0
 set updatecount=50
-set tabstop=4
+set tabstop=2
 set expandtab
 set softtabstop=-1
 let g:vim_indent_cont = 4
@@ -274,29 +286,17 @@ let g:vimsyn_embed='lPr'
 function! s:is_view_available() abort
   if !&buflisted || &buftype !=# ''
     return 0
-  elseif !filewritable(expand('%:p'))
-    return 0
   endif
   return 1
 endfunction
 
-function! s:mkview() abort
-  if s:is_view_available()
-    silent! mkview
-  endif
-endfunction
-function! s:loadview() abort
-  if s:is_view_available()
-    silent! loadview
-  endif
-endfunction
-augroup MyAutoCmd
-  autocmd!
-  autocmd MyAutoCmd BufWinLeave * call s:mkview()
-  autocmd MyAutoCmd BufReadPost * call s:loadview()
-augroup END
-set viewoptions-=options
-set viewoptions-=curdir
+" au vimrc BufReadPost * silent! norm! '^
+" augroup MyAutoCmd
+"   autocmd!
+"   autocmd MyAutoCmd BufWinLeave * if <SID>is_view_available() | mkview | echom expand('%') | endif
+"   autocmd MyAutoCmd BufReadPost * if <SID>is_view_available() | loadview |  endif
+" augroup END
+" set viewoptions=cursor
 
 nnoremap <CR> o<ESC>
 " moving visible lines by j/k
@@ -304,6 +304,8 @@ nnoremap <silent>j gj
 nnoremap <silent>k gk
 vnoremap <silent>j gj
 vnoremap <silent>k gk
+nnoremap <silent><expr> l charcol('$') - 1 > 0 ? (charcol('.') ==# charcol('$') - 1 ? "j^" : "l") : "j^"
+nnoremap <silent><expr> h col('.') ==# 1 ? "k$" : "h"
 " moving tip/end of a line
 nnoremap <S-l> $
 nnoremap <S-h> ^
@@ -333,12 +335,12 @@ nnoremap <silent><Leader>l <Cmd>bnext!<CR>
 nnoremap <silent> <C-L> <Cmd>tabnext<CR>
 nnoremap <silent> <C-H> <Cmd>tabprevious<CR>
 " matchit mapping
-nmap <TAB>  %
-nmap g<TAB> g%
-xmap <TAB>  %
-xmap g<TAB> g%
-omap <TAB>  %
-omap g<TAB> g%
+nmap <TAB>  <plug>(matchup-%)
+nmap g<TAB> <plug>(matchup-g%)
+xmap <TAB>  <plug>(matchup-%)
+xmap g<TAB> <plug>(matchup-g%)
+omap <TAB>  <plug>(matchup-%)
+omap g<TAB> <plug>(matchup-g%)
 " native <TAB> is useful
 nnoremap <C-p> <TAB>zz<CR>
 vnoremap <C-p> <C-i>
@@ -424,6 +426,7 @@ inoremap zz2 ②
 inoremap zz3 ③
 inoremap zz4 ④
 inoremap zz5 ⑤
+
 inoremap zz6 ⑥
 inoremap zz7 ⑦
 inoremap zz8 ⑧
@@ -473,7 +476,6 @@ cnoremap z. …
 cnoremap z/ ・
 cnoremap z, ●
 cnoremap z<space>  　
-
 "terminal
 tnoremap <Esc> <C-\><C-n>
 
@@ -668,12 +670,50 @@ inoremap <silent> <c-l> <C-g>u<ESC><cmd>call <SID>move_to_char_pos('★')<CR>
 
 let g:denops#debug = v:false
 let g:denops#trace = v:false
-" let g:denops_server_addr = '127.0.0.1:32123'
+let g:denops_server_addr = '127.0.0.1:32123'
 
 function! s:change_textwidth()
 let &tw = input('Input textwidth value: ')
 endfunction
 
 nnoremap <leader>u <Cmd>call <SID>change_textwidth()<CR>
-set laststatus=0
+let g:markdown_recommended_style=0
+function! AerialCall() abort
+lua << EOF
+
+local ext_config = {
+  show_nesting = {
+    ["_"] = false,
+    json = true,
+    yaml = true,
+  },
+}
+  require("aerial").sync_load()
+  local backends = require("aerial.backends")
+  local config = require("aerial.config")
+  local data = require("aerial.data")
+  local highlight = require("aerial.highlight")
+  local util = require("aerial.util")
+
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filename = vim.api.nvim_buf_get_name(0)
+  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+  local show_nesting = ext_config.show_nesting[filetype]
+  if show_nesting == nil then
+    show_nesting = ext_config.show_nesting["_"]
+  end
+  local backend = backends.get()
+
+  if not backend then
+    backends.log_support_err()
+    return
+  elseif not data.has_symbols(0) then
+    backend.fetch_symbols_sync(0, opts)
+  end
+  print(vim.inspect(data.get()))
+EOF
+endfunction
+
+runtime! plugin/rplugin.vim
+
 " vim:set foldmethod=marker:

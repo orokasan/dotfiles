@@ -90,7 +90,7 @@ local on_attach = function(client, bufnr)
   hi! link DiagnosticWarning Warning
   ]], false)
 
-  client.server_capabilities.semanticTokensProvider = nil
+  client.server_capabilities.semanticTokensProvider = false
 end
 
 local lspinstaller = require("mason")
@@ -313,7 +313,7 @@ on_lua = ["plenary"]
 repo = 'lukas-reineke/indent-blankline.nvim'
 on_event = ["BufRead"]
 hook_add = '''
-let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-ff']
+let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-ff', 'toml']
 let g:indent_blankline_use_treesitter = v:true
 "let g:indent_blankline_show_first_indent_level = v:true
 let g:indent_blankline_char = '|'
@@ -339,7 +339,7 @@ repo = 'bfredl/nvim-miniyank'
 on_map = ['<Plug>(miniyank']
 on_event = ["FocusLost"]
 hook_add = '''
-let g:miniyank_maxitems = 25
+" let g:miniyank_maxitems = 5
 map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
 map <leader>n <Plug>(miniyank-cycle)
@@ -376,6 +376,7 @@ vim.api.nvim_set_option('runtimepath', vim.api.nvim_get_option('runtimepath') ..
 require 'nvim-treesitter.configs'.setup {
   parser_install_dir = ts_path,
   tree_docs = { enable = true },
+    -- [options]
   highlight = {
     enable = true,
     disable = { "cpp", "toml", "help", 'markdown'},
@@ -488,13 +489,26 @@ vim.api.nvim_create_autocmd({ "Filetype" }, {
 })
 local aerial = require("aerial")
 require('aerial').setup({
+    icons = {},
+    nerd_font = "false",
   layout = {
     width = 40,
     min_width = 30,
     default_direction = "right",
+  placement = "edge",
   },
+    attach_mode = "global",
   show_guides = true,
-  -- Customize the characters used when show_guides = true
+   guides = {
+    -- When the child item has a sibling below it
+    mid_item = "├─",
+    -- When the child item is the last in the list
+    last_item = "└─",
+    -- When there are nested child guides to the right
+    nested_top = "│ ",
+    -- Raw indentation
+    whitespace = "  ",
+  }, -- Customize the characters used when show_guides = true
   lsp = {
     -- Fetch document symbols when LSP diagnostics update.
     -- If false, will update on buffer changes.
@@ -505,16 +519,6 @@ require('aerial').setup({
     -- How long to wait (in ms) after a buffer change before updating
     -- Only used when diagnostics_trigger_update = false
     update_delay = 300,
-  },
-  guides = {
-    -- When the child item has a sibling below it
-    mid_item = " ",
-    -- When the child item is the last in the list
-    last_item = " ",
-    -- When there are nested child guides to the right
-    nested_top = " ",
-    -- Raw indentation
-    whitespace = " ",
   },
   txt = {
     update_delay = 300
@@ -541,11 +545,48 @@ require('aerial').setup({
 
   open_automatic = function(bufnr)
     return false
-    -- Enforce a minimum line count
-    -- return vim.api.nvim_buf_line_count(bufnr) > 80
-    --   -- Enforce a minimum symbol count
-    --   and not aerial.was_closed()
-  end
+    end,
+-- Keymaps in aerial window. Can be any value that `vim.keymap.set` accepts OR a table of keymap
+  -- options with a `callback` (e.g. { callback = function() ... end, desc = "", nowait = true })
+  -- Additionally, if it is a string that matches "actions.<name>",
+  -- it will use the mapping at require("aerial.actions").<name>
+  -- Set to `false` to remove a keymap
+  keymaps = {
+    ["?"] = "actions.show_help",
+    ["-"] = "<C-w>p",
+    ["g?"] = "actions.show_help",
+    ["<CR>"] = "actions.jump",
+    ["<2-LeftMouse>"] = "actions.jump",
+    ["<C-v>"] = "actions.jump_vsplit",
+    ["<C-s>"] = "actions.jump_split",
+    ["p"] = "actions.scroll",
+    ["<space>"] = { callback = function() require('aerial.actions').scroll() end, desc = "", nowait = true },
+    ["<C-j>"] = "actions.down_and_scroll",
+    ["<C-k>"] = "actions.up_and_scroll",
+    ["{"] = "actions.prev",
+    ["}"] = "actions.next",
+    ["[["] = "actions.prev_up",
+    ["]]"] = "actions.next_up",
+    ["q"] = "actions.close",
+    ["o"] = "actions.tree_toggle",
+    ["za"] = "actions.tree_toggle",
+    ["O"] = "actions.tree_toggle_recursive",
+    ["zA"] = "actions.tree_toggle_recursive",
+    ["l"] = "actions.tree_open",
+    ["zo"] = "actions.tree_open",
+    ["L"] = "actions.tree_open_recursive",
+    ["zO"] = "actions.tree_open_recursive",
+    ["h"] = "actions.tree_close",
+    ["zc"] = "actions.tree_close",
+    ["H"] = "actions.tree_close_recursive",
+    ["zC"] = "actions.tree_close_recursive",
+    ["zr"] = "actions.tree_increase_fold_level",
+    ["zR"] = "actions.tree_open_all",
+    ["zm"] = "actions.tree_decrease_fold_level",
+    ["zM"] = "actions.tree_close_all",
+    ["zx"] = "actions.tree_sync_folds",
+    ["zX"] = "actions.tree_sync_folds",
+  },
 })
 '''
 
@@ -727,6 +768,12 @@ end)
 vim.keymap.set("n", "<C-x>", function()
 	require("dial.map").manipulate("decrement", "normal")
 end)
+vim.keymap.set("n", "g<C-a>", function()
+  require("dial.map").manipulate("increment", "gnormal")
+end)
+vim.keymap.set("n", "g<C-x>", function()
+  require("dial.map").manipulate("decrement", "gnormal")
+end)
 vim.keymap.set("v", "<C-a>", function()
 	require("dial.map").manipulate("increment", "visual")
 end)
@@ -805,7 +852,7 @@ on_attach = function(bufnr)
     map('n', '<leader>xB', gs.toggle_current_line_blame)
     map('n', '<leader>xd', gs.diffthis)
     map('n', '<leader>xD', function() gs.diffthis('~') end)
-    map('n', '<leader>td', gs.toggle_deleted)
+    map('n', '<leader>xd', gs.toggle_deleted)
 
     map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
   end
@@ -831,9 +878,10 @@ require("csvtools").setup({
 
 [[plugins]]
 repo = 'gen740/SmoothCursor.nvim'
+lazy = 1
 on_event = ['BufRead','BufNew']
 lua_source = '''
-vim.o.signcolumn = 'yes'
+vim.o.signcolumn = 'number'
 vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1'})
 require('smoothcursor').setup({
     autostart = true,
@@ -849,8 +897,9 @@ require('smoothcursor').setup({
     threshold = 3,             -- animate if threshold lines jump
     disable_float_win = false, -- disable on float window
     enabled_filetypes = nil,   -- example: { "lua", "vim" }
-    disabled_filetypes = nil,  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
+    disabled_filetypes = {'ddu-ff', 'ddu-filer',},  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
 })
+vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
 local autocmd = vim.api.nvim_create_autocmd
 local augroup = vim.api.nvim_create_augroup
 autocmd({ 'ModeChanged' }, {
@@ -868,3 +917,57 @@ autocmd({ 'ModeChanged' }, {
   end,
 })
 '''
+
+[[plugins]]
+repo = 'cshuaimin/ssr.nvim'
+on_lua = ["ssr"]
+lua_add = '''
+vim.keymap.set({ "n", "x" }, "<space>r", function() require("ssr").open() end)
+'''
+lua_post_source = '''
+require("ssr").setup {
+      border = "rounded",
+      min_width = 50,
+      min_height = 5,
+      max_width = 120,
+      max_height = 25,
+      keymaps = {
+        close = "q",
+        next_match = "n",
+        prev_match = "N",
+        replace_confirm = "<cr>",
+        replace_all = "<leader><cr>",
+        help = "?",
+      },
+    }
+'''
+
+[[plugins]]
+repo = 'kensleDev/persistent-macros.nvim'
+on_lua = ["persistent-macros"]
+lua_post_source = '''
+  require('persistent-macros').setup(".config/macros.json")
+    vim.keymap.set("n", "<leader>m", function()
+        vim.cmd([[:ShowMacros()]])
+    end, { noremap = true, silent = true })
+'''
+
+[[plugins]]
+repo = 'uga-rosa/ugaterm.nvim'
+on_cmd = ['UgatermOpen']
+lua_add = '''
+vim.keymap.set("n", "<leader>t", function()
+    vim.cmd([[:UgatermOpen]])
+end, { noremap = true, silent = true })
+'''
+lua_source = '''
+require("ugaterm").setup({
+  ---@type string The terminal buffer name prefix.
+  prefix = "terminal://",
+  ---@type string The filetype for a terminal buffer.
+  filetype = "ugaterm",
+  ---@type string|function The command/function to open a teminal window.
+  open_cmd = "botright 15sp",
+})
+'''
+

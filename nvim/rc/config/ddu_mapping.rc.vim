@@ -12,25 +12,25 @@ function! s:ddu_mapping() abort
       \ -name=default
       \ mr -source-param-kind='mrw'<CR>
   nnoremap <silent> sb <cmd>Ddu
-      \ -name=buffer
+      \ -name=select
       \ buffer<CR>
   nnoremap <silent> sd <cmd>Ddu
       \ -ui-param-split=floating
       \ -ui-param-autoResize
       \ jump<CR>
-
   nnoremap <silent> ss <cmd>Ddu
       \ -name=file
-      \ file -source-option-path=`expand('%:p:h')`<CR>
+      \ file -source-option-path=`escape(expand('%:p:h'))`<CR>
   nnoremap <silent> <leader>s <cmd>Ddu
       \ -name=file
       \ -searchPath=`expand('%:p')`
       \ file -source-option-path=`expand('%:p:h')`<CR>
   nnoremap <silent> sS <cmd>Ddu file -source-option-path=`getcwd()`<CR>
-  nnoremap <silent> s/ <cmd>Ddu searchres<CR>
+  nnoremap <silent> s/ <cmd>Ddu
+      \ searchres<CR>
   nnoremap <silent> sy <cmd>Ddu
       \ -name=word
-      \ -ui-param-split=floating
+      \ -name=float
       \ miniyank<CR>
 
   nnoremap <silent> se <cmd>Ddu
@@ -51,12 +51,12 @@ function! s:ddu_mapping() abort
   nnoremap <silent> s- <cmd>Ddu -ui-param-startFilter=v:true dein<CR>
   nnoremap <silent> s_ <cmd>Ddu dein_update<CR>
 
-  nnoremap <silent> sv <cmd>Ddu junkfile -name=prev -ui-param-cursorPos=2<CR>
+  nnoremap <silent> sv <cmd>Ddu junkfile -name=prev -ui-param-cursorPos=1<CR>
   nnoremap <silent> sV <cmd>call ddu#start({'sources': [{'name': 'file_external', 'option': {'path': '~/.cache/junkfile/' .. strftime('%Y/%m'),'input': ''}}]})<CR>
 
   nnoremap <silent> sK <cmd>Ddu nvim_lsp_diagnostic_all<CR>
   nnoremap <silent> sk <cmd>Ddu nvim_lsp_diagnostic_buffer<CR>
-  autocmd dein FileType txt,markdown nnoremap <silent><buffer> sk <cmd>Ddu textlint<CR>
+  autocmd dein FileType txt,markdown nnoremap <silent><buffer> sk <cmd>Ddu -name=textlint textlint<CR>
 
   nnoremap <silent> <leader>e <cmd>Ddu
       \ -name=filer
@@ -67,6 +67,22 @@ function! s:ddu_mapping() abort
   nnoremap <silent> st <cmd> call ddu#start({'name': 'tree',  'options':{'searchPath': ''}, 'sources': [{'name': 'text'}],'resume': v:true, 'refresh':v:true}})<CR>
 
   nnoremap <silent> <C-e> <cmd> call ddu#start({'name': 'filer', 'resume': v:true})<CR>
+
+  inoremap <C-q> <Cmd>call ddu#start(#{
+  \   name: 'file',
+  \   ui: 'ff',
+  \   input: matchstr(getline('.')[: col('.') - 1], '\f*$'),
+  \   sources: [
+  \     #{ name: 'file', options: #{ defaultAction: 'feedkeys' } },
+  \   ],
+  \   uiParams: #{
+  \     ff: #{
+  \       startFilter: v:true,
+  \       replaceCol: match(getline('.')[: col('.') - 1], '\f*$') + 1,
+  \     },
+  \   },
+  \ })<CR>
+
 endfunction
 
 function! s:find_gitdir() abort
@@ -90,3 +106,4 @@ nnoremap <silent> sH :Ddu
     \ help<CR>
 
 call s:ddu_mapping()
+

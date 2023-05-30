@@ -14,6 +14,14 @@ repo = 'gamoutatsumi/dps-ghosttext.vim'
 lazy = 1
 on_cmd = ['Gin']
 repo = 'lambdalisue/gin.vim'
+hook_add = '''
+"nnoremap <silent> <Leader>gg
+"\ <Cmd>GinStatus ++opener=botright\ split<CR>
+"nnoremap <silent> <Leader>gl
+"\ <Cmd>GinLog ++opener=botright\ vsplit  --graph --abbrev-commit --pretty=format:%h\ %s\ (%ar)<CR>
+"nnoremap <silent> <Leader>gc
+"\ <Cmd>Gin ++opener=botright\ split commit<CR>
+'''
 
 [[plugins]]
 repo = 'Shougo/ddc.vim'
@@ -24,48 +32,27 @@ hook_source = 'source ~/dotfiles/nvim/rc/config/ddc.rc.vim'
 
 [[plugins]]
 repo = 'Shougo/ddc-cmdline-history'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-cmdline'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-around'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-matcher_head'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-sorter_rank'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'matsui54/ddc-buffer'
-# lazy = 1
-# on_source = ['ddc.vim']
-
-# [[plugins]]
-# repo = 'matsui54/ddc-matcher_fuzzy'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-nvim-lsp'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc-converter_remove_overlap'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
 repo = 'vim-skk/denops-skkeleton.vim'
@@ -112,7 +99,7 @@ endfunction
 
 function! s:highlight_imesign_on()
 if mode() is# 'c' | return | endif
-lua vim.api.nvim_set_hl(0, 'SmoothCursor', { link = "InEskkKanaSign" })
+lua vim.api.nvim_set_hl(0, 'SmoothCursor', { fg= '#e2a478'})
 endfunction
 
 
@@ -198,32 +185,21 @@ repo ='kat0h/bufpreview.vim'
 
 [[plugins]]
 repo = 'LumaKernel/ddc-file'
-# lazy = 1
-# on_source = ['ddc.vim']
 
 [[plugins]]
-# lazy = 1
-# on_source = ['ddc.vim']
 repo = 'Shougo/ddc-ui-pum'
 
 [[plugins]]
 repo = 'Shougo/ddc-ui-native'
 
 [[plugins]]
-# lazy = 1
-# on_source = ['ddc.vim']
 repo = 'Shougo/pum.vim'
 
 [[plugins]]
-# lazy = 1
-# on_source = ['ddc.vim']
 repo = 'Shougo/ddc-matcher_length'
 
 [[plugins]]
-# lazy = 1
-# on_source = ['ddc.vim']
 repo = 'matsui54/ddc-converter_truncate'
-#on_source = ['ddc.vim']
 
 # [[plugins]]
 # repo = 'matsui54/denops-signature_help'
@@ -235,12 +211,14 @@ repo = 'matsui54/ddc-converter_truncate'
 
 [[plugins]]
 repo = 'Shougo/ddu.vim'
-lazy = 1
-on_func = 'ddu#start'
+# lazy = 1
+# on_func = 'ddu#start'
+merged = 0
 hook_add = '''
 source ~/dotfiles/nvim/rc/config/ddu_mapping.rc.vim
+"source ~/miniddu.vim
 '''
-hook_source = '''
+hook_post_source = '''
 source ~/dotfiles/nvim/rc/config/ddu.rc.vim
 '''
 
@@ -249,9 +227,12 @@ repo = 'Shougo/ddu-commands.vim'
 [[plugins]]
 # lazy = 1
 # on_source = ['ddu.vim']
+merged = 0
 repo = 'Shougo/ddu-ui-ff'
 [[plugins]]
 repo = 'Shougo/ddu-source-file'
+[[plugins]]
+repo = 'Shougo/ddu-kind-file'
 [[plugins]]
 repo = 'Shougo/ddu-source-file_point'
 [[plugins]]
@@ -260,8 +241,6 @@ repo = 'Shougo/ddu-source-file_old'
 repo = 'Shougo/ddu-source-line'
 [[plugins]]
 repo = 'Shougo/ddu-source-file_rec'
-[[plugins]]
-repo = 'Shougo/ddu-kind-file'
 [[plugins]]
 repo = 'Shougo/ddu-filter-matcher_substring'
 [[plugins]]
@@ -327,8 +306,8 @@ repo = 'matsui54/denops-popup-preview.vim'
 [[plugins]]
 repo = 'tani/ddc-fuzzy'
 
-# [[plugins]]
-# repo = 'vim-denops/denops-shared-server.vim'
+[[plugins]]
+repo = 'vim-denops/denops-shared-server.vim'
 
 [[plugins]]
 repo = 'mikanIchinose/ddu-source-markdown'
@@ -337,7 +316,6 @@ repo = 'mikanIchinose/ddu-source-markdown'
 repo = 'Milly/ddc-source-register'
 
 [[plugins]]
-merged = 0
 repo = 'yukimemi/dps-hitori'
 hook_add = '''
 let g:hitori_debug = v:false  " debug console.log
@@ -352,13 +330,25 @@ repo = 'lambdalisue/kensaku.vim'
 
 [[plugins]]
 repo = 'lambdalisue/kensaku-command.vim'
+
+[[plugins]]
+repo = 'lambdalisue/kensaku-search.vim'
+hook_add = '''
+'''
+
 # [[plugins]]
 # if = 'executable("gh")'
 # repo = 'skanehira/denops-gh.vim'
+
 [[plugins]]
-merged = 0
 repo = 'Milly/ddu-filter-merge'
 
 [[plugins]]
 repo = 'hasundue/ddu-filter-zf'
 build = 'deno task build'
+
+[[plugins]]
+repo = 'Shougo/ddc-ui-inline'
+
+[[plugins]]
+repo = 'tennashi/ddu-source-git'

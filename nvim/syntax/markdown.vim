@@ -8,7 +8,7 @@ syn region markdownBold matchgroup=markdownBoldDelimiter start="\S\@<=\*\*\|\*\*
 syn region markdownBoldItalic matchgroup=markdownBoldItalicDelimiter start="\S\@<=\*\*\*\|\*\*\*\S\@=" end="\S\@<=\*\*\*\|\*\*\*\S\@=" keepend contains=markdownLineStart
 " syn region markdownBoldItalic matchgroup=markdownBoldItalicDelimiter start="\S\@<=___\|___\S\@=" end="\S\@<=___\|___\S\@=" keepend contains=markdownLineStart'
 
-setlocal conceallevel=2
+setlocal conceallevel=0
 setlocal concealcursor=ni
 syntax match markdownNextline '  $' conceal cchar=↓
 highlight! def link markdownNextline Function

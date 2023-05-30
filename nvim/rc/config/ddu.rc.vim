@@ -40,17 +40,30 @@ function! s:ddu_my_open(context) abort
   if isdirectory(action.path)
     if config.sources[0].name ==# 'file'
       call ddu#ui#do_action('itemAction', {'name' : 'narrow'})
+      return
     else
       call ddu#ui#do_action('updateOptions',{'sources':[{'name':'file','options':{'path': expand(action.path,':p')}}]})
       return
     endif
   else
     call ddu#ui#do_action('itemAction', {'name' : 'open'})
+    return
   endif
 endfunction
 
 call ddu#custom#action('kind', 'file', 'my_open',
     \  function('s:ddu_my_open'))
+
+call ddu#custom#patch_global({
+\ 'kindOptions': {
+\   'git_tag': {
+\     'defaultAction': 'switch',
+\   },
+\   'git_branch': {
+\     'defaultAction': 'switch',
+\   },
+\ },
+\})
 
 call ddu#custom#patch_global({
     \ 'actionOptions': {
@@ -154,7 +167,7 @@ call ddu#custom#patch_global({
     \ 'jump': {
     \ 'defaultAction': 'jump'
     \ },
-    \ 'textlint': {'defaultAction': 'preview'},
+    \ 'textlint': {'defaultAction': 'highlight'},
     \ 'markdown':{
     \'defaultAction':'open',
     \},
@@ -163,10 +176,12 @@ call ddu#custom#patch_global({
     \ 'file': {'matchers': ['matcher_hidden','merge'],'converters':['converter_no_empty', 'converter_highlight_filename'], 'sorters':['sorter_time'],},
     \ 'buffer': {'matchers': ['merge'],'converters':['converter_highlight_filename']},
     \ 'grep': {'matchers': ['matcher_substring'],},
+    \ 'dirmark': {'sorters': ['sorter_time'],},
     \ 'dein': {'sorters':[]},
     \ 'text': {'columns':[]},
+    \ 'miniyank': {'columns':[]},
     \ 'file_old': {'matchers': ['converter_unique','matcher_fzy',],'converters':['converter_highlight_filename',],},
-    \ 'mr': {'matchers': ['merge',], 'converters':['converter_relative','converter_unique','converter_highlight_filename'],'sorters': ['sorter_oldfiles'],},
+    \ 'mr': {'matchers': ['merge',], 'converters':['converter_relative','converter_unique','converter_highlight_filename'],'sorters': [],},
     \ },
     \ 'sourceParams': {
     \ 'mr': {
@@ -189,7 +204,7 @@ call ddu#custom#patch_global({
     \ },
     \ 'file_external': {
     \ 'cmd': ['rg', '--files', '--color', 'never', '--no-binary'],
-    \ 'updateItems': 20000,
+    \ 'updateItems': 5000,
     \ },
     \ },
     \ 'uiParams': {
@@ -197,6 +212,7 @@ call ddu#custom#patch_global({
     \ 'previewFloating': v:true,
     \ 'filterSplitDirection': 'floating',
     \ 'filterFloatingPosition': 'top',
+    \ 'floatingBorder': 'none',
     \ 'winHeight': s:ddu_winheight,
     \ 'winRow': 13,
     \ 'highlights': {
@@ -206,13 +222,12 @@ call ddu#custom#patch_global({
     \ 'prompt': '# ',
     \ 'direction': 'botright',
     \ 'displaySourceName': 'no',
-    \ 'filterUpdateTime': 0,
     \ 'statusline': v:false,
     \ 'previewVertical': v:true,
     \ 'previewWidth': &columns/2,
     \ 'previewHeight': s:ddu_winheight,
-    \ 'cursorPos': -1,
-    \ 'ignoreEmpty': v:true,
+    \ 'previewSplit': "vertical",
+    \ 'ignoreEmpty': v:false,
     \ },
     \ 'filer': {
     \ 'previewFloating': v:true,
@@ -233,19 +248,17 @@ call ddu#custom#patch_global({
     \ },
     \ },
     \ 'filterParams': {
-    \ 'matcher_migemo': {'highlightMatched': ''},
+    \ 'matcher_kensaku': {'highlightMatched': 'Constant'},
     \  'merge': {
     \    'filters': [
     \      {'name': 'matcher_kensaku', 'weight': 5.0},
-    \      'matcher_fzy',
+    \      {'name': 'matcher_fzy', 'weight': 1.0},
     \    ],
     \    'unique': v:true,
     \  },
-    \   'filterParams': {
     \     'matcher_fzy': {
     \       'threshold': 0.1,
     \     },
-    \   }
     \ },
     \ 'columnParams': {
     \ 'filename': {
@@ -354,10 +367,37 @@ call ddu#custom#patch_local('prev', {
     \ 'ui': 'ff',
     \ 'uiParams': {
     \ 'ff': {
-    \ 'autoAction':{'name': 'preview', 'params': {}}
+    \ 'autoAction':{'name': 'preview'}
+    \}
+    \}})
+call ddu#custom#patch_local('textlint', {
+    \ 'ui': 'ff',
+    \ 'uiParams': {
+    \ 'ff': {
+    \ 'autoAction':{'name': 'itemAction','params': {'name': 'highlight'}}
+    \}
+    \}})
+call ddu#custom#patch_local('float', {
+    \ 'ui': 'ff',
+    \ 'uiParams': {
+    \ 'ff': {
+    \ 'split': 'floating',
+    \ 'winWidth': &columns - 10,
+  \ 'winCol': 5,
     \}
     \}})
 call ddu#custom#patch_local('select', {
+    \ 'ui': 'ff',
+    \ 'uiParams': {
+    \ 'ff': {
+    \ 'split': 'floating',
+    \ 'winRow': &lines - 20,
+    \ 'winWidth': &columns - 10,
+    \ 'winHeight': 15,
+  \ 'winCol': 5,
+    \}
+    \}})
+call ddu#custom#patch_local('ui-select', {
     \ 'ui': 'ff',
     \ 'uiParams': {
     \ 'ff': {
@@ -392,11 +432,11 @@ endfunction
 
 au! BufEnter,BufReadPost,WinClosed *  call s:ddu_set_cursorline(v:false)
 autocmd FileType ddu-ff call s:ddu_my_settings()
-
 function! s:ddu_my_settings() abort
   if has('nvim')
     setlocal winbar=%!MyDduWinbarInput()
   endif
+  setlocal signcolumn=yes
 
   function! MyDduWinbarInput()
     if &filetype =~# '^ddu'
@@ -433,13 +473,16 @@ function! s:ddu_my_settings() abort
       \ <Cmd>call ddu#ui#do_action('toggleAllItems')<CR>
   nnoremap <buffer><silent> \
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'cd'})<CR>
-  nnoremap <buffer> h <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
+  nnoremap <buffer> h <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}, 'searchPath': expand(ddu#ui#get_item().action.path, ':h:p')})<CR>
   nnoremap <nowait><buffer><silent> m
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'move'})<CR>
   nnoremap <nowait><buffer><silent> C
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'copy'})<CR>
-  nnoremap <buffer><silent> p
-      \ <Cmd>call ddu#ui#do_action('preview')<CR>
+
+nnoremap <buffer><silent><expr> p
+    \  ddu#ui#get_item().__sourceName ==# 'miniyank' ? 
+    \ ddu#ui#do_action('itemAction', {'name' : 'append'}) :
+    \ ddu#ui#do_action('preview')
   " nnoremap <buffer><silent> P
   " \ <Cmd>call ddu#ui#do_action('preview', { 'previewCmds': ['git', '-C', '%s', 'log', '--pretty=reference', '-' .. '%h' , '--abbrev-commit']})<CR>
   " !git -C    dotfiles\nvim\rc\config\ log --pretty=format:"%h %s" --grap
@@ -452,7 +495,9 @@ function! s:ddu_my_settings() abort
   nnoremap <buffer><silent> l
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
   nnoremap <buffer><silent> e
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'to_filer'})<CR>
+      \ <Cmd>call ddu#ui#do_action('updateOptions', {'ui' : 'filer'})<CR>
+  nnoremap <buffer><silent> u
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'undo'})<CR>
   nnoremap <buffer><silent><nowait> r
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR>
   nnoremap <buffer><silent><nowait> <C-g>
@@ -478,9 +523,10 @@ function! s:ddu_my_settings() abort
   nnoremap <buffer> R
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'rename'})<CR>
-  nnoremap <buffer> P
-      \ <Cmd>call ddu#ui#do_action('itemAction',
-      \ {'name': 'paste'})<CR>
+nnoremap <buffer><silent><expr> P
+    \  ddu#ui#get_item().__sourceName ==# 'miniyank' ? 
+    \ ddu#ui#do_action('itemAction', {'name' : 'append'}) :
+    \ ddu#ui#do_action('itemAction', {'name': 'paste'})
   nnoremap <buffer> K
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'newDirectory'})<CR>
@@ -492,17 +538,10 @@ function! s:ddu_my_settings() abort
       \ {'name': 'narrow', 'params': {'path': expand('~')}})<CR>
   nnoremap <buffer><silent> .
       \ <Cmd>call <SID>swap_converter('matchers','matcher_hidden', '')<CR>
-  nnoremap <buffer> W
+  nnoremap <buffer> w
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'replace'})<CR>
 
   " name specific configs
-  if b:ddu_ui_name ==# 'word'
-    nnoremap <buffer><silent> p
-        \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'append'})<CR>
-    nnoremap <buffer><silent> P
-        \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'insert'})<CR>
-  endif
-
 endfunction
 
 function! s:execute(expr) abort
@@ -521,13 +560,13 @@ function! s:ddu_my_filter_settings() abort
   inoremap <buffer><silent> <C-o>
       \ <Esc><Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
   inoremap <buffer><silent> <C-l>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<bar>norm! cc<CR>
   inoremap <buffer><silent> <C-h> <cmd>call <SID>ddu_ff_back()<CR>
   inoremap <silent><buffer> <C-i> <Plug>(skkeleton-enable)
   inoremap <silent><buffer> <CR>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<bar>norm! cc<CR>
   inoremap <silent><buffer> <C-CR>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<bar>norm! cc<CR>
   inoremap <silent><buffer> <tab>
       \ <Cmd>call ddu#ui#do_action('chooseAction') \| call ddu#ui#do_action('openFilterWindow')<CR>
   inoremap <silent><buffer> <C-r>
@@ -618,7 +657,7 @@ function! s:ddu_filer_my_settings() abort
   nnoremap <buffer><silent> h <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
   " \ ddu#ui#filer#get_item().__level > 0 ?
   nnoremap <silent><buffer> ss
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'to_ff'})<CR>
+      \ <Cmd>call ddu#ui#do_action('updateOptions', {'ui' : 'ff'})<CR>
   nnoremap <buffer><silent> .
       \ <Cmd>call <SID>swap_converter('matchers','matcher_hidden', '')<CR>
   nnoremap <buffer><expr> <CR>
@@ -650,8 +689,8 @@ function! s:swap_converter(type, before, after) abort
   call ddu#ui#do_action('updateOptions',option)
 endfunction
 
-highlight! DduUnderlined cterm=underline gui=underline guifg=NONE
-au ColorScheme * highlight! DduUnderlined cterm=underline gui=underline guifg=NONE
+highlight! DduUnderlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
+au ColorScheme * highlight! DduUnderlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 "
 " iceberg
 function! s:ddu_set_cursorline(enter) abort
@@ -671,3 +710,4 @@ let bg = synIDattr(synIDtrans(hlID(a:hi)), "bg")
     return
 endfunction
 au dein ColorScheme * let s:SvCursorLine =s:gethighlight('CursorLine')
+
