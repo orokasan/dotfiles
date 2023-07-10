@@ -1,10 +1,10 @@
 [[plugins]]
 repo = 'vim-denops/denops.vim'
 
-[[plugins]]
-lazy = 1
-on_cmd = ['GhostStart']
-repo = 'gamoutatsumi/dps-ghosttext.vim'
+# [[plugins]]
+# lazy = 1
+# on_cmd = ['GhostStart']
+# repo = 'gamoutatsumi/dps-ghosttext.vim'
 
 # [[plugins]]
 # repo = 'lambdalisue/guise.vim'
@@ -15,12 +15,35 @@ lazy = 1
 on_cmd = ['Gin']
 repo = 'lambdalisue/gin.vim'
 hook_add = '''
-"nnoremap <silent> <Leader>gg
-"\ <Cmd>GinStatus ++opener=botright\ split<CR>
-"nnoremap <silent> <Leader>gl
-"\ <Cmd>GinLog ++opener=botright\ vsplit  --graph --abbrev-commit --pretty=format:%h\ %s\ (%ar)<CR>
-"nnoremap <silent> <Leader>gc
-"\ <Cmd>Gin ++opener=botright\ split commit<CR>
+nnoremap <silent> <Leader>gg
+\ <Cmd>GinStatus<CR>
+nnoremap <silent> <Leader>gb
+\ <Cmd>GinBranch<CR>
+nnoremap <silent> <Leader>gl
+\ <Cmd>GinLog<CR>
+nnoremap <silent> <Leader>gc
+\ <Cmd>Gin ++opener=botright\ split commit<CR>
+nnoremap <silent> <Leader>gd <Cmd>diffthis \| GinEdit! HEAD %:p ++opener=vsplit \| diffthis<CR>
+let g:gin_log_default_args = ['++opener=botright vsplit', '--graph', '--abbrev-commit', '--pretty=format:%Cred%h%Creset %s %C(yellow)%d%Creset %Cgreen(%cr) %C(bold blue)<%an>%Creset']
+let g:gin_status_default_args = ['++opener=botright split']
+let g:gin_branch_default_args = ['++opener=botright split']
+
+au vimrc BufEnter * if &ft =~# 'gin-.*' | call <SID>gin_mapping() | endif
+function! s:gin_mapping() abort
+  nnoremap <buffer> q <cmd>close<CR>
+endfunction
+
+function! s:define_gin_local() abort
+  command! -buffer -bar GinLocal execute 'edit' gin#util#expand('%')
+  nnoremap <buffer> q <cmd>close<CR>
+endfunction
+
+augroup my-gin-local
+  autocmd BufReadCmd ginedit://* call s:define_gin_local()
+  autocmd BufReadCmd gindiff://* call s:define_gin_local()
+  autocmd FileType gin call s:define_gin_local()
+  " autocmd BufReadCmd ginlog://* call s:define_gin_local()
+augroup END
 '''
 
 [[plugins]]
@@ -352,3 +375,15 @@ repo = 'Shougo/ddc-ui-inline'
 
 [[plugins]]
 repo = 'tennashi/ddu-source-git'
+
+[[plugins]]
+repo = 'uga-rosa/ddu-source-lsp'
+
+[[plugins]]
+repo ='kuuote/ddu-source-git_diff'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-dummy'
+
+[[plugins]]
+repo = 'uga-rosa/ddc-source-vsnip'

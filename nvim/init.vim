@@ -173,10 +173,6 @@ syntax on
 set fileformats=unix,dos,mac
 set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis
 
-
-colorscheme iceberg
-set background=dark
-
 set notermguicolors
 set swapfile
 set undofile
@@ -213,7 +209,7 @@ set t_Co=256
 set synmaxcol=1500
 set belloff=all
 set fillchars+=vert:\ ,fold:\ ,diff:\ ,eob:~
-set diffopt=internal,context:10,algorithm:histogram,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap,closeoff
+set diffopt=internal,context:10,algorithm:histogram,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap,closeoff,linematch:60
 set nrformats+=unsigned
 set hidden
 set splitright
@@ -304,8 +300,8 @@ nnoremap <silent>j gj
 nnoremap <silent>k gk
 vnoremap <silent>j gj
 vnoremap <silent>k gk
-nnoremap <silent><expr> l charcol('$') - 1 > 0 ? (charcol('.') ==# charcol('$') - 1 ? "j^" : "l") : "j^"
-nnoremap <silent><expr> h col('.') ==# 1 ? "k$" : "h"
+" nnoremap <silent><expr> l charcol('$') - 1 > 0 ? (charcol('.') ==# charcol('$') - 1 ? "j^" : "l") : "j^"
+" nnoremap <silent><expr> h col('.') ==# 1 ? "k$" : "h"
 " moving tip/end of a line
 nnoremap <S-l> $
 nnoremap <S-h> ^
@@ -370,10 +366,9 @@ endfunction
 nnoremap q <nop>
 nnoremap Q q
 " for ahk workaround
-nmap <BS> <C-h>
+" nmap <BS> <C-h>
 nnoremap , @q
 xnoremap , @q
-
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-a> <HOME>
@@ -668,9 +663,9 @@ endfunction
 
 inoremap <silent> <c-l> <C-g>u<ESC><cmd>call <SID>move_to_char_pos('★')<CR>
 
-let g:denops#debug = v:false
-let g:denops#trace = v:false
-let g:denops_server_addr = '127.0.0.1:32123'
+" let g:denops#debug = v:false
+" let g:denops#trace = v:false
+" let g:denops_server_addr = '127.0.0.1:32123'
 
 function! s:change_textwidth()
 let &tw = input('Input textwidth value: ')
@@ -693,7 +688,7 @@ local ext_config = {
   local config = require("aerial.config")
   local data = require("aerial.data")
   local highlight = require("aerial.highlight")
-  local util = require("aerial.util")
+  alocal util = require("aerial.util")
 
   local bufnr = vim.api.nvim_get_current_buf()
   local filename = vim.api.nvim_buf_get_name(0)
@@ -713,7 +708,6 @@ local ext_config = {
   print(vim.inspect(data.get()))
 EOF
 endfunction
-
 runtime! plugin/rplugin.vim
-
+" call denops_shared_server#runtray#_execute_script_command('start')
 " vim:set foldmethod=marker:

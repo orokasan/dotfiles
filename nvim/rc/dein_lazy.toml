@@ -1,14 +1,12 @@
 [[plugins]]
-lazy = 1
+lazy = 0
 repo =  'itchyny/lightline.vim'
 hook_add = '''
-if v:vim_did_enter
-  set laststatus=0
-endif
-autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
-autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
-'''
-hook_source = '''
+" if v:vim_did_enter
+"   set laststatus=0
+" endif
+" autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
+" autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
 source ~/dotfiles/nvim/rc/config/lightline.rc.vim
 let &laststatus = has('nvim') ? 2 : 2
 '''
@@ -19,12 +17,11 @@ on_source = ['nvim-lspconfig']
 lazy = 1
 if = 'has("nvim")'
 repo = 'josa42/nvim-lightline-lsp'
-hook_source = '''
+hook_add = '''
     "autocmd DiagnosticChanged * call lightline#update()
     let g:lightline#lsp#indicator_warnings = ' '
     let g:lightline#lsp#indicator_errors = ' '
     let g:lightline#lsp#indicator_hints = ' '
-    call lightline#lsp#register()
 '''
 
 [[plugins]]
@@ -160,6 +157,7 @@ if has('win32') || has('win64')
     \}
 else
 let g:quickrun_config['python'] = {
+            \   'command' : 'python3',
     \   "hook/output_encode/enable" : 1,
     \   'hook/output_encode/encoding': 'utf-8',
     \ }
@@ -210,6 +208,14 @@ let g:quickrun_config['typescript'] = {
             \   'exec': ['%c %o %s']
             \ }
 '''
+# [[plugins]]
+# repo = 'jiaoshijie/undotree'
+# hook_add = '''
+# lua require('undotree').setup()
+# '''
+# lua_add = '''
+# vim.keymap.set('n', 'U', require('undotree').toggle, { noremap = true, silent = true })
+# '''
 
 [[plugins]]
 repo = 'mbbill/undotree'
@@ -263,52 +269,52 @@ let g:previm_enable_realtime = 1
 [[plugins]]
 on_cmd = ['Gina']
 repo =  'lambdalisue/gina.vim'
-hook_add = '''
-autocmd BufReadPre gina://* set noswapfile
-let g:gina#command#status#use_default_mappings=0
-function! s:make_abbrev_rule(rules)
-  let keys = uniq(sort(map(copy(a:rules), "v:val['from']")))
-  for key in keys
-    let rules_with_key = filter(copy(a:rules), "v:val['from'] ==# '" .. key .. "'")
-    let dict = {}
-    for val in rules_with_key
-      if has_key(val, 'prepose')
-        let dict[val['prepose'] .. ' ' .. key] = (val['to'])
-      else
-        let dict[key] = val['to']
-      endif
-    endfor
-    exec 'cnoreabbrev <expr> ' .. key .. ' '
-        \ .. '(getcmdtype() !=# ":")? "' .. key .. '" : '
-        \ .. 'get(' .. string(dict) .. ', getcmdline(), "' .. key .. '")'
-  endfor
-endfunction
-call s:make_abbrev_rule([
-    \   {'from': 'gi', 'to': 'Gina'},
-    \   {'from': 'gc', 'to': 'Gina! commit -am'},
-    \   {'from': 'gf', 'to': 'Gina! commit --fixup HEAD'},
-    \   {'from': 'gp', 'to': 'Gina push'},
-    \   {'prepose': 'Gina commit', 'from': 'a', 'to': '--amend'},
-    \ ])
-nnoremap <silent> <Leader>gg <Cmd>Gina status<CR>
-nnoremap <silent> ` <Cmd>Gina status<CR>
-nnoremap <silent> <Leader>gA <Cmd>Gina changes HEAD<CR>
-nnoremap <silent> <Leader>ga <Cmd>Gina add %<CR>
-nnoremap <silent> <Leader>gc <Cmd>Gina commit<CR>
-nnoremap <silent> <Leader>gC <Cmd>Gina commit --amend<CR>
-nnoremap <silent> <Leader>gb <Cmd>Gina branch -av<CR>
-nnoremap <silent> <Leader>gB <Cmd>nos Gina blame<CR>
-nnoremap <silent> <Leader>gt <Cmd>Gina tag<CR>
-nnoremap <silent> <Leader>gq <Cmd>Gina qrep<CR>
-nnoremap <silent> <Leader>gd <Cmd>nos Gina compare<CR>zz
-nnoremap <silent> <Leader>gs <Cmd>Gina df<CR>
-nnoremap <silent> <Leader>gl <Cmd>Gina log<CR>
-nnoremap <silent> <Leader>gL <Cmd>Gina log :<CR>
-nnoremap <silent> <Leader>gr <Cmd>Gina reflog<CR>
-nnoremap <silent> <Leader>gf <Cmd>Gina ls<CR>
-nnoremap <silent> <Leader>gp <Cmd>Gina!! add -p<CR>
-let g:gina#core#spinner#delaytime = 10
-'''
+# hook_add = '''
+# autocmd BufReadPre gina://* set noswapfile
+# let g:gina#command#status#use_default_mappings=0
+# function! s:make_abbrev_rule(rules)
+#   let keys = uniq(sort(map(copy(a:rules), "v:val['from']")))
+#   for key in keys
+#     let rules_with_key = filter(copy(a:rules), "v:val['from'] ==# '" .. key .. "'")
+#     let dict = {}
+#     for val in rules_with_key
+#       if has_key(val, 'prepose')
+#         let dict[val['prepose'] .. ' ' .. key] = (val['to'])
+#       else
+#         let dict[key] = val['to']
+#       endif
+#     endfor
+#     exec 'cnoreabbrev <expr> ' .. key .. ' '
+#         \ .. '(getcmdtype() !=# ":")? "' .. key .. '" : '
+#         \ .. 'get(' .. string(dict) .. ', getcmdline(), "' .. key .. '")'
+#   endfor
+# endfunction
+# call s:make_abbrev_rule([
+#     \   {'from': 'gi', 'to': 'Gina'},
+#     \   {'from': 'gc', 'to': 'Gina! commit -am'},
+#     \   {'from': 'gf', 'to': 'Gina! commit --fixup HEAD'},
+#     \   {'from': 'gp', 'to': 'Gina push'},
+#     \   {'prepose': 'Gina commit', 'from': 'a', 'to': '--amend'},
+#     \ ])
+# nnoremap <silent> <Leader>gg <Cmd>Gina status<CR>
+# nnoremap <silent> ` <Cmd>Gina status<CR>
+# nnoremap <silent> <Leader>gA <Cmd>Gina changes HEAD<CR>
+# nnoremap <silent> <Leader>ga <Cmd>Gina add %<CR>
+# nnoremap <silent> <Leader>gc <Cmd>Gina commit<CR>
+# nnoremap <silent> <Leader>gC <Cmd>Gina commit --amend<CR>
+# nnoremap <silent> <Leader>gb <Cmd>Gina branch -av<CR>
+# nnoremap <silent> <Leader>gB <Cmd>nos Gina blame<CR>
+# nnoremap <silent> <Leader>gt <Cmd>Gina tag<CR>
+# nnoremap <silent> <Leader>gq <Cmd>Gina qrep<CR>
+# nnoremap <silent> <Leader>gd <Cmd>nos Gina compare<CR>zz
+# nnoremap <silent> <Leader>gs <Cmd>Gina df<CR>
+# nnoremap <silent> <Leader>gl <Cmd>Gina log<CR>
+# nnoremap <silent> <Leader>gL <Cmd>Gina log :<CR>
+# nnoremap <silent> <Leader>gr <Cmd>Gina reflog<CR>
+# nnoremap <silent> <Leader>gf <Cmd>Gina ls<CR>
+# nnoremap <silent> <Leader>gp <Cmd>Gina!! add -p<CR>
+# let g:gina#core#spinner#delaytime = 10
+# '''
 
 hook_source = '''
 call gina#custom#command#alias('branch', 'br')
@@ -470,12 +476,13 @@ let g:popup_preview_config = {
       \ }
 '''
 
-[[plugins]]
-on_event = ['InsertEnter']
-repo = 'hrsh7th/vim-vsnip-integ'
+# [[plugins]]
+# on_event = ['InsertEnter']
+# repo = 'hrsh7th/vim-vsnip-integ'
 
 [[plugins]]
-on_source = ['vim-vsnip-integ']
+# on_source = ['vim-vsnip-integ']
+lazy = 0
 repo = 'rafamadriz/friendly-snippets'
 
 [[plugins]]
@@ -855,4 +862,5 @@ let g:matchup_surround_enabled = 0
 let g:matchup_matchparen_deferred = 0
 "lvim.builtin.treesitter.matchup.enable = true
 '''
+
 # vim:set foldmethod=marker:

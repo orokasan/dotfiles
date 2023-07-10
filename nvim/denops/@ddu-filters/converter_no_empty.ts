@@ -2,9 +2,9 @@ import {
   BaseFilter,
   DduItem,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v1.10.1/types.ts";
+} from "https://deno.land/x/ddu_vim@v3.2.2/types.ts";
 import { Denops } from "https://deno.land/x/ddu_vim@v0.14/deps.ts";
-import { SEP } from "https://deno.land/std@0.132.0/path/mod.ts"
+import { SEP } from "https://deno.land/std@0.192.0/path/mod.ts"
 
 type Params = {
   mes: string;

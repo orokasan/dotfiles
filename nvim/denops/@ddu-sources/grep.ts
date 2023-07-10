@@ -2,14 +2,13 @@ import {
   BaseSource,
   DduOptions,
   Item,
-} from "https://deno.land/x/ddu_vim@v1.8.8/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.8.8/deps.ts";
+} from "https://deno.land/x/ddu_vim@v2.9.0/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.9.0/deps.ts";
 import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts";
-import { BufReader } from "https://deno.land/std@0.151.0/io/buffer.ts";
 import { join } from "https://deno.land/std@0.151.0/path/mod.ts";
 import { abortable } from "https://deno.land/std@0.151.0/async/mod.ts";
-import { TextProtoReader } from "https://deno.land/std@0.151.0/textproto/mod.ts";
-import { StringReader } from "https://deno.land/x/std@0.110.0/io/mod.ts";
+import { StringReader } from "https://deno.land/std@0.110.0/io/mod.ts";
+import { TextLineStream } from "https://deno.land/std@0.186.0/streams/mod.ts";
 
 // based on https://github.com/shun/ddu-source-rg
 
@@ -28,12 +27,15 @@ type Params = {
   highlights: HighlightGroup;
 };
 
-async function* iterLine(r: Deno.Reader): AsyncIterable<string> {
-  const reader = new TextProtoReader(BufReader.create(r));
-  while (true) {
-    const line = await reader.readLine();
-    if (!line) break;
-    yield line;
+async function* iterLine(r: ReadableStream<Uint8Array>): AsyncIterable<string> {
+  const lines = r
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(new TextLineStream());
+
+  for await (const line of lines) {
+    if ((line as string).length) {
+      yield line as string;
+    }
   }
 }
 
@@ -48,9 +50,10 @@ export class Source extends BaseSource<Params> {
   }): ReadableStream<Item<ActionData>[]> {
     const abortController = new AbortController();
 
-    const hl_group_path = args.sourceParams.highlights?.path ?? "";
-    const hl_group_lineNr = args.sourceParams.highlights?.lineNr ?? "";
-    const hl_group_word = args.sourceParams.highlights?.word ?? "";
+    const param = args.sourceParams;
+    const hl_group_path = param.highlights.path ?? "";
+    const hl_group_lineNr = param.highlights.lineNr ?? "";
+    const hl_group_word = param.highlights.word ?? "";
 
     const parse_json = (line: string, cwd: string) => {
       line = line.trim();
@@ -121,9 +124,7 @@ export class Source extends BaseSource<Params> {
 
     return new ReadableStream({
       async start(controller) {
-        const input = args.options.volatile
-          ? args.input
-          : args.sourceParams.input;
+        const input = args.sourceParams.input;
 
         if (input == "") {
           controller.close();
@@ -140,13 +141,16 @@ export class Source extends BaseSource<Params> {
         let enqueueSize = enqueueSize1st;
         let numChunks = 0;
 
-        const proc = Deno.run({
-          cmd: cmd,
-          stdout: "piped",
-          stderr: "piped",
-          stdin: "null",
-          cwd: cwd,
-        });
+        const proc = new Deno.Command(
+          cmd[0],
+          {
+            args: cmd.slice(1),
+            stdout: "piped",
+            stderr: "piped",
+            stdin: "null",
+            cwd,
+          },
+        ).spawn();
 
         try {
           for await (
@@ -182,14 +186,14 @@ export class Source extends BaseSource<Params> {
             console.error(e);
           }
         } finally {
-          const [status, stderr] = await Promise.all([
-            proc.status(),
-            proc.stderrOutput(),
-          ]);
-          proc.close();
+          const status = await proc.status;
           if (!status.success) {
-            const mes = new TextDecoder().decode(stderr);
-            if (!args.options.volatile || !mes.match(/regex parse error/)) {
+            for await (
+              const mes of abortable(
+                iterLine(proc.stderr),
+                abortController.signal,
+              )
+            ) {
               console.error(mes);
             }
           }

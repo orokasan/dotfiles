@@ -1,4 +1,4 @@
-call ddc#custom#patch_global('ui', 'pum')
+call ddc#custom#patch_global('ui', 'native')
 " call ddc#custom#patch_global('ui', 'inline')
 " inoremap <expr><C-t>       ddc#map#insert_item(0, "\<C-e>")
 call ddc#custom#patch_global({
@@ -18,6 +18,16 @@ call ddc#custom#patch_global('sourceOptions', {
 \   'mark': 'lsp',
 \   'forceCompletionPattern': '\.\w*|:\w*|->\w*' },
 \ })
+
+call ddc#custom#patch_global('sourceParams', #{
+      \   nvim-lsp: #{
+      \     snippetEngine: denops#callback#register({
+      \           body -> vsnip#anonymous(body)
+      \     }),
+      \ enableResolveItem: v:true,
+      \ confirmBehavior: "insert"
+      \   }
+      \ })
 " Change source options
 call ddc#custom#patch_global('sourceOptions', {
 \ 'around': {'mark': 'A'},
@@ -37,16 +47,17 @@ call ddc#custom#patch_global('sourceParams', {
 " Customize settings on a filetype
 call pum#set_option({
 \ 'use_complete': v:true,
-\ 'scrollbar_char': ' ',
-\ 'highlight_scrollbar': 'WildMenu',
+\ 'scrollbar_char': '|',
+\ 'highlight_scrollbar': 'Title',
 \ 'highlight_selected': 'PmenuSelected',
+\ 'item_orders': ['abbr', 'kind', 'menu', 'info']
 \ })
 
 if has('nvim')
 call ddc#custom#patch_global('sources', [
 \ 'skkeleton',
-\ 'vsnip',
 \ 'nvim-lsp',
+\ 'vsnip',
 \ 'around',
 \ 'buffer',
 \ ])
@@ -56,6 +67,7 @@ call ddc#custom#patch_global('sources', [
 \ 'around',
 \ ])
 endif
+
 " autocmd dein User skkeleton-enable-pre call s:skkeleton_pre()
 " function! s:skkeleton_pre() abort
 "   " Overwrite sources
@@ -74,13 +86,12 @@ function! s:my_cr_function() abort "{{{
 return pum#visible()  ? "\<CR>": lexima#expand('<CR>', 'i')
 endfunction
 
-inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
-inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
+" inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
+" inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
 
-function! s:my_bs_function() abort "{{{
-return lexima#expand('<BS>', 'i')
-endfunction "}}}
-
+" function! s:my_bs_function() abort "{{{
+" return lexima#expand('<BS>', 'i')
+" endfunction "}}}
 " <TAB>: completion.
 imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
 smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
@@ -238,3 +249,4 @@ let s:backup = ddc#custom#get_global()
 function! Restore_ddc_config()
   call ddc#custom#patch_global(s:backup)
 endfunction
+" autocmd User PumCompleteDone call vsnip_integ#on_complete_done(g:pum#completed_item)

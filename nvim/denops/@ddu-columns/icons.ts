@@ -2,23 +2,18 @@ import {
   BaseColumn,
   DduItem,
   ItemHighlight,
-} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
-import { GetTextResult } from "https://deno.land/x/ddu_vim@v2.2.0/base/column.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
-import { basename, extname } from "https://deno.land/std@0.149.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.1/file.ts";
+} from "https://deno.land/x/ddu_vim@v3.2.2/types.ts";
+import { GetTextResult } from "https://deno.land/x/ddu_vim@v3.2.2/base/column.ts";
+import { Denops } from "https://deno.land/x/ddu_vim@v3.2.2/deps.ts";
+import { basename, extname } from "https://deno.land/std@0.192.0/path/mod.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.0/file.ts";
 
 type Params = {
   padding: number;
-  highlights: HighlightGroup;
-  filer: boolean;
-  ignoreMatcherHighlight: string[];
-  kind: string[];
-};
-
-type HighlightGroup = {
-  directoryIcon?: string;
-  directoryName?: string;
+  highlights: {
+    directoryName: string;
+  };
+  isTree: boolean;
 };
 
 interface IconList {
@@ -55,14 +50,16 @@ export class Column extends BaseColumn<Params> {
     item: DduItem;
   }): Promise<GetTextResult> {
     const highlights: ItemHighlight[] = args.item.highlights ?? [];
+
     if (args.item.display && (args.item.word != args.item.display)) {
       return Promise.resolve({
-        text: args.item.display ?? args.item.word,
-        highlights: highlights
+        text: args.item.display,
+        highlights: highlights,
       });
     }
 
     const isDir = isDirectory(args.item);
+
     const prefix = this.makePrefix(args.item, args.columnParams);
 
     const text = prefix + (args.item.display ?? args.item.word);
@@ -79,7 +76,7 @@ export class Column extends BaseColumn<Params> {
       const userHighlights = args.columnParams.highlights;
       highlights.push({
         name: "column-icon",
-        hl_group: userHighlights.directoryName ?? "function",
+        hl_group: userHighlights.directoryName,
         col: args.startCol +
           args.item.__level +
           args.columnParams.padding +
@@ -103,7 +100,7 @@ export class Column extends BaseColumn<Params> {
     const widths = args.items.map((item) => {
       const filename = getFilename(item);
 
-      if (args.columnParams.filer) {
+      if (args.columnParams.isTree) {
         return item.__level + args.columnParams.padding +
           this.iconWidth + this.span +
           charposToBytepos(filename, -1);
@@ -115,52 +112,46 @@ export class Column extends BaseColumn<Params> {
   }
 
   private makePrefix(item: DduItem, columnParams: Params): string {
-    let icon = "";
     const action = item.action as ActionData;
     const fname: string = getFilename(item);
     const extention: string = extname(fname).substring(1) ?? "";
 
-    if (isDirectory(item)) {
-      icon = item.__expanded
-        ? this.directoryPalette.open
-        : action.isLink
-        ? this.directoryPalette.symlink
-        : this.directoryPalette.close;
-    } else if (item.__sourceName == "markdown") {
-      icon = item.__expanded
-        ? this.directoryPalette.open
-        : action.isLink
-        ? this.directoryPalette.symlink
-        : this.directoryPalette.close;
-    } else {
-      icon = (fname in this.basenamePalette)
-        ? icon = this.basenamePalette[fname]
-        : (extention in this.extensionPalette)
-        ? icon = this.extensionPalette[extention]
-        : icon = this.defaultIcon;
-    }
+    const getIcon = () => {
+      if (isDirectory(item) || item.isTree) {
+        return item.__expanded
+          ? this.directoryPalette.open
+          : action.isLink
+          ? this.directoryPalette.symlink
+          : this.directoryPalette.close;
+      } else {
+        return (fname in this.basenamePalette)
+          ? this.basenamePalette[fname]
+          : (extention in this.extensionPalette)
+          ? this.extensionPalette[extention]
+          : this.defaultIcon;
+      }
+    };
+    const icon = getIcon();
 
     const whitespace = (count: number) => " ".repeat(Math.max(0, count));
     const span = whitespace(this.span);
 
-    let prefix = "";
-    if (columnParams.filer) {
+    if (columnParams.isTree) {
       const indent = item.__level > 0
         ? whitespace(item.__level + columnParams.padding - 1) + "├ " //│
         : whitespace(columnParams.padding);
-      prefix = indent + icon + span;
+      return indent + icon + span;
     } else {
-      prefix = icon + span;
+      return icon + span;
     }
-    return prefix;
   }
   params(): Params {
     return {
       padding: 0,
-      highlights: {},
-      filer: true,
-      ignoreMatcherHighlight: [],
-      kind: ["file"],
+      highlights: {
+        directoryName: "Function",
+      },
+      isTree: false,
     };
   }
 }

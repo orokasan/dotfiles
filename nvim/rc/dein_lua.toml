@@ -1,6 +1,6 @@
 [[plugins]]
-on_source = ['nvim-lspconfig']
 repo = 'williamboman/mason.nvim'
+on_source = ['nvim-lspconfig']
 
 [[plugins]]
 repo = 'williamboman/mason-lspconfig.nvim'
@@ -31,274 +31,7 @@ function! s:lspdefinetoggleaucmd() abort
         echom "Lsp ON"
     endif
 endfunction
-lua << EOF
-local vim = vim
-
-local nvim_lsp = require('lspconfig')
-
-require("lsp-inlayhints").setup()
-vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
-vim.api.nvim_create_autocmd("LspAttach", {
-  group = "LspAttach_inlayhints",
-  callback = function(args)
-    if not (args.data and args.data.client_id) then
-      return
-    end
-
-    local bufnr = args.buf
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    require("lsp-inlayhints").on_attach(client, bufnr, true)
-  end,
-})
-
-local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-
-  local opts = { noremap = true, silent = true }
-  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gI', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', 'sc', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references(nil, {on_list=on_list})<CR>', opts)
-  buf_set_keymap('n', '<space>we', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-  -- buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.format({async = True})<CR>', opts)
-
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-    vim.lsp.handlers.hover, {
-    -- Use a sharp border with `FloatBorder` highlights
-    border = "single"
-  })
-
-  vim.cmd([[
-         augroup My_group
-           autocmd!
-         augroup END
-       ]])
-  -- autocmd CursorHold * lua vim.diagnostic.open_float()
-  vim.api.nvim_exec([[
-  hi! link DiagnosticError Error
-  hi! link DiagnosticWarning Warning
-  ]], false)
-
-  client.server_capabilities.semanticTokensProvider = false
-end
-
-local lspinstaller = require("mason")
-lspinstaller.setup {}
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true;
-
-
-local default_config = {
-  on_attach = on_attach,
-  capabilities = capabilities,
-  root_dir = function(fname)
-    return vim.fn.fnamemodify(fname, ':h')
-  end
-}
-local mason_lspconfig = require('mason-lspconfig')
-mason_lspconfig.setup({
-  automatic_installation = true
-})
-mason_lspconfig.setup_handlers({ function(server_name)
-  local config = default_config
-  local node_root_dir = nvim_lsp.util.root_pattern("package.json")
-  local is_node_repo = node_root_dir(vim.api.nvim_buf_get_name(0)) ~= nil
-
-  -- if server_name == "tsserver" then
-  --   print(is_node_repo)
-  --   if not is_node_repo then
-  --     return
-  --   end
-  --   end
-
-  --  config.root_dir = node_root_dir
-  if server_name == "denols" then
-    if is_node_repo then
-      return
-    end
-      config.root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc", "deps.ts", "import_map.json")
-      config = vim.tbl_extend('force', default_config,
-        {
-          single_file_support = true,
-          root_dir = nvim_lsp.util.root_pattern("deno.json", "deno.jsonc", "deps.ts", "import_map.json"),
-          init_options = {
-            enable = true,
-            lint = true,
-            unstable = true,
-          },
-          suggest = {
-            imports = {
-              hosts = {
-                ["https://deno.land"] = true,
-                ["https://cdn.nest.land"] = true,
-                ["https://crux.land"] = true
-              }
-            }
-          },
-          filetypes = {
-            'typescript'
-          }
-        })
-      end
-  if server_name == 'marksman' then
-    config = vim.tbl_extend('force', default_config,
-      {
-        init_options = {
-          enable = false,
-          lint = false,
-        },
-      })
-  end
-  if server_name == 'tsserver' then
-    config = vim.tbl_extend('force', default_config,
-      {
-        settings = {
-          typescript = {
-            format = {
-              enable = false,
-            },
-            validate = false,
-            suggest = {
-              enabled = false
-            },
-            preferences = {
-              importModuleSpecifierEnding = "minimal",
-            },
-            inlayHints = {
-              includeInlayParameterNameHints = 'all',
-              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = true,
-              includeInlayPropertyDeclarationTypeHints = true,
-              includeInlayFunctionLikeReturnTypeHints = true,
-              includeInlayEnumMemberValueHints = true,
-            }
-          },
-        },
-        filetypes = {
-          'javascript',
-        }
-      })
-
-  end
-  local root_files = {
-    -- Single-module projects
-    {
-      'build.xml', -- Ant
-      'pom.xml', -- Maven
-      'settings.gradle', -- Gradle
-      'settings.gradle.kts', -- Gradle
-    },
-    -- Multi-module projects
-    { 'build.gradle', 'build.gradle.kts' },
-  }
-
-  if server_name == 'jdtls' then
-    config = vim.tbl_extend('force', default_config,
-      {
-        root_dir = function(fname)
-          for _, patterns in ipairs(root_files) do
-            local root = nvim_lsp.util.root_pattern(unpack(patterns))(fname)
-            if root then
-              return root
-            end
-          end
-        end
-      })
-  end
-
-  local root_files = {
-    'settings.gradle', -- Gradle (multi-project)
-    'settings.gradle.kts', -- Gradle (multi-project)
-    'build.xml', -- Ant
-    'pom.xml', -- Maven
-  }
-
-  local fallback_root_files = {
-    'build.gradle', -- Gradle
-    'build.gradle.kts', -- Gradle
-  }
-
-  if server_name == 'kotlin_language_server' then
-    config = vim.tbl_extend('force', default_config,
-      {
-        get_root_dir = function(fname)
-          for _, patterns in ipairs(root_files) do
-            local root = nvim_lsp.util.root_pattern(unpack(root_files))(fname) or
-                nvim_lsp.util.root_pattern(unpack(fallback_root_files))(fname)
-            if root then
-              return root
-            end
-          end
-        end
-      })
-  end
-
-  -- ファイル名に日本語が入ると動かなくなる
-  if server_name == 'efm' then
-    config = vim.tbl_extend('force', default_config,
-      {
-        autostart = false,
-        debounce_text_changes = 1500,
-        get_root_dir = function(fname)
-          return vim.fn.fnamemodify(fname, ':h')
-        end,
-        single_file_support = true,
-        filetypes = {
-          'markdown',
-          'text',
-          'txt',
-          'json',
-          'html',
-          'typescript',
-          'css',
-        }
-      })
-  end
-
-  if server_name == 'sumneko_lua' then
-    config = vim.tbl_extend('force', default_config,
-      {
-        settings = {
-          Lua = {
-            runtime = {
-              version = 'LuaJIT',
-            },
-            completion = {
-              callSnippet = 'Both',
-            },
-            diagnostics = {
-              globals = { 'vim' },
-            },
-            workspace = {
-              -- Make the server aware of Neovim runtime files
-              library = vim.api.nvim_get_runtime_file("", true),
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {
-              enable = false,
-            },
-          },
-        }
-      })
-  end
-
-  nvim_lsp[server_name].setup(
-    config
-  )
-end })
-EOF
+lua require("masonrc")
 '''
 
 # [[plugins]]
@@ -897,7 +630,7 @@ require('smoothcursor').setup({
     threshold = 3,             -- animate if threshold lines jump
     disable_float_win = false, -- disable on float window
     enabled_filetypes = nil,   -- example: { "lua", "vim" }
-    disabled_filetypes = {'ddu-ff', 'ddu-filer',},  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
+    disabled_filetypes = {'ddu-ff', 'ddu-filer', 'help'},  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
 })
 vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
 local autocmd = vim.api.nvim_create_autocmd
@@ -971,3 +704,8 @@ require("ugaterm").setup({
 })
 '''
 
+# [[plugins]]
+# lazy = 0
+# repo = 'Bekaboo/dropbar.nvim'
+# lua_post_source = '''
+# '''

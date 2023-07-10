@@ -1,4 +1,5 @@
 import re
+
 import unicodedata
 from .base import Base
 from denite.util import debug, clear_cmdline

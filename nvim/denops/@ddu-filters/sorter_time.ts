@@ -2,9 +2,9 @@ import {
   BaseFilter,
   DduItem,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
-import { relative, resolve } from "https://deno.land/std@0.181.0/path/mod.ts";
+} from "https://deno.land/x/ddu_vim@v3.2.2/types.ts";
+import { Denops } from "https://deno.land/x/ddu_vim@v3.2.2/deps.ts";
+import { relative, resolve } from "https://deno.land/std@0.192.0/path/mod.ts";
 
 type Params = {
   force: boolean;

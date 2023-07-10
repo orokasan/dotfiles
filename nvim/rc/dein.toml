@@ -41,6 +41,7 @@ highlight! link WinBarNC Comment
 highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 highlight! PmenuSelected gui=bold guifg=#e2a478 guibg=#3d425b blend=0
 highlight! link WhiteSpace Comment
+highlight! link LspInlayHint Comment
 
 highlight! link @text.diff.add DiffAdd
 highlight! link @text.diff.change DiffChange
@@ -48,13 +49,17 @@ highlight! link @text.diff.delete DiffDelete
 hi! GitsignsAdd guifg=#8a8a67 guibg=#1e2132
 hi! GitsignsChange guifg=#54909c guibg=#1e2132
 hi! GitSignsDelete guifg=#9c4848 guibg=#1e2132
-hi! link Winbar Title
+hi! link Winbar Function
 hi! link DiagnosticUnderlineError Error
 highlight! link @punctuation.special Comment
 hi! FloatBorder guifg=#c6c8d1 guibg=#272c42
 hi! NormalNC ctermfg=252 guifg=#c6c8d1
 
 endfunction
+
+colorscheme iceberg
+set background=dark
+
 '''
 
 [[plugins]]
