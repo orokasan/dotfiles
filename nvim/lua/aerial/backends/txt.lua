@@ -1,3 +1,6 @@
+-- ref. https://github.com/stevearc/aerial.nvim/blob/master/lua/aerial/fzf.lua
+-- MIT License
+-- Copyright (c) 2020 Steven Arcangeli
 
 local backends = require("aerial.backends")
 local backend_util = require("aerial.backends.util")

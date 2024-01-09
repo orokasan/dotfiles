@@ -18,15 +18,44 @@ hook_add = '''
 nnoremap <silent> <Leader>gg
 \ <Cmd>GinStatus<CR>
 nnoremap <silent> <Leader>gb
-\ <Cmd>GinBranch<CR>
+\ <Cmd>GinBranch --all<CR>
 nnoremap <silent> <Leader>gl
-\ <Cmd>GinLog<CR>
-nnoremap <silent> <Leader>gc
-\ <Cmd>Gin ++opener=botright\ split commit<CR>
-nnoremap <silent> <Leader>gd <Cmd>diffthis \| GinEdit! HEAD %:p ++opener=vsplit \| diffthis<CR>
-let g:gin_log_default_args = ['++opener=botright vsplit', '--graph', '--abbrev-commit', '--pretty=format:%Cred%h%Creset %s %C(yellow)%d%Creset %Cgreen(%cr) %C(bold blue)<%an>%Creset']
-let g:gin_status_default_args = ['++opener=botright split']
-let g:gin_branch_default_args = ['++opener=botright split']
+\ <Cmd>GinLog ++opener=botright\ vsplit<CR>
+nnoremap <silent> <Leader>ga
+\ <Cmd>Gin ++wait add %:p<bar>Gin commit<CR>
+
+let g:gin_proxy_editor_opener='split'
+"nnoremap <silent> <Leader>gc
+"\ <Cmd>GinBuffer ++opener=botright\ split commit<CR>
+nnoremap <silent> <Leader>gc <Cmd>Gin commit<CR>
+nnoremap <silent> <Leader>gC <Cmd>Gin commit --amend<CR>
+nnoremap <silent> <Leader>gd <Cmd>call <SID>compare()<CR>
+nnoremap <silent> <Leader>gD <Cmd>call <SID>compare_commitish()<CR>
+" nnoremap <silent> <Leader>gD <Cmd>call execute('let @* = "'.. input('commitish: ') ..'"\|GinEdit ++opener=tabedit ' .. expand(@*) .. ' %:p \|diffthis\|GinEdit ++opener=vsplit ' .. expand(@*).. '^  %\|diffthis')<CR>
+
+function! s:compare() abort
+tabedit %
+setlocal scrolloff=999
+diffthis
+GinEdit! %:p ++opener=vsplit
+set scrolloff=999
+diffthis
+endfunction
+
+function! s:compare_commitish() abort
+let commitish = input('commitish: ')
+call execute('GinEdit ' .. '++opener=tabedit ' .. expand(commitish) .. ' %:p')
+setlocal scrolloff=999
+diffthis
+call execute('GinEdit ' .. '++opener=vsplit ' .. expand(commitish) .. '^' .. ' %')
+set scrolloff=999
+diffthis
+endfunction
+let g:gin_log_persistent_args = ['++emojify', '--graph', '--abbrev-commit', '--pretty=format:%Cred%h%Creset %s %d %Cgreen%cr %C(bold blue)<%an>%Creset']
+"'--pretty=format:%Cred%h%Creset %s %C(yellow)%d%Creset %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+let g:gin_status_persistent_args = ['++opener=botright 15split']
+let g:gin_branch_persistent_args = ['++opener=botright 15split']
+let g:gin_proxy_apply_without_confirm = 1
 
 au vimrc BufEnter * if &ft =~# 'gin-.*' | call <SID>gin_mapping() | endif
 function! s:gin_mapping() abort
@@ -34,16 +63,17 @@ function! s:gin_mapping() abort
 endfunction
 
 function! s:define_gin_local() abort
+  setlocal bufhidden=hide
   command! -buffer -bar GinLocal execute 'edit' gin#util#expand('%')
   nnoremap <buffer> q <cmd>close<CR>
 endfunction
 
-augroup my-gin-local
-  autocmd BufReadCmd ginedit://* call s:define_gin_local()
-  autocmd BufReadCmd gindiff://* call s:define_gin_local()
-  autocmd FileType gin call s:define_gin_local()
-  " autocmd BufReadCmd ginlog://* call s:define_gin_local()
-augroup END
+"augroup my-gin-local
+"  autocmd BufReadCmd ginedit://* call s:define_gin_local()
+"  autocmd BufReadCmd gindiff://* call s:define_gin_local()
+"  autocmd FileType gin call s:define_gin_local()
+"  " autocmd BufReadCmd ginlog://* call s:define_gin_local()
+"augroup END
 '''
 
 [[plugins]]
@@ -79,14 +109,13 @@ repo = 'Shougo/ddc-converter_remove_overlap'
 
 [[plugins]]
 repo = 'vim-skk/denops-skkeleton.vim'
-merged = 0
-# on_map = { i = '<Plug>(skkeleton-' }
+merged = 1
 hook_add = '''
 imap <C-j> <Plug>(skkeleton-toggle)
 cmap <C-j> <Plug>(skkeleton-enable)
+xnoremap <C-j> c<Cmd>call skkeleton#handle('enable', {})<CR><Cmd>call skkeleton#handle('handleKey', {'key': [';', getreg()]})<CR>
 autocmd dein ColorScheme * hi InInsertSign gui=bold guifg=#84a0c6
 autocmd dein ColorScheme * hi InEskkKanaSign gui=bold guifg=#e2a478
-
 let s:insertpos = 0
 let s:insert_icon = '▶'
 
@@ -124,7 +153,6 @@ function! s:highlight_imesign_on()
 if mode() is# 'c' | return | endif
 lua vim.api.nvim_set_hl(0, 'SmoothCursor', { fg= '#e2a478'})
 endfunction
-
 
 call skkeleton#config({
 \ 'globalJisyo': expand('~/GoogleDrive/config/.skk/SKK-JISYO.L'),
@@ -198,13 +226,9 @@ call skkeleton#register_kanatable('rom', {
 \ })
 
 call skkeleton#register_keymap('input', ';', 'henkanPoint')
-
-nnoremap i <cmd>setlocal iminsert=0<CR>i
-
-
 '''
-[[plugins]]
-repo ='kat0h/bufpreview.vim'
+# [[plugins]]
+# repo ='kat0h/bufpreview.vim'
 
 [[plugins]]
 repo = 'LumaKernel/ddc-file'
@@ -236,7 +260,7 @@ repo = 'matsui54/ddc-converter_truncate'
 repo = 'Shougo/ddu.vim'
 # lazy = 1
 # on_func = 'ddu#start'
-merged = 0
+# merged = 0
 hook_add = '''
 source ~/dotfiles/nvim/rc/config/ddu_mapping.rc.vim
 "source ~/miniddu.vim
@@ -250,7 +274,7 @@ repo = 'Shougo/ddu-commands.vim'
 [[plugins]]
 # lazy = 1
 # on_source = ['ddu.vim']
-merged = 0
+# merged = 0
 repo = 'Shougo/ddu-ui-ff'
 [[plugins]]
 repo = 'Shougo/ddu-source-file'
@@ -278,8 +302,8 @@ repo = 'yuki-yano/ddu-filter-fzf'
 repo = 'matsui54/ddu-source-file_external'
 [[plugins]]
 repo = 'matsui54/ddu-source-help'
-[[plugins]]
-repo = 'gamoutatsumi/ddu-source-nvim-lsp'
+# [[plugins]]
+# repo = 'gamoutatsumi/ddu-source-nvim-lsp'
 [[plugins]]
 repo = 'shun/ddu-source-rg'
 [[plugins]]
@@ -302,9 +326,6 @@ on_cmd = ['Glance']
 repo = 'tani/glance-vim'
 hook_source = '''
 " let g:glance#plugins = ['https://esm.sh/markdown-it-checkbox']
-let g:markdown_fenced_languages = [
-    \ 'bash=sh', 'javascript', 'js=javascript', 'json=javascript', 'typescript',
-    \ 'ts=typescript', 'php', 'html', 'css', 'rust', 'sql', 'lua']
 '''
 [[plugins]]
 repo = 'Shougo/ddu-filter-matcher_hidden'
@@ -343,6 +364,7 @@ repo = 'yukimemi/dps-hitori'
 hook_add = '''
 let g:hitori_debug = v:false  " debug console.log
 let g:hitori_quit = v:true    " whether to exit after attaching
+let g:hitori_ignore_patterns = ["\\.tmp$", "\\.diff$", "\\.eml$", "(COMMIT_EDIT|TAG_EDIT|MERGE_|SQUASH_)MSG$"]
 '''
 
 [[plugins]]
@@ -350,6 +372,8 @@ repo = 'Milly/ddu-filter-kensaku'
 
 [[plugins]]
 repo = 'lambdalisue/kensaku.vim'
+hook_add ='''
+'''
 
 [[plugins]]
 repo = 'lambdalisue/kensaku-command.vim'
@@ -357,6 +381,7 @@ repo = 'lambdalisue/kensaku-command.vim'
 [[plugins]]
 repo = 'lambdalisue/kensaku-search.vim'
 hook_add = '''
+cnoremap <CR> <Plug>(kensaku-search-replace)<CR>
 '''
 
 # [[plugins]]
@@ -366,9 +391,9 @@ hook_add = '''
 [[plugins]]
 repo = 'Milly/ddu-filter-merge'
 
-[[plugins]]
-repo = 'hasundue/ddu-filter-zf'
-build = 'deno task build'
+# [[plugins]]
+# repo = 'hasundue/ddu-filter-zf'
+# build = 'deno task build'
 
 [[plugins]]
 repo = 'Shougo/ddc-ui-inline'
@@ -387,3 +412,9 @@ repo = 'Shougo/ddu-source-dummy'
 
 [[plugins]]
 repo = 'uga-rosa/ddc-source-vsnip'
+
+[[plugins]]
+repo = 'uga-rosa/ddc-source-lsp-setup'
+
+[[plugins]]
+repo = 'Shougo/neco-vim'

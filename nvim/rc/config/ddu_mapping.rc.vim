@@ -4,24 +4,35 @@ function! s:ddu_mapping() abort
       \ mr<CR>
   nnoremap <silent> sr <cmd>Ddu
       \ -resume
-      \ -ui-param-startFilter=v:false<CR>
+      \ -ui-param-ff-startFilter=v:false<CR>
   nnoremap <silent> sh <cmd>Ddu
       \ -name=default
-      \ help -ui-param-startFilter=v:true<CR>
+      \ help -ui-param-ff-startFilter=v:true<CR>
+  nnoremap <silent> s- <cmd>Ddu
+      \ -name=default
+      \ dein -ui-param-ff-startFilter=v:true<CR>
   nnoremap <silent> sN <cmd>Ddu
       \ -name=default
       \ mr -source-param-kind='mrw'<CR>
   nnoremap <silent> sb <cmd>Ddu
-      \ -name=select
+      \ -name=default
       \ buffer<CR>
-  nnoremap <silent> sd <cmd>Ddu
-      \ -ui-param-split=floating
-      \ -ui-param-autoResize
-      \ jump<CR>
+  nnoremap <silent> - <cmd>Ddu
+      \ -name=side
+      \ -input=
+      \ aerial<CR>
+  " nnoremap <silent> sd <cmd>Ddu
+  "     \ -ui-param-ff-split=floating
+  "     \ -ui-param-ff-autoResize
+  "     \ jump<CR>
   nnoremap <silent> ss <cmd>call ddu#start({'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}]})<CR>
   nnoremap <silent> <Leader>s <cmd>call ddu#start({'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}], 'searchPath': expand('%:p')})<CR>
   nnoremap <silent> sS <cmd>call ddu#start({'sources': [{'name': 'file', 'options': {'path': getcwd()}}]})<CR>
   nnoremap <silent> s/ <cmd>Ddu
+      \ -resume
+      \ -refresh
+      \ -ui-option-ff-persist
+      \ -ui-option-ff-restoreCursor
       \ searchres<CR>
   nnoremap <silent> sy <cmd>Ddu
       \ -name=word
@@ -30,7 +41,7 @@ function! s:ddu_mapping() abort
 
   nnoremap <silent> se <cmd>Ddu
       \ -name=word
-      \ -ui-param-split=floating
+      \ -ui-param-ff-split=floating
       \ -source-option-path=`expand('~/GoogleDrive/SD/work/template/editor_symbols.txt')`
       \ word_line<CR>
 
@@ -39,21 +50,20 @@ function! s:ddu_mapping() abort
   nnoremap <silent> s* <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': expand('<cword>')}}]})<CR>
   nnoremap <silent> sG <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': getcwd(),'input': input('Pattern: ')}}]})<CR>
   " nnoremap <silent> sG <cmd>call ddu#start({'sources': [{'name': 'grep_all', 'params': {'input': input('Pattern: ')}}]})<CR>
-  nnoremap <silent> sf <cmd>call ddu#start({'sources': [{'name': 'file_external', 'options': {'path': <SID>find_gitdir()}}]})<CR>
+  nnoremap <silent> sf <cmd>call ddu#start({'sources': [{'name': 'file_external', 'options': {'path': <SID>find_gitdir()}}],'uiParams':{'ff': {'startFilter': v:true}} })<CR>
   nnoremap <silent> sF <cmd>call ddu#start({'sources': [{'name': 'file_external', 'options': {'path': getcwd()}}]})<CR>
   nnoremap <silent> sp <cmd>call ddu#start({'name': 'default', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}, 'params':{}}]})<CR>
   nnoremap <silent> sj <cmd>Ddu dirmark<CR>
-  nnoremap <silent> s- <cmd>Ddu -ui-param-startFilter=v:true dein<CR>
   nnoremap <silent> s_ <cmd>Ddu dein_update<CR>
 
-  nnoremap <silent> sv <cmd>Ddu junkfile -name=prev -ui-param-cursorPos=1<CR>
+  nnoremap <silent> sv <cmd>call ddu#start({'sources': [{'name': 'tree', 'options': {'path': expand(g:junkfile#directory)}}], 'name': 'prev'})<CR>
   nnoremap <silent> sV <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': expand('~/.cache/junkfile/' .. strftime('%Y')),'input': input('Pattern: ')}}]})<CR>
 
   nnoremap <silent> sc <cmd>call ddu#start({'sources': [{'name': 'lsp_codeAction'}]})<CR>
   nnoremap <silent> sC <cmd>call ddu#start({'name':'prev', 'sources': [{'name': 'lsp_references'},{'name': 'lsp_definition'},{'name': 'lsp_documentSymbol'},{'name': 'lsp_typeHierarchy'},{'name': 'lsp_callHierarchy'},{'name': 'lsp_codeAction'}]})<CR>
-  nnoremap <silent> sk <cmd>call ddu#start({'sources': [{'name': 'lsp_diagnostic', 'params':{'buffer': 0}}]})<CR>
+  nnoremap <silent> sk <cmd>call ddu#start({'sources': [{'name': 'lsp_diagnostic', 'params':{'buffer': 0}}]})\|set splitkeep=cursor<CR>
   autocmd dein FileType txt,markdown nnoremap <silent><buffer> sk <cmd>Ddu -name=textlint textlint<CR>
-
+nnoremap <silent> sd <Cmd>call ddu#start(#{sync: v:true, sources: [#{   name: 'lsp_definition', }], uiParams: #{   ff: #{    immediateAction: 'open', },}})<CR>
   nnoremap <silent> <Leader>e <cmd>call ddu#start({'ui': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}], 'searchPath': expand('%:p')})<CR>
   nnoremap <silent> <space>E <cmd>call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}}]})<CR>
   " nnoremap <silent> <space>e <cmd>Ddu -name=filer -path=`expand('%:h:p')` file<CR>

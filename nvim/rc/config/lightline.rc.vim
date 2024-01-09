@@ -11,25 +11,27 @@ let g:lightline = {
     \ },
     \ 'inactive': {
     \ 'left': [['inactivefn']],
-    \ 'right': [[ 'percent' ], [], ['filetype']]
+    \ 'right': [[ 'percent' ], [], ['filetype','inactiveruler']]
     \ },
     \ 'tabline' : {
     \ 'left': [['tab']],
     \ 'right': [['filetype'], ['fileencoding', 'fileformat'], [] ]
     \ },
     \ 'tab' : {
-    \ 'active': [ 'tabnum', 'filename', 'modified' ],
-    \ 'inactive': [ 'tabnum', 'filename', 'modified' ]
+    \ 'active': [ 'tabnum', 'icon', 'modified' ],
+    \ 'inactive': [ 'tabnum', 'icon', 'modified' ]
     \ },
     \ 'component':{
-    \ 'lineinfo':'%{LLruler()}%<'
+    \ 'lineinfo':'%{LLruler()}%<',
     \},
     \ 'component_function': {
     \ 'percent' : 'LLpercent',
+    \ 'icon': 'LLicon',
     \ 'cd': 'LLcd',
     \ 'readonly':'LLReadonly',
     \ 'filetype':'LLfiletype',
     \ 'inactivefn':'LLInactiveFilename',
+    \ 'inactiveruler':'LLinactiveruler',
     \ 'path':'LLMyFilepath',
     \ 'mode': 'LLMode',
     \ 'charcount':'LLCharcount',
@@ -131,8 +133,7 @@ let s:mode_map = {
     \   }
 function! LLMode()
     return &filetype is# 'help' ? 'Help' :
-        \ &filetype is# 'fern' ? 'Fern' :
-        \ &filetype is# 'undotree' ? 'undotree' :
+        \ &filetype is# 'undotree' ? 'Undotree' :
         \ &previewwindow ? 'preview' :
         \ s:mode_map[mode()]
 endfunction
@@ -175,6 +176,19 @@ function! LLfiletype() abort
 endfunction
 
 function! LLruler() abort
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+        " let done = w:ddu_ui_ff_status.done ? '' : '[loading...]'
+        " return '[' .. done .. ']' .. w:ddu_ui_ff_status.name .. ' ' .. w:ddu_ui_ff_status.maxItems
+        return printf('%d/%d[%d]', line('.'), line('$'), w:ddu_ui_ff_status.maxItems)
+    endif
+    if !s:ignore_window()
+        return printf('L%3s:C%3s', line('.'), col('.'))
+    else
+        return ''
+    endif
+endfunction
+
+function! LLinactiveruler() abort
     if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
         " let done = w:ddu_ui_ff_status.done ? '' : '[loading...]'
         " return '[' .. done .. ']' .. w:ddu_ui_ff_status.name .. ' ' .. w:ddu_ui_ff_status.maxItems
@@ -378,3 +392,12 @@ function! LLsearchres() abort
     return printf('  [%d/%d]',
         \             result.current, result.total)
 endfunction
+
+function LLicon(n) abort
+let buflist = tabpagebuflist(a:n)
+let winnr = tabpagewinnr(a:n)
+let icon = nerdfont#find(expand('#'.buflist[winnr - 1].':t'))
+return icon !=# '' ? icon : '[No Name]'
+endfunction
+
+let g:lightline.tab_component_function = {'icon': 'LLicon'}

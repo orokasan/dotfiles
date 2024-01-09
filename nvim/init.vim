@@ -1,8 +1,14 @@
 "ork's vimrc
-lua if vim.loader then vim.loader.enable() end
+let s:is_nvim = has('nvim')
+if s:is_nvim
+  lua if vim.loader then vim.loader.enable() end
+endif
 augroup vimrc
   autocmd!
 augroup END
+language ja_JP
+filetype plugin indent off
+syntax off
 " don't load unused default plugins
 let g:did_load_ftplugin         = 1
 let g:skip_loading_mswin        = 1
@@ -23,17 +29,17 @@ let g:loaded_netrwPlugin       = 1
 let g:loaded_netrwSettings     = 1
 let g:loaded_netrwFileHandlers = 1
 let g:loaded_godoc = 1
-let g:loaded_matchparen = 0
+let g:loaded_matchparen = 1
 let g:loaded_node_provider = 1
 let g:loaded_perl_provider = 1
-let g:loaded_python_provider = 0
+let g:loaded_python_provider = 1
 let g:loaded_ruby_provider = 1
 let g:did_indent_on             = 1
 let g:did_load_filetypes        = 1
 " let g:loaded_2html_plugin       = 1
 let g:loaded_man                = 1
-let g:loaded_matchit            = 0
-let g:loaded_remote_plugins     = 0
+let g:loaded_matchit            = 1
+let g:loaded_remote_plugins     = 1
 let g:loaded_shada_plugin       = 1
 let g:loaded_spellfile_plugin   = 1
 let g:loaded_tutor_mode_plugin  = 1
@@ -48,8 +54,8 @@ if exists('neovide')
   let g:neovide_padding_bottom = 0
   let g:neovide_padding_right = 0
   let g:neovide_padding_left = 0
-  let g:neovide_refresh_rate=60
-  let g:neovide_transparency=0.95
+  " let g:neovide_refresh_rate=60
+  let g:neovide_transparency=0.92
   let g:neovide_profiler = v:false
   let g:neovide_confirm_quit = v:true
   cd ~/
@@ -58,9 +64,9 @@ if exists('neovide')
   let g:neovide_remember_window_position=v:true
   let g:neovide_cursor_animation_length=0
   " let g:neovide_scale_factor=1.0
-  let g:neovide_refresh_rate_idle = 5
+  " let g:neovide_refresh_rate_idle = 5
 endif
-let g:python3_host_prog = expand('AppData\Local\Programs\Python\Python39\python.EXE')
+" let g:python3_host_prog = expand('AppData\Local\Programs\Python\Python39\python.EXE')
 
 if executable('win32yank.exe')
   if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
@@ -91,6 +97,43 @@ endif
 " endif
 let mapleader = "\<Space>"
 
+" const s:dpp_base = '~/.cache/dpp/'
+
+" " Set dpp source path (required)
+" const s:dpp_src = '~/.cache/dpp/repos/github.com/Shougo/dpp.vim'
+" const s:dpp_ext = [
+" \ 'Shougo/dpp-ext-installer',
+" \ 'Shougo/dpp-ext-lazy',
+" \ 'Shougo/dpp-ext-toml',
+" \ 'Shougo/dpp-ext-local',
+" \ 'Shougo/dpp-protocol-git',
+" \ ]
+" const s:denops_src = '~/.cache/dpp/repos/github.com/vim-denops/denops.vim'
+
+" " Set dpp runtime path (required)
+" execute 'set runtimepath^=' .. s:dpp_src
+" for item in s:dpp_ext
+"   execute 'set runtimepath+=~/.cache/dpp/repos/github.com/' . item
+" endfor
+
+" if dpp#min#load_state(s:dpp_base)
+"   " NOTE: dpp#make_state() requires denops.vim
+" endif
+"   execute 'set runtimepath^=' .. s:denops_src
+"   autocmd User DenopsReady
+"   \ call dpp#make_state(s:dpp_base, expand('~/dotfiles/nvim/dpp_config.ts'))
+
+" " Attempt to determine the type of a file based on its name and
+" " possibly its " contents. Use this to allow intelligent
+" " auto-indenting " for each filetype, and for plugins that are
+" " filetype specific.
+" filetype indent plugin on
+
+" " Enable syntax highlighting
+" if has('syntax')
+"   syntax on
+" endif
+
 let $CACHE = expand('~/.cache')
 if !isdirectory($CACHE)
   call mkdir($CACHE, 'p')
@@ -110,7 +153,7 @@ endif
 
 let g:dein#install_progress_type = "floating"
 
-if has('nvim')
+if s:is_nvim
 let g:dein#default_options = { 'merged': v:true }
 else
 let g:dein#default_options = { 'merged': v:false }
@@ -125,15 +168,15 @@ let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
 let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
 let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
 let s:denops_toml = '~/dotfiles/nvim/rc/dein_denops.toml'
-let g:dein#auto_remote_plugins = v:true
+
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
   call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:denops_toml])
-  call dein#load_toml(s:denops_toml)
+  call dein#load_toml(s:denops_toml, {'if': executable('deno')})
   call dein#load_toml(s:toml,      {'lazy': 0})
-  call dein#load_toml(s:lazy_toml, {'lazy': 1})
-  if has('nvim')
+  if s:is_nvim
     call dein#load_toml(s:lua_toml, {'lazy': 1})
+    call dein#load_toml(s:lazy_toml, {'lazy': 1})
   endif
   call dein#end()
   call dein#save_state()
@@ -176,21 +219,22 @@ set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis
 set notermguicolors
 set swapfile
 set undofile
-if !has('nvim')
+set autoread
+set nobackup
+set backupext
+set nowritebackup
+if !s:is_nvim
   set directory=~/.backup/vim/swap
   set undodir=~/.backup/vim/undo
-  set backupdir=~/.backup/vim/backup
+  " set backupdir=~/.backup/vim/backup
 else
-  set directory=~/.backup/nvim/swap
-  set undodir=~/.backup/nvim/undo
-  set backupdir=~/.backup/nvim/backup
+  " set directory=~/.backup/nvim/swap
+  " set undodir=~/.backup/nvim/undo
 endif
-set autoread
-set backup
 
 " language C
 set ambiwidth=single
-set shortmess=aActTFOoI
+set shortmess=aActTFOo
 set showtabline=2
 set number
 set signcolumn=number
@@ -198,18 +242,20 @@ set laststatus=2
 set cmdheight=1
 set noshowcmd
 set noshowmode
-set cursorline
+set nocursorline
 set cursorlineopt=screenline,number
 set cinwords=
 set list
-set listchars=tab:^-,trail:␣,extends:»,precedes:«,nbsp:%
+set listchars=tab:^-,trail:␣,extends:\ ,precedes:«,nbsp:%
 set modelines=5
 set termguicolors
 set t_Co=256
 set synmaxcol=1500
 set belloff=all
 set fillchars+=vert:\ ,fold:\ ,diff:\ ,eob:~
+if s:is_nvim
 set diffopt=internal,context:10,algorithm:histogram,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap,closeoff,linematch:60
+endif
 set nrformats+=unsigned
 set hidden
 set splitright
@@ -230,7 +276,7 @@ set sidescrolloff=5
 set sidescroll=1
 set noshowmatch
 set matchtime=1
-set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕
+set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕,":",':',
 set nojoinspaces
 set textwidth=0
 set updatecount=50
@@ -241,7 +287,7 @@ let g:vim_indent_cont = 4
 set autoindent
 set smartindent
 set shiftwidth=0
-set formatoptions=mjMcrql
+set formatoptions=roqn2M1mj]
 au vimrc FileType * set fo-=o
 set iskeyword+=-
 set ignorecase
@@ -314,7 +360,7 @@ nnoremap <C-f> <C-f>zz
 nnoremap <C-b> <C-b>zz
 nnoremap <C-d> <C-d>
 nnoremap <C-u> <C-u>
-nnoremap <C-o> <C-o>zz<CR>
+nnoremap <C-o> <C-o>zz
 
 nnoremap m `
 nnoremap M m
@@ -330,15 +376,8 @@ nnoremap <silent><Leader>l <Cmd>bnext!<CR>
 " moving around tabpages
 nnoremap <silent> <C-L> <Cmd>tabnext<CR>
 nnoremap <silent> <C-H> <Cmd>tabprevious<CR>
-" matchit mapping
-nmap <TAB>  <plug>(matchup-%)
-nmap g<TAB> <plug>(matchup-g%)
-xmap <TAB>  <plug>(matchup-%)
-xmap g<TAB> <plug>(matchup-g%)
-omap <TAB>  <plug>(matchup-%)
-omap g<TAB> <plug>(matchup-g%)
 " native <TAB> is useful
-nnoremap <C-p> <TAB>zz<CR>
+nnoremap <C-p> <TAB>zz
 vnoremap <C-p> <C-i>
 xnoremap <C-p> <C-i>
 
@@ -524,11 +563,8 @@ if has('GUI')
   set imsearch=0
 endif
 
-if has('nvim')
-  set shada=!,'200,<100,s10,h
-  autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
-  autocmd vimrc TermOpen * startinsert
-  autocmd vimrc TermOpen term://* nnoremap <buffer> q :quit<CR>
+if s:is_nvim
+  set shada=!,'10,<100,s10,h
   set display=lastline,msgsep,truncate
   set wildoptions=pum
   set pumblend=5
@@ -602,6 +638,7 @@ tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 function! NumCheckZen()
   g/\v(１|２|３|４|５|６|７|８|９|０)/
 endfunction
+
 function! NumZentohan() abort
   %s/１/1/eg
   %s/２/2/eg
@@ -614,6 +651,7 @@ function! NumZentohan() abort
   %s/９/9/eg
   %s/０/0/eg
 endfunction
+
 " g/\W*\ze \/\//s/^\(\W*\) \/\zs\ze\//\=jautil#convert(submatch(1),'hiragana')
 
 function! MdToText()
@@ -656,6 +694,7 @@ onoremap aO <Cmd>TextobjectOutline from_parent with_blank<CR>
 set imdisable
 function! s:move_to_char_pos(char)
   if search(a:char, 'cW', line("w$"))
+
     norm! "_x
     startinsert
   endif
@@ -665,49 +704,118 @@ inoremap <silent> <c-l> <C-g>u<ESC><cmd>call <SID>move_to_char_pos('★')<CR>
 
 " let g:denops#debug = v:false
 " let g:denops#trace = v:false
-" let g:denops_server_addr = '127.0.0.1:32123'
+if !has('mac')
+  " let g:denops_server_addr = '127.0.0.1:32123'
+endif
 
 function! s:change_textwidth()
 let &tw = input('Input textwidth value: ')
 endfunction
-
-nnoremap <leader>u <Cmd>call <SID>change_textwidth()<CR>
-let g:markdown_recommended_style=0
-function! AerialCall() abort
-lua << EOF
-
-local ext_config = {
-  show_nesting = {
-    ["_"] = false,
-    json = true,
-    yaml = true,
-  },
-}
-  require("aerial").sync_load()
-  local backends = require("aerial.backends")
-  local config = require("aerial.config")
-  local data = require("aerial.data")
-  local highlight = require("aerial.highlight")
-  alocal util = require("aerial.util")
-
-  local bufnr = vim.api.nvim_get_current_buf()
-  local filename = vim.api.nvim_buf_get_name(0)
-  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-  local show_nesting = ext_config.show_nesting[filetype]
-  if show_nesting == nil then
-    show_nesting = ext_config.show_nesting["_"]
-  end
-  local backend = backends.get()
-
-  if not backend then
-    backends.log_support_err()
-    return
-  elseif not data.has_symbols(0) then
-    backend.fetch_symbols_sync(0, opts)
-  end
-  print(vim.inspect(data.get()))
-EOF
-endfunction
-runtime! plugin/rplugin.vim
+nnoremap <leader>U <Cmd>call <SID>change_textwidth()<CR>
+nnoremap <leader>u <Cmd>call execute('Wrapwidth' .. (input({'prompt': 'Wrapwidth: ', 'cancelreturn': '0' }) ?? 0) )<CR>
+" let g:markdown_recommended_style=0
+" runtime! plugin/rplugin.vim
+" autocmd FileType mail call s:himalaya_autocmd_update()
+" function! s:himalaya_autocmd_update()
+" echom 'called'
+" augroup himalaya_write
+" au! * <buffer>
+"   autocmd  BufWritePost <buffer> call himalaya#domain#email#process_draft()
+" augroup end
+" endfunction
+  " autocmd  BufLeave    <buffer> call himalaya#domain#email#process_draft()
+" let g:markdown_fenced_languages = [
+"     \ 'bash=sh', 'javascript', 'js=javascript', 'json=javascript', 'typescript',
+"     \ 'ts=typescript', 'php', 'html', 'css', 'rust', 'sql', 'lua']
 " call denops_shared_server#runtray#_execute_script_command('start')
+set smoothscroll
+" カーソルがインデント内部ならtrue
+function! s:in_indent() abort
+  return col('.') <= indent('.')
+endfunction
+" カーソルがインデントとずれた位置ならtrue
+function! s:not_fit_indent() abort
+  return !!((col('.') - 1) % shiftwidth())
+endfunction
+function! s:quantized_h(cnt = 1) abort
+  if a:cnt > 1
+    execute printf('normal! %sh', a:cnt)
+    return
+  endif
+  normal! h
+  while s:in_indent() && s:not_fit_indent()
+    normal! h
+  endwhile
+endfunction
+function! s:quantized_l(cnt = 1) abort
+  if a:cnt > 1
+    execute printf('normal! %sl', a:cnt)
+    return
+  endif
+  normal! l
+  while s:in_indent() && s:not_fit_indent()
+    normal! l
+  endwhile
+endfunction
+nnoremap h <cmd>call <sid>quantized_h(v:count1)<cr>
+nnoremap l <cmd>call <sid>quantized_l(v:count1)<cr>
+
+set jumpoptions=stack,view
+
+let g:lastplace_ignore_buftype = "quickfix,nofile,help,mail"
+au vimrc VimEnter *.eml norm }
+hi! link SatelliteCursor Title
+autocmd BufWritePost *.eml call execute('write! %:h/backup/' .. strftime("%Y%m%d").. '_bak_%:t')
+nmap gqq :Wrapwidth0<CR>\|g/.*/norm! gqgq/
+nmap gu :Wrapwidth34<CR>
+
+function! Count_display_line()
+  let lineNr = 1
+  let start_pos = getcurpos('.')
+  let lines = line('$')
+  while line('.') !=# 1
+  norm! gk
+  let lineNr+=1
+  endwhile
+  call setpos('.', start_pos)
+
+  " let col = 1
+  " norm! gj
+  " let lineNr+=1
+
+  " while col != col('.')
+  " let col = col('.')
+  " norm! gj
+  " let lineNr+=1
+  " endwhile
+  return lineNr
+  " echom printf('LineNr：%s, Display LineNr：%s, textwidth(double)：%s', line('$'), lineNr, &textwidth/2)
+endfunction
+" echom printf('LineNr：%s, Display LineNr：%s', line('$'), lineNr)
+imap <C-h> <BS>
+nmap g<c-g> :autocmd vimrc CursorMoved * echo Count_display_line()<CR>
+autocmd TabClosed * if tabpagenr('$') >= expand('<afile>') | execute('tabnext ' .. (expand('<afile>') -1 ? expand('<afile>') -1 : 1 )) | endif
+set splitkeep=screen
+let g:nerdfont#autofix_cellwidths = v:false
+
+function! WASD() abort
+if !exists('b:wasd_save_nmap')
+let  b:wasd_save_nmap = nvim_buf_get_keymap(0,'n')
+call nvim_buf_set_keymap(0, 'n', 'w', 'k', {'nowait': v:true})
+call nvim_buf_set_keymap(0, 'n', 'a', 'h', {'nowait': v:true})
+call nvim_buf_set_keymap(0, 'n', 's', 'j', {'nowait': v:true})
+call nvim_buf_set_keymap(0, 'n', 'd', 'l', {'nowait': v:true})
+else
+  for i in b:wasd_save_nmap
+    echom i
+    call nvim_buf_set_keymap(0, i.mode, i.lhs, i.rhs, i.opts  )
+    unlet b:wasd_save_nmap
+  endfor
+endif
+endfunction
+let g:sonictemplate_key = "<C-z>"
+"C:/Program Files/WezTerm/wezterm.exe" start nvim "/path/to/temp.eml"
+autocmd vimrc FileType gitcommit startinsert
+autocmd vimrc FileType gitcommit nnoremap q :close<CR>
+" let &stc='%{substitute(v:lnum,"\\d\\zs\\ze\\' . '%(\\d\\d\\d\\)\\+$",",","g")}'
 " vim:set foldmethod=marker:

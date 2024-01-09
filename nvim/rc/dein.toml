@@ -5,7 +5,6 @@ augroup dein
     autocmd!
 augroup END
 '''
-
 # [[plugins]]
 # repo = 'rebelot/heirline.nvim'
 # hook_post_source = '''
@@ -29,47 +28,61 @@ repo = 'tyru/skkdict.vim'
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
 hook_add = '''
+au VimEnter * if (exists('neovide') && &filetype ==# 'mail') | set background=light |endif
 autocmd dein ColorScheme iceberg call My_iceberg_highlight()
 function! My_iceberg_highlight()
-highlight! PmenuSel ctermbg=236 guibg=#3d425b blend=0
-highlight! Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
+"highlight! PmenuSel ctermbg=236 guibg=#3d425b blend=0
+" highlight! Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 highlight! NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 highlight! clear Search
 highlight! link Search Title
 highlight! link Conceal Title
 highlight! link WinBarNC Comment
+highlight! link StatusLine Normal
+highlight! MatchParen ctermfg=255 ctermbg=237 guifg=#cdd1e6 guibg=#3e445e
 highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 highlight! PmenuSelected gui=bold guifg=#e2a478 guibg=#3d425b blend=0
 highlight! link WhiteSpace Comment
-highlight! link LspInlayHint Comment
-
-highlight! link @text.diff.add DiffAdd
-highlight! link @text.diff.change DiffChange
-highlight! link @text.diff.delete DiffDelete
 hi! GitsignsAdd guifg=#8a8a67 guibg=#1e2132
 hi! GitsignsChange guifg=#54909c guibg=#1e2132
 hi! GitSignsDelete guifg=#9c4848 guibg=#1e2132
 hi! link Winbar Function
 hi! link DiagnosticUnderlineError Error
-highlight! link @punctuation.special Comment
 hi! FloatBorder guifg=#c6c8d1 guibg=#272c42
 hi! NormalNC ctermfg=252 guifg=#c6c8d1
-
+if has('nvim')
+highlight! link @punctuation.special Comment
+highlight! link @punctuation.delimiter Constant
+highlight! link @text.strong Function
+highlight! link @text.emphasis Constant
+highlight! link @text.literal String
+highlight! link @text.diff.add DiffAdd
+highlight! link @text.diff.change DiffChange
+highlight! link @text.diff.delete DiffDelete
+endif
 endfunction
 
+if has('nvim')
 colorscheme iceberg
-set background=dark
+else
+au VimEnter * colorscheme iceberg
+endif
 
+if exists('nvy')
+set background=light
+else
+set background=dark
+endif
 '''
 
 [[plugins]]
 repo =  'kmnk/denite-dirmark'
 
-[[plugins]]
-repo = 'itchyny/vim-parenmatch'
-hook_add = '''
-hi! link ParenMatch MatchParen
-'''
+# [[plugins]]
+# repo = 'itchyny/vim-parenmatch'
+# hook_add = '''
+# hi! link ParenMatch MatchParen
+# '''
 
 # [[plugins]]
 # repo = 'glacambre/firenvim'
@@ -109,69 +122,69 @@ hi! link ParenMatch MatchParen
 [[plugins]]
 repo = 'thinca/vim-jautil'
 
-[[plugins]]
-repo = 'https://github.com/vim-jp/autofmt'
+# [[plugins]]
+# repo = 'https://github.com/vim-jp/autofmt'
+# # merged = 0
+# hook_add = '''
+# set formatexpr=autofmt#japanese#formatexpr()
+# set textwidth=42
+
+# set formatexpr=myfmt.format_normal_mode()
+
+# let s:compat = autofmt#compat#import()
+
+# let myfmt = {}
+# call extend(myfmt, s:compat)
+
+# function! myfmt.format_normal_mode(lnum, count) abort
+#   let self.textwidth = self.comp_textwidth(1)
+
+#   if self.textwidth == 0
+#     return
+#   endif
+
+#   let offset = 0
+
+#   let para = []
+#   call map(getline(a:lnum, a:lnum + a:count - 1),{ idx, val -> extend(para, [[idx, [val]]]) } )
+#   for [i, lines] in para
+#     let lnum = a:lnum + i + offset
+#     call setline(lnum, self.retab(getline(lnum)))
+
+#     let offset += self.format_lines(lnum, len(lines))
+
+#     if self.is_comment_enabled()
+#       " " * */" -> " */"
+#       let lnum = a:lnum + i + (len(lines) - 1) + offset
+#       let line = getline(lnum)
+#       let [indent, com_str, mindent, text, com_flags] = self.parse_leader(line)
+#       if com_flags =~# 'm'
+#         let [s, m, e] = self.find_three_piece_comments(&comments, com_flags, com_str)
+#         if text == e[1]
+#           let line = indent . e[1]
+#           call setline(lnum, line)
+#         endif
+#       endif
+#     endif
+
+#   endfor
+
+#   " The cursor is left on the first non-blank of the last formatted line.
+#   let lnum = a:lnum + (a:count - 1) + offset
+#   execute printf('keepjumps normal! %dG', lnum)
+# endfunction
+# '''
+
+# [[plugins]]
+# if = '!has("nvim")'
 # merged = 0
-hook_add = '''
-set formatexpr=autofmt#japanese#formatexpr()
-set textwidth=42
+# repo = 'thinca/vim-singleton'
+# hook_post_source = '''
+# call singleton#enable()
+# '''
 
-set formatexpr=myfmt.format_normal_mode()
-
-let s:compat = autofmt#compat#import()
-
-let myfmt = {}
-call extend(myfmt, s:compat)
-
-function! myfmt.format_normal_mode(lnum, count) abort
-  let self.textwidth = self.comp_textwidth(1)
-
-  if self.textwidth == 0
-    return
-  endif
-
-  let offset = 0
-
-  let para = []
-  call map(getline(a:lnum, a:lnum + a:count - 1),{ idx, val -> extend(para, [[idx, [val]]]) } )
-  for [i, lines] in para
-    let lnum = a:lnum + i + offset
-    call setline(lnum, self.retab(getline(lnum)))
-
-    let offset += self.format_lines(lnum, len(lines))
-
-    if self.is_comment_enabled()
-      " " * */" -> " */"
-      let lnum = a:lnum + i + (len(lines) - 1) + offset
-      let line = getline(lnum)
-      let [indent, com_str, mindent, text, com_flags] = self.parse_leader(line)
-      if com_flags =~# 'm'
-        let [s, m, e] = self.find_three_piece_comments(&comments, com_flags, com_str)
-        if text == e[1]
-          let line = indent . e[1]
-          call setline(lnum, line)
-        endif
-      endif
-    endif
-
-  endfor
-
-  " The cursor is left on the first non-blank of the last formatted line.
-  let lnum = a:lnum + (a:count - 1) + offset
-  execute printf('keepjumps normal! %dG', lnum)
-endfunction
-'''
-
-[[plugins]]
-if = '!has("nvim")'
-merged = 0
-repo = 'thinca/vim-singleton'
-hook_post_source = '''
-call singleton#enable()
-'''
-
-[[plugins]]
-repo = 'machakann/vim-colorscheme-snowtrek'
+# [[plugins]]
+# repo = 'machakann/vim-colorscheme-snowtrek'
 
 [[plugins]]
 repo = 'lambdalisue/glyph-palette.vim'
@@ -187,7 +200,8 @@ let g:mr#mru#predicates = [{ filename -> filename !~# '\(doc[\\\/].*txt\|COMMIT_
 
 [[plugins]]
 repo = 'lambdalisue/nerdfont.vim'
-hook_post_source = '''
+merged = 1
+hook_add = '''
 if !has('nvim')
 au dein VimEnter * call nerdfont#find()
 au dein VimEnter * let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
@@ -218,15 +232,14 @@ augroup my-glyph-palette
   autocmd! *
   autocmd FileType ddu-ff,ddu-filer call glyph_palette#apply()
 augroup END
-
 '''
 
 [[plugins]]
 repo='Shougo/junkfile.vim'
 hook_add = '''
-nnoremap <silent> <C-T> <Cmd>tabnew<bar>JunkfileOpen txt<CR>
-nnoremap <silent> g<C-T> <Cmd>JunkfileOpen<CR>
-nnoremap <C-S> <Cmd>JunkfileOpen<CR>
+nnoremap <silent> <C-T> <Cmd>tabnew<bar>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
+nnoremap <silent> g<C-T> <Cmd>call junkfile#open(strftime('%Y-%m-%d-%H%M%S.'))<CR>
+nnoremap <C-S> <Cmd>call junkfile#open(strftime('%Y-%m-%d-%H%M%S.'))<CR>
 '''
 
 [ftplugin]
@@ -236,9 +249,6 @@ setlocal tabstop=2
 
 json = '''
 setlocal conceallevel=0
-'''
-
-markdown = '''
 '''
 
 tsv = '''
@@ -254,10 +264,14 @@ setlocal textwidth=42
 setlocal noexpandtab
 nnoremap ]] <Cmd>call search('^\s*\(■\)', "W")<CR>
 nnoremap [[ <Cmd>call search('^\s*\(■\)', "bW")<CR>
+inoremap <buffer> ( （
+inoremap <buffer> ) ）
+inoremap <buffer> z( (
+inoremap <buffer> z) )
 '''
 
-[[plugins]]
-repo = 'eihigh/vim-aomi-grayscale'
+# [[plugins]]
+# repo = 'eihigh/vim-aomi-grayscale'
 
 [[plugins]]
 repo = 'farmergreg/vim-lastplace'
@@ -266,20 +280,12 @@ repo = 'farmergreg/vim-lastplace'
 # repo = 'theHamsta/nvim-treesitter-pairs'
 # lua_post_source = '''
 # '''
-
-[[plugins]]
-repo = "rcarriga/nvim-notify"
-
-[[plugins]]
-repo = "IwasakiYuuki/ai-assistant.nvim"
-lua_add = '''
-vim.keymap.set('n', '<leader>c', "<cmd>AIAssistantToggle<cr>")
-'''
-
 [[plugins]]
 lazy = 1
 on_cmd = ['Ask', 'Review']
 repo ='CoderCookE/vim-chatgpt'
 
+# [[plugins]]
+# repo = 'Matts966/skk-vconv.vim'
 
 # vim:set foldmethod=marker:'

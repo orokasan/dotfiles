@@ -247,3 +247,17 @@ endfunction
       let s:highlight_id = v:true
     endif
   endfunction
+
+function! vimrc#yanky_history() abort
+let g:vimrc_yank_history = {}
+lua <<EOF
+local value = {}
+local history = {}
+for index, value in pairs(require("yanky.history").all()) do
+  value.history_index = index
+  history[index] = value
+end
+vim.g.vimrc_yank_history = history
+EOF
+return g:vimrc_yank_history
+endfunction

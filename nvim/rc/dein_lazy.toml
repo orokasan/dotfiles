@@ -1,14 +1,14 @@
 [[plugins]]
-lazy = 0
+# lazy = 1
 repo =  'itchyny/lightline.vim'
 hook_add = '''
-" if v:vim_did_enter
-"   set laststatus=0
-" endif
+if v:vim_did_enter
+  set laststatus=0
+endif
 " autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
 " autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
 source ~/dotfiles/nvim/rc/config/lightline.rc.vim
-let &laststatus = has('nvim') ? 2 : 2
+" let &laststatus = has('nvim') ? 2 : 2
 '''
 
 [[plugins]]
@@ -30,66 +30,70 @@ repo =  'itchyny/vim-gitbranch'
 on_source = ['lightline.vim']
 depends = ['lightline.vim']
 
-[[plugins]]
-repo = 'glidenote/memolist.vim'
-on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
-hook_add = '''
-nnoremap <Leader>mn <Cmd>MemoNew<CR>
-nnoremap <silent> sl <cmd>call ddu#start({'sources': [{'name': 'file_external', 'params': {'path': expand('~/GoogleDrive/memo')}}]})<CR>
-nnoremap <silent> ml <cmd>call ddu#start({'sources': [{'name': 'file_external', 'params': {'path': expand('~/GoogleDrive/memo')}}]})<CR>
-nnoremap <silent><Leader>mg  <Cmd>Denite 
-    \ -buffer-name=default
-    \ grep:~/GoogleDrive/memo::<CR>
-" use denite (default 0)
-let g:memolist_denite = 1
-let g:memolist_memo_suffix = 'md'
-let g:memolist_path = "~/GoogleDrive/memo"
-let g:memolist_template_dir_path = "~/GoogleDrive/template/memolist"
-let g:memolist_memo_date = "%Y%m%d[%H:%M]"
-let g:memolist_filename_date = "%y%m%d"
+# [[plugins]]
+# repo = 'glidenote/memolist.vim'
+# on_cmd = ['MemoNew', 'MemoGrep' , 'MemoList']
+# hook_add = '''
+# nnoremap <Leader>mn <Cmd>MemoNew<CR>
+# nnoremap <silent> sl <cmd>call ddu#start({'sources': [{'name': 'file_external', 'params': {'path': expand('~/GoogleDrive/memo')}}]})<CR>
+# nnoremap <silent> ml <cmd>call ddu#start({'sources': [{'name': 'file_external', 'params': {'path': expand('~/GoogleDrive/memo')}}]})<CR>
+# nnoremap <silent><Leader>mg  <Cmd>Denite 
+#     \ -buffer-name=default
+#     \ grep:~/GoogleDrive/memo::<CR>
+# " use denite (default 0)
+# let g:memolist_denite = 1
+# let g:memolist_memo_suffix = 'md'
+# let g:memolist_path = "~/GoogleDrive/memo"
+# let g:memolist_template_dir_path = "~/GoogleDrive/template/memolist"
+# let g:memolist_memo_date = "%Y%m%d[%H:%M]"
+# let g:memolist_filename_date = "%y%m%d"
 
-let g:memolist_prompt_categories = 0
-'''
+# let g:memolist_prompt_categories = 0
+# '''
 
-[[plugins]]
-repo =  'cohama/lexima.vim'
-if = 'has("nvim")'
-on_event = ['InsertEnter', 'CmdlineEnter']
-hook_source = '''
-let g:lexima_ctrlh_as_backspace = v:true
-let g:lexima_enable_endwise_rules = v:false
-let g:lexima_accept_pum_with_enter = v:false
-let g:lexima_no_default_rules = v:true
+# [[plugins]]
+# repo =  'cohama/lexima.vim'
+# if = 'has("nvim")'
+# on_event = ['InsertEnter', 'CmdlineEnter']
+# hook_source = '''
+# let g:lexima_ctrlh_as_backspace = v:true
+# let g:lexima_enable_endwise_rules = v:false
+# let g:lexima_accept_pum_with_enter = v:false
+# let g:lexima_no_default_rules = v:true
 
-call lexima#set_default_rules()
+# call lexima#set_default_rules()
 
-let s:lexima_my_rules = [
-\ { 'char': '"', 'input': '"', 'filetype': 'toml' },
-\ { 'char': '"', 'input': '"', 'filetype': 'toml' },
-\ { 'char': '[', 'at': '^\s*[\*-]\%#', 'input': ' [ ] ', 'filetype': 'markdown' },
-\ { 'char': '[', 'at': '[\*-]\s\%#', 'input': '[ ] ', 'filetype': 'markdown' },
-\ { 'char': "'", 'at': "\%#'", 'input': "'",'input_after': "'", 'syntax': 'String' },
-\ ]
+# let s:lexima_my_rules = [
+# \ { 'char': '"', 'input': '"', 'filetype': 'toml' },
+# \ { 'char': '"', 'input': '"', 'filetype': 'toml' },
+# \ { 'char': '[', 'at': '^\s*[\*-]\%#', 'input': ' [ ] ', 'filetype': 'markdown' },
+# \ { 'char': '[', 'at': '[\*-]\s\%#', 'input': '[ ] ', 'filetype': 'markdown' },
+# \ { 'char': "'", 'at': "\%#'", 'input': "'",'input_after': "'", 'syntax': 'String' },
+# \ ]
 
-for rule in s:lexima_my_rules
-  call lexima#add_rule(rule)
-endfor
+# for rule in s:lexima_my_rules
+#   call lexima#add_rule(rule)
+# endfor
 
-"qqq Simple usage
-LeximaAlterCommand ee e!
-LeximaAlterCommand ee e!
+# "qqq Simple usage
+# LeximaAlterCommand ee e!
+# LeximaAlterCommand ee e!
 
-" With atom ( Read `:h \%[]` )
-LeximaAlterCommand cap\%[ture] Capture
-LeximaAlterCommand r\%[un]     QuickRun
-LeximaAlterCommand s\%[et] set
-cnoremap <CR> <Plug>(kensaku-search-replace)<CR>
-'''
-[[plugins]]
-lazy = 1
-repo = 'yuki-yano/lexima-alter-command.vim'
-hook_source = '''
-'''
+# " With atom ( Read `:h \%[]` )
+# LeximaAlterCommand cap\%[ture] Capture
+# LeximaAlterCommand r\%[un]     QuickRun
+# LeximaAlterCommand s\%[et] set
+
+# if dein#is_sourced('kensaku.vim')
+# cnoremap <CR> <Plug>(kensaku-search-replace)<CR>
+# endif
+# '''
+
+# [[plugins]]
+# lazy = 1
+# repo = 'yuki-yano/lexima-alter-command.vim'
+# hook_source = '''
+# '''
 
 [[plugins]]
 repo = 'rhysd/clever-f.vim'
@@ -227,18 +231,18 @@ let g:undotree_DiffAutoOpen = v:false
 let g:undotree_WindowLayout = 2
 '''
 
-[[plugins]]
-repo = 't9md/vim-textmanip'
-on_map = { x = '<Plug>(textmanip'}
-hook_add = '''
-xmap <C-j> <Plug>(textmanip-move-down)
-xmap <C-k> <Plug>(textmanip-move-up)
-xmap <C-h> <Plug>(textmanip-move-left)
-xmap <C-l> <Plug>(textmanip-move-right)
-" toggle insert/replace with <F10>
-" nmap <F10> <Plug>(textmanip-toggle-mode)
-" xmap <F10> <Plug>(textmanip-toggle-mode)
-'''
+# [[plugins]]
+# repo = 't9md/vim-textmanip'
+# on_map = { x = '<Plug>(textmanip'}
+# hook_add = '''
+# xmap <C-j> <Plug>(textmanip-move-down)
+# xmap <C-k> <Plug>(textmanip-move-up)
+# xmap <C-h> <Plug>(textmanip-move-left)
+# xmap <C-l> <Plug>(textmanip-move-right)
+# " toggle insert/replace with <F10>
+# " nmap <F10> <Plug>(textmanip-toggle-mode)
+# " xmap <F10> <Plug>(textmanip-toggle-mode)
+# '''
 
 [[plugins]]
 on_map = {nxo = '<Plug>Commentary'}
@@ -316,144 +320,144 @@ repo =  'lambdalisue/gina.vim'
 # let g:gina#core#spinner#delaytime = 10
 # '''
 
-hook_source = '''
-call gina#custom#command#alias('branch', 'br')
-call gina#custom#command#alias('diff', 'df')
-call gina#custom#command#option('df', '--stat')
-call gina#custom#command#option(
-    \ '/\%(log\|reflog\|diff\)',
-    \ '--opener', 'vsplit'
-    \)
-call gina#custom#command#option(
-    \ '/\%(status\|branch\|ls\|grep\|changes\|tag\|df\)',
-    \ '--opener' , 'botright 10split'
-    \)
-call gina#custom#command#option('commit', '--opener' , 'split')
-call gina#custom#command#option('log', '--group', 'log-viewer')
-call gina#custom#command#option('diff', '--group', 'log-viewer')
-call gina#custom#command#option('status', '--group', 'status-viewer')
-call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
-call gina#custom#command#option('commit', '-v|--verbose')
-call gina#custom#command#option('commit', '--group', 'status-viewer')
-" call gina#custom#command#option('diff', '-U0')
-call gina#custom#command#option('compare', '-R')
-call gina#custom#command#option('branch', '-v', 'v')
-call gina#custom#command#option('status', '--short')
-call gina#custom#command#option('status', '--branch')
-call gina#custom#command#option('log', '--graph')
-call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
-"call gina#custom#command#option(
-"\ '/\%(status\|changes\)',
-"\ '--ignore-submodules'
-"\)
-"call gina#custom#action#alias(
-"\ 'branch', 'track',
-"\ 'checkout:track'
-"\)
-call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
-call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
-call gina#custom#mapping#nmap(
-    \ '/.*', 'q',
-    \ ':close<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ '/.*', '<TAB>',
-      \ ':call gina#action#call(''builtin:choice'')<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', '<C-^>',
-    \ '<Cmd>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', '<C-^>',
-    \ '<Cmd>Gina status<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', '<C-6>',
-    \ '<Cmd>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-      \ 'status', 'a',
-      \ ':call gina#action#call(''toggle'')<CR>',
-      \ {'noremap': 1, 'silent': 1},
-      \)
-call gina#custom#mapping#vmap(
-    \ 'status', '-',
-      \ ':call gina#action#call(''toggle'')<CR>',
-    \ { 'noremap':1, 'silent': 1, 'nowait': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'status', 'c',
-    \ '<Cmd>Gina commit<CR>',
-    \ {'noremap': 1, 'silent': 1, 'nowait':1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', '<C-6>',
-    \ '<Cmd>Gina status<CR>',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#mapping#nmap(
-    \ 'commit', 'I',
-    \ 'ggI',
-    \ {'noremap': 1, 'silent': 1}
-    \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'preview',
-      \ 'topleft show:commit:preview',
-      \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'preview',
-      \ 'show:commit:above',
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'yy',
-      \ '<Cmd>call gina#action#call(''yank:rev'')<CR>',
-      \ {'noremap': 1}
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'yy',
-      \ '<Cmd>call gina#action#call(''yank:rev'')<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(change\)',
-      \ 'c',
-      \ '<Cmd>call gina#action#call(''compare'')<CR>',
-      \ {'noremap': 1, 'silent': 1, 'nowait': 1}
-      \)
-call gina#custom#action#alias(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'changes',
-      \ 'changes:of:split',
-      \)
-call gina#custom#mapping#nmap(
-      \ '/\%(blame\|log\|reflog\)',
-      \ 'c',
-      \ '<Cmd>call gina#action#call(''changes'')<CR>',
-      \ {'noremap': 1, 'silent': 1}
-      \)
-"call gina#custom#execute(
-"      \ '/\%(ls\|log\|reflog\|grep\)',
-"      \ 'setlocal noautoread',
-"      \)
-call gina#custom#execute(
-      \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
-      \ 'setlocal cursorline',
-      \)
-call gina#custom#execute(
-      \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
-      \ 'setlocal winfixheight',
-      \)
-'''
+# hook_source = '''
+# call gina#custom#command#alias('branch', 'br')
+# call gina#custom#command#alias('diff', 'df')
+# call gina#custom#command#option('df', '--stat')
+# call gina#custom#command#option(
+#     \ '/\%(log\|reflog\|diff\)',
+#     \ '--opener', 'vsplit'
+#     \)
+# call gina#custom#command#option(
+#     \ '/\%(status\|branch\|ls\|grep\|changes\|tag\|df\)',
+#     \ '--opener' , 'botright 10split'
+#     \)
+# call gina#custom#command#option('commit', '--opener' , 'split')
+# call gina#custom#command#option('log', '--group', 'log-viewer')
+# call gina#custom#command#option('diff', '--group', 'log-viewer')
+# call gina#custom#command#option('status', '--group', 'status-viewer')
+# call gina#custom#command#option('reflog', '--group', 'reflog-viewer')
+# call gina#custom#command#option('commit', '-v|--verbose')
+# call gina#custom#command#option('commit', '--group', 'status-viewer')
+# " call gina#custom#command#option('diff', '-U0')
+# call gina#custom#command#option('compare', '-R')
+# call gina#custom#command#option('branch', '-v', 'v')
+# call gina#custom#command#option('status', '--short')
+# call gina#custom#command#option('status', '--branch')
+# call gina#custom#command#option('log', '--graph')
+# call gina#custom#command#option('/\%(status\|commit\)', '-u|--untracked-files')
+# "call gina#custom#command#option(
+# "\ '/\%(status\|changes\)',
+# "\ '--ignore-submodules'
+# "\)
+# "call gina#custom#action#alias(
+# "\ 'branch', 'track',
+# "\ 'checkout:track'
+# "\)
+# call gina#custom#action#alias( 'branch', 'merge', 'commit:merge')
+# call gina#custom#action#alias( 'branch', 'rebase', 'commit:rebase')
+# call gina#custom#mapping#nmap(
+#     \ '/.*', 'q',
+#     \ ':close<CR>',
+#     \ {'noremap': 1, 'silent': 1}
+#     \)
+# call gina#custom#mapping#nmap(
+#     \ '/.*', '<TAB>',
+#       \ ':call gina#action#call(''builtin:choice'')<CR>',
+#     \ {'noremap': 1, 'silent': 1}
+#     \)
+# call gina#custom#mapping#nmap(
+#     \ 'status', '<C-^>',
+#     \ '<Cmd>Gina commit<CR>',
+#     \ {'noremap': 1, 'silent': 1}
+#     \)
+# call gina#custom#mapping#nmap(
+#     \ 'commit', '<C-^>',
+#     \ '<Cmd>Gina status<CR>',
+#     \ {'noremap': 1, 'silent': 1}
+#     \)
+# call gina#custom#mapping#nmap(
+#     \ 'status', '<C-6>',
+#     \ '<Cmd>Gina commit<CR>',
+#     \ {'noremap': 1, 'silent': 1}
+#     \)
+# call gina#custom#mapping#nmap(
+#       \ 'status', 'a',
+#       \ ':call gina#action#call(''toggle'')<CR>',
+#       \ {'noremap': 1, 'silent': 1},
+#       \)
+# call gina#custom#mapping#vmap(
+#     \ 'status', '-',
+#       \ ':call gina#action#call(''toggle'')<CR>',
+#     \ { 'noremap':1, 'silent': 1, 'nowait': 1}
+#     \)
+# call gina#custom#mapping#nmap(
+#     \ 'status', 'c',
+#     \ '<Cmd>Gina commit<CR>',
+#     \ {'noremap': 1, 'silent': 1, 'nowait':1}
+#     \)
+# call gina#custom#mapping#nmap(
+#     \ 'commit', '<C-6>',
+#     \ '<Cmd>Gina status<CR>',
+#     \ {'noremap': 1, 'silent': 1}
+#     \)
+# call gina#custom#mapping#nmap(
+#     \ 'commit', 'I',
+#     \ 'ggI',
+#     \ {'noremap': 1, 'silent': 1}
+#     \)
+# call gina#custom#action#alias(
+#       \ '/\%(blame\|log\|reflog\)',
+#       \ 'preview',
+#       \ 'topleft show:commit:preview',
+#       \)
+# call gina#custom#action#alias(
+#       \ '/\%(blame\|log\|reflog\)',
+#       \ 'preview',
+#       \ 'show:commit:above',
+#       \)
+# call gina#custom#mapping#nmap(
+#       \ '/\%(blame\|log\|reflog\)',
+#       \ 'yy',
+#       \ '<Cmd>call gina#action#call(''yank:rev'')<CR>',
+#       \ {'noremap': 1}
+#       \)
+# call gina#custom#mapping#nmap(
+#       \ '/\%(blame\|log\|reflog\)',
+#       \ 'yy',
+#       \ '<Cmd>call gina#action#call(''yank:rev'')<CR>',
+#       \ {'noremap': 1, 'silent': 1}
+#       \)
+# call gina#custom#mapping#nmap(
+#       \ '/\%(change\)',
+#       \ 'c',
+#       \ '<Cmd>call gina#action#call(''compare'')<CR>',
+#       \ {'noremap': 1, 'silent': 1, 'nowait': 1}
+#       \)
+# call gina#custom#action#alias(
+#       \ '/\%(blame\|log\|reflog\)',
+#       \ 'changes',
+#       \ 'changes:of:split',
+#       \)
+# call gina#custom#mapping#nmap(
+#       \ '/\%(blame\|log\|reflog\)',
+#       \ 'c',
+#       \ '<Cmd>call gina#action#call(''changes'')<CR>',
+#       \ {'noremap': 1, 'silent': 1}
+#       \)
+# "call gina#custom#execute(
+# "      \ '/\%(ls\|log\|reflog\|grep\)',
+# "      \ 'setlocal noautoread',
+# "      \)
+# call gina#custom#execute(
+#       \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
+#       \ 'setlocal cursorline',
+#       \)
+# call gina#custom#execute(
+#       \ '/\%(status\|branch\|ls\|log\|reflog\|grep\)',
+#       \ 'setlocal winfixheight',
+#       \)
+# '''
 
 [[plugins]]
 on_cmd = 'GitMessenger'
@@ -469,7 +473,7 @@ on_event = ['InsertEnter']
 on_source = ['ddc.nvim']
 repo = 'hrsh7th/vim-vsnip'
 hook_add = '''
-let g:vsnip_snippet_dir = expand('~/GoogleDrive/config/.vsnip')
+let g:vsnip_snippet_dir = [expand('~/GoogleDrive/config/.vsnip')]
 let g:vsnip_choice_delay = 10
 let g:popup_preview_config = {
     \ 'supportVsnip' : v:true
@@ -483,6 +487,7 @@ let g:popup_preview_config = {
 [[plugins]]
 # on_source = ['vim-vsnip-integ']
 lazy = 0
+merged = 0
 repo = 'rafamadriz/friendly-snippets'
 
 [[plugins]]
@@ -493,13 +498,13 @@ on_cmd = ['MakeTable']
 on_ft = ['vim']
 repo = 'rbtnn/vim-vimscript_indentexpr'
 
-[[plugins]]
-repo =  'mattn/vim-sonictemplate'
-on_cmd = ['Template']
-on_event = ['InsertEnter']
-hook_add = '''
-let g:sonictemplate_vim_template_dir = '~/GoogleDrive/config/template/'
-'''
+# [[plugins]]
+# repo =  'mattn/vim-sonictemplate'
+# on_cmd = ['Template']
+# on_event = ['InsertEnter']
+# hook_add = '''
+# let g:sonictemplate_vim_template_dir = '~/GoogleDrive/config/template/'
+# '''
 
 [[plugins]]
 repo = 'haya14busa/vim-asterisk'
@@ -641,8 +646,10 @@ onoremap  'a <Plug>(operator-sandwich-g@)
 
 " delete
 xnoremap  'd <Plug>(operator-sandwich-delete)
+onoremap  'd <Plug>(operator-sandwich-delete)
 "replace
 xnoremap  'r <Plug>(operator-sandwich-replace)
+onoremap  'r <Plug>(operator-sandwich-replace)
 nmap 'dd 'db
 nmap 'rr vab'r
 '''
@@ -713,7 +720,7 @@ if = '!has("kaoriya")'
 repo = 'orokasan/jasentence.vim'
 on_map = { nox = '<Plug>JaSentence' }
 hook_add = '''
-let g:jasentence_endpat = '[、。，．？！$]\+'
+let g:jasentence_endpat = '[、。，．？！]\+'
 let g:jasentence_no_default_key_mappings = 1
   nmap <silent> ) <Plug>JaSentenceMoveNF
   nmap <silent> ( <Plug>JaSentenceMoveNB
@@ -792,32 +799,32 @@ on_cmd = ['Nyancat','Nyancat2']
 repo = 'tyru/capture.vim'
 on_cmd = ['Capture']
 
-[[plugins]]
-repo = 'dstein64/vim-win'
-on_cmd = ["WinWin"]
-hook_add='''
-nmap <C-Space> <Plug>WinWin
-" map <C-w> :Win 1<CR>
-let g:win_disable_version_warning = 1
-let g:win_ext_command_map = {
-      \   'c': 'wincmd c',
-      \   'C': 'close!',
-      \   'q': 'Win#exit',
-      \   'Q': 'quit',
-      \   'V': 'wincmd v',
-      \   'S': 'wincmd s',
-      \   'n': 'bnext',
-      \   'N': 'bnext!',
-      \   'p': 'bprevious',
-      \   'P': 'bprevious!',
-      \   "\<c-n>": 'tabnext',
-      \   "\<c-p>": 'tabprevious',
-      \   '=': 'wincmd =',
-      \   't': 'tabnew',
-      \   'x': 'Win#exit',
-      \   '\<C-Space>': 'Win#exit',
-      \ }
-'''
+# [[plugins]]
+# repo = 'dstein64/vim-win'
+# on_cmd = ["WinWin"]
+# hook_add='''
+# nmap <C-Space> <Plug>WinWin
+# " map <C-w> :Win 1<CR>
+# let g:win_disable_version_warning = 1
+# let g:win_ext_command_map = {
+#       \   'c': 'wincmd c',
+#       \   'C': 'close!',
+#       \   'q': 'Win#exit',
+#       \   'Q': 'quit',
+#       \   'V': 'wincmd v',
+#       \   'S': 'wincmd s',
+#       \   'n': 'bnext',
+#       \   'N': 'bnext!',
+#       \   'p': 'bprevious',
+#       \   'P': 'bprevious!',
+#       \   "\<c-n>": 'tabnext',
+#       \   "\<c-p>": 'tabprevious',
+#       \   '=': 'wincmd =',
+#       \   't': 'tabnew',
+#       \   'x': 'Win#exit',
+#       \   '\<C-Space>': 'Win#exit',
+#       \ }
+# '''
 
 [[plugins]]
 on_func = ['magic#expr()']
@@ -856,11 +863,30 @@ repo = 'arecarn/vim-selection'
 repo = 'andymass/vim-matchup'
 on_event = ["BufRead", "BufNew"]
 hook_add = '''
+let g:matchup_mappings_enabled = 1
+"nnoremap <TAB>  <plug>(matchup-%)
+"nnoremap g<TAB> <plug>(matchup-g%)
+"xnoremap <TAB>  <plug>(matchup-%)
+"xnoremap g<TAB> <plug>(matchup-g%)
+"onoremap <TAB>  <plug>(matchup-%)
+"onoremap g<TAB> <plug>(matchup-g%)
+nmap <TAB> %
+xmap <TAB> %
+omap <TAB> %
+let g:matchup_transmute_enabled = 1
 let g:matchup_matchparen_offscreen = { "method":"popup" }
-let g:matchup_matchparen_enabled = 0
-let g:matchup_surround_enabled = 0
-let g:matchup_matchparen_deferred = 0
-"lvim.builtin.treesitter.matchup.enable = true
+let g:matchup_matchparen_enabled = 1
+let g:matchup_matchparen_pumvisible = 1
+let g:matchup_matchparen_end_sign = "◀"
+" let g:matchup_surround_enabled = 0
+" let g:matchup_matchparen_deferred = 1
 '''
+[[plugins]]
+on_cmd = ["Wrapwidth"]
+repo = 'rickhowe/wrapwidth'
+
+# [[plugins]]
+# on_cmd = ['Himalaya']
+# repo = 'https://git.sr.ht/~soywod/himalaya-vim'
 
 # vim:set foldmethod=marker:

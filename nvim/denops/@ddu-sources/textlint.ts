@@ -5,8 +5,8 @@ import {
   Context,
   DduItem,
   Item,
-} from "https://deno.land/x/ddu_vim@v1.13.0/types.ts#^";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v1.13.0/deps.ts#^";
+} from "https://deno.land/x/ddu_vim@v2.8.6/types.ts#^";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.6/deps.ts#^";
 import { basename } from "https://deno.land/std@0.152.0/path/mod.ts";
 
 type Params = Record<never, never>;
@@ -46,30 +46,40 @@ export type ActionData = {
   after?: string;
 };
 
+type NvimLspDiagnostic =
+  & Pick<LSP.Diagnostic, "message" | "severity" | "source" | "code">
+  & {
+    bufnr: number;
+    lnum: number;
+    end_lnum: number;
+    col: number;
+    end_col: number;
+  };
+
 export class Source extends BaseSource<Params> {
   kind = "file";
   actions: Actions<Params> = {
     highlight: async (args: { denops: Denops; items: DduItem[] }) => {
-      const action = args.items[0]?.action as ActionData
-      const lineNr = action.lineNr
+      const action = args.items[0]?.action as ActionData;
+      const lineNr = action.lineNr;
       await args.denops.call("cursor", lineNr, 0);
       await args.denops.cmd("norm! zz");
       return Promise.resolve(ActionFlags.Persist);
     },
 
     replace: async (args: { denops: Denops; items: DduItem[] }) => {
-      const action = args.items[0]?.action as ActionData
-      const lineNr = action.lineNr
-      const bufNr = action.bufNr
+      const action = args.items[0]?.action as ActionData;
+      const lineNr = action.lineNr;
+      const bufNr = action.bufNr;
       const bufline = await args.denops.call(
         "getbufline",
         bufNr,
         lineNr,
       ) as string[];
 
-      const after = action.after
-      const before = action.before
-      if (after && before){
+      const after = action.after;
+      const before = action.before;
+      if (after && before) {
         const rep = bufline[0].replace(before, after);
         await args.denops.call("setbufline", bufNr, lineNr, rep);
         await args.denops.call("cursor", lineNr, 0);
@@ -86,9 +96,10 @@ export class Source extends BaseSource<Params> {
   }): ReadableStream<Item<ActionData>[]> {
     return new ReadableStream({
       async start(controller) {
-        const res = await args.denops.eval(
-          `luaeval("require'lsp_ddu'.diagnostic_buffer(${args.context.bufNr})")`,
-        ) as DiagnosticItems;
+        const res = await args.denops.call(
+          `luaeval`,
+          `vim.diagnostic.get(${args.context.bufNr})`,
+        ) as NvimLspDiagnostic[] | null;
         if (res === null) {
           return controller.close();
         }

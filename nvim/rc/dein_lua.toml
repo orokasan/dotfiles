@@ -46,54 +46,100 @@ on_lua = ["plenary"]
 repo = 'lukas-reineke/indent-blankline.nvim'
 on_event = ["BufRead"]
 hook_add = '''
-let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-ff', 'toml']
-let g:indent_blankline_use_treesitter = v:true
-"let g:indent_blankline_show_first_indent_level = v:true
-let g:indent_blankline_char = '|'
-let g:indent_blankline_show_current_context = v:true
-let g:indent_blankline_show_current_context_start = v:true
-"let g:indent_blankline_context_patterns = ['^if','class', 'function', 'method']
+"let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-ff', 'toml','markdown']
+"let g:indent_blankline_use_treesitter = v:true
+""let g:indent_blankline_show_first_indent_level = v:true
+"let g:indent_blankline_char = '┊'
+"let g:indent_blankline_context_char = '┊'
+"let g:indent_blankline_max_indent_increase = 1
+"let g:indent_blankline_show_current_context = v:true
+"let g:indent_blankline_use_treesitter_scope = v:false
+"let g:indent_blankline_show_current_context_start = v:false
+"let g:indent_blankline_show_current_context_start_on_current_line = v:false
+"" let g:indent_blankline_show_first_indent_level = v:false
+"let g:indent_blankline_show_trailing_blankline_indent = v:false
+""let g:indent_blankline_context_patterns = ['^if','class', 'function', 'method']
 '''
 lua_source = '''
-require("indent_blankline").setup {
-  -- for example, context is off by default, use this to turn it on
-  show_current_context = true,
-  show_current_context_start = true,
-  use_treesitter_scope = true,
-}
+require("ibl").setup {
+    indent = {
+      char = '┊',
+    },
+    exclude = {
+      buftypes = {'defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-ff', 'toml','markdown'}
+    },
+    scope = {
+      enabled = true,
+    },
+  }
 '''
 
 [[plugins]]
 repo = 'norcalli/nvim-colorizer.lua'
 on_cmd = ['ColorizerToggle']
 
+# [[plugins]]
+# repo = 'bfredl/nvim-miniyank'
+# on_map = {nxo = '<Plug>(miniyank-'}
+# on_event = ["FocusLost"]
+# hook_add = '''
+# let g:miniyank_maxitems = 100
+# map p <Plug>(miniyank-autoput)
+# map P <Plug>(miniyank-autoPut)
+# map <leader>n <Plug>(miniyank-cycle)
+# map <leader>N <Plug>(miniyank-cycleback)
+# " doesnt work
+# " map <Leader>pc <Plug>(miniyank-tochar)
+# " map <Leader>pl <Plug>(miniyank-toline)
+# " map <Leader>pb <Plug>(miniyank-toblock)
+# function! To_miniyank_on_focused() abort
+#     let data = {}
+#     let data = {
+# 		\ 'regcontents': [getreg('*')],
+# 		\ 'visual': v:false,
+# 		\ 'inclusive': v:false,
+# 		\ 'regname': '',
+# 		\ 'operator': 'y',
+# 		\ 'regtype': 'V',
+# 		\ }
+#     call miniyank#on_yank(data)
+# endfunction
+# au dein FocusGained * call To_miniyank_on_focused()
+# '''
+
 [[plugins]]
-repo = 'bfredl/nvim-miniyank'
-on_map = ['<Plug>(miniyank']
-on_event = ["FocusLost"]
-hook_add = '''
-" let g:miniyank_maxitems = 5
-map p <Plug>(miniyank-autoput)
-map P <Plug>(miniyank-autoPut)
-map <leader>n <Plug>(miniyank-cycle)
-map <leader>N <Plug>(miniyank-cycleback)
-map <Leader>pc <Plug>(miniyank-tochar)
-map <Leader>pl <Plug>(miniyank-toline)
-map <Leader>pb <Plug>(miniyank-toblock)
-function! To_miniyank_on_focused() abort
-    let data = {}
-    let data = {
-		\ 'regcontents': [getreg('*')],
-		\ 'visual': v:false,
-		\ 'inclusive': v:false,
-		\ 'regname': '',
-		\ 'operator': 'y',
-		\ 'regtype': 'V',
-		\ }
-    call miniyank#on_yank(data)
-endfunction
-au dein FocusGained * call To_miniyank_on_focused()
+repo = 'gbprod/yanky.nvim'
+on_event = ['BufRead','BufNew']
+lua_source = '''
+-- Lua
+vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
+vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
+vim.keymap.set({"n","x"}, "gp", "<Plug>(YankyGPutAfter)")
+vim.keymap.set({"n","x"}, "gP", "<Plug>(YankyGPutBefore)")
+vim.keymap.set("n", "<Leader>pl", "<Plug>(YankyPutIndentAfterLinewise)")
+vim.keymap.set("n", "<Leader>pc", "<Plug>(YankyPutIndentAfterCharwise)")
+vim.keymap.set("n", "<Leader>Pl", "<Plug>(YankyPutIndentBeforeLinewise)")
+vim.keymap.set("n", "<Leader>Pc", "<Plug>(YankyPutIndentBeforeCharwise)")
+require("yanky").setup({
+  ring = {
+    history_length = 100,
+    storage = "shada",
+    sync_with_numbered_registers = true,
+    cancel_event = "update",
+    ignore_registers = { "_" },
+  },
+  system_clipboard = {
+    sync_with_ring = true,
+  },
+  highlight = {
+    on_put = false,
+    on_yank = false,
+    timer = 500,
+  },
+})
 '''
+
+
 
 # [[plugins]]
 # repo = "sindrets/diffview.nvim"
@@ -101,56 +147,58 @@ au dein FocusGained * call To_miniyank_on_focused()
 [[plugins]]
 if = 'executable("gcc")'
 repo = 'nvim-treesitter/nvim-treesitter'
+# frozen = 1
 on_event = ['BufRead','BufNew']
+hook_source = '''
+let &runtimepath =  substitute(&runtimepath, 'C:/tools/neovim/nvim-win64/lib/nvim', '', 'g')
+'''
 lua_source = '''
 local ts_path = vim.fn.stdpath('data') .. '/treesitter'
 vim.api.nvim_set_option('runtimepath', vim.api.nvim_get_option('runtimepath') .. ',' .. ts_path)
-
 require 'nvim-treesitter.configs'.setup {
   parser_install_dir = ts_path,
-  tree_docs = { enable = true },
+  -- tree_docs = { enable = true },
     -- [options]
   highlight = {
     enable = true,
-    disable = { "cpp", "toml", "help", 'markdown'},
-    -- additional_vim_regex_highlighting = {'markdown'},
+    disable = { "cpp", "toml", "help", "python"},
   },
-  indent = {
-    enable = true
-  },
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = "gnn",
-      node_incremental = "grn",
-      scope_incremental = "grc",
-      node_decremental = "grm",
-    },
-  },
+  -- indent = {
+  --   enable = true
+  -- },
+  -- incremental_selection = {
+  --   enable = true,
+  --   keymaps = {
+  --     init_selection = "gnn",
+  --     node_incremental = "grn",
+  --     scope_incremental = "grc",
+  --     node_decremental = "grm",
+  --   },
+  -- },
 }
 '''
 
 # [[plugins]]
 # repo = 'nvim-lua/lsp-status.nvim'
 
-[[plugins]]
-repo = 'delphinus/hop.nvim'
-rev = 'feature/migemo'
-on_cmd = ["HopChar2"]
-hook_add = '''
-nnoremap  sa :HopChar2<CR>
-"highlight! clear HopUnmatched
-"highlight! HopNextKey1 gui=bold guifg=#ff007c guibg=#c6c8d1
-"highlight! HopNextKey2 gui=bold guifg=#2b8db3 guibg=#c6c8d1
-"highlight! HopNextKey gui=bold guifg=#ff007c guibg=#c6c8d1
-'''
-lua_source = '''
-require 'hop'.setup {
-  use_migemo = true;
-  migemo_dict = vim.g.migemo_dict;
-  migemo_debug = false;
-}
-'''
+# [[plugins]]
+# repo = 'delphinus/hop.nvim'
+# rev = 'feature/migemo'
+# on_cmd = ["HopChar2"]
+# hook_add = '''
+# nnoremap  sa :HopChar2<CR>
+# "highlight! clear HopUnmatched
+# "highlight! HopNextKey1 gui=bold guifg=#ff007c guibg=#c6c8d1
+# "highlight! HopNextKey2 gui=bold guifg=#2b8db3 guibg=#c6c8d1
+# "highlight! HopNextKey gui=bold guifg=#ff007c guibg=#c6c8d1
+# '''
+# lua_source = '''
+# require 'hop'.setup {
+#   use_migemo = true;
+#   migemo_dict = vim.g.migemo_dict;
+#   migemo_debug = false;
+# }
+# '''
 
 [[plugins]]
 repo = 'kevinhwang91/nvim-hlslens'
@@ -183,6 +231,9 @@ on_source = ['nvim-treesitter']
 repo = 'nvim-treesitter/nvim-treesitter-context'
 lua_source = '''
 require'treesitter-context'.setup{}
+vim.keymap.set("n", "]]", function()
+  require("treesitter-context").go_to_context()
+end, { silent = true })
 '''
 
 [[plugins]]
@@ -208,10 +259,46 @@ onoremap au :<c-u>lua require"treesitter-unit".select(true)<CR>
 '''
 
 [[plugins]]
-on_cmd = ["AerialOpen"]
+# on_cmd = ["AerialOpen"]
+lazy = 1
+on_lua = ["aerial", "aerial.ddu"]
 repo = 'stevearc/aerial.nvim'
-lua_add = '''
-vim.api.nvim_set_keymap('n', '-', '<cmd>AerialOpen<CR>', { noremap = true, silent = true })
+hook_add = '''
+function! AerialCall() abort
+lua << EOF
+local ext_config = {
+  show_nesting = {
+    ["_"] = false,
+    json = true,
+    yaml = true,
+  },
+}
+  require("aerial").sync_load()
+  local backends = require("aerial.backends")
+  local config = require("aerial.config")
+  local data = require("aerial.data")
+  local highlight = require("aerial.highlight")
+  local util = require("aerial.util")
+
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filename = vim.api.nvim_buf_get_name(0)
+  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+  local show_nesting = ext_config.show_nesting[filetype]
+  if show_nesting == nil then
+    show_nesting = ext_config.show_nesting["_"]
+  end
+  local backend = backends.get()
+
+  if not backend then
+    backends.log_support_err()
+    return
+  elseif not data.has_symbols(0) then
+    backend.fetch_symbols_sync(0, opts)
+  end
+  print(vim.inspect(data.get()))
+EOF
+-- vim.api.nvim_set_keymap('n', '-', '<cmd>AerialOpen<CR>', { noremap = true, silent = true })
+endfunction
 '''
 lua_source = '''
 vim.api.nvim_create_autocmd({ "Filetype" }, {
@@ -259,6 +346,7 @@ require('aerial').setup({
   backends = {
     ['_']      = { "lsp", "treesitter", "txt" },
     typescript = { "lsp" },
+    lua = { "treesitter" },
   },
   disable_max_lines = 100000,
   filter_kind = {
@@ -391,14 +479,13 @@ on_event = ['BufRead','BufNew']
 lua_source = '''
 require("cellwidths").setup {
   name = "user/custom",
-  -- log_level = 'DEBUG',
   fallback = function(cw)
     -- 特定のテンプレートから追加・削除を行いたい場合は最初に load() を呼んで下さい。
     -- cw.load "default"
     -- 好きな設定を追加します。以下のどの書式でも構いません。
     cw.add {
-      { 0x00d7, 0x00d7, 2 },
-      { 0x03b1, 0x03c9, 2 },
+      -- { 0x00d7, 0x00d7, 2 },
+      -- { 0x03b1, 0x03c9, 2 },
       { 0x201c, 0x201d, 2 },
       { 0x2015, 0x2015, 2 },
       { 0x2018, 0x2018, 2 },
@@ -456,7 +543,7 @@ require("cellwidths").setup {
 
 [[plugins]]
 repo = 'onsails/lspkind.nvim'
-on_source = ['aerial.nvim']
+on_lua = ['lspkind']
 lua_source = '''
 require('lspkind').init({
   mode = 'symbol_text',
@@ -522,13 +609,28 @@ end)
 '''
 lua_source = '''
 local augend = require("dial.augend")
+local date = require("dial.augend.date")
+date.alias["%Y年%-m月%-d日（%ja）"] = date.new {
+    pattern = "%Y年%-m月%-d日（%J）",
+    default_kind = "day",
+    only_valid = true,
+}
+
+-- date.alias["%-m月%-d日（%ja）"] = date.new {
+--     pattern = "%-m月%-d日（%J）",
+--     default_kind = "day",
+--     only_valid = true,
+-- }
+
 require("dial.config").augends:register_group{
   default = {
     augend.integer.alias.decimal,
    augend.integer.alias.hex,
    augend.date.alias["%Y/%m/%d"],
-    augend.date.alias["%Y年%-m月%-d日(%ja)"],
+   -- augend.date.alias["%Y年%-m月%-d日(%ja)"],
    augend.date.alias["%Y年%-m月%-d日"],
+   -- augend.date.alias["%Y年%-m月%-d日（%ja）"],
+   -- augend.date.alias["%-m月%-d日（%ja）"],
     augend.constant.alias.ja_weekday,
     augend.constant.alias.ja_weekday_full,
     augend.constant.alias.bool,
@@ -649,63 +751,242 @@ autocmd({ 'ModeChanged' }, {
     end
   end,
 })
-'''
-
-[[plugins]]
-repo = 'cshuaimin/ssr.nvim'
-on_lua = ["ssr"]
-lua_add = '''
-vim.keymap.set({ "n", "x" }, "<space>r", function() require("ssr").open() end)
-'''
-lua_post_source = '''
-require("ssr").setup {
-      border = "rounded",
-      min_width = 50,
-      min_height = 5,
-      max_width = 120,
-      max_height = 25,
-      keymaps = {
-        close = "q",
-        next_match = "n",
-        prev_match = "N",
-        replace_confirm = "<cr>",
-        replace_all = "<leader><cr>",
-        help = "?",
-      },
-    }
-'''
-
-[[plugins]]
-repo = 'kensleDev/persistent-macros.nvim'
-on_lua = ["persistent-macros"]
-lua_post_source = '''
-  require('persistent-macros').setup(".config/macros.json")
-    vim.keymap.set("n", "<leader>m", function()
-        vim.cmd([[:ShowMacros()]])
-    end, { noremap = true, silent = true })
-'''
-
-[[plugins]]
-repo = 'uga-rosa/ugaterm.nvim'
-on_cmd = ['UgatermOpen']
-lua_add = '''
-vim.keymap.set("n", "<leader>t", function()
-    vim.cmd([[:UgatermOpen]])
-end, { noremap = true, silent = true })
-'''
-lua_source = '''
-require("ugaterm").setup({
-  ---@type string The terminal buffer name prefix.
-  prefix = "terminal://",
-  ---@type string The filetype for a terminal buffer.
-  filetype = "ugaterm",
-  ---@type string|function The command/function to open a teminal window.
-  open_cmd = "botright 15sp",
+autocmd({ 'User' }, {
+  pattern = 'skkeleton-mode-changed',
+  group = 'dein',
+  callback = function()
+    local current_mode = vim.api.nvim_eval('g:skkeleton#mode')
+    if current_mode == 'hira' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#84a0c6' })
+      -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
+    elseif current_mode == 'kata' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#DF81A2' })
+    elseif current_mode == 'abbrev' then
+      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#149116' })
+    end
+  end,
 })
+'''
+
+# [[plugins]]
+# repo = 'cshuaimin/ssr.nvim'
+# on_lua = ["ssr"]
+# lua_add = '''
+# vim.keymap.set({ "n", "x" }, "<space>r", function() require("ssr").open() end)
+# '''
+# lua_post_source = '''
+# require("ssr").setup {
+#       border = "rounded",
+#       min_width = 50,
+#       min_height = 5,
+#       max_width = 120,
+#       max_height = 25,
+#       keymaps = {
+#         close = "q",
+#         next_match = "n",
+#         prev_match = "N",
+#         replace_confirm = "<cr>",
+#         replace_all = "<leader><cr>",
+#         help = "?",
+#       },
+#     }
+# '''
+
+# [[plugins]]
+# repo = 'kensleDev/persistent-macros.nvim'
+# on_lua = ["persistent-macros"]
+# lua_post_source = '''
+#   require('persistent-macros').setup(".config/macros.json")
+#     vim.keymap.set("n", "<leader>m", function()
+#         vim.cmd([[:ShowMacros()]])
+#     end, { noremap = true, silent = true })
+# '''
+
+# [[plugins]]
+# repo = 'uga-rosa/ugaterm.nvim'
+# on_cmd = ['UgatermOpen']
+# lua_add = '''
+# vim.keymap.set("n", "<leader>t", function()
+#     vim.cmd([[:UgatermOpen]])
+# end, { noremap = true, silent = true })
+# '''
+# lua_source = '''
+# require("ugaterm").setup({
+#   ---@type string The terminal buffer name prefix.
+#   prefix = "terminal://",
+#   ---@type string The filetype for a terminal buffer.
+#   filetype = "ugaterm",
+#   ---@type string|function The command/function to open a teminal window.
+#   open_cmd = "botright 15sp",
+# })
+# '''
+
+[[plugins]]
+repo = 'hrsh7th/nvim-insx'
+on_event = ['InsertEnter', 'CmdlineEnter']
+lua_source = '''
+require('insx.preset.standard').setup( )
+local insx = require('insx')
+insx.add(
+  "（",
+  insx.with(require('insx.recipe.auto_pair')({
+    open = "（",
+    close = "）"
+  }), {
+    insx.with.in_string(true),
+    insx.with.in_comment(true),
+  })
+)
 '''
 
 # [[plugins]]
 # lazy = 0
 # repo = 'Bekaboo/dropbar.nvim'
 # lua_post_source = '''
+# '''
+
+# [[plugins]]
+# lazy = 0
+# repo = "epwalsh/obsidian.nvim"
+# lua_post_source = '''
+# local opts = {
+#     dir = "~/GoogleDrive/obsidian_memo",
+# }
+# require("obsidian").setup(opts)
+
+# vim.keymap.set("n", "gf", function()
+#   if require("obsidian").util.cursor_on_markdown_link() then
+#     return "<cmd>ObsidianFollowLink<CR>"
+#   else
+#     return "gf"
+#   end
+# end, { noremap = false, expr = true })
+# '''
+
+# [[plugins]]
+# repo = "rcarriga/nvim-notify"
+
+# [[plugins]]
+# repo = "IwasakiYuuki/ai-assistant.nvim"
+# lua_add = '''
+# vim.keymap.set('n', '<leader>c', "<cmd>AIAssistantToggle<cr>")
+# '''
+
+[[plugins]]
+repo = 'tzachar/highlight-undo.nvim'
+on_event = ['BufRead','BufNew']
+lua_post_source = '''
+require('highlight-undo').setup({
+    hlgroup = 'HighlightUndo',
+    duration = 200,
+    keymaps = {
+      {'n', 'u', 'undo', {}},
+      {'n', '<C-r>', 'redo', {}},
+    }
+})
+'''
+# [[plugins]]
+# on_event = ['BufRead','BufNew']
+# repo = 'lewis6991/satellite.nvim'
+# lua_source = '''
+# require('satellite').setup {
+#   current_only = true,
+#   winblend = 50,
+#   zindex = 40,
+#   excluded_filetypes = {},
+#   width = 2,
+#   handlers = {
+#     cursor = {
+#       enable = true,
+#       -- Supports any number of symbols
+#       symbols = { '⎺', '⎻', '⎼', '⎽' }
+#       -- symbols = { '⎻', '⎼' }
+#       -- Highlights:
+#       -- - SatelliteCursor (default links to NonText
+#     },
+#     search = {
+#       enable = true,
+#       -- Highlights:
+#       -- - SatelliteSearch (default links to Search)
+#       -- - SatelliteSearchCurrent (default links to SearchCurrent)
+#     },
+#     diagnostic = {
+#       enable = false,
+#       signs = {'-', '=', '≡'},
+#       min_severity = vim.diagnostic.severity.HINT,
+#       -- Highlights:
+#       -- - SatelliteDiagnosticError (default links to DiagnosticError)
+#       -- - SatelliteDiagnosticWarn (default links to DiagnosticWarn)
+#       -- - SatelliteDiagnosticInfo (default links to DiagnosticInfo)
+#       -- - SatelliteDiagnosticHint (default links to DiagnosticHint)
+#     },
+#     gitsigns = {
+#       enable = false,
+#       signs = { -- can only be a single character (multibyte is okay)
+#         add = "│",
+#         change = "│",
+#         delete = "-",
+#       },
+#       -- Highlights:
+#       -- SatelliteGitSignsAdd (default links to GitSignsAdd)
+#       -- SatelliteGitSignsChange (default links to GitSignsChange)
+#       -- SatelliteGitSignsDelete (default links to GitSignsDelete)
+#     },
+#     marks = {
+#       enable = true,
+#       show_builtins = false, -- shows the builtin marks like [ ] < >
+#       key = 'm'
+#       -- Highlights:
+#       -- SatelliteMark (default links to Normal)
+#     },
+#     quickfix = {
+#       signs = { '-', '=', '≡' },
+#       -- Highlights:
+#       -- SatelliteQuickfix (default links to WarningMsg)
+#     }
+#   },
+# }
+# '''
+# [[plugins]]
+# repo = 'uga-rosa/ddc-nvim-lsp-setup'
+# on_source = ['ddc.vim']
+# lua_source = '''
+# require("ddc_nvim_lsp_setup").setup()
+# require("lspconfig").denols.setup()
+
+[[plugins]]
+lazy = 1
+repo = 'rebelot/terminal.nvim'
+on_lua = ["terminal"]
+hook_add = '''
+autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
+autocmd vimrc TermOpen * startinsert
+autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>TermClose<CR>
+'''
+lua_add = '''
+local term_map = require("terminal.mappings")
+vim.keymap.set({ "n", "x" }, "<leader>Ts", term_map.operator_send, { expr = false })
+vim.keymap.set("n", "<leader>t", term_map.toggle)
+vim.keymap.set("n", "<leader>TO", term_map.toggle({ open_cmd = "enew" }))
+vim.keymap.set("n", "<leader>Tr", term_map.run)
+vim.keymap.set("n", "<leader>TR", term_map.run(nil, { layout = { open_cmd = "enew" } }))
+vim.keymap.set("n", "<leader>Tk", term_map.kill)
+vim.keymap.set("n", "<leader>T]", term_map.cycle_next)
+vim.keymap.set("n", "<leader>T[", term_map.cycle_prev)
+'''
+lua_post_source = '''
+require('terminal').setup(
+  {
+    layout = { open_cmd = "botright15 new" },
+    cmd = { vim.o.shell },
+    autoclose = true,
+  }
+)
+'''
+# '''
+
+# [[plugins]]
+# repo = 'mvllow/modes.nvim'
+# lua_post_source = '''
+# require('modes').setup()
 # '''

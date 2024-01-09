@@ -11,7 +11,11 @@ type Params = {
   "reg": string;
 };
 
-type YankedData = [[string], string, string];
+type YankedData = {
+  filetype: string;
+  regcontents: string;
+  regtype: string;
+};
 
 export class Source extends BaseSource<Params> {
   kind = "word";
@@ -44,24 +48,25 @@ export class Source extends BaseSource<Params> {
     return new ReadableStream({
       async start(controller) {
         const items: Item<ActionData>[] = [];
-        const data = await args.denops.call("miniyank#read") as YankedData[];
+        const data = await args.denops.call(
+          "vimrc#yanky_history",
+        ) as YankedData[];
         for (const i of data) {
-          const word = i[0].join("\\n").replace(/\r?\n/g, "");
-          const regtype = (i[1] == "v") ? "c" : (i[1] == "V") ? "l" : "B"; // \<C-v> is Blockwise
-          const reg = (args.sourceParams.reg ? i[2] + ": " : "");
+          const word = i.regcontents.replace(/\r?\n/g, "");
+          const regtype = (i.regtype == "v") ? "c" : (i.regtype == "V") ? "l" : "B"; // \<C-v> is Blockwise
           items.push({
             word: word,
-            display: `${reg}${regtype}: ${word}`,
+            display: `${regtype}: ${word}`,
             action: {
-              text: i[0].join("\n"),
-              regType: i[1],
+              text: i.regcontents,
+              regType: i.regtype,
             },
             highlights: [
               {
                 name: "word",
                 hl_group: "Function",
                 col: 1,
-                width: i[1] == "v" ? (new StringReader(word).length) + 3 : 0,
+                width: i.regtype == "v" ? (new StringReader(word).length) + 3 : 0,
               },
             ],
           });

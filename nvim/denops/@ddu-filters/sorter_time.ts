@@ -17,18 +17,19 @@ export class Filter extends BaseFilter<Params> {
     input: string;
     items: DduItem[];
   }): Promise<DduItem[]> {
-    const items = (args.filterParams.force) ? await Promise.all(args.items.map(async (i) => {
+    const items = (args.filterParams.force)
+      ? await Promise.all(args.items.map(async (i) => {
         const fullPath = resolve(Deno.cwd(), i.word);
         const stat = await tryGetStat(fullPath);
         i.status = {
           size: stat?.size,
           time: stat?.atime?.getTime(),
         };
-      console.log(i)
-        return i
-      }
-    )) : args.items
-      // console.log(items.sort((a, b) => {
+        console.log(i);
+        return i;
+      }))
+      : args.items;
+    // console.log(items.sort((a, b) => {
     //   if (a.status?.time || b.status?.time) {
     //     if ((a.status?.time ?? 0) < (b.status?.time ?? 0)) return 1
     //       else return -1;
@@ -37,8 +38,8 @@ export class Filter extends BaseFilter<Params> {
     // }))
     return Promise.resolve(items.sort((a, b) => {
       if (a.status?.time || b.status?.time) {
-        if ((a.status?.time ?? 0) < (b.status?.time ?? 0)) return 1
-          else return -1;
+        if ((a.status?.time ?? 0) < (b.status?.time ?? 0)) return 1;
+        else return -1;
       }
       return 0;
     }));

@@ -21,7 +21,7 @@ interface IconList {
 }
 
 export class Column extends BaseColumn<Params> {
-  private span = 1;
+  private span = 2;
   private iconWidth = 3;
   private defaultIcon = "";
   private extensionPalette: IconList = {};
@@ -51,18 +51,10 @@ export class Column extends BaseColumn<Params> {
   }): Promise<GetTextResult> {
     const highlights: ItemHighlight[] = args.item.highlights ?? [];
 
-    if (args.item.display && (args.item.word != args.item.display)) {
-      return Promise.resolve({
-        text: args.item.display,
-        highlights: highlights,
-      });
-    }
-
     const isDir = isDirectory(args.item);
-
     const prefix = this.makePrefix(args.item, args.columnParams);
 
-    const text = prefix + (args.item.display ?? args.item.word);
+    const text = prefix + (args.item.word);
     if (args.item.__level > 0) {
       highlights.push({
         name: "column-icon-padding",
@@ -138,7 +130,7 @@ export class Column extends BaseColumn<Params> {
 
     if (columnParams.isTree) {
       const indent = item.__level > 0
-        ? whitespace(item.__level + columnParams.padding - 1) + "├ " //│
+        ? whitespace(item.__level + columnParams.padding - 1) + "  " //│
         : whitespace(columnParams.padding);
       return indent + icon + span;
     } else {

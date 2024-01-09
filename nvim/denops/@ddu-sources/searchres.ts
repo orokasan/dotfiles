@@ -7,7 +7,7 @@ import {
   Item,
 } from "https://deno.land/x/ddu_vim@v1.13.0/types.ts";
 import { Denops } from "https://deno.land/x/ddu_vim@v1.2.0/deps.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.2/file.ts";
 
 type Params = Record<never, never>;
 
@@ -49,24 +49,30 @@ export class Source extends BaseSource<Params> {
     return new ReadableStream({
       async start(controller) {
         const bufnr = args.context.bufNr;
+        const winid = args.context.winId
+        const winwidth = await args.denops.call("winwidth", winid) as number
         const items: Item<ActionData>[] = [];
         const aword = word.replaceAll("\\<", "").replaceAll("\\>", "");
+        const byte_word = get_string_byte_count(aword)
+
         for (const i of lines) {
+        const searched_word_pos = `${i[0]}:`.length + i[1] + 1
           items.push({
             word: i[2],
-            display: `${i[0]}: ${i[2]}`,
+            display: `${i[0]}: ${(searched_word_pos > winwidth) ? i[2].slice(searched_word_pos-10) : i[2]}`,
             action: {
               bufNr: bufnr,
               path: await args.denops.call("bufname", bufnr) as string,
               lineNr: i[0],
               col: i[1],
+              text: aword,
             },
             highlights: [
               {
                 name: "word",
                 hl_group: "Function",
-                col: `${i[0]}:`.length + i[1] + 1,
-                width: get_string_byte_count(aword),
+                col: searched_word_pos,
+                width: byte_word,
               },
               {
                 name: "lnum",
