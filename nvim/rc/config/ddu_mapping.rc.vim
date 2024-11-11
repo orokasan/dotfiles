@@ -1,16 +1,30 @@
+function! s:startfilter()
+  let chars = ''
+  while v:true
+    let chars ..= getcharstr(0)
+    sleep 1m
+    if exists('w:ddu_ui_ff_status') && get(w:ddu_ui_ff_status, 'done', v:false)
+      break
+    endif
+  endwhile
+  call feedkeys("\<Cmd>call ddu#ui#sync_action('openFilterWindow')\<CR>" .. chars, 'it')
+endfunction
+" autocmd User Ddu:uiDone ++nested call ddu#ui#async_action('openFilterWindow')
+
 function! s:ddu_mapping() abort
   nnoremap <silent> sn <cmd>Ddu
       \ -name=default
       \ mr<CR>
   nnoremap <silent> sr <cmd>Ddu
-      \ -resume
-      \ -ui-param-ff-startFilter=v:false<CR>
+      \ -resume<CR>
   nnoremap <silent> sh <cmd>Ddu
       \ -name=default
-      \ help -ui-param-ff-startFilter=v:true<CR>
+      \ help
+      \ \| call <SID>startfilter()<CR>
   nnoremap <silent> s- <cmd>Ddu
       \ -name=default
-      \ dein -ui-param-ff-startFilter=v:true<CR>
+      \ dein
+      \ \| call <SID>startfilter()<CR>
   nnoremap <silent> sN <cmd>Ddu
       \ -name=default
       \ mr -source-param-kind='mrw'<CR>
@@ -38,7 +52,10 @@ function! s:ddu_mapping() abort
       \ -name=word
       \ -name=float
       \ miniyank<CR>
+  nnoremap <silent> sl <cmd>Ddu
+      \ ddu_history<CR>
 
+  nnoremap <silent> sL <cmd>call ddu#start({'sync': v:true, 'sources': [{'name': 'ddu_history'}], 'uiParams': {'ff': {'startAutoAction': v:true,'cursorPos': -1, 'autoAction': {'name': 'itemAction','param':{'name': 'start'}}}}})<CR>
   nnoremap <silent> se <cmd>Ddu
       \ -name=word
       \ -ui-param-ff-split=floating
@@ -50,8 +67,8 @@ function! s:ddu_mapping() abort
   nnoremap <silent> s* <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': expand('<cword>')}}]})<CR>
   nnoremap <silent> sG <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': getcwd(),'input': input('Pattern: ')}}]})<CR>
   " nnoremap <silent> sG <cmd>call ddu#start({'sources': [{'name': 'grep_all', 'params': {'input': input('Pattern: ')}}]})<CR>
-  nnoremap <silent> sf <cmd>call ddu#start({'sources': [{'name': 'file_external', 'options': {'path': <SID>find_gitdir()}}],'uiParams':{'ff': {'startFilter': v:true}} })<CR>
-  nnoremap <silent> sF <cmd>call ddu#start({'sources': [{'name': 'file_external', 'options': {'path': getcwd()}}]})<CR>
+  nnoremap <silent> sf <cmd>call ddu#start({'sources': [{'name': 'file_external', 'options': {'path': <SID>find_gitdir()}}]})<CR>
+  nnoremap <silent> sF <cmd>call ddu#start({'sources': [{'name': 'file_external', 'options': {'path': getcwd()}}]})\|call <SID>startfilter()<CR>
   nnoremap <silent> sp <cmd>call ddu#start({'name': 'default', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}, 'params':{}}]})<CR>
   nnoremap <silent> sj <cmd>Ddu dirmark<CR>
   nnoremap <silent> s_ <cmd>Ddu dein_update<CR>
@@ -62,14 +79,19 @@ function! s:ddu_mapping() abort
   nnoremap <silent> sc <cmd>call ddu#start({'sources': [{'name': 'lsp_codeAction'}]})<CR>
   nnoremap <silent> sC <cmd>call ddu#start({'name':'prev', 'sources': [{'name': 'lsp_references'},{'name': 'lsp_definition'},{'name': 'lsp_documentSymbol'},{'name': 'lsp_typeHierarchy'},{'name': 'lsp_callHierarchy'},{'name': 'lsp_codeAction'}]})<CR>
   nnoremap <silent> sk <cmd>call ddu#start({'sources': [{'name': 'lsp_diagnostic', 'params':{'buffer': 0}}]})\|set splitkeep=cursor<CR>
-  autocmd dein FileType txt,markdown nnoremap <silent><buffer> sk <cmd>Ddu -name=textlint textlint<CR>
+augroup dduconf
+  au!
+ autocmd FileType txt,markdown nnoremap <silent><buffer> sk <cmd>Ddu -name=textlint textlint<CR>
+ augroup END
 nnoremap <silent> sd <Cmd>call ddu#start(#{sync: v:true, sources: [#{   name: 'lsp_definition', }], uiParams: #{   ff: #{    immediateAction: 'open', },}})<CR>
-  nnoremap <silent> <Leader>e <cmd>call ddu#start({'ui': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}], 'searchPath': expand('%:p')})<CR>
+  nnoremap <silent> <Leader>e <cmd>call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}], 'searchPath': expand('%:p')})<CR>
   nnoremap <silent> <space>E <cmd>call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}}]})<CR>
   " nnoremap <silent> <space>e <cmd>Ddu -name=filer -path=`expand('%:h:p')` file<CR>
   nnoremap <silent> st <cmd> call ddu#start({'name': 'tree',  'options':{'searchPath': ''}, 'sources': [{'name': 'text'}],'resume': v:true, 'refresh':v:true}})<CR>
 
-  nnoremap <silent> <C-e> <cmd> call ddu#start({'name': 'filer', 'resume': v:true})<CR>
+  nnoremap <silent> <C-e> <cmd> if ddu#ui#visible('filer') \| call execute(['wincmd',  win_id2win(ddu#ui#winids('filer')[0]),  'w']->join(' ')) \| else \|
+  \ call ddu#start({'name': 'filer', 'sources': [{'name': 'file'}]}) \| endif<CR>
+
 
   inoremap <C-q> <Cmd>call ddu#start(#{
   \   name: 'file',

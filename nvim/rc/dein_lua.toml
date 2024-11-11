@@ -13,8 +13,13 @@ repo = 'neovim/nvim-lspconfig'
 # plugins = ['mason.nvim', 'mason-lspconfig.nvim', 'nvim-lspconfig']
 hook_source = '''
 let s:lsptoggle_switch = v:false
+let s:bufnr = 0
 command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
 function! s:lspdefinetoggleaucmd() abort
+    if s:bufnr != bufnr('%')
+      let s:lsptoggle_switch = v:false
+      let s:bufnr = bufnr('%')
+    endif
     if !s:lsptoggle_switch
         let s:lsptoggle_switch = v:true
         augroup lsptoggle
@@ -27,10 +32,12 @@ function! s:lspdefinetoggleaucmd() abort
         augroup lsptoggle
             au!
         augroup END
+        LspStart
         let s:lsptoggle_switch = v:false
         echom "Lsp ON"
     endif
 endfunction
+nnoremap <Leader>d <Cmd>LspToggle<CR>
 lua require("masonrc")
 '''
 
@@ -46,25 +53,10 @@ on_lua = ["plenary"]
 repo = 'lukas-reineke/indent-blankline.nvim'
 on_event = ["BufRead"]
 hook_add = '''
-"let g:indentLine_fileTypeExclude = ['defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-ff', 'toml','markdown']
-"let g:indent_blankline_use_treesitter = v:true
-""let g:indent_blankline_show_first_indent_level = v:true
-"let g:indent_blankline_char = '┊'
-"let g:indent_blankline_context_char = '┊'
-"let g:indent_blankline_max_indent_increase = 1
-"let g:indent_blankline_show_current_context = v:true
-"let g:indent_blankline_use_treesitter_scope = v:false
-"let g:indent_blankline_show_current_context_start = v:false
-"let g:indent_blankline_show_current_context_start_on_current_line = v:false
-"" let g:indent_blankline_show_first_indent_level = v:false
-"let g:indent_blankline_show_trailing_blankline_indent = v:false
-""let g:indent_blankline_context_patterns = ['^if','class', 'function', 'method']
 '''
 lua_source = '''
 require("ibl").setup {
-    indent = {
-      char = '┊',
-    },
+    indent = { highlight = highlight, char = "┊" },
     exclude = {
       buftypes = {'defx', 'denite', 'denite-filter','fern', 'help','voomtree','ddu-ff', 'toml','markdown'}
     },
@@ -108,9 +100,10 @@ on_cmd = ['ColorizerToggle']
 # '''
 
 [[plugins]]
+lazy = 0
 repo = 'gbprod/yanky.nvim'
-on_event = ['BufRead','BufNew']
-lua_source = '''
+# on_event = ['BufRead','BufNew']
+lua_add = '''
 -- Lua
 vim.keymap.set({"n","x"}, "p", "<Plug>(YankyPutAfter)")
 vim.keymap.set({"n","x"}, "P", "<Plug>(YankyPutBefore)")
@@ -123,7 +116,7 @@ vim.keymap.set("n", "<Leader>Pc", "<Plug>(YankyPutIndentBeforeCharwise)")
 require("yanky").setup({
   ring = {
     history_length = 100,
-    storage = "shada",
+    storage = "memory",
     sync_with_numbered_registers = true,
     cancel_event = "update",
     ignore_registers = { "_" },
@@ -139,42 +132,30 @@ require("yanky").setup({
 })
 '''
 
-
-
 # [[plugins]]
 # repo = "sindrets/diffview.nvim"
 
 [[plugins]]
 if = 'executable("gcc")'
 repo = 'nvim-treesitter/nvim-treesitter'
+# lazy = 0
 # frozen = 1
 on_event = ['BufRead','BufNew']
-hook_source = '''
-let &runtimepath =  substitute(&runtimepath, 'C:/tools/neovim/nvim-win64/lib/nvim', '', 'g')
-'''
-lua_source = '''
-local ts_path = vim.fn.stdpath('data') .. '/treesitter'
-vim.api.nvim_set_option('runtimepath', vim.api.nvim_get_option('runtimepath') .. ',' .. ts_path)
+lua_source= '''
+vim.opt.runtimepath:prepend(vim.fn.stdpath("data"))
 require 'nvim-treesitter.configs'.setup {
-  parser_install_dir = ts_path,
-  -- tree_docs = { enable = true },
+  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+  -- parser_install_dir = vim.api.nvim_eval('g:dein#_cache_path') ..  '/.dein',
+  parser_install_dir = vim.fn.stdpath("data"),
+  -- tree_docs = { enable = false },
     -- [options]
   highlight = {
     enable = true,
-    disable = { "cpp", "toml", "help", "python"},
+    -- disable = { "cpp", "toml", "help","vimdoc", "python", "gitcommit"},
   },
-  -- indent = {
-  --   enable = true
-  -- },
-  -- incremental_selection = {
-  --   enable = true,
-  --   keymaps = {
-  --     init_selection = "gnn",
-  --     node_incremental = "grn",
-  --     scope_incremental = "grc",
-  --     node_decremental = "grm",
-  --   },
-  -- },
+  indent = {
+    enable = true
+  },
 }
 '''
 
@@ -204,6 +185,9 @@ require 'nvim-treesitter.configs'.setup {
 repo = 'kevinhwang91/nvim-hlslens'
 on_lua = ['hlslens']
 hook_add = '''
+hi! default link HlSearchNear Title
+hi! default link HlSearchLens Function
+hi! default link HlSearchLensNear Constant
 au dein ColorScheme * hi! default link HlSearchNear Title
 au dein ColorScheme * hi! default link HlSearchLens Function
 au dein ColorScheme * hi! default link HlSearchLensNear Constant
@@ -230,22 +214,73 @@ require('history-ignore').setup{}
 on_source = ['nvim-treesitter']
 repo = 'nvim-treesitter/nvim-treesitter-context'
 lua_source = '''
-require'treesitter-context'.setup{}
-vim.keymap.set("n", "]]", function()
-  require("treesitter-context").go_to_context()
-end, { silent = true })
+require'treesitter-context'.setup{
+  enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+  multiwindow = false, -- Enable multiwindow support.
+  max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+  min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+  line_numbers = true,
+  multiline_threshold = 20, -- Maximum number of lines to show for a single context
+  trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+  mode = 'cursor',  -- Line used to calculate context. Choices: 'cursor', 'topline'
+  -- Separator between context and content. Should be a single character string, like '-'.
+  -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+  separator = nil,
+  zindex = 20, -- The Z-index of the context window
+  on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+}
 '''
 
-[[plugins]]
-on_source = ['nvim-lspconfig']
-repo = 'lvimuser/lsp-inlayhints.nvim'
+# [[plugins]]
+# on_source = ['nvim-lspconfig']
+# repo = 'lvimuser/lsp-inlayhints.nvim'
 
 [[plugins]]
-repo = 'mfussenegger/nvim-ts-hint-textobject'
-on_lua = ['tsht']
-hook_add = '''
-onoremap <silent> m :<C-U>lua require('tsht').nodes()<CR>
-xnoremap <silent> m :lua require('tsht').nodes()<CR>
+repo = 'nvim-treesitter/nvim-treesitter-textobjects'
+on_source = ['nvim-treesitter']
+lua_source = '''
+require'nvim-treesitter.configs'.setup {
+  textobjects = {
+    select = {
+      enable = true,
+      -- Automatically jump forward to textobj, similar to targets.vim
+      lookahead = true,
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        -- ["af"] = "@function.outer",
+        -- ["if"] = "@function.inner",
+        -- ["ac"] = "@class.outer",
+        -- -- You can optionally set descriptions to the mappings (used in the desc parameter of
+        -- -- nvim_buf_set_keymap) which plugins like which-key display
+        -- ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+        -- -- You can also use captures from other query groups like `locals.scm`
+        -- ["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
+      },
+      -- You can choose the select mode (default is charwise 'v')
+      --
+      -- Can also be a function which gets passed a table with the keys
+      -- * query_string: eg '@function.inner'
+      -- * method: eg 'v' or 'o'
+      -- and should return the mode ('v', 'V', or '<c-v>') or a table
+      -- mapping query_strings to modes.
+      selection_modes = {
+        ['@parameter.outer'] = 'v', -- charwise
+        ['@function.outer'] = 'V', -- linewise
+        ['@class.outer'] = '<c-v>', -- blockwise
+      },
+      -- If you set this to `true` (default is `false`) then any textobject is
+      -- extended to include preceding or succeeding whitespace. Succeeding
+      -- whitespace has priority in order to act similarly to eg the built-in
+      -- `ap`.
+      --
+      -- Can also be a function which gets passed a table with the keys
+      -- * query_string: eg '@function.inner'
+      -- * selection_mode: eg 'v'
+      -- and should return true or false
+      include_surrounding_whitespace = true,
+    },
+  },
+}
 '''
 
 [[plugins]]
@@ -261,9 +296,10 @@ onoremap au :<c-u>lua require"treesitter-unit".select(true)<CR>
 [[plugins]]
 # on_cmd = ["AerialOpen"]
 lazy = 1
-on_lua = ["aerial", "aerial.ddu"]
+# on_lua = ["aerial", "aerial.ddu"]
+on_event = ['BufRead','BufNew']
 repo = 'stevearc/aerial.nvim'
-hook_add = '''
+hook_source = '''
 function! AerialCall() abort
 lua << EOF
 local ext_config = {
@@ -344,7 +380,8 @@ require('aerial').setup({
     update_delay = 300
   },
   backends = {
-    ['_']      = { "lsp", "treesitter", "txt" },
+    ['_']      = { "lsp",  "txt"},
+    markdown = { "markdown"},
     typescript = { "lsp" },
     lua = { "treesitter" },
   },
@@ -514,7 +551,8 @@ require("cellwidths").setup {
       { 0x26b0, 0x26b1, 2 },
       { 0x26b9, 0x26b9, 2 },
       { 0x2701, 0x2709, 2 },
-      { 0x270c, 0x2727, 2 },
+      { 0x270c, 0x2712, 2 },
+      { 0x2714, 0x2727, 2 },
       { 0x2729, 0x274d, 2 },
       { 0x274f, 0x2752, 2 },
       { 0x2756, 0x2756, 2 },
@@ -654,6 +692,17 @@ require('gitsigns').setup{
   numhl      = true, -- Toggle with `:Gitsigns toggle_numhl`
   linehl     = false, -- Toggle with `:Gitsigns toggle_linehl`
   word_diff  = false, -- Toggle with `:Gitsigns toggle_word_diff`
+  preview_config = {
+          border = "none",
+          col = 1,
+          relative = "cursor",
+          row = 0,
+          height = 10,
+          -- footer = true,
+          -- fixed = true,
+          --footer_pos = true,
+          style = "minimal"
+    },
 on_attach = function(bufnr)
     local gs = package.loaded.gitsigns
 
@@ -694,79 +743,79 @@ on_attach = function(bufnr)
 }
 '''
 
-[[plugins]]
-repo = 'Decodetalkers/csv-tools.lua'
-on_ft = ['csv', 'tsv']
-lua_source = '''
-require("csvtools").setup({
-    before = 10,
-    after = 10,
-    clearafter = true,
-    -- this will clear the highlight of buf after move
-    showoverflow = false,
-    -- this will provide a overflow show
-    titelflow = true,
-    -- add an alone title
+# [[plugins]]
+# repo = 'Decodetalkers/csv-tools.lua'
+# on_ft = ['csv', 'tsv']
+# lua_source = '''
+# require("csvtools").setup({
+#     before = 10,
+#     after = 10,
+#     clearafter = true,
+#     -- this will clear the highlight of buf after move
+#     showoverflow = false,
+#     -- this will provide a overflow show
+#     titelflow = true,
+#     -- add an alone title
 
-})
-'''
+# })
+# '''
 
-[[plugins]]
-repo = 'gen740/SmoothCursor.nvim'
-lazy = 1
-on_event = ['BufRead','BufNew']
-lua_source = '''
-vim.o.signcolumn = 'number'
-vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1'})
-require('smoothcursor').setup({
-    autostart = true,
-    cursor = "▶",              -- cursor shape (need nerd font)
-    texthl = "SmoothCursor",   -- highlight group, default is { bg = nil, fg = "#FFD400" }
-    linehl = nil,              -- highlight sub-cursor line like 'cursorline', "CursorLine" recommended
-    type = "default",          -- define cursor movement calculate function, "default" or "exp" (exponential).
-    flyin_effect = "bottom",        -- "bottom" or "top"
-    speed = 30,                -- max is 100 to stick to your current position
-    intervals = 20,            -- tick interval
-    priority = 1,             -- set marker priority
-    timeout = 3000,            -- timout for animation
-    threshold = 3,             -- animate if threshold lines jump
-    disable_float_win = false, -- disable on float window
-    enabled_filetypes = nil,   -- example: { "lua", "vim" }
-    disabled_filetypes = {'ddu-ff', 'ddu-filer', 'help'},  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
-})
-vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
-local autocmd = vim.api.nvim_create_autocmd
-local augroup = vim.api.nvim_create_augroup
-autocmd({ 'ModeChanged' }, {
-  group = 'dein',
-  callback = function()
-    local current_mode = vim.fn.mode()
-    if current_mode == 'n' then
-      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
-      -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
-    elseif current_mode == 'v' or current_mode == 'V' then
-      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#b4be82' })
-    elseif current_mode == 'i' then
-      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#84a0c6' })
-    end
-  end,
-})
-autocmd({ 'User' }, {
-  pattern = 'skkeleton-mode-changed',
-  group = 'dein',
-  callback = function()
-    local current_mode = vim.api.nvim_eval('g:skkeleton#mode')
-    if current_mode == 'hira' then
-      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#84a0c6' })
-      -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
-    elseif current_mode == 'kata' then
-      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#DF81A2' })
-    elseif current_mode == 'abbrev' then
-      vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#149116' })
-    end
-  end,
-})
-'''
+# [[plugins]]
+# repo = 'gen740/SmoothCursor.nvim'
+# lazy = 1
+# on_event = ['BufRead','BufNew']
+# lua_source = '''
+# vim.o.signcolumn = 'number'
+# vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1'})
+# require('smoothcursor').setup({
+#     autostart = true,
+#     cursor = "▶",              -- cursor shape (need nerd font)
+#     texthl = "SmoothCursor",   -- highlight group, default is { bg = nil, fg = "#FFD400" }
+#     linehl = nil,              -- highlight sub-cursor line like 'cursorline', "CursorLine" recommended
+#     type = "default",          -- define cursor movement calculate function, "default" or "exp" (exponential).
+#     flyin_effect = "bottom",        -- "bottom" or "top"
+#     speed = 100,                -- max is 100 to stick to your current position
+#     intervals = 20,            -- tick interval
+#     priority = 1,             -- set marker priority
+#     timeout = 3000,            -- timout for animation
+#     threshold = 3,             -- animate if threshold lines jump
+#     disable_float_win = false, -- disable on float window
+#     enabled_filetypes = nil,   -- example: { "lua", "vim" }
+#     disabled_filetypes = {'ddu-ff', 'ddu-filer', 'help'},  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
+# })
+# vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
+# local autocmd = vim.api.nvim_create_autocmd
+# local augroup = vim.api.nvim_create_augroup
+# autocmd({ 'ModeChanged' }, {
+#   group = 'dein',
+#   callback = function()
+#     local current_mode = vim.fn.mode()
+#     if current_mode == 'n' then
+#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
+#       -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
+#     elseif current_mode == 'v' or current_mode == 'V' then
+#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#b4be82' })
+#     elseif current_mode == 'i' then
+#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#84a0c6' })
+#     end
+#   end,
+# })
+# autocmd({ 'User' }, {
+#   pattern = 'skkeleton-mode-changed',
+#   group = 'dein',
+#   callback = function()
+#     local current_mode = vim.api.nvim_eval('g:skkeleton#mode')
+#     if current_mode == 'hira' then
+#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#84a0c6' })
+#       -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
+#     elseif current_mode == 'kata' then
+#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#DF81A2' })
+#     elseif current_mode == 'abbrev' then
+#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#149116' })
+#     end
+#   end,
+# })
+# '''
 
 # [[plugins]]
 # repo = 'cshuaimin/ssr.nvim'
@@ -837,6 +886,9 @@ insx.add(
     insx.with.in_comment(true),
   })
 )
+insx.add('<C-]>', require('insx.recipe.fast_wrap')({
+  close = ')'
+}))
 '''
 
 # [[plugins]]
@@ -872,19 +924,19 @@ insx.add(
 # vim.keymap.set('n', '<leader>c', "<cmd>AIAssistantToggle<cr>")
 # '''
 
-[[plugins]]
-repo = 'tzachar/highlight-undo.nvim'
-on_event = ['BufRead','BufNew']
-lua_post_source = '''
-require('highlight-undo').setup({
-    hlgroup = 'HighlightUndo',
-    duration = 200,
-    keymaps = {
-      {'n', 'u', 'undo', {}},
-      {'n', '<C-r>', 'redo', {}},
-    }
-})
-'''
+# [[plugins]]
+# repo = 'tzachar/highlight-undo.nvim'
+# on_event = ['BufRead','BufNew']
+# lua_post_source = '''
+# require('highlight-undo').setup({
+#     hlgroup = 'HighlightUndo',
+#     duration = 200,
+#     keymaps = {
+#       {'n', 'u', 'undo', {}},
+#       {'n', '<C-r>', 'redo', {}},
+#     }
+# })
+# '''
 # [[plugins]]
 # on_event = ['BufRead','BufNew']
 # repo = 'lewis6991/satellite.nvim'
@@ -957,22 +1009,18 @@ require('highlight-undo').setup({
 [[plugins]]
 lazy = 1
 repo = 'rebelot/terminal.nvim'
-on_lua = ["terminal"]
+# on_lua = ["terminal"]
+on_cmd = ["TermToggle", "TermRun"]
 hook_add = '''
 autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
 autocmd vimrc TermOpen * startinsert
 autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>TermClose<CR>
-'''
-lua_add = '''
-local term_map = require("terminal.mappings")
-vim.keymap.set({ "n", "x" }, "<leader>Ts", term_map.operator_send, { expr = false })
-vim.keymap.set("n", "<leader>t", term_map.toggle)
-vim.keymap.set("n", "<leader>TO", term_map.toggle({ open_cmd = "enew" }))
-vim.keymap.set("n", "<leader>Tr", term_map.run)
-vim.keymap.set("n", "<leader>TR", term_map.run(nil, { layout = { open_cmd = "enew" } }))
-vim.keymap.set("n", "<leader>Tk", term_map.kill)
-vim.keymap.set("n", "<leader>T]", term_map.cycle_next)
-vim.keymap.set("n", "<leader>T[", term_map.cycle_prev)
+nnoremap <silent> <leader>Ts <cmd>TermSend<CR>
+nnoremap <silent> <leader>t  <cmd>TermToggle<CR>
+nnoremap <silent> <leader>TO <cmd>TermToggle!<CR>
+nnoremap <silent> <leader>Tr <cmd>TermRun<CR>
+nnoremap <silent> <leader>Tr <cmd>TermRun!<CR>
+nnoremap <silent> <leader>Tr <cmd>TermKill<CR>
 '''
 lua_post_source = '''
 require('terminal').setup(
@@ -986,7 +1034,29 @@ require('terminal').setup(
 # '''
 
 # [[plugins]]
+# repo = 'dstein64/nvim-scrollview'
+# on_event = ['BufRead','BufNew']
+# lua_post_source = '''
+# require('scrollview').setup({
+#   signs_on_startup = {'conflicts', 'marks', 'search', 'trail'},
+# })
+# '''
+
+[[plugins]]
+repo = 'm00qek/baleia.nvim'
+on_source = ['quickrun.vim']
+hook_source = '''
+let s:baleia = luaeval("require('baleia').setup { }")
+command! BaleiaColorize call s:baleia.once(bufnr('%'))
+autocmd! BufEnter * if &ft ==# 'quickrun' | silent call s:baleia.once(bufnr('%')) | endif
+'''
+
+# [[plugins]]
 # repo = 'mvllow/modes.nvim'
 # lua_post_source = '''
 # require('modes').setup()
 # '''
+
+[[plugins]]
+repo = 'folke/zen-mode.nvim'
+on_cmd = ['ZenMode']

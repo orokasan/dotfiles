@@ -6,12 +6,12 @@ repo = 'vim-denops/denops.vim'
 # on_cmd = ['GhostStart']
 # repo = 'gamoutatsumi/dps-ghosttext.vim'
 
-# [[plugins]]
-# repo = 'lambdalisue/guise.vim'
-# depends = ['denops.vim']
+[[plugins]]
+repo = 'lambdalisue/guise.vim'
+depends = ['denops.vim']
 
 [[plugins]]
-lazy = 1
+# lazy = 1
 on_cmd = ['Gin']
 repo = 'lambdalisue/gin.vim'
 hook_add = '''
@@ -29,8 +29,8 @@ let g:gin_proxy_editor_opener='split'
 "\ <Cmd>GinBuffer ++opener=botright\ split commit<CR>
 nnoremap <silent> <Leader>gc <Cmd>Gin commit<CR>
 nnoremap <silent> <Leader>gC <Cmd>Gin commit --amend<CR>
-nnoremap <silent> <Leader>gd <Cmd>call <SID>compare()<CR>
-nnoremap <silent> <Leader>gD <Cmd>call <SID>compare_commitish()<CR>
+nnoremap <silent> <Leader>gd <Cmd>call <SID>compare_commitish(0)<CR>
+nnoremap <silent> <Leader>gD <Cmd>call <SID>compare_commitish(1)<CR>
 " nnoremap <silent> <Leader>gD <Cmd>call execute('let @* = "'.. input('commitish: ') ..'"\|GinEdit ++opener=tabedit ' .. expand(@*) .. ' %:p \|diffthis\|GinEdit ++opener=vsplit ' .. expand(@*).. '^  %\|diffthis')<CR>
 
 function! s:compare() abort
@@ -38,20 +38,29 @@ tabedit %
 setlocal scrolloff=999
 diffthis
 GinEdit! %:p ++opener=vsplit
-set scrolloff=999
+setlocal scrolloff=999
 diffthis
+wincmd p
+norm! ]c
 endfunction
 
-function! s:compare_commitish() abort
-let commitish = input('commitish: ')
+function! s:compare_commitish(flag) abort
+if a:flag ==# 0
+  call s:compare()
+  return
+endif
+let commitish = input('commitish(default: head): ', "head")
 call execute('GinEdit ' .. '++opener=tabedit ' .. expand(commitish) .. ' %:p')
 setlocal scrolloff=999
 diffthis
-call execute('GinEdit ' .. '++opener=vsplit ' .. expand(commitish) .. '^' .. ' %')
-set scrolloff=999
+let from = input('diff_from(default: head^): ', "head^")
+call execute('GinEdit ' .. '++opener=vsplit ' .. expand(from)  .. ' %')
+setlocal scrolloff=999
 diffthis
+wincmd p
+norm! ]c
 endfunction
-let g:gin_log_persistent_args = ['++emojify', '--graph', '--abbrev-commit', '--pretty=format:%Cred%h%Creset %s %d %Cgreen%cr %C(bold blue)<%an>%Creset']
+let g:gin_log_persistent_args = ['++emojify', '--graph', '--abbrev-commit', '--pretty=format:%Cred%h%Creset %s %d %cr %C(blue)<%an>%Creset']
 "'--pretty=format:%Cred%h%Creset %s %C(yellow)%d%Creset %Cgreen(%cr) %C(bold blue)<%an>%Creset'
 let g:gin_status_persistent_args = ['++opener=botright 15split']
 let g:gin_branch_persistent_args = ['++opener=botright 15split']
@@ -64,24 +73,27 @@ endfunction
 
 function! s:define_gin_local() abort
   setlocal bufhidden=hide
+  setlocal buftype=nofile
+  setlocal nobuflisted
+  setlocal noswapfile
   command! -buffer -bar GinLocal execute 'edit' gin#util#expand('%')
   nnoremap <buffer> q <cmd>close<CR>
 endfunction
 
-"augroup my-gin-local
-"  autocmd BufReadCmd ginedit://* call s:define_gin_local()
-"  autocmd BufReadCmd gindiff://* call s:define_gin_local()
-"  autocmd FileType gin call s:define_gin_local()
-"  " autocmd BufReadCmd ginlog://* call s:define_gin_local()
-"augroup END
+augroup my-gin-local
+  autocmd BufReadCmd ginedit://* call s:define_gin_local()
+  autocmd BufReadCmd gindiff://* call s:define_gin_local()
+  autocmd FileType gin call s:define_gin_local()
+  " autocmd BufReadCmd ginlog://* call s:define_gin_local()
+augroup END
 '''
 
 [[plugins]]
 repo = 'Shougo/ddc.vim'
-lazy = 1
-depends = ['denops.vim']
-on_event = ['InsertEnter', 'CmdlineEnter']
-hook_source = 'source ~/dotfiles/nvim/rc/config/ddc.rc.vim'
+# lazy = 1
+# depends = ['denops.vim', 'pum.vim']
+# on_event = ['InsertEnter', 'CmdlineEnter']
+hook_add = 'source ~/GoogleDrive/config/dotfiles/nvim/rc/config/ddc.rc.vim'
 
 [[plugins]]
 repo = 'Shougo/ddc-cmdline-history'
@@ -108,8 +120,7 @@ repo = 'Shougo/ddc-nvim-lsp'
 repo = 'Shougo/ddc-converter_remove_overlap'
 
 [[plugins]]
-repo = 'vim-skk/denops-skkeleton.vim'
-merged = 1
+repo = 'vim-skk/skkeleton'
 hook_add = '''
 imap <C-j> <Plug>(skkeleton-toggle)
 cmap <C-j> <Plug>(skkeleton-enable)
@@ -119,54 +130,91 @@ autocmd dein ColorScheme * hi InEskkKanaSign gui=bold guifg=#e2a478
 let s:insertpos = 0
 let s:insert_icon = '▶'
 
-"call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
-"call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
-"call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 51 })
+call sign_define('InInsert',{'text':s:insert_icon,'texthl':'InInsertSign' ,'priority': 50 })
+call sign_define('InEskkKana',{'text':s:insert_icon,'texthl':'InEskkKanaSign', 'priority': 50 })
+call sign_define('InEskkKat',{'text':s:insert_icon,'texthl':"Constant" ,'priority': 51 })
 
-"au vimrc InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()
-"au vimrc CursorMovedI * if s:insertpos != line('.') | call s:insert_highlight() | let s:insertpos = line('.') | endif
-"
-"if has('nvim')
-"au vimrc InsertLeavePre * call sign_unplace('Ins')
-"else
-"au vimrc InsertLeave * call sign_unplace('Ins')
-"endif
-"
-"function! s:insert_highlight() abort
-"call sign_unplace('Ins')
-"if &l:iminsert
-"call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
-"else
-"call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
-"endif
-"endfunction
+au vimrc InsertEnter * let s:insertpos = line('.') | call s:insert_highlight()
+au vimrc CursorMovedI * if s:insertpos != line('.') | call s:insert_highlight() | let s:insertpos = line('.') | endif
+
+if has('nvim')
+au vimrc InsertLeavePre * call sign_unplace('Ins')
+else
+au vimrc InsertLeave * call sign_unplace('Ins')
+endif
+
+function! s:insert_highlight() abort
+call sign_unplace('Ins')
+if &l:iminsert
+call sign_place( 15,'Ins','InEskkKana','%',{'lnum':line('.')} )
+else
+call sign_place( 10,'Ins','InInsert','%',{'lnum':line('.')} )
+endif
+endfunction
 
 autocmd vimrc User skkeleton-enable-post call s:highlight_imesign_on()
 autocmd vimrc User skkeleton-disable-post call s:highlight_imesign_off()
 
 function! s:highlight_imesign_off()
 if mode() is# 'c' | return | endif
-lua vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
+lua vim.api.nvim_set_hl(0, 'InInsertSign', { fg = '#84a0c6' })
 endfunction
 
 function! s:highlight_imesign_on()
 if mode() is# 'c' | return | endif
-lua vim.api.nvim_set_hl(0, 'SmoothCursor', { fg= '#e2a478'})
+lua vim.api.nvim_set_hl(0, 'InInsertSign', { fg= '#e2a478'})
 endfunction
+lua << EOF
+vim.api.nvim_set_hl(0, 'InInsertSign', { fg = '#84a0c6' })
+local autocmd = vim.api.nvim_create_autocmd
+local augroup = vim.api.nvim_create_augroup
+autocmd({ 'ModeChanged' }, {
+  group = 'dein',
+  callback = function()
+    local current_mode = vim.fn.mode()
+    if current_mode == 'n' then
+      vim.api.nvim_set_hl(0, 'InInsertSign', { fg = '#c6c8d1' })
+      -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
+    elseif current_mode == 'v' or current_mode == 'V' then
+      vim.api.nvim_set_hl(0, 'InInsertSign', { fg = '#b4be82' })
+    elseif current_mode == 'i' then
+      vim.api.nvim_set_hl(0, 'InInsertSign', { fg = '#84a0c6' })
+    end
+  end,
+})
+autocmd({ 'User' }, {
+  pattern = 'skkeleton-mode-changed',
+  group = 'dein',
+  callback = function()
+    local current_mode = vim.api.nvim_eval('g:skkeleton#mode')
+    if current_mode == 'hira' then
+      vim.api.nvim_set_hl(0, 'InInsertSign', { fg = '#84a0c6' })
+      -- vim.fn.sign_define('InInsertSign', { text = 'V' }) -- you can also change the cursor shape.
+    elseif current_mode == 'kata' then
+      vim.api.nvim_set_hl(0, 'InInsertSign', { fg = '#DF81A2' })
+    elseif current_mode == 'abbrev' then
+      vim.api.nvim_set_hl(0, 'InInsertSign', { fg = '#149116' })
+    end
+  end,
+})
+EOF
 
 call skkeleton#config({
-\ 'globalJisyo': expand('~/GoogleDrive/config/.skk/SKK-JISYO.L'),
-\ 'userJisyo': expand('~/GoogleDrive/config/.skk/.skk-jisyo'),
-\ 'completionRankFile': expand('~/.skk/.skkeleton_rank'),
+\ 'globalDictionaries': glob('~/GoogleDrive/config/.skk/SKK-JISYO.*', v:false, v:true),
+\ 'userDictionary': expand('~/GoogleDrive/config/.skk/.skk-jisyo'),
+\ 'completionRankFile': expand('~/.skk/rank.json'),
 \ 'eggLikeNewline': v:true,
+\ 'debug': v:false,
 \ 'registerConvertResult': v:true,
 \ 'showCandidatesCount': 3,
 \ 'immediatelyCancel': v:false,
 \ 'keepState': v:false,
 \})
-
+" call add(g:skkeleton#mapped_keys, '<C-CR>')
+" call add(g:skkeleton#mapped_keys, '<C-w>')
+" call skkeleton#register_keymap('henkan', '<C-w>', 'cancel')
+" call skkeleton#register_keymap('henkan', '<C-CR>', 'kakutei')
 call skkeleton#register_kanatable('rom', {
-\ '\<C-w>': 'deleteChar',
 \ "z\<Space>": ["\u3000", ''],
 \ 'va': ['ゔぁ', ''],
 \ 'vi': ['ゔぃ', ''],
@@ -184,7 +232,7 @@ call skkeleton#register_kanatable('rom', {
 \ 'zm': ['●', ''],
 \ 'zss': ['▼', ''],
 \ 'zsu': ['▲', ''],
-\ 'zha': ['☆', ''],
+\ 'zsa': ['☆', ''],
 \ 'zv': ['★', ''],
 \ 'zx': ['○', ''],
 \ 'zds': ['◇', ''],
@@ -234,6 +282,7 @@ call skkeleton#register_keymap('input', ';', 'henkanPoint')
 repo = 'LumaKernel/ddc-file'
 
 [[plugins]]
+depends = ['pum.vim']
 repo = 'Shougo/ddc-ui-pum'
 
 [[plugins]]
@@ -258,15 +307,15 @@ repo = 'matsui54/ddc-converter_truncate'
 
 [[plugins]]
 repo = 'Shougo/ddu.vim'
-# lazy = 1
-# on_func = 'ddu#start'
+# [[plugins]]
+# repo = 'Milly/ddu.vim'
+# rev = 'source-stream'
 # merged = 0
 hook_add = '''
-source ~/dotfiles/nvim/rc/config/ddu_mapping.rc.vim
-"source ~/miniddu.vim
+source ~/GoogleDrive/config/dotfiles/nvim/rc/config/ddu_mapping.rc.vim
+source ~/GoogleDrive/config/dotfiles/nvim/rc/config/ddu.rc.vim
 '''
-hook_post_source = '''
-source ~/dotfiles/nvim/rc/config/ddu.rc.vim
+hook_source = '''
 '''
 
 [[plugins]]
@@ -320,13 +369,13 @@ repo = 'nekowasabi/ddu-filter-matcher_migemo'
 repo = 'matsui54/ddc-postfilter_score'
 [[plugins]]
 repo = 'matsui54/ddu-source-dein_update'
-[[plugins]]
-lazy = 1
-on_cmd = ['Glance']
-repo = 'tani/glance-vim'
-hook_source = '''
-" let g:glance#plugins = ['https://esm.sh/markdown-it-checkbox']
-'''
+# [[plugins]]
+# # lazy = 1
+# on_cmd = ['Glance']
+# repo = 'tani/glance-vim'
+# hook_source = '''
+# " let g:glance#plugins = ['https://esm.sh/markdown-it-checkbox']
+# '''
 [[plugins]]
 repo = 'Shougo/ddu-filter-matcher_hidden'
 [[plugins]]
@@ -335,8 +384,8 @@ repo = 'Shougo/ddu-filter-matcher_hidden'
 repo = 'Shougo/ddu-ui-filer'
 [[plugins]]
 repo = 'Bakudankun/ddu-filter-matchfuzzy'
-[[plugins]]
-repo = 'matsui54/ddu-vim-ui-select'
+# [[plugins]]
+# repo = 'matsui54/ddu-vim-ui-select'
 [[plugins]]
 repo = 'Shougo/ddu-column-filename'
 [[plugins]]
@@ -363,7 +412,7 @@ repo = 'Milly/ddc-source-register'
 repo = 'yukimemi/dps-hitori'
 hook_add = '''
 let g:hitori_debug = v:false  " debug console.log
-let g:hitori_quit = v:true    " whether to exit after attaching
+let g:hitori_quit = v:false    " whether to exit after attaching
 let g:hitori_ignore_patterns = ["\\.tmp$", "\\.diff$", "\\.eml$", "(COMMIT_EDIT|TAG_EDIT|MERGE_|SQUASH_)MSG$"]
 '''
 
@@ -372,15 +421,16 @@ repo = 'Milly/ddu-filter-kensaku'
 
 [[plugins]]
 repo = 'lambdalisue/kensaku.vim'
-hook_add ='''
-'''
 
 [[plugins]]
 repo = 'lambdalisue/kensaku-command.vim'
 
 [[plugins]]
 repo = 'lambdalisue/kensaku-search.vim'
-hook_add = '''
+on_event = ['BufEnter']
+lazy = 1
+merged = 0
+hook_source = '''
 cnoremap <CR> <Plug>(kensaku-search-replace)<CR>
 '''
 
@@ -398,8 +448,8 @@ repo = 'Milly/ddu-filter-merge'
 [[plugins]]
 repo = 'Shougo/ddc-ui-inline'
 
-[[plugins]]
-repo = 'tennashi/ddu-source-git'
+# [[plugins]]
+# repo = 'tennashi/ddu-source-git'
 
 [[plugins]]
 repo = 'uga-rosa/ddu-source-lsp'
@@ -418,3 +468,21 @@ repo = 'uga-rosa/ddc-source-lsp-setup'
 
 [[plugins]]
 repo = 'Shougo/neco-vim'
+
+[[plugins]]
+repo = 'https://github.com/lambdalisue/http-protocol.vim'
+
+[[plugins]]
+repo = 'kyoh86/ddu-source-github'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-path_history'
+
+[[plugins]]
+repo = 'Shougo/ddu-filter-sorter_alpha'
+
+# [[plugins]]
+# repo = 'Milly/windows-clipboard-history.vim'
+
+[[plugins]]
+repo = 'kamecha/ddu-source-tab'

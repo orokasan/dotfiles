@@ -28,8 +28,8 @@ repo = 'tyru/skkdict.vim'
 [[plugins]]
 repo = 'cocopon/iceberg.vim'
 hook_add = '''
-au VimEnter * if (exists('neovide') && &filetype ==# 'mail') | set background=light |endif
-autocmd dein ColorScheme iceberg call My_iceberg_highlight()
+"au VimEnter * if (exists('neovide') && &filetype ==# 'mail') | set background=light |endif
+autocmd dein ColorScheme iceberg if &background ==# 'dark' | call My_iceberg_highlight() | endif
 function! My_iceberg_highlight()
 "highlight! PmenuSel ctermbg=236 guibg=#3d425b blend=0
 " highlight! Pmenu  ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
@@ -43,6 +43,7 @@ highlight! MatchParen ctermfg=255 ctermbg=237 guifg=#cdd1e6 guibg=#3e445e
 highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 highlight! PmenuSelected gui=bold guifg=#e2a478 guibg=#3d425b blend=0
 highlight! link WhiteSpace Comment
+
 hi! GitsignsAdd guifg=#8a8a67 guibg=#1e2132
 hi! GitsignsChange guifg=#54909c guibg=#1e2132
 hi! GitSignsDelete guifg=#9c4848 guibg=#1e2132
@@ -50,28 +51,12 @@ hi! link Winbar Function
 hi! link DiagnosticUnderlineError Error
 hi! FloatBorder guifg=#c6c8d1 guibg=#272c42
 hi! NormalNC ctermfg=252 guifg=#c6c8d1
-if has('nvim')
-highlight! link @punctuation.special Comment
-highlight! link @punctuation.delimiter Constant
-highlight! link @text.strong Function
-highlight! link @text.emphasis Constant
-highlight! link @text.literal String
-highlight! link @text.diff.add DiffAdd
-highlight! link @text.diff.change DiffChange
-highlight! link @text.diff.delete DiffDelete
-endif
 endfunction
 
 if has('nvim')
 colorscheme iceberg
 else
 au VimEnter * colorscheme iceberg
-endif
-
-if exists('nvy')
-set background=light
-else
-set background=dark
 endif
 '''
 
@@ -200,6 +185,7 @@ let g:mr#mru#predicates = [{ filename -> filename !~# '\(doc[\\\/].*txt\|COMMIT_
 
 [[plugins]]
 repo = 'lambdalisue/nerdfont.vim'
+if = 'has("nvim")'
 merged = 1
 hook_add = '''
 if !has('nvim')
@@ -237,8 +223,8 @@ augroup END
 [[plugins]]
 repo='Shougo/junkfile.vim'
 hook_add = '''
-nnoremap <silent> <C-T> <Cmd>tabnew<bar>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
-nnoremap <silent> g<C-T> <Cmd>call junkfile#open(strftime('%Y-%m-%d-%H%M%S.'))<CR>
+nnoremap <silent> <C-T> <Cmd>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
+nnoremap <silent> g<C-T> <Cmd>tabnew<bar>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
 nnoremap <C-S> <Cmd>call junkfile#open(strftime('%Y-%m-%d-%H%M%S.'))<CR>
 '''
 
@@ -268,6 +254,19 @@ inoremap <buffer> ( （
 inoremap <buffer> ) ）
 inoremap <buffer> z( (
 inoremap <buffer> z) )
+setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
+'''
+
+markdown = '''
+setlocal textwidth=42
+setlocal noexpandtab
+nnoremap ]] <Cmd>call search('^\s*\(■\)', "W")<CR>
+nnoremap [[ <Cmd>call search('^\s*\(■\)', "bW")<CR>
+inoremap <buffer> ( （
+inoremap <buffer> ) ）
+inoremap <buffer> z( (
+inoremap <buffer> z) )
+setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
 '''
 
 # [[plugins]]
@@ -287,5 +286,18 @@ repo ='CoderCookE/vim-chatgpt'
 
 # [[plugins]]
 # repo = 'Matts966/skk-vconv.vim'
+[[plugins]]
+repo = 'itchyny/calendar.vim'
+hook_add = '''
+nnoremap <leader>c <Cmd>Calendar -split=horizontal -position=topleft<CR>
+'''
 
+[[plugins]]
+repo = 'wordijp/vim-quickfixsync'
+
+[[plugins]]
+repo = 'itchyny/vim-qfedit'
+
+[[plugins]]
+repo = 'Shougo/cmdline.vim'
 # vim:set foldmethod=marker:'

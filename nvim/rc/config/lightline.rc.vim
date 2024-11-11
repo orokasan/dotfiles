@@ -2,11 +2,11 @@
 set laststatus=2
 let g:lightline = {
     \ 'active': {
-    \ 'left': [ ['mode', 'paste'],['git'], [ 'readonly', 'path'] ],
+    \ 'left': [ ['mode', 'paste'],['git', 'ddu_path', ], [ 'readonly', 'path'] ],
     \ 'right': [
     \ ['lineinfo','lsp_status'],
     \ ['charcount','denitebuffer'],
-    \ ['linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus','searchcount', 'lsp_info', 'lsp_hints', 'lsp_errors', 'lsp_warnings', 'deniteinput','ddupath' ]
+    \ ['linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus','searchcount', 'lsp_info', 'lsp_hints', 'lsp_errors', 'lsp_warnings', 'deniteinput','ddu' ]
     \ ]
     \ },
     \ 'inactive': {
@@ -35,13 +35,15 @@ let g:lightline = {
     \ 'path':'LLMyFilepath',
     \ 'mode': 'LLMode',
     \ 'charcount':'LLCharcount',
+    \ 'ddu_path':'LLddupath',
     \ 'tabnr': 'LLtabnr',
     \ 'git':'LLgit',
+    \ 'gittraffic': "LLgitUpstream",
     \ 'searchres': 'LLsearchres',
     \ 'denitebuffer' : 'LLDeniteBuffer',
     \ 'denitefilter' : 'LLDeniteFilter',
     \ 'progress': 'LLLspProgress',
-    \ 'ddupath': 'LLddupath',
+    \ 'ddu': 'LLddu',
     \ 'quickrun': 'LL_quickrun_running',
     \ 'searchcount': 'LastSearchCount',
     \ },
@@ -54,6 +56,7 @@ let g:lightline = {
     \ 'component_type' : {
     \ 'buffers': 'tabsel',
     \ 'tab': 'tabsel',
+    \ 'gittraffic': "warning",
     \ 'linter_warnings': 'warning',
     \ 'linter_errors': 'error',
     \ }
@@ -68,6 +71,7 @@ let g:lightline.colorscheme = 'iceberg'
 " autocmd dein ColorScheme,VimEnter * call <SID>lightline_set_colorscheme()
 let g:lightline.tab_component_function = {
     \ 'modified': 'LLModified',
+    \ 'filename': 'lightline#tab#filename',
     \ 'tabnum': 'LLtabnum' }
 
 " let g:lightline.subseparator= { 'left': '', 'right': '' }
@@ -258,13 +262,26 @@ function! LLtabnr() abort
 endfunction
 
 let s:llgitbranch = ''
+let s:llgittrafic = ''
+augroup my_gin_component
+  autocmd!
+  autocmd User GinComponentPost redrawstatus
+  " Or if you use tabline instead
+  "autocmd User GinComponentPost redrawtabline
+augroup END
 function! LLgit() abort
     if s:ignore_window()
         return ''
     else
-        return len(s:llgitbranch) ? ''. s:llgitbranch : ''
-        " return s:threshold(1) ? ' '. s:llgitbranch :
-        " \ s:threshold(2) ? '' :''
+  return s:llgitbranch
+    endif
+endfunction
+
+function! LLgitUpstream()
+    if s:ignore_window()
+        return ''
+    else
+      return gin#component#traffic#unicode()
     endif
 endfunction
 
@@ -274,10 +291,12 @@ autocmd dein BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
 autocmd dein SourcePost $MYVIMRC call <SID>llgitcache()
 
 function! s:llgitcache() abort
-    if !exists('*gitbranch#name')
-        return
+    if s:ignore_window()
+        return ''
     else
-        let s:llgitbranch = len(gitbranch#name()) ? gitbranch#name() : ''
+        let s:llgitbranch = ''. gin#component#branch#unicode()
+        " return s:threshold(1) ? ' '. s:llgitbranch :
+        " \ s:threshold(2) ? '' :''
     endif
 endfunction
 
@@ -300,7 +319,7 @@ let s:ddustatus = {}
 function! s:llddustatus() abort
     let s:ddustatus = ddu#custom#get_current(b:ddu_ui_name)
 endfunction
-function! LLddupath() abort
+function! LLddu() abort
     if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
         " let options = get(w:ddu_ui_ff_item.sources[0],'options', {})
         " let path = len(options) ? get(options,'path','') : getcwd()
@@ -309,6 +328,23 @@ function! LLddupath() abort
         return done
     endif
     return ''
+endfunction
+
+au User Ddu:redraw call s:update_ddu_path()
+let s:ddu_path = ''
+function! s:update_ddu_path() abort
+  if !exists('b:ddu_ui_name')
+    return
+  endif
+  let s:ddu_path = ddu#get_context(b:ddu_ui_name).path
+endfunction
+
+function! LLddupath()
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+      return s:ddu_path
+    else
+       return ''
+    endif
 endfunction
 
 function! s:denite_statusline() abort
@@ -397,7 +433,7 @@ function LLicon(n) abort
 let buflist = tabpagebuflist(a:n)
 let winnr = tabpagewinnr(a:n)
 let icon = nerdfont#find(expand('#'.buflist[winnr - 1].':t'))
-return icon !=# '' ? icon : '[No Name]'
+return icon !=# '' ? ' ' .. icon : '[No Name]'
 endfunction
 
 let g:lightline.tab_component_function = {'icon': 'LLicon'}

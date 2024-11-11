@@ -18,11 +18,15 @@ export class Filter extends BaseFilter<Params> {
   filter(args: {
     denops: Denops;
     sourceOptions: SourceOptions;
+    filterParams: Params;
     input: string;
     items: DduItem[];
   }): Promise<DduItem[]> {
+    if (args.items.length > 1000) return Promise.resolve(args.items)
+
     return Promise.resolve(args.items.filter((v) => {
       const action = v.action as ActionData;
+      if (!action || !action.path) return true
       if (!v.highlights) v.highlights = [];
       v.highlights.push(
         (!action?.isDirectory)

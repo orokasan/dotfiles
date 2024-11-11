@@ -6,7 +6,7 @@ endif
 augroup vimrc
   autocmd!
 augroup END
-language ja_JP
+" language en_US
 filetype plugin indent off
 syntax off
 " don't load unused default plugins
@@ -36,7 +36,7 @@ let g:loaded_python_provider = 1
 let g:loaded_ruby_provider = 1
 let g:did_indent_on             = 1
 let g:did_load_filetypes        = 1
-" let g:loaded_2html_plugin       = 1
+let g:loaded_2html_plugin       = 1
 let g:loaded_man                = 1
 let g:loaded_matchit            = 1
 let g:loaded_remote_plugins     = 1
@@ -48,32 +48,34 @@ silent! call execute('source ' .. expand('~/local_vimrc'))
 
 if exists('neovide')
   set guifont=PlemolJP\ Console\ NF:h13:#e-subpixelantialias
-  " set guifont:HackGen\ Console\ NFJ:h11
   set linespace=0
   let g:neovide_padding_top = 0
   let g:neovide_padding_bottom = 0
   let g:neovide_padding_right = 0
   let g:neovide_padding_left = 0
-  " let g:neovide_refresh_rate=60
-  let g:neovide_transparency=0.92
+  let g:neovide_refresh_rate=60
+  let g:neovide_scroll_animation_length = 0.05
+  let g:neovide_unlink_border_highlights = v:true
+  let g:neovide_transparency=0.93
   let g:neovide_profiler = v:false
+  let g:neovide_scroll_animation_far_lines = 1
   let g:neovide_confirm_quit = v:true
   cd ~/
   let g:neovide_cursor_trail_size=0
   let g:neovide_remember_window_size=v:true
   let g:neovide_remember_window_position=v:true
   let g:neovide_cursor_animation_length=0
+  let g:neovide_window_blurred=v:false
   " let g:neovide_scale_factor=1.0
   " let g:neovide_refresh_rate_idle = 5
 endif
-" let g:python3_host_prog = expand('AppData\Local\Programs\Python\Python39\python.EXE')
 
 if executable('win32yank.exe')
-  if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
-    let win32yank = resolve(exepath('win32yank.exe'))
-  else
+  " if has('wsl') && getftype(exepath('win32yank.exe')) == 'link'
+  "   let win32yank = resolve(exepath('win32yank.exe'))
+  " else
     let win32yank = 'win32yank.exe'
-  endif
+  " endif
   let g:clipboard = {
       \   'name': 'myClipboard',
       \   'copy': {
@@ -89,12 +91,7 @@ if executable('win32yank.exe')
 else
   call  provider#clipboard#Executable()
 endif
-
 "---------------------------------------------------------------------
-" if has('win32')
-"   let g:migemo_dict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
-"   let g:migemodict = "C:/tools/cmigemo/dict/utf-8/migemo-dict"
-" endif
 let mapleader = "\<Space>"
 
 " const s:dpp_base = '~/.cache/dpp/'
@@ -164,17 +161,17 @@ let s:dein_dir = expand('~/.cache/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 let s:dein_is_initializing = 0
 
-let s:toml      = '~/dotfiles/nvim/rc/dein.toml'
-let s:lazy_toml = '~/dotfiles/nvim/rc/dein_lazy.toml'
-let s:lua_toml = '~/dotfiles/nvim/rc/dein_lua.toml'
-let s:denops_toml = '~/dotfiles/nvim/rc/dein_denops.toml'
+let s:toml      = '~/GoogleDrive/config/dotfiles/nvim/rc/dein.toml'
+let s:lazy_toml = '~/GoogleDrive/config/dotfiles/nvim/rc/dein_lazy.toml'
+let s:lua_toml = '~/GoogleDrive/config/dotfiles/nvim/rc/dein_lua.toml'
+let s:denops_toml = '~/GoogleDrive/config/dotfiles/nvim/rc/dein_denops.toml'
 
 let s:myvimrc = expand('$MYVIMRC')
 if dein#load_state(s:dein_dir)
   call dein#begin(s:dein_dir,[s:myvimrc,s:toml,s:lazy_toml, s:denops_toml])
-  call dein#load_toml(s:denops_toml, {'if': executable('deno')})
   call dein#load_toml(s:toml,      {'lazy': 0})
   if s:is_nvim
+    call dein#load_toml(s:denops_toml, {'if': executable('deno')})
     call dein#load_toml(s:lua_toml, {'lazy': 1})
     call dein#load_toml(s:lazy_toml, {'lazy': 1})
   endif
@@ -198,6 +195,9 @@ if !v:vim_did_enter
   endfunction
 endif
 
+filetype plugin indent on
+syntax on
+
 " for dein dein#util#_check_vimrcs() bug workaround
 au! dein BufWritePost
 if s:dein_is_initializing
@@ -209,19 +209,14 @@ autocmd vimrc VimEnter * call s:vimrc_VimEnter_hook()
 function! s:vimrc_VimEnter_hook() abort
 call dein#call_hook('post_source')
 endfunction
-
-filetype plugin indent on
-syntax on
-
 set fileformats=unix,dos,mac
-set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis
+set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis,utf-16le
 
 set notermguicolors
 set swapfile
 set undofile
 set autoread
 set nobackup
-set backupext
 set nowritebackup
 if !s:is_nvim
   set directory=~/.backup/vim/swap
@@ -234,7 +229,7 @@ endif
 
 " language C
 set ambiwidth=single
-set shortmess=aActTFOo
+set shortmess=ltToOCF
 set showtabline=2
 set number
 set signcolumn=number
@@ -242,7 +237,7 @@ set laststatus=2
 set cmdheight=1
 set noshowcmd
 set noshowmode
-set nocursorline
+set cursorline
 set cursorlineopt=screenline,number
 set cinwords=
 set list
@@ -253,9 +248,6 @@ set t_Co=256
 set synmaxcol=1500
 set belloff=all
 set fillchars+=vert:\ ,fold:\ ,diff:\ ,eob:~
-if s:is_nvim
-set diffopt=internal,context:10,algorithm:histogram,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap,closeoff,linematch:60
-endif
 set nrformats+=unsigned
 set hidden
 set splitright
@@ -266,7 +258,6 @@ set previewheight=10
 set helpheight=15
 set helplang=en,ja
 set pumheight=12
-
 set updatetime=1000
 set virtualedit=block
 set wrap
@@ -276,7 +267,7 @@ set sidescrolloff=5
 set sidescroll=1
 set noshowmatch
 set matchtime=1
-set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕,":",':',
+set matchpairs+=<:>,（:）,「:」,『:』,【:】,［:］,＜:＞,〔:〕,":",':',“”
 set nojoinspaces
 set textwidth=0
 set updatecount=50
@@ -285,11 +276,11 @@ set expandtab
 set softtabstop=-1
 let g:vim_indent_cont = 4
 set autoindent
-set smartindent
-set shiftwidth=0
+set nosmartindent
+set shiftwidth=2
 set formatoptions=roqn2M1mj]
 au vimrc FileType * set fo-=o
-set iskeyword+=-
+set iskeyword+=-,:
 set ignorecase
 set smartcase
 set incsearch
@@ -298,6 +289,7 @@ set hlsearch
 set complete=.,w,b,u
 set history=1000
 set clipboard+=unnamed,unnamedplus
+" set clipboard=
 set mouse=a
 set winheight=1
 set winwidth=1
@@ -356,8 +348,23 @@ vnoremap <S-h> ^
 onoremap <S-l> $
 onoremap <S-h> ^
 
-nnoremap <C-f> <C-f>zz
-nnoremap <C-b> <C-b>zz
+nnoremap <C-f> <Cmd>call <SID>zz_if_not_near_eof()<CR>
+nnoremap <C-b> <C-b><Cmd>call <SID>zz_C_B()<CR>
+function! s:zz_C_B() abort
+  if line('.') > winheight(0)
+    norm! z.
+  else
+    norm! gg
+  endif
+endfunction
+function! s:zz_if_not_near_eof() abort
+  if line('$') - line('.') < winheight(0)/2
+    norm! G
+  else
+    exe "normal! \<c-f>z."
+  endif
+endfunction
+
 nnoremap <C-d> <C-d>
 nnoremap <C-u> <C-u>
 nnoremap <C-o> <C-o>zz
@@ -418,7 +425,7 @@ xnoremap Y y$`]
 xnoremap y ygv<ESC>
 nnoremap <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
-nnoremap <silent> <C-q> <cmd>tabclose<CR>
+nnoremap <silent> <C-q> <cmd>tabclose!<CR>
 vnoremap < <gv
 vnoremap > >gv
 vnoremap > >gv
@@ -460,7 +467,6 @@ inoremap zz2 ②
 inoremap zz3 ③
 inoremap zz4 ④
 inoremap zz5 ⑤
-
 inoremap zz6 ⑥
 inoremap zz7 ⑦
 inoremap zz8 ⑧
@@ -535,12 +541,15 @@ nmap <S-LeftMouse> <CR>
 set mousetime=10
 nmap <2-LeftMouse> <CR>
 
+nnoremap <expr> i empty(getline('.')) ? '"_cc' : 'i'
+nnoremap <expr> A empty(getline('.')) ? '"_cc' : 'A'
 
 autocmd vimrc FileType qf call s:my_qf_setting()
 function! s:my_qf_setting() abort
   set modifiable
   " nnoremap <buffer> <CR> :<C-u>.cc<CR>
   nnoremap <silent><buffer> q <Cmd>close<CR>
+  setlocal errorformat=%f\|%l\ col\ %c\|\ %m
   call <SID>is_loc()
   noremap <buffer> p  <CR>zz<C-w>p
 endfunction
@@ -665,39 +674,19 @@ endfunction
 let g:terminal_scrollback_buffer_size = 3000
 
 nnoremap <silent> gm <cmd>call vimrc#isbn()<CR>
-nnoremap <silent> ` :call OpenBrowserSearch(input('Search: '))<CR>
 nnoremap gM :call vimrc#PostIsbnFromClipboard()<CR>
-
-nnoremap <C-f> <C-f>z.<SID>zz_if_not_near_eof()<CR>
-nnoremap <C-b> <C-b>z.<CR>
-function! s:zz_if_not_near_eof() abort
-  if line('$') - line('.') > winheight(0)/2
-    norm G
-  endif
-endfunction
 
 au vimrc FileType vim setlocal indentexpr=
 au vimrc FileType vim setlocal tabstop=2
 au dein FileType toml call dein#toml#syntax()
 au vimrc FileType lua setlocal tabstop=2
 
-command! -nargs=* TextobjectOutline call vimrc#textobject_outline(<f-args>)
-xnoremap io <Cmd>TextobjectOutline<CR>
-xnoremap ao <Cmd>TextobjectOutline from_parent<CR>
-xnoremap iO <Cmd>TextobjectOutline with_blank<CR>
-xnoremap aO <Cmd>TextobjectOutline from_parent with_blank<CR>
-onoremap io <Cmd>TextobjectOutline<CR>
-onoremap ao <Cmd>TextobjectOutline from_parent<CR>
-onoremap iO <Cmd>TextobjectOutline with_blank<CR>
-onoremap aO <Cmd>TextobjectOutline from_parent with_blank<CR>
-" au vimrc BufRead,BufNewFile *.txt setfiletype txt
-set imdisable
 function! s:move_to_char_pos(char)
   if search(a:char, 'cW', line("w$"))
 
-    norm! "_x
-    startinsert
+    norm! "_xa
   endif
+  startinsert
 endfunction
 
 inoremap <silent> <c-l> <C-g>u<ESC><cmd>call <SID>move_to_char_pos('★')<CR>
@@ -708,27 +697,8 @@ if !has('mac')
   " let g:denops_server_addr = '127.0.0.1:32123'
 endif
 
-function! s:change_textwidth()
-let &tw = input('Input textwidth value: ')
-endfunction
-nnoremap <leader>U <Cmd>call <SID>change_textwidth()<CR>
 nnoremap <leader>u <Cmd>call execute('Wrapwidth' .. (input({'prompt': 'Wrapwidth: ', 'cancelreturn': '0' }) ?? 0) )<CR>
-" let g:markdown_recommended_style=0
-" runtime! plugin/rplugin.vim
-" autocmd FileType mail call s:himalaya_autocmd_update()
-" function! s:himalaya_autocmd_update()
-" echom 'called'
-" augroup himalaya_write
-" au! * <buffer>
-"   autocmd  BufWritePost <buffer> call himalaya#domain#email#process_draft()
-" augroup end
-" endfunction
-  " autocmd  BufLeave    <buffer> call himalaya#domain#email#process_draft()
-" let g:markdown_fenced_languages = [
-"     \ 'bash=sh', 'javascript', 'js=javascript', 'json=javascript', 'typescript',
-"     \ 'ts=typescript', 'php', 'html', 'css', 'rust', 'sql', 'lua']
-" call denops_shared_server#runtray#_execute_script_command('start')
-set smoothscroll
+" set smoothscroll
 " カーソルがインデント内部ならtrue
 function! s:in_indent() abort
   return col('.') <= indent('.')
@@ -760,16 +730,29 @@ endfunction
 nnoremap h <cmd>call <sid>quantized_h(v:count1)<cr>
 nnoremap l <cmd>call <sid>quantized_l(v:count1)<cr>
 
-set jumpoptions=stack,view
 
 let g:lastplace_ignore_buftype = "quickfix,nofile,help,mail"
-au vimrc VimEnter *.eml norm }
 hi! link SatelliteCursor Title
-autocmd BufWritePost *.eml call execute('write! %:h/backup/' .. strftime("%Y%m%d").. '_bak_%:t')
 nmap gqq :Wrapwidth0<CR>\|g/.*/norm! gqgq/
 nmap gu :Wrapwidth34<CR>
 
-function! Count_display_line()
+let s:count_display_line_is_enable = v:false
+
+function! Toggle_count_display_line()
+if s:count_display_line_is_enable
+  augroup CDline
+    autocmd!
+  augroup END
+  let s:count_display_line_is_enable = v:false
+else
+  augroup CDline
+    autocmd!
+    autocmd CursorMoved * noautocmd echo s:count_display_line()
+  augroup END
+  let s:count_display_line_is_enable = v:true
+endif
+endfunction
+function! s:count_display_line()
   let lineNr = 1
   let start_pos = getcurpos('.')
   let lines = line('$')
@@ -778,22 +761,11 @@ function! Count_display_line()
   let lineNr+=1
   endwhile
   call setpos('.', start_pos)
-
-  " let col = 1
-  " norm! gj
-  " let lineNr+=1
-
-  " while col != col('.')
-  " let col = col('.')
-  " norm! gj
-  " let lineNr+=1
-  " endwhile
   return lineNr
-  " echom printf('LineNr：%s, Display LineNr：%s, textwidth(double)：%s', line('$'), lineNr, &textwidth/2)
 endfunction
-" echom printf('LineNr：%s, Display LineNr：%s', line('$'), lineNr)
+
 imap <C-h> <BS>
-nmap g<c-g> :autocmd vimrc CursorMoved * echo Count_display_line()<CR>
+nmap g<c-g> <Cmd>call Toggle_count_display_line()<CR>
 autocmd TabClosed * if tabpagenr('$') >= expand('<afile>') | execute('tabnext ' .. (expand('<afile>') -1 ? expand('<afile>') -1 : 1 )) | endif
 set splitkeep=screen
 let g:nerdfont#autofix_cellwidths = v:false
@@ -813,9 +785,68 @@ else
   endfor
 endif
 endfunction
-let g:sonictemplate_key = "<C-z>"
-"C:/Program Files/WezTerm/wezterm.exe" start nvim "/path/to/temp.eml"
+
 autocmd vimrc FileType gitcommit startinsert
-autocmd vimrc FileType gitcommit nnoremap q :close<CR>
-" let &stc='%{substitute(v:lnum,"\\d\\zs\\ze\\' . '%(\\d\\d\\d\\)\\+$",",","g")}'
+autocmd vimrc FileType gitcommit nnoremap <buffer> q :close<CR>
+set startofline
+if s:is_nvim
+set diffopt=internal,context:10,algorithm:histogram,vertical,foldcolumn:0,indent-heuristic,filler,hiddenoff,followwrap,closeoff,linematch:60
+set jumpoptions=stack,view
+endif
+silent! iunmap <C-W>
+nnoremap ` <cmd>call <SID>setqfhint()<CR>
+nnoremap  <Leader>` <cmd>call <SID>saveqfhint()<CR>
+
+function! s:setqfhint()
+let input = input('Enter: ')
+if input ==# ''
+return
+endif
+call setqflist([{'lnum':line('.'), 'col':col('.'), 'text': input, 'filename': expand('%:p'),'type': 'H'}], 'a')
+call quickfixsync#signs#update()
+return
+endfunction
+
+function! s:saveqfhint()
+let d = getqflist()
+let l = []
+for i in d
+  if i.bufnr ==# bufnr('%')
+    let i['filename'] = fnamemodify(bufname(i.bufnr), ':p')
+    call remove(i, 'bufnr')
+    call insert(l, i)
+  endif
+endfor
+eval l->sort({i1, i2 ->i1.lnum - i2.lnum})
+edit %:p:h\savehint.vim
+call setline(1, 'call setqflist('.. string(l) .. ')')
+call setline(2, 'call quickfixsync#signs#update()')
+return l
+endfunction
+
+function! Loadqfhint()
+let path = expand('%:h')
+endfunction
+
+nnoremap <silent> + :call OpenBrowserSearch(input('Search: '))<CR>
+nnoremap <Leader>l <Cmd>echo getqflist()->filter({_,val -> val.lnum ==# line('.')})->map({_, val -> 'qf: ' .. val.text})->join("\n")<CR>
+" echom call getqflist()
+"  call denops_shared_server#runtray#_execute_script_command('start')
+" autocmd vimrc WinClosed * if nvim_win_get_config(0).focusable && !nvim_win_get_config(0).relative | wincmd p | endif
+" autocmd vimrc WinClosed * echom expand('<afile>')
+
+command! -nargs=? -complete=command MarkdonwToSD  call sd#markdown_to_sd()
+nnoremap <Space>g <cmd>call sd#pagecount()<CR>
+
+au User Ddu:redraw call ddu_history#save_current()
+call cmdline#set_option(#{
+  \   highlight_prompt: 'Statement',
+  \   highlight_window: 'None',
+  \   border : 'none',
+  \   col: 19,
+  \   row: 1,
+  \ })
+" autocmd User Ddu:ui:ff:openFilterWindow call cmdline#enable()
+" autocmd User Ddu:ui:ff:closeFilterWindow call cmdline#disable()
+
 " vim:set foldmethod=marker:

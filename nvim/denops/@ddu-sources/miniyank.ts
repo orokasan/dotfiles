@@ -20,26 +20,6 @@ type YankedData = {
 export class Source extends BaseSource<Params> {
   kind = "word";
 
-  // actions: Actions<Params> = {
-  //   jump: async (args: {
-  //     denops: Denops;
-  //     items: DduItem[];
-  //     actionParams: unknown;
-  //   }) => {
-  //     const action = args.items[0].action as ActionData;
-  //     if (action.index < 0) {
-  //       await args.denops.cmd(
-  //         `execute "normal! ${-action.index}\\<C-o>"`,
-  //       );
-  //     } else {
-  //       await args.denops.cmd(
-  //         `execute "normal! ${action.index}\\<C-i>"`,
-  //       );
-  //     }
-  //     return Promise.resolve(ActionFlags.None);
-  //   },
-  // };
-
   gather(args: {
     denops: Denops;
     context: Context;

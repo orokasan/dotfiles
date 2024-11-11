@@ -11,7 +11,7 @@ M.get_labels = function(opts)
   local results = {}
   if data.has_symbols(0) then
     for _, item in data.get_or_create(0):iter({ skip_hidden = false }) do
-      table.insert(results, {idx = item.idx, name = item.name, level = item.level, col= item.col, lnum = item.lnum, id = item.id, parent = item.parent})
+      table.insert(results, {idx = item.idx, name = item.name, level = item.level, col= item.col, lnum = item.lnum, id = item.id})
     end
   end
   return results

@@ -7,9 +7,10 @@ function! s:ddu_change_to_filer(context)
   else
     let dir = path
   endif
+  let config.name = 'filer'
   let config.uiParams = {'filer':{'search': path}}
   let config.sources = [{'name':'file','options':{'path': dir}}]
-  let config.name = 'filer'
+  echom config
   call ddu#start(config)
 endfunction
 
@@ -37,29 +38,25 @@ call ddu#custom#action('kind', 'file', 'to_ff',
 function! s:ddu_my_open(context) abort
   let action = a:context.items[0].action
   let config = ddu#custom#get_current(a:context.options.name)
-  let mode = mode()
 
   if !isdirectory(action.path)
-    call ddu#ui#do_action('itemAction', {'name' : 'open'})
-    return
-  endif
-
-  if config.sources[0].name ==# 'file'
-    call ddu#ui#do_action('itemAction', {'name' : 'narrow'})
-    if mode ==# 'i'
-      norm! cc
+    if exists('s:ddu_save_cmap')
+      let key = nvim_replace_termcodes("<ESC>", v:true, v:false, v:true)
+      call nvim_feedkeys(key, 'n', v:false)
     endif
-    return
-  endif
-
-  if mode ==# 'i'
-    stopinsert
-  endif
-  call ddu#ui#do_action('quit')
+    call ddu#ui#do_action('itemAction', {'name' : 'open'})
+  elseif config.sources[0].name ==# 'file'
+    call ddu#ui#do_action('itemAction', {'name' : 'narrow'})
+    let key = nvim_replace_termcodes("<C-u>", v:true, v:false, v:true)
+    call nvim_feedkeys(key, 'n', v:false)
+  else
   call ddu#start({'sources':[{'name':'file', 'options':{'path': expand(action.path,':p')}}],
   \ 'ui': config.ui,
-  \ 'uiParams': { 'ff' : {'startFilter' : mode ==# 'i'}}
   \ })
+  let key = nvim_replace_termcodes("<C-u>", v:true, v:false, v:true)
+  call nvim_feedkeys(key, 'n', v:false)
+  endif
+  redraw
   return
 
 endfunction
@@ -68,6 +65,24 @@ call ddu#custom#action('kind', 'file', 'my_open',
     \  function('s:ddu_my_open'))
 call ddu#custom#action('kind', 'help', 'my_open',
     \  function('s:ddu_my_open'))
+
+" Define cd action for "ddu-ui-filer"
+call ddu#custom#patch_global(#{
+    \   sourceOptions: #{
+    \     path_history: #{
+    \       defaultAction: 'uiCd',
+    \     },
+    \   }
+    \ })
+call ddu#custom#action('kind', 'file', 'uiCd',
+    \ { args -> s:uiCdAction(args) })
+function! s:uiCdAction(args)
+  let path = a:args.items[0].action.path
+  let directory = path->isdirectory() ? path : path->fnamemodify(':h')
+
+  call ddu#ui#filer#do_action('itemAction',
+          \ #{ name: 'narrow', params: #{ path: directory } })
+endfunction
 
 function! s:ddu_grep(context) abort
   let action = a:context.items[0].action
@@ -99,7 +114,7 @@ function! s:ddu_file_rec(context) abort
     return
   endif
   if &filetype =~# '\v(ddu-ff|ddu-ff-filter)'
-      call ddu#ui#do_action('updateOptions',{'sources':[{'name':'file_external','options':{'path': expand(action.path,':p')}}]})
+      call ddu#start({'sources':[{'name':'file_external','options':{'path': expand(action.path,':p')}}]})
     return
   endif
   if &filetype ==# 'ddu-filer'
@@ -164,66 +179,12 @@ call ddu#custom#patch_global(#{
     \   }
     \ })
 
-call ddu#custom#patch_local( 'ff-filer',{
-    \'ui': 'ff',
-    \ 'uiParams': {
-    \ 'ff': {
-    \ 'split': 'vertical',
-    \ 'previewFloating': v:true,
-    \ 'filterSplitDirection': 'floating',
-    \ 'highlights': {
-    \ 'prompt': 'Function'
-    \ },
-    \ 'direction': 'botright',
-    \ 'winWidth': 40,
-    \ },
-    \},
-    \})
 call ddu#custom#patch_local( 'nocolumn',{
     \'ui': 'ff',
     \ 'sourceOptions': {
     \ '_': {
     \ 'columns':['icons'],
     \ },}
-    \})
-call ddu#custom#patch_local('filer',{
-    \'ui': 'filer',
-    \ 'uiOptions': {'filer':{'persist': v:true,}},
-    \'sources': [{'name': 'file'}],
-    \'resume': v:true,
-    \ 'sync': v:false,
-    \ 'uiParams':{
-    \ 'filer':{
-    \ 'sort': "filename",
-    \'sortTreesFirst': v:true,
-    \'focus': v:true,
-    \},
-    \},
-    \   'actionOptions': {
-    \ '_':{
-    \ 'quit': v:true
-    \},
-    \     'narrow': {
-    \       'quit': v:false,
-    \     },
-    \     'open': {
-    \       'quit': v:true,
-    \     },
-    \},
-    \ 'columnParams': {
-    \'icons':{
-    \ 'isTree': v:true,
-    \ 'padding': 2,
-    \} ,
-    \} ,
-    \ 'sourceOptions': {
-    \ '_': {
-    \ 'columns':['icons'],
-    \ },
-    \ 'file': {
-    \ 'sorters': []
-    \}
-    \ },
     \})
 call ddu#custom#patch_local('prev', {
     \ 'ui': 'ff',
@@ -235,8 +196,21 @@ call ddu#custom#patch_local('prev', {
     \}})
 call ddu#custom#patch_local('textlint', {
     \ 'ui': 'ff',
+    \ 'sourceOptions': {
+      \ 'textlint':{
+      \ 'defaultAction': 'open'
+    \ }},
+    \ 'actionParams' :{
+      \ 'open': {'command': 'drop'}},
+    \   'actionOptions': {
+    \     'open': {
+    \       'quit': v:false,
+    \     },
+    \},
     \ 'uiParams': {
     \ 'ff': {
+    \ 'split': 'vertical',
+    \ 'splitDirection': 'belowright',
     \ 'startAutoAction': v:true,
     \ 'autoAction':{'name': 'itemAction','params': {'name': 'highlight'}}
     \}
@@ -276,12 +250,18 @@ function! s:make_preview_git(s)   abort
 endfunction
 
 function! s:ddu_ff_back() abort
-  if getline('.') == ''
-    call ddu#ui#do_action('itemAction', {'name' : 'narrow', 'params': { 'path': '..'}})
-  else
+  if !exists('w:ddu_ui_ff_status')
+    return
+  endif
+  let item = ddu#ui#get_item()
+  let parent = fnamemodify(item.action.path, ':h')
+  if len(w:ddu_ui_ff_status.input) > 0
     let key = nvim_replace_termcodes("<C-h>", v:true, v:false, v:true)
     call nvim_feedkeys(key, 'n', v:false)
+  else
+    call ddu#ui#sync_action('itemAction', {'name' : 'narrow', 'params': { 'path': '..'}})
   endif
+  call ddu#redraw(b:ddu_ui_name, {'searchPath': parent})
 endfunction
 
 function! MyDduWinbarInput()
@@ -295,13 +275,21 @@ function! MyDduWinbarInput()
     endif
 endfunction
 
-
-autocmd FileType ddu-ff call s:ddu_my_settings()
+function! s:restore_spk()
+if &filetype !~# '^ddu'
+  if exists('s:save_splitkeep')
+  let &splitkeep=s:save_splitkeep
+  unlet s:save_splitkeep
+  endif
+endif
+endfunction
 
 function! s:ddu_my_settings() abort
   setlocal cursorline
   let save_winhighlight=&winhighlight
   set winhighlight+=CursorLine:DduUnderlined
+  let s:save_splitkeep = &splitkeep
+  set splitkeep=cursor
   if has('nvim')
     if expand('%') != 'ddu-ff-side'
     setlocal winbar=%!MyDduWinbarInput()
@@ -321,38 +309,51 @@ function! s:ddu_my_settings() abort
   nnoremap <buffer><silent><nowait> V
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'vsplit'}})<CR>
   nnoremap <buffer><silent><nowait> <tab>
-      \ <Cmd>call ddu#ui#filer#do_action('inputAction')<CR>
+      \ <Cmd>call ddu#ui#do_action('inputAction')<CR>
   nnoremap <buffer><silent><nowait> T
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'tabedit'}})<CR>
   nnoremap <buffer><silent> a
-      \ <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>
+      \ <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>j
   nnoremap <buffer><silent> A
       \ <Cmd>call ddu#ui#do_action('toggleAllItems')<CR>
   nnoremap <buffer><silent> \
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'cd'})<CR>
-  nnoremap <buffer> h <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
+  nnoremap <buffer> h
+      \ <Cmd>call <SID>ddu_ff_back()<CR>
+  " <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
+
   " nnoremap <buffer> h <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
   nnoremap <nowait><buffer><silent> m
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'move'})<CR>
+      \ <Cmd>call ddu#ui#multi_actions([
+      \ ['itemAction', {'name' : 'move'}],
+      \ ['clearSelectAllItems']
+      \ ])<CR>
   nnoremap <nowait><buffer><silent> C
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'copy'})<CR>
-
+      \ <Cmd>call ddu#ui#multi_actions([
+      \ ['itemAction', {'name' : 'copy'}],
+      \ ['clearSelectAllItems']
+      \ ])<CR>
   nnoremap <buffer><silent> p
       \ <Cmd>call ddu#ui#do_action('toggleAutoAction', {'name': 'preview'})<CR>
 
-  nnoremap <buffer><silent> x
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'executeSystem'})<CR>
+  nnoremap <buffer> x
+      \ <Cmd>call ddu#ui#do_action('itemAction',
+      \ {'name': 'executeSystem', 'params': {'method': 'windows-rundll32'}})<CR>
+  nnoremap <buffer><silent> u
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'undo'})<CR>
   nnoremap <buffer> X
       \ <Cmd>call ddu#ui#multi_actions([
       \ ['itemAction', {'name': 'narrow', 'params': {'path': ".."}}],
-      \ ['itemAction', {'name': 'executeSystem'}]
+      \ {'name': 'executeSystem', 'params': {'method': 'windows-rundll32'}})<CR>
       \ ])<CR>
   nnoremap <buffer><silent><nowait> m
       \ <Cmd>call ddu#ui#do_action('updateOptions',{'sourceOptions': {ddu#custom#get_current(b:ddu_ui_name).sources[0].name :{'matchers':['matcher_kensaku']}}})<CR>
   nnoremap <buffer><silent> l
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
+  nnoremap <buffer><silent> <c-l>
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
   nnoremap <buffer><silent> e
-      \ <Cmd>call ddu#ui#do_action('updateOptions', {'ui' : 'filer'})<CR>
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'to_filer'})<CR>
   nnoremap <buffer><silent> u
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'undo'})<CR>
   nnoremap <buffer><silent><nowait> r
@@ -371,8 +372,7 @@ function! s:ddu_my_settings() abort
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'copy'})<CR>
   nnoremap <buffer> D
-      \ <Cmd>call ddu#ui#do_action('itemAction',
-      \ {'name': 'delete'})<CR>
+      \ <Cmd>call ddu#ui#sync_action('itemAction', {'name': 'trash'})<CR>
   nnoremap <buffer> yy
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'yank'})\|echom 'yanked: '..getreg('*')<CR>
@@ -383,6 +383,7 @@ function! s:ddu_my_settings() abort
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'rename'})<CR>
 nnoremap <buffer> P <Cmd>call ddu#ui#do_action('itemAction', {'name': 'paste'})<CR>
+nnoremap <buffer> <leader>p <Cmd>call ddu#ui#do_action('itemAction', {'name': 'paste', 'params': {'path': input('Input target path:')}})<CR>
   nnoremap <buffer> K
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'newDirectory'})<CR>
@@ -393,12 +394,15 @@ nnoremap <buffer> P <Cmd>call ddu#ui#do_action('itemAction', {'name': 'paste'})<
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'narrow', 'params': {'path': expand('~')}})<CR>
   nnoremap <buffer><silent> .
-      \ <Cmd>call <SID>swap_converter('matchers','matcher_hidden', '')<CR>
+      \ <Cmd>call <SID>ddu_swap_converter('matchers','matcher_hidden', '')<CR>
   nnoremap <buffer> w
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'replace'})<CR>j
   nnoremap <buffer><silent><nowait> sf
       \ <Cmd>call ddu#ui#do_action('updateOptions',{'sources': [{'name': 'file_external', 'options': {'path': ddu#custom#get_current(b:ddu_ui_name).sources[0].options.path}}]})<CR>
-  " name specific configs
+  nnoremap <buffer><expr> Y
+      \ ddu#ui#get_item().kind ==# 'file' ? setreg('*', fnamemodify(ddu#ui#get_item().action.path, ':t')) : "Y"
+  nnoremap <buffer><silent> !
+      \ <Cmd>call <SID>ddu_swap_converter('sorters','sorter_time', 'sorter_alpha')<CR>
 endfunction
 
 function! s:execute(expr) abort
@@ -408,46 +412,43 @@ function! s:execute(expr) abort
   call win_execute(g:ddu#ui#ff#_filter_parent_winid, a:expr)
 endfunction
 
-autocmd FileType ddu-ff-filter call s:ddu_my_filter_settings()
-function! s:ddu_my_filter_settings() abort
-  " if has('nvim')
-  "   setlocal winblend=100
-  " endif
-  set winhighlight+=Normal:DduFilter
-  inoremap <buffer><silent> <C-o>
-      \ <Esc><Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
-  inoremap <buffer><silent> <C-l>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
-  inoremap <buffer><silent> <C-h> <cmd>call <SID>ddu_ff_back()<CR>
-  inoremap <silent><buffer> <C-i> <Plug>(skkeleton-enable)
-  inoremap <silent><buffer> <CR>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
-  inoremap <silent><buffer> <C-CR>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
-  inoremap <silent><buffer> <tab>
-      \ <Cmd>call ddu#ui#do_action('chooseAction') \| call ddu#ui#do_action('openFilterWindow')<CR>
-  inoremap <silent><buffer> <C-r>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR>
-  inoremap <buffer><silent><C-t>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'tabedit'}})<CR>
-  nnoremap <buffer><silent> <CR>
-      \ <Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
-  nnoremap <buffer><silent> q
-      \ <C-w>c
-  inoremap <buffer><silent> <C-c>
-      \ <ESC><Cmd>call ddu#ui#do_action('quit')<CR>
-  inoremap <buffer><silent> <C-[>
-      \ <ESC><Cmd>call ddu#ui#do_action('quit')<CR>
-  inoremap <buffer><silent> <ESC>
-      \ <Esc><Cmd>call ddu#ui#do_action('closeFilterWindow')<CR>
-  inoremap <buffer><silent><nowait> <C-g>
-      \ <Cmd>call ddu#ui#do_action('chooseAction')<CR>
-  inoremap <buffer> <C-j>
-      \ <Cmd>call ddu#ui#ff#execute(
-      \ "call cursor(line('.')+1,0)<Bar>redraw")<CR>
-  inoremap <buffer> <C-k>
-      \ <Cmd>call ddu#ui#ff#execute(
-      \ "call cursor(line('.')-1,0)<Bar>redraw")<CR>
+augroup ddu-user
+  au!
+  autocmd User Ddu:ui:ff:closeFilterWindow
+        \ call s:ddu_ff_filter_cleanup()
+  autocmd User Ddu:ui:ff:openFilterWindow
+        \ call s:ddu_ff_filter_my_settings()
+  autocmd FileType ddu-ff call s:ddu_my_settings()
+  autocmd BufEnter * call s:restore_spk()
+  autocmd FileType ddu-ff-filter call s:ddu_my_filter_settings()
+augroup END
+
+let s:ddu_save_cmap = {}
+let s:save_cmap_list = ['<CR>', '<C-j>', '<C-k>', '<C-o>', '<C-l>' ,'<C-h>', '<C-R>', '<C-t>']
+call foreach(s:save_cmap_list, {_, v -> extend(s:ddu_save_cmap, {v : !empty(maparg(v, 'c', v:false, v:true)) ? maparg(v, 'c', v:false, v:true) : ""})})
+
+function! s:ddu_ff_filter_my_settings() abort
+  setlocal cursorline
+  call foreach(s:save_cmap_list, {_, v -> extend(s:ddu_save_cmap, {v : maparg(v, 'c', v:false, v:true)})})
+  cnoremap  <C-j>
+        \ <Cmd>call ddu#ui#do_action('cursorNext', { 'loop': v:true })<CR>
+  cnoremap  <C-k>
+        \ <Cmd>call ddu#ui#do_action('cursorPrevious', {'loop': v:true })<CR>
+  cnoremap  <CR>
+      \ <Cmd>call ddu#ui#do_action('itemAction')<CR>
+  cnoremap  <C-t>
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'tabedit'}})<CR><ESC>
+  cnoremap  <C-r>
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR><C-u>
+  cnoremap  <C-l>
+      \ <Cmd>call ddu#ui#do_action('itemAction')<CR>
+  cnoremap <C-h>
+      \ <Cmd>call <SID>ddu_ff_back()<CR>
+  cnoremap <C-o> <ESC>
+endfunction
+
+function! s:ddu_ff_filter_cleanup() abort
+  call foreach(s:ddu_save_cmap, {k,v -> empty(v) ? mapcheck(k, "c") != "" ? nvim_del_keymap('c', k) : "" : mapset('c', 0, v)})
 endfunction
 
 autocmd FileType ddu-filer call s:ddu_filer_my_settings()
@@ -461,17 +462,17 @@ function! s:ddu_filer_my_settings() abort
   nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
   nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
   nnoremap <buffer> a
-      \ <Cmd>call ddu#ui#filer#do_action('toggleSelectItem')<CR>j
+      \ <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>j
   nnoremap <buffer> A
-      \ <Cmd>call ddu#ui#filer#do_action('toggleAllItems')<CR>j
+      \ <Cmd>call ddu#ui#do_action('toggleAllItems')<CR>j
   nnoremap <buffer> q
-      \ <Cmd>call ddu#ui#filer#do_action('quit')<CR>
+      \ <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer><silent><nowait> <tab>
-      \ <Cmd>call ddu#ui#filer#do_action('inputAction')<CR>
+      \ <Cmd>call ddu#ui#do_action('inputAction')<CR>
   nnoremap <buffer> o
-      \ <Cmd>call ddu#ui#filer#do_action('expandItem',{'mode': 'toggle', 'maxLevel': 0})<CR>
+      \ <Cmd>call ddu#ui#do_action('expandItem',{'mode': 'toggle', 'maxLevel': 0})<CR>
   nnoremap <buffer> O
-      \ <Cmd>call ddu#ui#filer#do_action('expandItem',{ 'maxLevel': -1})<CR>
+      \ <Cmd>call ddu#ui#do_action('expandItem',{ 'maxLevel': -1})<CR>
   nnoremap <buffer><silent><nowait> <C-r>
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR>
   nnoremap <buffer> C
@@ -479,7 +480,7 @@ function! s:ddu_filer_my_settings() abort
       \ {'name': 'copy'})<CR>
   nnoremap <buffer> D
       \ <Cmd>call ddu#ui#do_action('itemAction',
-      \ {'name': 'delete'})<CR>
+      \ {'name': 'trash'})<CR>
   nnoremap <buffer> yy
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'yank'})\|echom 'yanked: '..getreg('*')<CR>
@@ -491,8 +492,9 @@ function! s:ddu_filer_my_settings() abort
       \ {'name': 'rename'})<CR>
   nnoremap <buffer> x
       \ <Cmd>call ddu#ui#do_action('itemAction',
-      \ {'name': 'executeSystem'})<CR>
-call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})
+      \ {'name': 'executeSystem', 'params': {'method': 'windows-rundll32'}})<CR>
+  nnoremap <buffer> h
+    \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
   nnoremap <buffer> P
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'paste'})<CR>
@@ -519,7 +521,9 @@ call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}}
   nnoremap <silent><buffer> ss
       \ <Cmd>call ddu#ui#do_action('updateOptions', {'ui' : 'ff'})<CR>
   nnoremap <buffer><silent> .
-      \ <Cmd>call <SID>swap_converter('matchers','matcher_hidden', '')<CR>
+      \ <Cmd>call <SID>ddu_swap_converter('matchers','matcher_hidden', '')<CR>
+  nnoremap <buffer><silent> !
+      \ <Cmd>call <SID>ddu_swap_converter('sorters','sorter_time', 'sorter_alpha')<CR>
   nnoremap <buffer><expr> <CR>
       \ ddu#ui#get_item()->get('isTree', v:false) ?
       \ "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow'})<CR>" :
@@ -530,7 +534,7 @@ call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}}
       \ "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'open'})<CR>"
 endfunction
 
-function! s:swap_converter(type, before, after) abort
+function! s:ddu_swap_converter(type, before, after) abort
   let item = ddu#ui#get_item()
   let option = ddu#custom#get_current(b:ddu_ui_name)
   let type = a:type
@@ -547,12 +551,26 @@ function! s:swap_converter(type, before, after) abort
     call map(llist, {i,v -> v ==# a:before ? a:after : v ==# a:after ? a:before : v})
   endif
   call ddu#ui#do_action('updateOptions',option)
+  call ddu#redraw(b:ddu_ui_name, {'method': 'refreshItems'})
+  echo 'swap ' .. type
 endfunction
 
 highlight! DduUnderlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 highlight! DduFilter guifg=#ffffff guibg=#e27878
 au ColorScheme * highlight! DduUnderlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 au ColorScheme * highlight! DduFilter guifg=#ffffff guibg=#e27878
+
+call ddu#custom#patch_global(#{
+    \   sourceOptions: #{
+    \     lsp_documentSymbol: #{
+    \       converters: [ 'converter_lsp_symbol' ],
+    \     },
+    \     lsp_workspaceSymbol: #{
+    \       converters: [ 'converter_lsp_symbol' ],
+    \     },
+    \   }
+    \ })
+
 
 lua require("ddurc")
 " au dein WinResized * lua require("ddurc")

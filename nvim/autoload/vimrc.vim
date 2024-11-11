@@ -2,7 +2,6 @@ function! vimrc#getRaw()
   let isbn = expand('<cword>')
   let raw = system(['curl', '-s', 'https://api.openbd.jp/v1/get?isbn=' . isbn])
   let s = json_decode(raw)[0]
-  echom s
 endfunction
 
 function! vimrc#isbn()
@@ -41,7 +40,7 @@ function! vimrc#isbn()
 
   try
     let output['Price'] = s.onix.ProductSupply.SupplyDetail.Price[0].PriceAmount
-    let output['hankei'] = hankei[s.onix.DescriptiveDetail.ProductFormDetail]
+    let output['hankei'] = s.hanmoto.hankeidokuji
     let output['PageNum'] = s.onix.DescriptiveDetail.Extent[0].ExtentValue
     let output['AuthorBio'] = s.onix.DescriptiveDetail.Contributor[0].BiographicalNote
   catch
@@ -54,7 +53,7 @@ function! vimrc#isbn()
   catch
   endtry
 
-  let isbn10 = substitute(isbn,'^978','','')
+  let isbn10 = substitute(s.summary.isbn,'^978','','')
   let output['Amazon'] = 'https://amazon.co.jp/dp/' .. isbn10
   let koumoku = [
       \ 'title',
@@ -101,15 +100,9 @@ function! vimrc#isbn()
   \ ]
   let l =  map(c, {i,v -> has_key(output, v) ?
         \ v ==# 'author' ? substitute(output[v], "／", ' ', 'g') :
-        \ v ==# 'hankei' ? output[v] .. '／' :
+        \ v ==# 'hankei' ? output[v] .. '判／' :
         \ v ==# 'PageNum' ? substitute(output[v], '\v(\d)(\d{3})', {m -> m[1] .. ',' .. m[2]}, '') .. 'ページ' :
-      \ v ==# 'isbn' ? "ISBN＝" .. substitute(output[v],
-      \ output[v][4:5] < 20 ? '\v(\d{3})(\d)(\d{2})(\d{6})(\d{1})' :
-      \ output[v][4:5] < 70 ? '\v(\d{3})(\d)(\d{3})(\d{5})(\d{1})' :
-      \ output[v][4:5] < 85 ? '\v(\d{3})(\d)(\d{4})(\d{4})(\d{1})' :
-      \ output[v][4:5] < 90 ? '\v(\d{3})(\d)(\d{5})(\d{3})(\d{1})' :
-      \ '\v(\d{3})(\d)(\d{6})(\d{2})(\d{1})',
-    \ {m -> m[1] .. '-' .. m[2] ..'-'.. m[3] ..'-' .. m[4] .. '-' .. m[5]}, '') :
+      \ v ==# 'isbn' ? "ISBN＝" ..  s:isbn_add_hyphen(output[v]):
         \ v ==# 'Price' ? substitute(output[v], '\v(\d+)(\d{3})', {m -> m[1] .. ',' .. m[2]}, '') ..  '円＋税' : output[v] : ''
       \ })
   call filter(l, {i,v -> append(line('$'), v)})
@@ -260,4 +253,15 @@ end
 vim.g.vimrc_yank_history = history
 EOF
 return g:vimrc_yank_history
+endfunction
+
+function s:isbn_add_hyphen(isbn)
+let isbn = a:isbn
+return substitute(isbn,
+      \ isbn[4:5] < 20 ? '\v(\d{3})(\d)(\d{2})(\d{6})(\d{1})' :
+      \ isbn[4:5] < 70 ? '\v(\d{3})(\d)(\d{3})(\d{5})(\d{1})' :
+      \ isbn[4:5] < 85 ? '\v(\d{3})(\d)(\d{4})(\d{4})(\d{1})' :
+      \ isbn[4:5] < 90 ? '\v(\d{3})(\d)(\d{5})(\d{3})(\d{1})' :
+      \ '\v(\d{3})(\d)(\d{6})(\d{2})(\d{1})',
+    \ {m -> m[1] .. '-' .. m[2] ..'-'.. m[3] ..'-' .. m[4] .. '-' .. m[5]}, '')
 endfunction

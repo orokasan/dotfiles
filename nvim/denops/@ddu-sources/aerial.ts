@@ -6,10 +6,9 @@ import {
   DduItem,
   Item,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v1.13.0/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v1.13.0/deps.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts";
-import { fn } from "https://deno.land/x/ddu_vim@v1.13.0/deps.ts";
+} from "https://deno.land/x/ddu_vim@v3.10.0/types.ts";
+import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.10.0/deps.ts";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.3/file.ts";
 import { StringReader } from "https://deno.land/std@0.110.0/io/readers.ts";
 
 type HighlightGroup = {
@@ -34,7 +33,7 @@ type AerialItem = {
   // kind: string;
   level: number;
   name: string;
-  parent?: AerialItem;
+  // parent?: AerialItem;
   // scope: "private" | "protected" | "public" | null;
   // selection_range?: [];
 };
@@ -48,6 +47,16 @@ export class Source extends BaseSource<Params> {
       const action = args.items[0]?.action as ActionData;
       const lineNr = action.lineNr;
       await args.denops.call("cursor", lineNr, 0);
+      await args.denops.cmd("norm! zz");
+      return Promise.resolve(ActionFlags.Persist);
+    },
+    highlight: async (args: { denops: Denops; items: DduItem[] }) => {
+      const action = args.items[0]?.action as ActionData;
+      const bufwinid = await args.denops.call("bufwinid", action.bufNr);
+      await args.denops.call("nvim_win_set_cursor", bufwinid, [
+        action.lineNr,
+        action.col,
+      ]);
       await args.denops.cmd("norm! zz");
       return Promise.resolve(ActionFlags.Persist);
     },
@@ -80,21 +89,33 @@ export class Source extends BaseSource<Params> {
         if (res === null) {
           return controller.close();
         }
-        const tree = async () => {
-          const items: Item<ActionData>[] = [];
-          const parent_name = (i: AerialItem): string => {
-            if (!i.parent) {
-              return i.name;
-            } else {
-              return parent_name(i.parent) + "/" + i.name;
+        const bufnr = args.context.bufNr;
+        const bufname = await fn.bufname(args.denops, bufnr);
+
+        const makeTreepath = (cur: AerialItem, items: Item<ActionData>[]) => {
+          const tpath = [];
+
+          for (let k = cur.level; k >= 0; k--) {
+            if (cur.level === k) {
+              tpath.unshift(cur.name);
             }
-          };
-          for await (const item of res) {
-            const bufnr = args.context.bufNr;
-            const bufname = await fn.bufname(args.denops, bufnr);
+            const lastItem = items.findLast((i) => (i.level == k - 1));
+
+            if (lastItem) {
+              tpath.unshift(lastItem.treePath[lastItem.treePath.length - 1]);
+            }
+          }
+          return ["/"].concat(tpath);
+        };
+
+        const tree = () => {
+          const items: Item<ActionData>[] = [];
+          for (const item of res) {
             const word = item.name;
+            const lev = item.level > 3 ? 3 : item.level;
+            const aerialLevel = `level${lev}`;
             items.push({
-              word: parent_name(item),
+              word: makeTreepath(item, items).join(""),
               display: " ".repeat(item.level) + word,
               action: {
                 path: bufname,
@@ -102,30 +123,30 @@ export class Source extends BaseSource<Params> {
                 lineNr: item.lnum,
                 col: item.col + 1,
               },
+              treePath: makeTreepath(item, items),
               highlights: [
                 {
                   name: `aerial_level${item.level}`,
-                  hl_group: args.sourceParams.highlights[`level${item.level}`],
+                  hl_group: args.sourceParams.highlights[aerialLevel],
                   col: 1,
-                  width: new StringReader(word).length + 1,
+                  width: 999,
                 },
               ],
-              // isTree: true,
-              // isExpanded: args.sourceOptions.path.length === 0,
+              isTree: true,
+              isExpanded: true,
+              level: item.level,
             });
           }
-          // for (const i of items) {
-          //   console.log(i.highlights)
-          //   // .filter((v) => {
-          //   //   console.log(v.hl_group.length);
-          //   //   // if (v.hl_group.length == 0) {
-          //   //   //   // console.log(i)
-          //   //   // }
-          //   // }));
-          // }
+          if (args.sourceOptions.path) {
+            return items.filter((i) => {
+              return i.treePath.toString().startsWith(
+                args.sourceOptions.path.toString(),
+              ) && i.treePath.length > args.sourceOptions.path.length;
+            });
+          }
           return items;
         };
-        controller.enqueue(await tree());
+        controller.enqueue(tree());
         controller.close();
       },
     });

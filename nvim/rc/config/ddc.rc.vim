@@ -6,11 +6,11 @@ call ddc#custom#patch_global({
 \})
 call ddc#custom#patch_global('sourceOptions', {
 \ '_': {
-\ 'matchers': ['matcher_fuzzy'],
-\     'sorters': ['sorter_fuzzy'],
-\ 'ignoreCase': v:true,
-\ 'converters': ['converter_remove_overlap']
-\ },
+  \ 'matchers': ['matcher_fuzzy'],
+  \ 'sorters': ['sorter_fuzzy'],
+  \ 'ignoreCase': v:true,
+  \ 'converters': ['converter_remove_overlap'],
+\     },
 \ 'skkeleton': {'mark': 'skk', 'matchers': [], 'sorters': [], 'isVolatile': v:true,'minAutoCompleteLength' :1},
 \ 'vsnip': {'matchers': ['matcher_head'], 'minAutoCompleteLength' :2},
 \ })
@@ -20,6 +20,7 @@ call ddc#custom#patch_global(#{
       \   lsp: #{
       \     dup: 'keep',
       \     keywordPattern: '\k+',
+      \     forceCompletionPattern: '\.'
       \   },
       \ },
       \ sourceParams: #{
@@ -40,26 +41,30 @@ call ddc#custom#patch_global('sourceOptions', {
 \ })
 
 call ddc#custom#patch_global('sourceParams', {
-\ 'buffer': {'requireSameFiletype': v:false,
+\ 'buffer': {'requireSameFiletype': v:true,
 \ 'fromAltBuf': v:true,
 \ 'bufNameStyle': 'basename'},
 \ })
 call ddc#custom#patch_global('sourceParams', {
 \ 'around': {'maxSize': 500},
 \ })
-
 " Customize settings on a filetype
 call pum#set_option({
-\ 'use_setline': v:false,
+\ 'use_setline': v:true,
+\ 'direction': 'below',
 \ 'scrollbar_char': '|',
+\ 'max_height': 12,
+\ 'blend': 15,
 \ 'highlight_scrollbar': 'Title',
 \ 'highlight_selected': 'PmenuSelected',
+\ 'highlight_matches': 'Constant',
 \ 'item_orders': ['abbr', 'space', 'kind', 'space', 'menu', 'info']
 \ })
 
 if has('nvim')
 call ddc#custom#patch_global('sources', [
 \ 'vsnip',
+\ 'skkeleton',
 \ 'lsp',
 \ 'buffer',
 \ ])
@@ -82,11 +87,11 @@ endif
 "   call ddc#custom#set_buffer(s:prev_buffer_config)
 " endfunction
 
-inoremap <silent><expr> <CR> <SID>my_cr_function()
+" inoremap <silent><expr> <CR> <SID>my_cr_function()
 
-function! s:my_cr_function() abort "{{{
-  return pum#visible() ? pum#map#confirm() : "\<CR>"
-endfunction
+" function! s:my_cr_function() abort "{{{
+"   return pum#visible() ? pum#map#confirm() : "\<CR>"
+" endfunction
 
 " inoremap <silent> <BS> <C-r>=<SID>my_bs_function()<CR>
 " inoremap <silent> <C-h> <C-r>=<SID>my_bs_function()<CR>
@@ -95,22 +100,28 @@ endfunction
 " return lexima#expand('<BS>', 'i')
 " endfunction "}}}
 " <TAB>: completion.
-imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+" imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+" smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
+inoremap <silent><expr> <C-k> pum#visible() ?
+\ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#confirm() : "<C-k>"
+snoremap <silent><expr> <C-k> pum#visible() ?
+\ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#confirm() : "<C-k>"
 snoremap <silent><expr> <TAB> pum#visible() ?
-\ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#insert_relative(+1) : lexima#expand('<TAB>', 'i')
+\ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#insert_relative(+1) : "<TAB>"
 snoremap <silent><expr> <S-TAB>
-\ pum#visible()  ?  vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)' : pum#map#insert_relative(-1) : "\<BS>"
-
-" inoremap <silent><expr> <TAB> pum#visible() ? '<Cmd> call pum#map#insert_relative(+1)<CR>' : '<TAB>'
+\ pum#visible()  ?  vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)' : pum#map#insert_relative(-1) : "<S-TAB>"
+inoremap <silent><expr> <TAB> pum#visible() ? '<Cmd> call pum#map#confirm()<CR>' : '<TAB>'
 " inoremap <silent><expr> <S-TAB> pum#visible() ? '<Cmd> call pum#map#insert_relative(-1)<CR>' : '<S-TAB>'
-inoremap <silent><expr> <C-n> pum#visible() ? '<Cmd> call pum#map#insert_relative(+1)<CR>' : '<C-n>'
-inoremap <silent><expr> <C-p> pum#visible() ? '<Cmd> call pum#map#insert_relative(-1)<CR>' : '<C-p>'
+inoremap <silent><expr> <C-n> pum#visible() ? "<Cmd> call pum#map#insert_relative(+1)<CR>" : '<C-n>'
+inoremap <silent><expr> <C-p> pum#visible() ? "<Cmd> call pum#map#insert_relative(-1)<CR>" : '<C-p>'
 
-inoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
-inoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
+" inoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
+" inoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
 inoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
 inoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
+
+" autocmd User PumCompleteDonePre echom g:pum#completed_item
+" autocmd User PumCompleteDonePre if complete_info(['mode']).mode !=? '' | call vsnip_integ#on_complete_done(g:pum#completed_item) | endif
 
 call pum#set_option({
 \ 'min_width': 30,
@@ -163,81 +174,4 @@ let g:popup_preview_config = { "border": v:false ,
 	      \ 'maxWidth': 60,
 	      \ 'maxHeight': 30,
 	      \ }
-" call popup_preview#enable()
-	" Use cmdline source.
-	" call ddc#custom#patch_global('autoCompleteEvents', [
-	" \ 'InsertEnter', 'TextChangedI', 'TextChangedP', 'CmdlineChanged'])
-	" nnoremap :       <Cmd>call CommandlinePre()<CR>:
-	" nnoremap /       <Cmd>call CommandlinePre()<CR>/
-	" nnoremap ?       <Cmd>call CommandlinePre()<CR>?
-	" nnoremap g/    <Cmd>call CommandlineUnmap()<CR>
-  " function! CommandlineUnmap() abort
-    " nunmap :
-    " nunmap /
-    " nunmap ?
-  " endfunction
-	
-	" function! CommandlinePre() abort
-" call ddc#custom#patch_global('ui', 'pum')
-" cnoremap <silent><expr> <TAB> pum#visible() ? pum#map#insert_relative(+1) : ddc#map#manual_complete()
-" cnoremap <silent><expr> <S-TAB> pum#visible() ? pum#map#insert_relative(-1) : ddc#map#manual_complete()
-" cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
-  " call pum#set_option({
-  " \ 'padding': v:false,
-  " \ 'reversed': v:true,
-  " \ })
-	"   " Overwrite sources
-	"   if !exists('b:prev_buffer_config')
-	"     let b:prev_buffer_config = ddc#custom#get_buffer()
-	"   endif
-	"   call ddc#custom#patch_buffer('cmdlineSources',
-	"   \ ['cmdline'])
-    " call ddc#custom#patch_buffer('sourceOptions',{
-    " \ '_': {
-        " \ 'minAutoCompleteLength': 1,
-        " \ 'sorters': ['sorter_fuzzy'],
-        " \ 'converters': ['converter_fuzzy'],
-        " \}
-	"   \} )
-	
-	"   autocmd User DDCCmdlineLeave ++once call CommandlinePost()
-	"   autocmd InsertEnter <buffer> ++once call CommandlinePost()
-	
-	"   " Enable command line completion
-	"   call ddc#enable_cmdline_completion()
-	" endfunction
-
-	" function! CommandlinePost() abort
-	"   silent! cunmap <Tab>
-	"   silent! cunmap <S-Tab>
-	"   silent! cunmap <C-y>
-	"   silent! cunmap <C-e>
-  " call pum#set_option({
-  " \ 'padding': v:false,
-  " \ 'reversed': v:false,
-  " \ })
-	
-	"   " Restore sources
-	"   if exists('b:prev_buffer_config')
-	"     call ddc#custom#set_buffer(b:prev_buffer_config)
-	"     unlet b:prev_buffer_config
-	"   else
-	"     call ddc#custom#set_buffer({})
-	"   endif
-	" endfunction
-	
-	" Change source options
-	call ddc#custom#patch_global('sourceOptions', {
-	\   'cmdline': {
-	\     'mark': '',
-    \   'forceCompletionPattern': '\S[\\/]\S*|^e\s+',
-	\   }
-	\ })
-" call signature_help#enable()
 call ddc#enable()
-
-
-" let s:backup = ddc#custom#get_global()
-" function! Restore_ddc_config()
-"   call ddc#custom#patch_global(s:backup)
-" endfunction
