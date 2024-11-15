@@ -1,22 +1,21 @@
-import {
-  BaseSource,
-  Context,
-  Item,
-  SourceOptions,
-} from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
+import * as depsTs from "https://deno.land/x/ddu_vim@v2.2.0/deps.ts";
+import * as typesTs from "https://deno.land/x/ddu_vim@v2.2.0/types.ts";
 import type { ActionData } from "https://raw.githubusercontent.com/Shougo/ddu-kind-word/master/denops/@ddu-kinds/word.ts";
 
 type Params = Record<never, never>;
 
-export class Source extends BaseSource<Params> {
-  override kind = "word";
+type NewType = depsTs.Denops;
 
-  override gather(args: {
-    denops: Denops;
-    context: Context;
-    sourceOptions: SourceOptions;
-  }): ReadableStream<Item<ActionData>[]> {
+export class Source extends typesTs.BaseSource<Params> {
+  kind = "word";
+
+  gather({ args }: {
+    args: {
+      denops: NewType;
+      context: typesTs.Context;
+      sourceOptions: typesTs.SourceOptions;
+    };
+  }): ReadableStream<typesTs.Item<ActionData>[]> {
     return new ReadableStream({
       async start(controller) {
         const rawContent = await Deno.readFile(args.sourceOptions.path);
@@ -38,7 +37,7 @@ export class Source extends BaseSource<Params> {
     });
   }
 
-  override params(): Params {
+  params(): Params {
     return {};
   }
 }

@@ -1,5 +1,6 @@
 #!/bin/bash
 XDG_CONFIG_HOME="${HOME}/.config"
+DOTPATH=${HOME}/dotfiles
 
 for f in .??*
 do
@@ -8,6 +9,8 @@ done
 
 ln -snfv ${DOTPATH}/nvim ${XDG_CONFIG_HOME}/nvim
 ln -snfv ${DOTPATH}/nvim/init.vim ${HOME}/.vimrc
-ln -snfv ${DOTPATH}/../.skk/ ${HOME}/.skk
+
+mkdir ${HOME}/.skk
+curl -o ${HOME}/.skk/SKK-JISYO.L https://raw.githubusercontent.com/skk-dev/dict/master/SKK-JISYO.L
 
 exit 0

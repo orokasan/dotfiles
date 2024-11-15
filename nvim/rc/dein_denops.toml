@@ -93,7 +93,7 @@ repo = 'Shougo/ddc.vim'
 # lazy = 1
 # depends = ['denops.vim', 'pum.vim']
 # on_event = ['InsertEnter', 'CmdlineEnter']
-hook_add = 'source ~/GoogleDrive/config/dotfiles/nvim/rc/config/ddc.rc.vim'
+hook_add = "call execute('source ' .. stdpath('config') .. '/rc/config/ddc.rc.vim')"
 
 [[plugins]]
 repo = 'Shougo/ddc-cmdline-history'
@@ -199,9 +199,11 @@ autocmd({ 'User' }, {
 })
 EOF
 
+let skk_global_dict = isdirectory(expand('~/GoogleDrive')) ? glob('~/GoogleDrive/config/.skk/SKK-JISYO.*', v:false, v:true) : ['~/.skk/SKK-JISYO.L']
+let skk_user_dict = isdirectory(expand('~/GoogleDrive')) ? expand('~/GoogleDrive/config/.skk/.skk-jisyo') : '.skk/.skk-jisyo'
 call skkeleton#config({
-\ 'globalDictionaries': glob('~/GoogleDrive/config/.skk/SKK-JISYO.*', v:false, v:true),
-\ 'userDictionary': expand('~/GoogleDrive/config/.skk/.skk-jisyo'),
+\ 'globalDictionaries': skk_global_dict,
+\ 'userDictionary': skk_user_dict,
 \ 'completionRankFile': expand('~/.skk/rank.json'),
 \ 'eggLikeNewline': v:true,
 \ 'debug': v:false,
