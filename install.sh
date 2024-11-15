@@ -1,6 +1,6 @@
 #!/bin/bash
 XDG_CONFIG_HOME="${HOME}/.config"
-DOTPATH=${HOME}/dotfiles
+DOTPATH="${HOME}/dotfiles"
 
 for f in .??*
 do
