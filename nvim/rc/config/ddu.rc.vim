@@ -50,11 +50,11 @@ function! s:ddu_my_open(context) abort
     let key = nvim_replace_termcodes("<C-u>", v:true, v:false, v:true)
     call nvim_feedkeys(key, 'n', v:false)
   else
-  call ddu#start({'sources':[{'name':'file', 'options':{'path': expand(action.path,':p')}}],
-  \ 'ui': config.ui,
-  \ })
-  let key = nvim_replace_termcodes("<C-u>", v:true, v:false, v:true)
-  call nvim_feedkeys(key, 'n', v:false)
+    call ddu#start({'sources':[{'name':'file', 'options':{'path': expand(action.path,':p')}}],
+    \ 'ui': config.ui,
+    \ })
+    let key = nvim_replace_termcodes("<C-u>", v:true, v:false, v:true)
+    call nvim_feedkeys(key, 'n', v:false)
   endif
   redraw
   return
@@ -288,8 +288,6 @@ function! s:ddu_my_settings() abort
   setlocal cursorline
   let save_winhighlight=&winhighlight
   set winhighlight+=CursorLine:DduUnderlined
-  let s:save_splitkeep = &splitkeep
-  set splitkeep=cursor
   if has('nvim')
     if expand('%') != 'ddu-ff-side'
     setlocal winbar=%!MyDduWinbarInput()

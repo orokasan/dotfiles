@@ -196,7 +196,7 @@ vim.fn["ddu#custom#patch_global"](
         highlightMatched = 'Title',
       },
       matcher_hidden = {
-        hiddenPath = {'NTUSER', 'ntuser', 'desktop.ini'}
+        hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini' }
       }
     },
     columnParams = {
@@ -232,7 +232,9 @@ vim.fn["ddu#custom#patch_global"](
       narrow = { quit = false },
       cd = { quit = false },
       replace = { quit = false },
-      highlight = { quit = false },
+      rename = { quit = false },
+      newFile = { quit = false },
+      newDirectory = { quit = false },
     },
   }
 )

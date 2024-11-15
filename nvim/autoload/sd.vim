@@ -59,6 +59,7 @@ silent! %s/\v^　-----$/◆　◆　◆/
 " /^\v[^〓■○]
 " /^$
 let &wrapscan = s
+call sd#deadlink()
 endfunction
 
 " function! WordFootnoteToSD()
@@ -252,4 +253,10 @@ echom SDpageNum .. 'ページ'
 bwipeout! %
 edit `=file`
 call setpos('.', pos)
+endfunction
+
+function! sd#deadlink()
+  if search('\(https:\|http:\)', 'np') > 0
+    echom system(['textlint', '--no-textlintrc', '-f', 'compact', '--rule', 'textlint-rule-no-dead-link', expand('%')])
+  endif
 endfunction

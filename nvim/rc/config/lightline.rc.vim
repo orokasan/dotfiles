@@ -429,7 +429,7 @@ function! LLsearchres() abort
         \             result.current, result.total)
 endfunction
 
-function LLicon(n) abort
+function! LLicon(n) abort
 let buflist = tabpagebuflist(a:n)
 let winnr = tabpagewinnr(a:n)
 let icon = nerdfont#find(expand('#'.buflist[winnr - 1].':t'))

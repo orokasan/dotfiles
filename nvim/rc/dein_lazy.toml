@@ -7,7 +7,7 @@ hook_add = '''
 " endif
 " autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
 " autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
-source ~/GoogleDrive/config/dotfiles/nvim/rc/config/lightline.rc.vim
+call execute('source ' .. stdpath('config') .. '/rc/config/lightline.rc.vim')
 " let &laststatus = has('nvim') ? 2 : 2
 '''
 

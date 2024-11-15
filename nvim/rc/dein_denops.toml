@@ -312,8 +312,8 @@ repo = 'Shougo/ddu.vim'
 # rev = 'source-stream'
 # merged = 0
 hook_add = '''
-source ~/GoogleDrive/config/dotfiles/nvim/rc/config/ddu_mapping.rc.vim
-source ~/GoogleDrive/config/dotfiles/nvim/rc/config/ddu.rc.vim
+call execute('source ' .. stdpath('config') .. '/rc/config/ddu_mapping.rc.vim')
+call execute('source ' .. stdpath('config') .. '/rc/config/ddu.rc.vim')
 '''
 hook_source = '''
 '''
@@ -486,3 +486,6 @@ repo = 'Shougo/ddu-filter-sorter_alpha'
 
 [[plugins]]
 repo = 'kamecha/ddu-source-tab'
+
+[[plugins]]
+repo = 'tani/hey.vim'

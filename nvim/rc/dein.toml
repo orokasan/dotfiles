@@ -274,6 +274,8 @@ setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
 
 [[plugins]]
 repo = 'farmergreg/vim-lastplace'
+hook_add = '''
+'''
 
 # [[plugins]]
 # repo = 'theHamsta/nvim-treesitter-pairs'

@@ -27,7 +27,7 @@ export class Filter extends BaseFilter<Params> {
   private basenamePalette: IconList = {};
   private directoryPalette: IconList = {};
 
-  async onInit(args: { denops: Denops }): Promise<void> {
+  override async onInit(args: { denops: Denops }): Promise<void> {
     if (this.initialized) return
 
     await args.denops.eval("nerdfont#find()");

@@ -767,7 +767,7 @@ endfunction
 imap <C-h> <BS>
 nmap g<c-g> <Cmd>call Toggle_count_display_line()<CR>
 autocmd TabClosed * if tabpagenr('$') >= expand('<afile>') | execute('tabnext ' .. (expand('<afile>') -1 ? expand('<afile>') -1 : 1 )) | endif
-set splitkeep=screen
+set splitkeep=cursor
 let g:nerdfont#autofix_cellwidths = v:false
 
 function! WASD() abort
@@ -848,5 +848,5 @@ call cmdline#set_option(#{
   \ })
 " autocmd User Ddu:ui:ff:openFilterWindow call cmdline#enable()
 " autocmd User Ddu:ui:ff:closeFilterWindow call cmdline#disable()
-
+" let g:hey_model_name = 'gpt-4o'
 " vim:set foldmethod=marker:
