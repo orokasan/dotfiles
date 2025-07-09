@@ -1,16 +1,16 @@
 import {
   ActionFlags,
   Actions,
-  BaseSource,
   Context,
   DduItem,
+  DduOptions,
   Item,
-  DduOptions
-} from "https://deno.land/x/ddu_vim@v4.0.0/types.ts#^";
-import { Denops } from "https://deno.land/x/ddu_vim@v4.0.0/deps.ts";
-import {type  ActionData } from "jsr:@shougo/ddu-kind-word";
-import { difference } from "https://deno.land/std@0.224.0/datetime/difference.ts";
-import { type DifferenceFormat } from "https://deno.land/std@0.224.0/datetime/difference.ts";
+} from "jsr:@shougo/ddu-vim/types";
+import { BaseSource } from "jsr:@shougo/ddu-vim/source";
+import { Denops } from "jsr:@denops/std";
+import { type ActionData } from "jsr:@shougo/ddu-kind-word";
+import { difference } from "jsr:@std/datetime";
+import { type DifferenceFormat } from "jsr:@std/datetime";
 
 type Params = Record<number | string | symbol, never>;
 
@@ -24,7 +24,6 @@ export class Source extends BaseSource<Params> {
 
   override actions: Actions<Params> = {
     start: async (args: { denops: Denops; items: DduItem[] }) => {
-
       for (const item of args.items) {
         const action = item.action?.text as ActionData;
         await args.denops.call("ddu#start", action);
@@ -68,13 +67,18 @@ export class Source extends BaseSource<Params> {
             return time;
           };
           const source_name: string = v.option.sources[0]?.name;
-          if (source_name === 'ddu_history') continue
-          const path = v.option.sources[0]?.options?.path
-          const word = `[${
-            String(i).padStart(2, " ")
-          }] Source: ${source_name.padEnd(15, ' ')}  Path: ${
-            path ? await args.denops.call('fnamemodify', path , ':~' ) : "--"
-          } Name: ${v.option.name}, ${gettime(v.timestamp)}`;
+          if (source_name === "ddu_history") continue;
+          const path = v.option.sources[0]?.options?.path;
+          // const word = `[${gettime(v.timestamp).padStart(6, " ")}] Source: ${
+          //   source_name.padEnd(15, " ")
+          // }  Path: ${
+          //   path ? await args.denops.call("fnamemodify", path, ":~") : ""
+          // }`;
+          const word = `Source: ${
+            source_name.padEnd(15, " ")
+          }  Path: ${
+            path ? await args.denops.call("fnamemodify", path, ":~") : ""
+          }`;
           i += 1;
           items.push({
             word: word,
@@ -85,7 +89,7 @@ export class Source extends BaseSource<Params> {
             highlights: [{
               name: "ddu_history_source_name",
               hl_group: "Constant",
-              col: 13,
+              col: 8,
               width: source_name.length + 1,
             }],
           });

@@ -10,6 +10,9 @@ vim.fn["ddu#custom#patch_global"](
       dein_update      = {
         defaultAction = 'viewDiff',
       },
+      himalaya         = {
+        defaultAction = 'open',
+      },
       git_tag          = {
         defaultAction = 'switch',
       },
@@ -42,7 +45,7 @@ vim.fn["ddu#custom#patch_global"](
         matchers = { 'merge' },
         ignoreCase = true,
         columns = {},
-        converters = { 'converter_no_empty', 'converter_nerdfont', 'converter_highlight_filename' },
+        converters = { 'converter_no_empty', 'converter_highlight_filename', 'converter_nerdfont' },
       },
       action = {
         matchers = { 'matcher_fzy' },
@@ -63,15 +66,16 @@ vim.fn["ddu#custom#patch_global"](
       markdown = {
         defaultAction = 'open',
       },
-      junkfile = { matchers = { 'matcher_fzy', 'matcher_hidden' } },
+      junkfile = { matchers = { 'matcher_fzy', 'filter_hidden' } },
       file_external = { matchers = { 'merge' } },
       file = {
-        matchers = { 'matcher_hidden', 'merge' },
-        sorters = { 'sorter_alpha' },
+        matchers = { 'filter_hidden', 'merge' },
+        sorters = { 'sorter_time', 'sorter_reversed' },
       },
-      buffer = { converters = { 'converter_highlight_filename' } },
+      buffer = { converters = { 'converter_highlight_filename', 'converter_nerdfont' } },
       grep = { converters = {}, },
-      dirmark = { sorters = { 'sorter_time' }, converters = {}, },
+      dirmark = { sorters = { { name = 'sorter_time', params = { force = true } }, { name = 'sorter_reversed' } }, converters = {}, },
+      tree = { sorters = { }, converters = { { name = 'converter_highlight_filename' }, { name = 'converter_nerdfont' }, { name = 'filter_hidden', params = { hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini', 'prh' } } } } },
       dein = { sorters = {} },
       text = { converters = {} },
       aerial = {
@@ -94,6 +98,11 @@ vim.fn["ddu#custom#patch_global"](
         converters = { 'converter_relative', 'converter_unique', 'converter_highlight_filename', 'converter_nerdfont' },
         sorters = {},
       },
+    },
+    actionParams = {
+      executeSystem = {
+        method = "windows-rundll32"
+      }
     },
     profile = false,
     ui = 'ff',
@@ -130,10 +139,14 @@ vim.fn["ddu#custom#patch_global"](
         limit = 1000,
       },
     },
+    uiOptions = {
+      _ = {
+        filterPrompt = '  # ',
+      },
+    },
     uiParams = {
       ff = {
         previewFloating = true,
-        filterSplitDirection = 'floating',
         filterFloatingPosition = 'top',
         floatingBorder = 'none',
         highlights = {
@@ -195,7 +208,7 @@ vim.fn["ddu#custom#patch_global"](
       matcher_substring = {
         highlightMatched = 'Title',
       },
-      matcher_hidden = {
+      filter_hidden = {
         hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini' }
       }
     },
@@ -217,6 +230,9 @@ vim.fn["ddu#custom#patch_global"](
         quit = true,
       },
       echo = {
+        quit = false,
+      },
+      unzip = {
         quit = false,
       },
       echoDiff = {

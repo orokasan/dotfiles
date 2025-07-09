@@ -1,9 +1,9 @@
 import {
-  BaseFilter,
   DduItem,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v0.14/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v0.14/deps.ts";
+} from "jsr:@shougo/ddu-vim/types";
+import { BaseFilter } from "jsr:@shougo/ddu-vim/filter";
+import { Denops } from "jsr:@denops/std";
 
 type Params = Record<never, never>;
 

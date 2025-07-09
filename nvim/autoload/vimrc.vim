@@ -102,7 +102,7 @@ function! vimrc#isbn()
         \ v ==# 'author' ? substitute(output[v], "／", ' ', 'g') :
         \ v ==# 'hankei' ? output[v] .. '判／' :
         \ v ==# 'PageNum' ? substitute(output[v], '\v(\d)(\d{3})', {m -> m[1] .. ',' .. m[2]}, '') .. 'ページ' :
-      \ v ==# 'isbn' ? "ISBN＝" ..  s:isbn_add_hyphen(output[v]):
+      \ v ==# 'isbn' ? "ISBN＝" ..  vimrc#isbn_add_hyphen(output[v]):
         \ v ==# 'Price' ? substitute(output[v], '\v(\d+)(\d{3})', {m -> m[1] .. ',' .. m[2]}, '') ..  '円＋税' : output[v] : ''
       \ })
   call filter(l, {i,v -> append(line('$'), v)})
@@ -255,7 +255,7 @@ EOF
 return g:vimrc_yank_history
 endfunction
 
-function s:isbn_add_hyphen(isbn)
+function vimrc#isbn_add_hyphen(isbn)
 let isbn = a:isbn
 return substitute(isbn,
       \ isbn[4:5] < 20 ? '\v(\d{3})(\d)(\d{2})(\d{6})(\d{1})' :

@@ -39,7 +39,11 @@ function! s:ddu_mapping() abort
   "     \ -ui-param-ff-split=floating
   "     \ -ui-param-ff-autoResize
   "     \ jump<CR>
-  nnoremap <silent> ss <cmd>call ddu#start({'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}]})<CR>
+  if exists('*isabsolutepath')
+  nnoremap <silent> ss <cmd>call ddu#start({'sources': [{'name': 'file', 'options': {'path': isabsolutepath(expand('%:p:h')) ? expand('%:p:h') : expand('~') }}],'sync': v:false})<CR>
+  else
+  nnoremap <silent> ss <cmd>call ddu#start({'sources': [{'name': 'file', 'options': {'path': expand('%:p:h') }}],'sync': v:false})<CR>
+  endif
   nnoremap <silent> <Leader>s <cmd>call ddu#start({'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}], 'searchPath': expand('%:p')})<CR>
   nnoremap <silent> sS <cmd>call ddu#start({'sources': [{'name': 'file', 'options': {'path': getcwd()}}]})<CR>
   nnoremap <silent> s/ <cmd>Ddu
@@ -51,17 +55,22 @@ function! s:ddu_mapping() abort
   nnoremap <silent> sy <cmd>Ddu
       \ -name=word
       \ -name=float
-      \ miniyank<CR>
+      \ yank-history<CR>
   nnoremap <silent> sl <cmd>Ddu
       \ ddu_history<CR>
 
-  nnoremap <silent> sL <cmd>call ddu#start({'sync': v:true, 'sources': [{'name': 'ddu_history'}], 'uiParams': {'ff': {'startAutoAction': v:true,'cursorPos': -1, 'autoAction': {'name': 'itemAction','param':{'name': 'start'}}}}})<CR>
+    nnoremap <silent> sL <cmd>call ddu#start({'sync': v:true, 'sources': [{'name': 'ddu_history'}], 'uiParams': {'ff': {'startAutoAction': v:true,'cursorPos': -1, 'autoAction': {'name': 'itemAction','param':{'name': 'start'}}}}})<CR>
   nnoremap <silent> se <cmd>Ddu
       \ -name=word
       \ -ui-param-ff-split=floating
       \ -source-option-path=`expand('~/GoogleDrive/SD/work/template/editor_symbols.txt')`
       \ word_line<CR>
 
+  nnoremap <silent> sd <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', }], resume: v:true, name: 'mail'})<CR>
+  " nnoremap <silent> sd <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', }], resume: v:true, name: 'mail'})\|call ddu#redraw('mail', {'input': '', 'method': 'refreshItems' })<CR>
+  nnoremap <silent> sD <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', }], sync: v:true, resume: v:false, name: 'mail' })<CR>
+  " nnoremap <silent> g/ <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', params: #{args: [ input('query: ')], folder: "[Gmail]/すべてのメール", page:100} }], name: 'mail'})<CR>
+  nnoremap <silent> g/ <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', params: #{ folder: "[Gmail]/送信済みメール", page:100} }], name: 'mail'})<CR>
   nnoremap <silent> sg <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': input('Pattern: ')}}]})<CR>
   " nnoremap <silent> sg <cmd>call ddu#start({'sources': [{'name': 'jvgrep', 'params': {'path': <SID>find_gitdir(),'input': input('Pattern: ')}}]})<CR>
   nnoremap <silent> s* <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': expand('<cword>')}}]})<CR>
@@ -71,6 +80,7 @@ function! s:ddu_mapping() abort
   nnoremap <silent> sF <cmd>call ddu#start({'sources': [{'name': 'file_external', 'options': {'path': getcwd()}}]})\|call <SID>startfilter()<CR>
   nnoremap <silent> sp <cmd>call ddu#start({'name': 'default', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}, 'params':{}}]})<CR>
   nnoremap <silent> sj <cmd>Ddu dirmark<CR>
+  nnoremap <silent> sm <cmd>call ddu#start({'sources': [{'name': 'dirmark', 'params': {'group': 'temp'}}]})<CR>
   nnoremap <silent> s_ <cmd>Ddu dein_update<CR>
 
   nnoremap <silent> sv <cmd>call ddu#start({'sources': [{'name': 'tree', 'options': {'path': expand(g:junkfile#directory)}}], 'name': 'prev'})<CR>
@@ -81,17 +91,14 @@ function! s:ddu_mapping() abort
   nnoremap <silent> sk <cmd>call ddu#start({'sources': [{'name': 'lsp_diagnostic', 'params':{'buffer': 0}}]})\|set splitkeep=cursor<CR>
 augroup dduconf
   au!
- autocmd FileType txt,markdown nnoremap <silent><buffer> sk <cmd>Ddu -name=textlint textlint<CR>
- augroup END
-nnoremap <silent> sd <Cmd>call ddu#start(#{sync: v:true, sources: [#{   name: 'lsp_definition', }], uiParams: #{   ff: #{    immediateAction: 'open', },}})<CR>
+  autocmd FileType txt,markdown nnoremap <silent><buffer> sk <cmd>Ddu -name=textlint textlint<CR>
+  augroup END
   nnoremap <silent> <Leader>e <cmd>call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand('%:p:h')}}], 'searchPath': expand('%:p')})<CR>
   nnoremap <silent> <space>E <cmd>call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}}]})<CR>
   " nnoremap <silent> <space>e <cmd>Ddu -name=filer -path=`expand('%:h:p')` file<CR>
   nnoremap <silent> st <cmd> call ddu#start({'name': 'tree',  'options':{'searchPath': ''}, 'sources': [{'name': 'text'}],'resume': v:true, 'refresh':v:true}})<CR>
-
   nnoremap <silent> <C-e> <cmd> if ddu#ui#visible('filer') \| call execute(['wincmd',  win_id2win(ddu#ui#winids('filer')[0]),  'w']->join(' ')) \| else \|
   \ call ddu#start({'name': 'filer', 'sources': [{'name': 'file'}]}) \| endif<CR>
-
 
   inoremap <C-q> <Cmd>call ddu#start(#{
   \   name: 'file',
@@ -107,7 +114,6 @@ nnoremap <silent> sd <Cmd>call ddu#start(#{sync: v:true, sources: [#{   name: 'l
   \     },
   \   },
   \ })<CR>
-
 endfunction
 
 function! s:find_gitdir() abort

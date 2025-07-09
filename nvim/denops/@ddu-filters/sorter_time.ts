@@ -1,10 +1,7 @@
-import {
-  BaseFilter,
-  DduItem,
-  SourceOptions,
-} from "https://deno.land/x/ddu_vim@v3.2.2/types.ts";
-import { Denops } from "https://deno.land/x/ddu_vim@v3.2.2/deps.ts";
-import { relative, resolve } from "https://deno.land/std@0.192.0/path/mod.ts";
+import { DduItem } from "jsr:@shougo/ddu-vim/types";
+import { BaseFilter } from "jsr:@shougo/ddu-vim/filter";
+import { Denops } from "jsr:@denops/std";
+import { resolve } from "https://deno.land/std@0.192.0/path/mod.ts";
 
 type Params = {
   force: boolean;
@@ -25,7 +22,6 @@ export class Filter extends BaseFilter<Params> {
           size: stat?.size,
           time: stat?.atime?.getTime(),
         };
-        console.log(i);
         return i;
       }))
       : args.items;
@@ -38,7 +34,7 @@ export class Filter extends BaseFilter<Params> {
     // }))
     return Promise.resolve(items.sort((a, b) => {
       if (a.status?.time || b.status?.time) {
-        if ((a.status?.time ?? 0) < (b.status?.time ?? 0)) return 1;
+        if ((a.status?.time ?? 0) > (b.status?.time ?? 0)) return 1;
         else return -1;
       }
       return 0;

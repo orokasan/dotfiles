@@ -47,16 +47,17 @@ let g:loaded_tutor_mode_plugin  = 1
 silent! call execute('source ' .. expand('~/local_vimrc'))
 
 if exists('neovide')
-  set guifont=PlemolJP\ Console\ NF:h13:#e-subpixelantialias
-  set linespace=0
+  let g:neovide_title_background_color = luaeval("string.format( '%x', vim.api.nvim_get_hl(0, {id=vim.api.nvim_get_hl_id_by_name('Normal')}).bg)")
+  set guifont=PlemolJP\ Console\ NF:h12.5:#e-subpixelantialias
+  set linespace=1
   let g:neovide_padding_top = 0
   let g:neovide_padding_bottom = 0
   let g:neovide_padding_right = 0
   let g:neovide_padding_left = 0
-  let g:neovide_refresh_rate=60
+  let g:neovide_refresh_rate=90
   let g:neovide_scroll_animation_length = 0.05
   let g:neovide_unlink_border_highlights = v:true
-  let g:neovide_transparency=0.93
+  let g:neovide_opacity=0.93
   let g:neovide_profiler = v:false
   let g:neovide_scroll_animation_far_lines = 1
   let g:neovide_confirm_quit = v:true
@@ -279,7 +280,6 @@ set autoindent
 set nosmartindent
 set shiftwidth=2
 set formatoptions=roqn2M1mj]
-au vimrc FileType * set fo-=o
 set iskeyword+=-,:
 set ignorecase
 set smartcase
@@ -413,6 +413,9 @@ nnoremap q <nop>
 nnoremap Q q
 " for ahk workaround
 " nmap <BS> <C-h>
+if has('win32')
+nmap <BS> <C-h>
+endif
 nnoremap , @q
 xnoremap , @q
 inoremap <C-f> <Right>
@@ -517,7 +520,12 @@ cnoremap z/ ・
 cnoremap z, ●
 cnoremap z<space>  　
 "terminal
-tnoremap <Esc> <C-\><C-n>
+tnoremap <ESC> <c-\><c-n><Plug>(esc)
+nnoremap <Plug>(esc)<ESC> i<ESC>
+tnoremap <C-f> <Right>
+tnoremap <C-b> <Left>
+tnoremap <C-a> <HOME>
+tnoremap <C-e> <END>
 
 nnoremap <silent> \ <Cmd>cd %:h<Bar>echo 'cd: ' . getcwd()<CR>
 nnoremap <silent> \| <Cmd>cd ..<Bar>echo 'cd: ' . getcwd()<CR>
@@ -589,10 +597,10 @@ if s:is_nvim
   nnoremap <F1> <cmd>call vimrc#Highlight_dict()<CR>
 
   autocmd CmdWinEnter [:>] syntax sync minlines=1 maxlines=1
-  hi! link DiagnosticsVirtualTextError Error
-  hi! link DiagnosticsVirtualTextWarning Question
-  sign define DiagnosticSignError text= texthl=DiagnosticVirtualTextError linehl= numhl=
-  sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl= numhl=
+  " hi! link DiagnosticsVirtualTextError Error
+  " hi! link DiagnosticsVirtualTextWarning Question
+  " sign define DiagnosticSignError text= texthl=DiagnosticVirtualTextError linehl= numhl=
+  " sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl= numhl=
   set winbar=%F%m
 else
   set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
@@ -795,20 +803,47 @@ set jumpoptions=stack,view
 endif
 silent! iunmap <C-W>
 nnoremap ` <cmd>call <SID>setqfhint()<CR>
-nnoremap  <Leader>` <cmd>call <SID>saveqfhint()<CR>
+nnoremap  <Leader>` <cmd>call <SID>openqfhint()<CR>
 
 function! s:setqfhint()
 let input = input('Enter: ')
 if input ==# ''
 return
 endif
-call setqflist([{'lnum':line('.'), 'col':col('.'), 'text': input, 'filename': expand('%:p'),'type': 'H'}], 'a')
+call setloclist(winbufnr(bufnr('%')),[{'lnum':line('.'), 'col':col('.'), 'text': input, 'filename': expand('%:p'),'type': 'H'}], 'a')
 call quickfixsync#signs#update()
 return
 endfunction
 
+function! s:findqfhint()
+let qffile = findfile('savehint.vim', ".;")
+if !empty(qffile)
+call  execute('source '.. fnamemodify(qffile, ':p'))
+endif
+endfunction
+
 function! s:saveqfhint()
-let d = getqflist()
+
+endfunction
+
+" autocmd FileType txt,markdown call <SID>findqfhint()
+
+function! s:filter(i,v)
+let v = a:v
+if exists("v['filename']")
+return v:true
+endif
+
+if exists('v["bufnr"]') && v.bufnr ==# bufnr('%')
+call remove(v, 'bufnr')
+let v['filename'] = fnamemodify(bufname(v.bufnr), ':p')
+return v:true
+endif
+return v:false
+endfunction
+
+function! s:openqfhint()
+let d = getloclist(winbufnr(bufnr('%')))
 let l = []
 for i in d
   if i.bufnr ==# bufnr('%')
@@ -819,26 +854,29 @@ for i in d
 endfor
 eval l->sort({i1, i2 ->i1.lnum - i2.lnum})
 edit %:p:h\savehint.vim
-call setline(1, 'call setqflist('.. string(l) .. ')')
+call setline(1, 'call setloclist('..bufnr('%') .. ', ' ..  string(l) .. ')')
 call setline(2, 'call quickfixsync#signs#update()')
+write %:p:h\savehint.vim
 return l
 endfunction
+
+let g:quickfixsync_qftype = 'Location'
 
 function! Loadqfhint()
 let path = expand('%:h')
 endfunction
 
 nnoremap <silent> + :call OpenBrowserSearch(input('Search: '))<CR>
-nnoremap <Leader>l <Cmd>echo getqflist()->filter({_,val -> val.lnum ==# line('.')})->map({_, val -> 'qf: ' .. val.text})->join("\n")<CR>
+nnoremap <Leader>l <Cmd>echo getloclist(winbufnr(bufnr('%')))->filter({_,val -> val.lnum ==# line('.')})->map({_, val -> 'qf: ' .. val.text})->join("\n")<CR>
 " echom call getqflist()
 "  call denops_shared_server#runtray#_execute_script_command('start')
 " autocmd vimrc WinClosed * if nvim_win_get_config(0).focusable && !nvim_win_get_config(0).relative | wincmd p | endif
 " autocmd vimrc WinClosed * echom expand('<afile>')
 
 command! -nargs=? -complete=command MarkdonwToSD  call sd#markdown_to_sd()
-nnoremap <Space>g <cmd>call sd#pagecount()<CR>
+nnoremap <Space><Space>g <cmd>call sd#pagecount()<CR>
 
-au User Ddu:redraw call ddu_history#save_current()
+au User Ddu:uiRedraw call ddu_history#save_current()
 call cmdline#set_option(#{
   \   highlight_prompt: 'Statement',
   \   highlight_window: 'None',
@@ -849,4 +887,32 @@ call cmdline#set_option(#{
 " autocmd User Ddu:ui:ff:openFilterWindow call cmdline#enable()
 " autocmd User Ddu:ui:ff:closeFilterWindow call cmdline#disable()
 " let g:hey_model_name = 'gpt-4o'
+
+nnoremap <silent> <leader>d <cmd>HimalayaWrite<CR>
+
+call execute('source ' .. stdpath('config') .. '/rc/config/ddu_mapping.rc.vim')
+call execute('source ' .. stdpath('config') .. '/rc/config/ddu.rc.vim')
+au vimrc CmdlineLeave * mode
+let g:_ts_force_sync_parsing = v:true
+
+function! UrlEncode(mystring)
+let urlsafe = ""
+for char in a:mystring
+    if matchend(char, '[-_.~a-zA-Z0-9]') >= 0
+        let urlsafe = urlsafe . char
+    else
+        let decimal = char2nr(char)
+        let urlsafe = urlsafe . "%" . printf("%02x", decimal)
+        echom urlsafe
+    endif
+endfor
+return urlsafe
+endfunction
+nnoremap <Leader>i <Cmd>call openbrowser#open('https://mail.google.com/mail/u/0/#search/' .. UrlEncode(input('EmailSearch: ')))<CR>
+
+function! SplitTxt()
+  %s/\v。([^$])/。\r\1/g
+endfunction
+
+set background=dark
 " vim:set foldmethod=marker:

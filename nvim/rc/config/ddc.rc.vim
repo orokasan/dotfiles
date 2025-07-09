@@ -19,7 +19,6 @@ call ddc#custom#patch_global(#{
       \ sourceOptions: #{
       \   lsp: #{
       \     dup: 'keep',
-      \     keywordPattern: '\k+',
       \     forceCompletionPattern: '\.'
       \   },
       \ },
@@ -37,6 +36,7 @@ call ddc#custom#patch_global(#{
 call ddc#custom#patch_global('sourceOptions', {
 \ 'around': {'mark': 'A'},
 \ 'buffer': {'mark': 'B'},
+\ 'lsp': {'mark': 'L'},
 \ 'vsnip': {'dup': 'keep'}
 \ })
 
@@ -58,7 +58,7 @@ call pum#set_option({
 \ 'highlight_scrollbar': 'Title',
 \ 'highlight_selected': 'PmenuSelected',
 \ 'highlight_matches': 'Constant',
-\ 'item_orders': ['abbr', 'space', 'kind', 'space', 'menu', 'info']
+\ 'item_orders': ['abbr', 'space', 'menu', 'kind', 'space','info', ]
 \ })
 
 if has('nvim')

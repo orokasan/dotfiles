@@ -44,12 +44,17 @@ highlight! Underlined cterm=underline gui=underline guifg=NONE guisp=#84a0c6
 highlight! PmenuSelected gui=bold guifg=#e2a478 guibg=#3d425b blend=0
 highlight! link WhiteSpace Comment
 
+hi! link @markup.strong Special
+hi! link @markup.link Float
+hi! link @markup.link.label Function
+hi! link @markup.link.url Normal
+hi! link @markup.raw String
+hi! link @markup.raw.block String
+hi! link @markup.list markdownListMarker
 hi! GitsignsAdd guifg=#8a8a67 guibg=#1e2132
 hi! GitsignsChange guifg=#54909c guibg=#1e2132
-hi! GitSignsDelete guifg=#9c4848 guibg=#1e2132
 hi! link Winbar Function
 hi! link DiagnosticUnderlineError Error
-hi! FloatBorder guifg=#c6c8d1 guibg=#272c42
 hi! NormalNC ctermfg=252 guifg=#c6c8d1
 endfunction
 
@@ -122,6 +127,18 @@ repo = 'thinca/vim-jautil'
 # call extend(myfmt, s:compat)
 
 # function! myfmt.format_normal_mode(lnum, count) abort
+#   let self.textwidth = self.comp_textwidth(1)
+
+#   if self.textwidth == 0
+#     return
+#   endif
+
+#   let offset = 0
+
+#   let para = []
+#   call map(getline(a:lnum, a:lnum + a:count - 1),{ idx, val -> extend(para, [[idx, [val]]]) } )
+#   for [i, lines] in para
+#     let lnum = a:lnum + i + offset
 #   let self.textwidth = self.comp_textwidth(1)
 
 #   if self.textwidth == 0
@@ -225,6 +242,7 @@ repo='Shougo/junkfile.vim'
 hook_add = '''
 nnoremap <silent> <C-T> <Cmd>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
 nnoremap <silent> g<C-T> <Cmd>tabnew<bar>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
+nnoremap <silent> <C-T> <Cmd>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
 nnoremap <C-S> <Cmd>call junkfile#open(strftime('%Y-%m-%d-%H%M%S.'))<CR>
 '''
 
@@ -246,8 +264,9 @@ nnoremap <buffer> <S-tab> F<TAB>
 '''
 
 txt = '''
+lua vim.b.insx_disabled = true
 setlocal textwidth=42
-setlocal noexpandtab
+setlocal expandtab
 nnoremap ]] <Cmd>call search('^\s*\(■\)', "W")<CR>
 nnoremap [[ <Cmd>call search('^\s*\(■\)', "bW")<CR>
 inoremap <buffer> ( （
@@ -255,15 +274,6 @@ inoremap <buffer> ) ）
 inoremap <buffer> z( (
 inoremap <buffer> z) )
 setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
-'''
-
-markdown = '''
-setlocal textwidth=42
-setlocal noexpandtab
-nnoremap ]] <Cmd>call search('^\s*\(■\)', "W")<CR>
-nnoremap [[ <Cmd>call search('^\s*\(■\)', "bW")<CR>
-inoremap <buffer> ( （
-inoremap <buffer> ) ）
 inoremap <buffer> z( (
 inoremap <buffer> z) )
 setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
@@ -275,6 +285,7 @@ setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
 [[plugins]]
 repo = 'farmergreg/vim-lastplace'
 hook_add = '''
+let g:lastplace_ignore = "gitcommit,gitrebase,hgcommit,svn,xxd,mail"
 '''
 
 # [[plugins]]
@@ -288,12 +299,6 @@ repo ='CoderCookE/vim-chatgpt'
 
 # [[plugins]]
 # repo = 'Matts966/skk-vconv.vim'
-[[plugins]]
-repo = 'itchyny/calendar.vim'
-hook_add = '''
-nnoremap <leader>c <Cmd>Calendar -split=horizontal -position=topleft<CR>
-'''
-
 [[plugins]]
 repo = 'wordijp/vim-quickfixsync'
 

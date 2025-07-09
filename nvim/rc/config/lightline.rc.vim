@@ -136,13 +136,20 @@ let s:mode_map = {
     \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL'
     \   }
 function! LLMode()
-    return &filetype is# 'help' ? 'Help' :
+
+    return &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status') ? printf('%d/%d[%d]', line('.'), line('$'), w:ddu_ui_ff_status.maxItems) :
+        \ &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'undotree' ? 'Undotree' :
         \ &previewwindow ? 'preview' :
         \ s:mode_map[mode()]
 endfunction
 
 function! LLMyFilepath()
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+        let done = !w:ddu_ui_ff_status.done ?  '[loading...] ' : fnamemodify(ddu#get_context(b:ddu_ui_name).path, ':~')
+        return done
+    endif
+
     if &filetype =~# s:ignore_filetype
         return ''
     else
@@ -160,7 +167,7 @@ function! LLInactiveFilename()
     if s:ignore_window()
         return LLMode()
     endif
-    return ''
+    return fnamemodify(getcwd(),':~')
 endfunction
 
 function! LLeskk() abort
@@ -180,11 +187,6 @@ function! LLfiletype() abort
 endfunction
 
 function! LLruler() abort
-    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
-        " let done = w:ddu_ui_ff_status.done ? '' : '[loading...]'
-        " return '[' .. done .. ']' .. w:ddu_ui_ff_status.name .. ' ' .. w:ddu_ui_ff_status.maxItems
-        return printf('%d/%d[%d]', line('.'), line('$'), w:ddu_ui_ff_status.maxItems)
-    endif
     if !s:ignore_window()
         return printf('L%3s:C%3s', line('.'), col('.'))
     else
@@ -320,13 +322,13 @@ function! s:llddustatus() abort
     let s:ddustatus = ddu#custom#get_current(b:ddu_ui_name)
 endfunction
 function! LLddu() abort
-    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
-        " let options = get(w:ddu_ui_ff_item.sources[0],'options', {})
-        " let path = len(options) ? get(options,'path','') : getcwd()
+    " if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+    "     " let options = get(w:ddu_ui_ff_item.sources[0],'options', {})
+    "     " let path = len(options) ? get(options,'path','') : getcwd()
 
-        let done = w:ddu_ui_ff_status.done ? '' : '[loading...] '
-        return done
-    endif
+    "     let done = w:ddu_ui_ff_status.done ? '' : '[loading...] '
+    "     return done
+    " endif
     return ''
 endfunction
 

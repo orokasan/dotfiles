@@ -1,15 +1,15 @@
 import {
   ActionFlags,
   Actions,
-  BaseSource,
   Context,
   DduItem,
   Item,
-  SourceOptions,
-} from "https://deno.land/x/ddu_vim@v3.10.0/types.ts";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v3.10.0/deps.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.3/file.ts";
-import { StringReader } from "https://deno.land/std@0.110.0/io/readers.ts";
+  type SourceOptions,
+} from "jsr:@shougo/ddu-vim/types";
+import { BaseSource } from "jsr:@shougo/ddu-vim/source";
+import { Denops } from "jsr:@denops/std";
+import * as fn from "jsr:@denops/std/function";
+import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.5.2/file.ts";
 
 type HighlightGroup = {
   level0: string;
@@ -39,10 +39,10 @@ type AerialItem = {
 };
 
 export class Source extends BaseSource<Params> {
-  kind = "file";
+  override kind = "file";
   word = [];
   private aerialData: AerialItem[] = [];
-  actions: Actions<Params> = {
+  override actions: Actions<Params> = {
     jump: async (args: { denops: Denops; items: DduItem[] }) => {
       const action = args.items[0]?.action as ActionData;
       const lineNr = action.lineNr;
@@ -62,7 +62,7 @@ export class Source extends BaseSource<Params> {
     },
   };
 
-  async onInit(args: {
+  override async onInit(args: {
     denops: Denops;
   }): Promise<void> {
     this.aerialData = await args.denops.eval(
@@ -86,9 +86,9 @@ export class Source extends BaseSource<Params> {
     const res = this.aerialData;
     return new ReadableStream({
       async start(controller) {
-        if (res === null) {
-          return controller.close();
-        }
+        // if (res === null) {
+        //   return controller.close();
+        // }
         const bufnr = args.context.bufNr;
         const bufname = await fn.bufname(args.denops, bufnr);
 
@@ -101,7 +101,7 @@ export class Source extends BaseSource<Params> {
             }
             const lastItem = items.findLast((i) => (i.level == k - 1));
 
-            if (lastItem) {
+            if (lastItem && lastItem.treePath) {
               tpath.unshift(lastItem.treePath[lastItem.treePath.length - 1]);
             }
           }
@@ -115,7 +115,7 @@ export class Source extends BaseSource<Params> {
             const lev = item.level > 3 ? 3 : item.level;
             const aerialLevel = `level${lev}`;
             items.push({
-              word: makeTreepath(item, items).join(""),
+              word: makeTreepath(item, items).join("/"),
               display: " ".repeat(item.level) + word,
               action: {
                 path: bufname,
@@ -129,7 +129,7 @@ export class Source extends BaseSource<Params> {
                   name: `aerial_level${item.level}`,
                   hl_group: args.sourceParams.highlights[aerialLevel],
                   col: 1,
-                  width: 999,
+                  width: 200,
                 },
               ],
               isTree: true,
@@ -137,13 +137,13 @@ export class Source extends BaseSource<Params> {
               level: item.level,
             });
           }
-          if (args.sourceOptions.path) {
-            return items.filter((i) => {
-              return i.treePath.toString().startsWith(
-                args.sourceOptions.path.toString(),
-              ) && i.treePath.length > args.sourceOptions.path.length;
-            });
-          }
+          // if (args.sourceOptions.path) {
+          //   return items.filter((i) => {
+          //     return i.treePath.toString().startsWith(
+          //       args.sourceOptions.path.toString(),
+          //     ) && i.treePath.length > args.sourceOptions.path.length;
+          //   });
+          // }
           return items;
         };
         controller.enqueue(tree());

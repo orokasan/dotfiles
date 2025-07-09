@@ -1,11 +1,11 @@
 import {
-  BaseFilter,
   DduItem,
   SourceOptions,
-} from "https://deno.land/x/ddu_vim@v1.8.0/types.ts";
-import { basename, extname } from "https://deno.land/std@0.149.0/path/mod.ts";
-import { ActionData } from "https://deno.land/x/ddu_kind_file@v0.3.0/file.ts#^";
-import { Denops } from "https://deno.land/x/ddu_vim@v0.14/deps.ts";
+} from "jsr:@shougo/ddu-vim/types";
+import { basename, extname } from "jsr:@std/path";
+import { BaseFilter } from "jsr:@shougo/ddu-vim/filter";
+import { ActionData } from "jsr:@shougo/ddu-kind-file";
+import { Denops } from "jsr:@denops/std";
 
 type Params = Record<never, never>;
 interface IconList {
@@ -17,7 +17,7 @@ export class Filter extends BaseFilter<Params> {
   private extensionPalette = {} as IconList;
   private basenamePalette = {} as IconList;
   private directoryPalette = {} as IconList;
-  async onInit(args: {
+  override async onInit(args: {
     denops: Denops;
   }): Promise<void> {
     this.extensionPalette = await args.denops.eval(

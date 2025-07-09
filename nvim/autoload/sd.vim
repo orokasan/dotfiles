@@ -44,6 +44,7 @@ silent! g/^```\w*/d
 silent! g/^```/d
 
 silent! %s/\v\s*`(.{-})`\s*/〓等幅〓\1〓\/等幅〓/g
+silent! %s/\v《(.{-})》/〓ルビ〓\1〓\/ルビ〓/g
 
 " silent! %s/```\w*//g
 " silent! %s/^|//
@@ -59,7 +60,7 @@ silent! %s/\v^　-----$/◆　◆　◆/
 " /^\v[^〓■○]
 " /^$
 let &wrapscan = s
-call sd#deadlink()
+" call sd#deadlink()
 endfunction
 
 " function! WordFootnoteToSD()
@@ -128,7 +129,6 @@ while search('\*\*' .. a:word.. '\zsx\*\*', 'Wp') > 0
   else
     echoerr a:word .."：本文の参照が抜けている箇所があります。"
     echoerr getline('.')
-    undo
     norm! `'
     return
   endif
@@ -250,7 +250,7 @@ let lineNr = line('$')
 let SDpageNum = (lineNr + 13 * 2) / 2.0 / 40.0
 echom SDpageNum .. 'ページ'
 
-bwipeout! %
+" bwipeout! %
 edit `=file`
 call setpos('.', pos)
 endfunction

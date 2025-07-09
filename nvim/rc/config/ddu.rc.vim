@@ -40,10 +40,6 @@ function! s:ddu_my_open(context) abort
   let config = ddu#custom#get_current(a:context.options.name)
 
   if !isdirectory(action.path)
-    if exists('s:ddu_save_cmap')
-      let key = nvim_replace_termcodes("<ESC>", v:true, v:false, v:true)
-      call nvim_feedkeys(key, 'n', v:false)
-    endif
     call ddu#ui#do_action('itemAction', {'name' : 'open'})
   elseif config.sources[0].name ==# 'file'
     call ddu#ui#do_action('itemAction', {'name' : 'narrow'})
@@ -60,6 +56,26 @@ function! s:ddu_my_open(context) abort
   return
 
 endfunction
+
+function! s:ddu_unzip(context) abort
+  let action = a:context.items[0].action
+  let config = ddu#custom#get_current(a:context.options.name)
+
+  if fnamemodify(action.path, ':e') !=# 'zip'
+    echo 'this is not zip file'
+    return
+  endif
+  let dir = fnamemodify(action.path, ':p:r')
+  if has('win32')
+    call mkdir(dir)
+    call system(['tar', '-xf', action.path, '-C', dir])
+    call ddu#redraw(b:ddu_ui_name, {'method': 'refreshItems'})
+  endif
+  return
+endfunction
+
+call ddu#custom#action('kind', 'file', 'unzip',
+    \  function('s:ddu_unzip'))
 
 call ddu#custom#action('kind', 'file', 'my_open',
     \  function('s:ddu_my_open'))
@@ -136,14 +152,30 @@ endfunction
 
 call ddu#custom#action('kind', 'file', 'file_rec',
     \  function('s:ddu_file_rec'))
+
+function! s:ddu_directory_rec(context) abort
+  " echom a:context
+  let action = a:context.items[0].action
+  if !isdirectory(action.path)
+    return
+  endif
+  if &filetype =~# '\v(ddu-ff|ddu-ff-filter)'
+      call ddu#start({'sources':[{'name':'directory_rec','options':{'path': expand(action.path,':p')}}]})
+    return
+  endif
+endfunction
+
+call ddu#custom#action('kind', 'file', 'directory_rec',
+    \  function('s:ddu_directory_rec'))
+
 function! s:ddu_get_context(context) abort
   let b:ddu_cursor_candidate = a:context
 endfunction
 call ddu#custom#action('kind', 'file', 'get_context',
     \  function('s:ddu_get_context'))
 
-call ddu#custom#alias('source', 'jvgrep', 'grep')
-call ddu#custom#alias('source', 'grep_all', 'grep')
+call ddu#custom#alias('default', 'source', 'jvgrep', 'grep' )
+call ddu#custom#alias('default', 'source', 'grep_all', 'grep' )
 call ddu#custom#patch_global(#{
     \ kindOptions: #{
     \   lsp: #{
@@ -254,14 +286,16 @@ function! s:ddu_ff_back() abort
     return
   endif
   let item = ddu#ui#get_item()
-  let parent = fnamemodify(item.action.path, ':h')
-  if len(w:ddu_ui_ff_status.input) > 0
+  let path = get(item.action, "path", "")
+  let parent = fnamemodify(path, ':h')
+  if len(path) == 0 || len(w:ddu_ui_ff_status.input) > 0
     let key = nvim_replace_termcodes("<C-h>", v:true, v:false, v:true)
     call nvim_feedkeys(key, 'n', v:false)
   else
     call ddu#ui#sync_action('itemAction', {'name' : 'narrow', 'params': { 'path': '..'}})
   endif
-  call ddu#redraw(b:ddu_ui_name, {'searchPath': parent})
+  " let parentItem = ddu#ui#get_item()
+  " call ddu#redraw(b:ddu_ui_name, {'searchPath': parentItem})
 endfunction
 
 function! MyDduWinbarInput()
@@ -285,15 +319,14 @@ endif
 endfunction
 
 function! s:ddu_my_settings() abort
+  if has('nvim')
+    setlocal winbar=
+  endif
   setlocal cursorline
   let save_winhighlight=&winhighlight
   set winhighlight+=CursorLine:DduUnderlined
-  if has('nvim')
-    if expand('%') != 'ddu-ff-side'
-    setlocal winbar=%!MyDduWinbarInput()
-    endif
-  endif
   setlocal signcolumn=no
+  setlocal nonumber
 
   setlocal scrolloff=5
   nnoremap <silent><buffer><expr> j
@@ -317,8 +350,8 @@ function! s:ddu_my_settings() abort
   nnoremap <buffer><silent> \
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'cd'})<CR>
   nnoremap <buffer> h
-      \ <Cmd>call <SID>ddu_ff_back()<CR>
-  " <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
+  \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
+      " \ <Cmd>call <SID>ddu_ff_back()<CR>
 
   " nnoremap <buffer> h <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
   nnoremap <nowait><buffer><silent> m
@@ -333,21 +366,38 @@ function! s:ddu_my_settings() abort
       \ ])<CR>
   nnoremap <buffer><silent> p
       \ <Cmd>call ddu#ui#do_action('toggleAutoAction', {'name': 'preview'})<CR>
+	nnoremap <buffer> <C-p>
+	      \ <Cmd>call ddu#ui#do_action('previewExecute',
+	      \ #{ command: 'execute "normal! \<C-y>"' })<CR>
+	nnoremap <buffer> <C-n>
+	      \ <Cmd>call ddu#ui#do_action('previewExecute',
+	      \ #{ command: 'execute "normal! \<C-e>"' })<CR>
 
-  nnoremap <buffer> x
-      \ <Cmd>call ddu#ui#do_action('itemAction',
-      \ {'name': 'executeSystem', 'params': {'method': 'windows-rundll32'}})<CR>
+  nnoremap <buffer><silent> x
+        \ <Cmd>call <SID>ddu_execute_mapping()<CR>
+
+  function! s:ddu_execute_mapping()
+    if fnamemodify(ddu#ui#get_item().action.path, ':e') ==# 'zip'
+       call ddu#ui#do_action('itemAction',{'name': 'unzip'})
+    else
+       call ddu#ui#do_action('itemAction',{'name': 'executeSystem'})
+    endif
+  endfunction
+
   nnoremap <buffer><silent> u
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'undo'})<CR>
   nnoremap <buffer> X
       \ <Cmd>call ddu#ui#multi_actions([
       \ ['itemAction', {'name': 'narrow', 'params': {'path': ".."}}],
-      \ {'name': 'executeSystem', 'params': {'method': 'windows-rundll32'}})<CR>
+      \ ['itemAction', {'name': 'executeSystem'}],
+      \ ['itemAction', {'name': 'narrow'}]
       \ ])<CR>
   nnoremap <buffer><silent><nowait> m
       \ <Cmd>call ddu#ui#do_action('updateOptions',{'sourceOptions': {ddu#custom#get_current(b:ddu_ui_name).sources[0].name :{'matchers':['matcher_kensaku']}}})<CR>
   nnoremap <buffer><silent> l
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
+  nnoremap <buffer><silent> <C-r>
+  \ <cmd>call ddu#redraw(b:ddu_ui_name, {'method': 'refreshItems'})<CR>
   nnoremap <buffer><silent> <c-l>
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
   nnoremap <buffer><silent> e
@@ -358,6 +408,7 @@ function! s:ddu_my_settings() abort
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR>
   nnoremap <buffer><silent><nowait> <C-g>
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'grep'})<CR>
+  nnoremap <buffer><silent> <C-o> <NOP>
   nnoremap <buffer><silent> q
       \ <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer><silent> i
@@ -412,18 +463,23 @@ endfunction
 
 augroup ddu-user
   au!
-  autocmd User Ddu:ui:ff:closeFilterWindow
-        \ call s:ddu_ff_filter_cleanup()
-  autocmd User Ddu:ui:ff:openFilterWindow
-        \ call s:ddu_ff_filter_my_settings()
+  autocmd User Ddu:uiCloseFilterWindow
+        \ call s:ddu_ff_filter_cleanup() | echohl NONE
+  autocmd User Ddu:uiOpenFilterWindow
+        \ call s:ddu_ff_filter_my_settings() | echohl Constant
   autocmd FileType ddu-ff call s:ddu_my_settings()
   autocmd BufEnter * call s:restore_spk()
   autocmd FileType ddu-ff-filter call s:ddu_my_filter_settings()
 augroup END
 
 let s:ddu_save_cmap = {}
-let s:save_cmap_list = ['<CR>', '<C-j>', '<C-k>', '<C-o>', '<C-l>' ,'<C-h>', '<C-R>', '<C-t>']
+let s:save_cmap_list = ['<CR>', '<C-j>', '<C-k>', '<C-o>', '<C-l>', '<C-R>', '<C-t>', '<C-d>']
 call foreach(s:save_cmap_list, {_, v -> extend(s:ddu_save_cmap, {v : !empty(maparg(v, 'c', v:false, v:true)) ? maparg(v, 'c', v:false, v:true) : ""})})
+
+function! s:escape()
+let key = nvim_replace_termcodes("<ESC>", v:true, v:false, v:true)
+call nvim_feedkeys(key, 'n', v:false)
+endfunction
 
 function! s:ddu_ff_filter_my_settings() abort
   setlocal cursorline
@@ -433,16 +489,17 @@ function! s:ddu_ff_filter_my_settings() abort
   cnoremap  <C-k>
         \ <Cmd>call ddu#ui#do_action('cursorPrevious', {'loop': v:true })<CR>
   cnoremap  <CR>
-      \ <Cmd>call ddu#ui#do_action('itemAction')<CR>
+      \ <Cmd>call <SID>escape()\|call ddu#ui#do_action('itemAction')\|mode<CR>
   cnoremap  <C-t>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'tabedit'}})<CR><ESC>
+      \ <Cmd>call <SID>escape()\|call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'tabedit'}})\|mode<CR><ESC>
   cnoremap  <C-r>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR><C-u>
+      \ <Cmd>call <SID>escape()\|call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})\|mode<CR><C-u>
   cnoremap  <C-l>
-      \ <Cmd>call ddu#ui#do_action('itemAction')<CR>
-  cnoremap <C-h>
-      \ <Cmd>call <SID>ddu_ff_back()<CR>
+      \ <Cmd>call <SID>escape()\|call ddu#ui#do_action('itemAction')\|mode<CR>
+  " cnoremap <C-h>
+  "     \ <Cmd>call <SID>ddu_ff_back()<CR>
   cnoremap <C-o> <ESC>
+  cnoremap <C-d> <ESC><Cmd>call ddu#ui#do_action('quit')<CR>
 endfunction
 
 function! s:ddu_ff_filter_cleanup() abort
@@ -490,7 +547,7 @@ function! s:ddu_filer_my_settings() abort
       \ {'name': 'rename'})<CR>
   nnoremap <buffer> x
       \ <Cmd>call ddu#ui#do_action('itemAction',
-      \ {'name': 'executeSystem', 'params': {'method': 'windows-rundll32'}})<CR>
+      \ {'name': 'executeSystem'})<CR>
   nnoremap <buffer> h
     \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})<CR>
   nnoremap <buffer> P
@@ -571,4 +628,27 @@ call ddu#custom#patch_global(#{
 
 
 lua require("ddurc")
+" Setup dps-yank-history
+
+" Setup ddu.vim
+call ddu#custom#patch_global('sources', [
+      \   {'name': 'yank-history'},
+      \ ])
+call ddu#custom#patch_global('sourceParams', #{
+      \ yank-history: #{
+      \   headerHlGroup: 'Special',
+      \   prefix: 'Hist:',
+      \ }})
+call ddu#custom#patch_global('sourceOptions', #{
+      \ yank-history: #{
+      \   sorters: ['sorter_reversed'],
+      \ }})
+
+ call ddu#custom#alias('default', 'source', 'file_rec_hidden', 'file_external' )
+ call ddu#custom#patch_global('sourceParams', {
+	 \   'file_rec_hidden': {
+	 \     'cmd': ['rg', '--files', '--color', 'never', '--no-binary', '--hidden']
+	 \   },
+	 \ })
+" Setup ddc.vim
 " au dein WinResized * lua require("ddurc")

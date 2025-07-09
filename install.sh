@@ -6,9 +6,12 @@ for f in .??*
 do
   ln -snfv ${DOTPATH}/${f} ${HOME}/${f}
 done
+if [ ! -d ${XDG_CONFIG_HOME} ]; then
+    mkdir -p ${XDG_CONFIG_HOME}
+fi
 
 ln -snfv ${DOTPATH}/nvim ${XDG_CONFIG_HOME}/nvim
-ln -snfv ${DOTPATH}/nvim/init.vim ${HOME}/.vimrc
+# ln -snfv ${DOTPATH}/nvim/init.vim ${HOME}/.vimrc
 
 mkdir ${HOME}/.skk
 curl -o ${HOME}/.skk/SKK-JISYO.L https://raw.githubusercontent.com/skk-dev/dict/master/SKK-JISYO.L

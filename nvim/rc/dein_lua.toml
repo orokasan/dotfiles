@@ -11,7 +11,7 @@ on_event = ['BufRead','BufNew']
 repo = 'neovim/nvim-lspconfig'
 # depend = ['mason.nvim', 'mason-lspconfig.nvim']
 # plugins = ['mason.nvim', 'mason-lspconfig.nvim', 'nvim-lspconfig']
-hook_source = '''
+hook_post_source = '''
 let s:lsptoggle_switch = v:false
 let s:bufnr = 0
 command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
@@ -37,8 +37,7 @@ function! s:lspdefinetoggleaucmd() abort
         echom "Lsp ON"
     endif
 endfunction
-nnoremap <Leader>d <Cmd>LspToggle<CR>
-lua require("masonrc")
+lua require("lsp_rc")
 '''
 
 # [[plugins]]
@@ -48,6 +47,7 @@ lua require("masonrc")
 [[plugins]]
 repo = 'nvim-lua/plenary.nvim'
 on_lua = ["plenary"]
+
 
 [[plugins]]
 repo = 'lukas-reineke/indent-blankline.nvim'
@@ -116,7 +116,7 @@ vim.keymap.set("n", "<Leader>Pc", "<Plug>(YankyPutIndentBeforeCharwise)")
 require("yanky").setup({
   ring = {
     history_length = 100,
-    storage = "memory",
+    storage = "shada",
     sync_with_numbered_registers = true,
     cancel_event = "update",
     ignore_registers = { "_" },
@@ -136,27 +136,28 @@ require("yanky").setup({
 # repo = "sindrets/diffview.nvim"
 
 [[plugins]]
-if = 'executable("gcc")'
 repo = 'nvim-treesitter/nvim-treesitter'
-# lazy = 0
+lazy = 0
 # frozen = 1
-on_event = ['BufRead','BufNew']
-lua_source= '''
-vim.opt.runtimepath:prepend(vim.fn.stdpath("data"))
+# on_event = ['BufRead','BufNew']
+lua_add = '''
+vim.opt.runtimepath:prepend(vim.fn.stdpath("data") .. '/site' )
 require 'nvim-treesitter.configs'.setup {
   ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
-  -- parser_install_dir = vim.api.nvim_eval('g:dein#_cache_path') ..  '/.dein',
-  parser_install_dir = vim.fn.stdpath("data"),
-  -- tree_docs = { enable = false },
+  parser_install_dir = vim.fn.stdpath("data") .. '/site',
+-- tree_docs = { enable = false },
     -- [options]
   highlight = {
     enable = true,
-    -- disable = { "cpp", "toml", "help","vimdoc", "python", "gitcommit"},
+    additional_vim_regex_highlighting = { "php" },
+    disable = { "cpp", "toml", "help","vimdoc", "python", "gitcommit"},
   },
   indent = {
     enable = true
   },
 }
+''''
+lua_post_source= '''
 '''
 
 # [[plugins]]
@@ -193,11 +194,13 @@ au dein ColorScheme * hi! default link HlSearchLens Function
 au dein ColorScheme * hi! default link HlSearchLensNear Constant
 '''
 lua_source = '''
+if vim.call('has','mac') == 0 then
 require('hlslens').setup({
   calm_down = true,
   nearest_only = true,
   nearest_float_when = 'auto',
 })
+end
 '''
 [[plugins]]
 on_cmd = ["Linediff"]
@@ -235,53 +238,53 @@ require'treesitter-context'.setup{
 # on_source = ['nvim-lspconfig']
 # repo = 'lvimuser/lsp-inlayhints.nvim'
 
-[[plugins]]
-repo = 'nvim-treesitter/nvim-treesitter-textobjects'
-on_source = ['nvim-treesitter']
-lua_source = '''
-require'nvim-treesitter.configs'.setup {
-  textobjects = {
-    select = {
-      enable = true,
-      -- Automatically jump forward to textobj, similar to targets.vim
-      lookahead = true,
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        -- ["af"] = "@function.outer",
-        -- ["if"] = "@function.inner",
-        -- ["ac"] = "@class.outer",
-        -- -- You can optionally set descriptions to the mappings (used in the desc parameter of
-        -- -- nvim_buf_set_keymap) which plugins like which-key display
-        -- ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-        -- -- You can also use captures from other query groups like `locals.scm`
-        -- ["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
-      },
-      -- You can choose the select mode (default is charwise 'v')
-      --
-      -- Can also be a function which gets passed a table with the keys
-      -- * query_string: eg '@function.inner'
-      -- * method: eg 'v' or 'o'
-      -- and should return the mode ('v', 'V', or '<c-v>') or a table
-      -- mapping query_strings to modes.
-      selection_modes = {
-        ['@parameter.outer'] = 'v', -- charwise
-        ['@function.outer'] = 'V', -- linewise
-        ['@class.outer'] = '<c-v>', -- blockwise
-      },
-      -- If you set this to `true` (default is `false`) then any textobject is
-      -- extended to include preceding or succeeding whitespace. Succeeding
-      -- whitespace has priority in order to act similarly to eg the built-in
-      -- `ap`.
-      --
-      -- Can also be a function which gets passed a table with the keys
-      -- * query_string: eg '@function.inner'
-      -- * selection_mode: eg 'v'
-      -- and should return true or false
-      include_surrounding_whitespace = true,
-    },
-  },
-}
-'''
+# [[plugins]]
+# repo = 'nvim-treesitter/nvim-treesitter-textobjects'
+# on_source = ['nvim-treesitter']
+# lua_source = '''
+# require'nvim-treesitter.configs'.setup {
+#   textobjects = {
+#     select = {
+#       enable = true,
+#       -- Automatically jump forward to textobj, similar to targets.vim
+#       lookahead = true,
+#       keymaps = {
+#         -- You can use the capture groups defined in textobjects.scm
+#         -- ["af"] = "@function.outer",
+#         -- ["if"] = "@function.inner",
+#         -- ["ac"] = "@class.outer",
+#         -- -- You can optionally set descriptions to the mappings (used in the desc parameter of
+#         -- -- nvim_buf_set_keymap) which plugins like which-key display
+#         -- ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+#         -- -- You can also use captures from other query groups like `locals.scm`
+#         -- ["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
+#       },
+#       -- You can choose the select mode (default is charwise 'v')
+#       --
+#       -- Can also be a function which gets passed a table with the keys
+#       -- * query_string: eg '@function.inner'
+#       -- * method: eg 'v' or 'o'
+#       -- and should return the mode ('v', 'V', or '<c-v>') or a table
+#       -- mapping query_strings to modes.
+#       selection_modes = {
+#         ['@parameter.outer'] = 'v', -- charwise
+#         ['@function.outer'] = 'V', -- linewise
+#         ['@class.outer'] = '<c-v>', -- blockwise
+#       },
+#       -- If you set this to `true` (default is `false`) then any textobject is
+#       -- extended to include preceding or succeeding whitespace. Succeeding
+#       -- whitespace has priority in order to act similarly to eg the built-in
+#       -- `ap`.
+#       --
+#       -- Can also be a function which gets passed a table with the keys
+#       -- * query_string: eg '@function.inner'
+#       -- * selection_mode: eg 'v'
+#       -- and should return true or false
+#       include_surrounding_whitespace = true,
+#     },
+#   },
+# }
+# '''
 
 [[plugins]]
 repo = 'David-Kunz/treesitter-unit'
@@ -296,7 +299,7 @@ onoremap au :<c-u>lua require"treesitter-unit".select(true)<CR>
 [[plugins]]
 # on_cmd = ["AerialOpen"]
 lazy = 1
-# on_lua = ["aerial", "aerial.ddu"]
+on_lua = ["aerial", "aerial.ddu"]
 on_event = ['BufRead','BufNew']
 repo = 'stevearc/aerial.nvim'
 hook_source = '''
@@ -874,7 +877,11 @@ on_attach = function(bufnr)
 repo = 'hrsh7th/nvim-insx'
 on_event = ['InsertEnter', 'CmdlineEnter']
 lua_source = '''
-require('insx.preset.standard').setup( )
+require('insx.preset.standard').setup({
+  cmdline = {enabled = true},
+  fast_wrap = {enabled = true},
+})
+
 local insx = require('insx')
 insx.add(
   "（",
@@ -886,9 +893,6 @@ insx.add(
     insx.with.in_comment(true),
   })
 )
-insx.add('<C-]>', require('insx.recipe.fast_wrap')({
-  close = ')'
-}))
 '''
 
 # [[plugins]]
@@ -1007,30 +1011,58 @@ insx.add('<C-]>', require('insx.recipe.fast_wrap')({
 # require("lspconfig").denols.setup()
 
 [[plugins]]
-lazy = 1
-repo = 'rebelot/terminal.nvim'
-# on_lua = ["terminal"]
-on_cmd = ["TermToggle", "TermRun"]
+repo = 'akinsho/toggleterm.nvim'
+lazy = 0
 hook_add = '''
-autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
-autocmd vimrc TermOpen * startinsert
-autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>TermClose<CR>
-nnoremap <silent> <leader>Ts <cmd>TermSend<CR>
-nnoremap <silent> <leader>t  <cmd>TermToggle<CR>
-nnoremap <silent> <leader>TO <cmd>TermToggle!<CR>
-nnoremap <silent> <leader>Tr <cmd>TermRun<CR>
-nnoremap <silent> <leader>Tr <cmd>TermRun!<CR>
-nnoremap <silent> <leader>Tr <cmd>TermKill<CR>
+" autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted winfixheight winfixwidth
+" autocmd vimrc TermOpen * startinsert
+autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>ToggleTermToggleAll<CR>
+autocmd vimrc TermOpen term://* nnoremap <buffer><silent> i I
+autocmd vimrc TermOpen term://* nnoremap <buffer><silent> <tab> <cmd>lua vim.api.nvim_win_set_height(0, vim.api.nvim_win_get_height(0) == 12 and math.floor(vim.o.lines / 2) or 12)<CR>
+nnoremap <silent> <leader>t <cmd>1ToggleTerm<CR>
+nnoremap <silent> <leader>T <cmd>ToggleTermToggleAll<CR>
+nnoremap <silent> # <Cmd>call execute('99TermExec cmd="' .. input('TermExec: ') .. '" dir=' .. expand('%:p:h') )<CR>
 '''
 lua_post_source = '''
-require('terminal').setup(
-  {
-    layout = { open_cmd = "botright15 new" },
-    cmd = { vim.o.shell },
-    autoclose = true,
-  }
-)
+require("toggleterm").setup({})
 '''
+
+# [[plugins]]
+# lazy = 1
+# repo = 'rebelot/terminal.nvim'
+# on_lua = ["terminal"]
+# # on_cmd = ["TermToggle", "TermRun"]
+# hook_add = '''
+# autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted winfixheight winfixwidth
+# autocmd vimrc TermOpen * startinsert
+# autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>TermClose<CR>
+# '''
+# lua_add = '''
+# local term_map = require("terminal.mappings")
+# vim.keymap.set({ "n", "x" }, "<leader>ts", term_map.operator_send, { expr = true })
+# vim.keymap.set("n", "<leader>to", term_map.toggle)
+# vim.keymap.set("n", "<leader>tO", term_map.toggle({ open_cmd = "enew" }))
+# vim.keymap.set("n", "<leader>tr", term_map.run)
+# vim.keymap.set("n", "<leader>tR", term_map.run(nil, { layout = { open_cmd = "enew" } }))
+# vim.keymap.set("n", "<leader>tk", term_map.kill)
+# vim.keymap.set("n", "<leader>t]", term_map.cycle_next)
+# vim.keymap.set("n", "<leader>t[", term_map.cycle_prev)
+# vim.keymap.set("n", "<leader>tl", term_map.move({ open_cmd = "belowright vnew" }))
+# vim.keymap.set("n", "<leader>tL", term_map.move({ open_cmd = "botright vnew" }))
+# vim.keymap.set("n", "<leader>th", term_map.move({ open_cmd = "belowright new" }))
+# vim.keymap.set("n", "<leader>tH", term_map.move({ open_cmd = "botright new" }))
+# vim.keymap.set("n", "<leader>tf", term_map.move({ open_cmd = "float" }))
+# '''
+
+# lua_source = '''
+# require('terminal').setup(
+#   {
+#     layout = { open_cmd = "belowright15 new" },
+#     cmd = { vim.o.shell },
+#     autoclose = true,
+#   }
+# )
+# '''
 # '''
 
 # [[plugins]]
@@ -1060,3 +1092,76 @@ autocmd! BufEnter * if &ft ==# 'quickrun' | silent call s:baleia.once(bufnr('%')
 [[plugins]]
 repo = 'folke/zen-mode.nvim'
 on_cmd = ['ZenMode']
+
+# [[plugins]]
+# repo = 'pwntester/octo.nvim'
+# on_event = ["BufRead"]
+# lua_source = '''
+# require"octo".setup({
+#   use_local_fs = false,                    -- use local files on right side of reviews
+#   enable_builtin = false,                  -- shows a list of builtin actions when no action is provided
+#   default_remote = {"upstream", "origin"}; -- order to try remotes
+#   default_merge_method = "commit",         -- default merge method which should be used for both `Octo pr merge` and merging from picker, could be `commit`, `rebase` or `squash`
+#   default_delete_branch = false,           -- whether to delete branch when merging pull request with either `Octo pr merge` or from picker (can be overridden with `delete`/`nodelete` argument to `Octo pr merge`)
+#   ssh_aliases = {},                        -- SSH aliases. e.g. `ssh_aliases = {["github.com-work"] = "github.com"}`. The key part will be interpreted as an anchored Lua pattern.
+#   picker = "telescope",                    -- or "fzf-lua"
+#   picker_config = {
+#     use_emojis = false,                    -- only used by "fzf-lua" picker for now
+#     mappings = {                           -- mappings for the pickers
+#       open_in_browser = { lhs = "<C-b>", desc = "open issue in browser" },
+#       copy_url = { lhs = "<C-y>", desc = "copy url to system clipboard" },
+#       checkout_pr = { lhs = "<C-o>", desc = "checkout pull request" },
+#       merge_pr = { lhs = "<C-r>", desc = "merge pull request" },
+#     },
+#   },
+#   comment_icon = "?",                      -- comment marker
+#   outdated_icon = "!",                    -- outdated indicator
+#   resolved_icon = "x",                    -- resolved indicator
+#   reaction_viewer_hint_icon = "*";        -- marker for user reactions
+#   users = "search",                        -- Users for assignees or reviewers. Values: "search" | "mentionable" | "assignable"
+#   user_icon = "Y";                        -- user icon
+#   timeline_marker = "→";                  -- timeline marker
+#   timeline_indent = "2";                   -- timeline indentation
+#   right_bubble_delimiter = ")";            -- bubble delimiter
+#   left_bubble_delimiter = "(";             -- bubble delimiter
+#   github_hostname = "";                    -- GitHub Enterprise host
+#   snippet_context_lines = 4;               -- number or lines around commented lines
+#   gh_cmd = "gh",                           -- Command to use when calling Github CLI
+#   gh_env = {},                             -- extra environment variables to pass on to GitHub CLI, can be a table or function returning a table
+#   timeout = 5000,                          -- timeout for requests between the remote server
+#   default_to_projects_v2 = false,          -- use projects v2 for the `Octo card ...` command by default. Both legacy and v2 commands are available under `Octo cardlegacy ...` and `Octo cardv2 ...` respectively.
+#   ui = {
+#     use_signcolumn = false,                -- show "modified" marks on the sign column
+#     use_signstatus = true,                 -- show "modified" marks on the status column
+#   },
+#   issues = {
+#     order_by = {                           -- criteria to sort results of `Octo issue list`
+#       field = "CREATED_AT",                -- either COMMENTS, CREATED_AT or UPDATED_AT (https://docs.github.com/en/graphql/reference/enums#issueorderfield)
+#       direction = "DESC"                   -- either DESC or ASC (https://docs.github.com/en/graphql/reference/enums#orderdirection)
+#     }
+#   },
+#   reviews = {
+#     auto_show_threads = true,              -- automatically show comment threads on cursor move
+#     focus             = "right",           -- focus right buffer on diff open
+#   },
+#   pull_requests = {
+#     order_by = {                           -- criteria to sort the results of `Octo pr list`
+#       field = "CREATED_AT",                -- either COMMENTS, CREATED_AT or UPDATED_AT (https://docs.github.com/en/graphql/reference/enums#issueorderfield)
+#       direction = "DESC"                   -- either DESC or ASC (https://docs.github.com/en/graphql/reference/enums#orderdirection)
+#     },
+#     always_select_remote_on_create = false -- always give prompt to select base remote repo when creating PRs
+#   },
+#   file_panel = {
+#     size = 10,                             -- changed files panel rows
+#     use_icons = true                       -- use web-devicons in file panel (if false, nvim-web-devicons does not need to be installed)
+#   },
+#   mappings_disable_default = false,        -- disable default mappings if true, but will still adapt user mappings
+# })
+# '''
+
+# [[plugins]]
+# repo = 'nvim-telescope/telescope.nvim'
+
+
+# [[plugins]]
+# repo = 'nvim-tree/nvim-web-devicons'

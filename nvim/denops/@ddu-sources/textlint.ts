@@ -1,13 +1,14 @@
 import {
   ActionFlags,
   Actions,
-  BaseSource,
   Context,
   DduItem,
   Item,
-} from "https://deno.land/x/ddu_vim@v2.8.6/types.ts#^";
+} from "jsr:@shougo/ddu-vim/types";
+import { BaseSource } from "jsr:@shougo/ddu-vim/source";
 import * as LSP from "npm:vscode-languageserver-types@3.17.6-next.1";
-import { Denops, fn } from "https://deno.land/x/ddu_vim@v2.8.6/deps.ts#^";
+import { Denops } from "jsr:@denops/std";
+import * as fn from "jsr:@denops/std/function";
 import { basename } from "https://deno.land/std@0.152.0/path/mod.ts";
 
 type Params = Record<never, never>;
@@ -54,11 +55,11 @@ type NvimLspDiagnostic =
   };
 
 export class Source extends BaseSource<Params> {
-  kind = "file";
-  actions: Actions<Params> = {
+  override kind = "file";
+  override actions: Actions<Params> = {
     highlight: async (args: { denops: Denops; items: DduItem[] }) => {
       const action = args.items[0]?.action as ActionData;
-      const bufwinid = await args.denops.call("bufwinid", action.bufNr);
+      const bufwinid = await fn.bufwinid(args.denops, action.bufNr);
       await args.denops.call("nvim_win_set_cursor", bufwinid, [
         action.lineNr,
         action.col,
@@ -70,11 +71,11 @@ export class Source extends BaseSource<Params> {
       const action = args.items[0]?.action as ActionData;
       const lineNr = action.lineNr;
       const bufNr = action.bufNr;
-      const bufline = await args.denops.call(
-        "getbufline",
+      const bufline = await fn.getbufline(
+        args.denops,
         bufNr,
         lineNr,
-      ) as string[];
+      );
 
       const after = action.after;
       const before = action.before;
@@ -89,7 +90,7 @@ export class Source extends BaseSource<Params> {
             if (--i == 0) return after;
             else return match;
           });
-          await args.denops.call("setbufline", bufNr, lineNr, rep);
+          await fn.setbufline(args.denops, bufNr, lineNr, rep);
           break;
         }
       }
@@ -111,12 +112,12 @@ export class Source extends BaseSource<Params> {
         if (res === null) {
           return controller.close();
         }
-        const bufline = await args.denops.call(
-          "getbufline",
+        const bufline = await fn.getbufline(
+          args.denops,
           args.context.bufNr,
           1,
           "$",
-        ) as string[];
+        );
         const tree = async () => {
           const items: Item<ActionData>[] = [];
           for await (const item of res) {
@@ -147,8 +148,8 @@ export class Source extends BaseSource<Params> {
                 bufNr: item.bufnr,
                 lineNr: lnum,
                 col: col,
-                before: before,
-                after: after,
+                before: before ?? "",
+                after: after ?? "",
               },
             });
           }

@@ -24,6 +24,9 @@ nnoremap <silent> <Leader>gl
 nnoremap <silent> <Leader>ga
 \ <Cmd>Gin ++wait add %:p<bar>Gin commit<CR>
 
+nnoremap <silent> <Leader>ge
+\ <Cmd>call execute('GinEdit ' .. '++opener=tabedit ' .. expand(input('Commit Hash: ')) .. ' %:p')<CR>
+
 let g:gin_proxy_editor_opener='split'
 "nnoremap <silent> <Leader>gc
 "\ <Cmd>GinBuffer ++opener=botright\ split commit<CR>
@@ -76,7 +79,8 @@ function! s:define_gin_local() abort
   setlocal buftype=nofile
   setlocal nobuflisted
   setlocal noswapfile
-  command! -buffer -bar GinLocal execute 'edit' gin#util#expand('%')
+  command! -buffer -bar GinLocal call execute('GinEdit ' .. '++opener=edit ' .. input('hash: ') .. ' %:p')
+  nnoremap <buffer> e <cmd>close<CR>
   nnoremap <buffer> q <cmd>close<CR>
 endfunction
 
@@ -314,8 +318,6 @@ repo = 'Shougo/ddu.vim'
 # rev = 'source-stream'
 # merged = 0
 hook_add = '''
-call execute('source ' .. stdpath('config') .. '/rc/config/ddu_mapping.rc.vim')
-call execute('source ' .. stdpath('config') .. '/rc/config/ddu.rc.vim')
 '''
 hook_source = '''
 '''
@@ -361,8 +363,8 @@ repo = 'shun/ddu-source-rg'
 repo = 'Shougo/ddu-source-action'
 [[plugins]]
 repo = 'kuuote/ddu-matcher-fuse'
-[[plugins]]
-repo = 'matsui54/ddu-filter-fzy'
+# [[plugins]]
+# repo = 'matsui54/ddu-filter-fzy'
 [[plugins]]
 repo = 'Bakudankun/ddu-source-dirmark'
 [[plugins]]
@@ -378,8 +380,9 @@ repo = 'matsui54/ddu-source-dein_update'
 # hook_source = '''
 # " let g:glance#plugins = ['https://esm.sh/markdown-it-checkbox']
 # '''
-[[plugins]]
-repo = 'Shougo/ddu-filter-matcher_hidden'
+# [[plugins]]
+# repo = 'Shougo/ddu-filter-matcher_hidden'
+
 [[plugins]]
 # lazy = 1
 # on_source = ['ddu.vim']
@@ -491,3 +494,17 @@ repo = 'kamecha/ddu-source-tab'
 
 [[plugins]]
 repo = 'tani/hey.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-filter-sorter_reversed'
+
+[[plugins]]
+repo = 'Milly/dps-yank-history'
+hook_add = '''
+let yank_history#persist_path = expand('~/.cache/yank-history.jsonl')
+let yank_history#min_length = 2
+let yank_history#update_duration = 1000
+let yank_history#mtime_margin = 200
+let yank_history#max_items = 100
+let yank_history#truncate_threshold = 0
+'''
