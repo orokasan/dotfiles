@@ -1,7 +1,4 @@
-import {
-  DduItem,
-  SourceOptions,
-} from "jsr:@shougo/ddu-vim/types";
+import { DduItem, SourceOptions } from "jsr:@shougo/ddu-vim/types";
 import { basename, extname } from "jsr:@std/path";
 import { BaseFilter } from "jsr:@shougo/ddu-vim/filter";
 import { ActionData } from "jsr:@shougo/ddu-kind-file";
@@ -9,6 +6,7 @@ import { Denops } from "jsr:@denops/std";
 
 type Params = {
   padding: number;
+  span: number;
   highlights: {
     directoryName: string;
   };
@@ -19,18 +17,13 @@ interface IconList {
 }
 
 export class Filter extends BaseFilter<Params> {
-  private span = 2;
-  private iconWidth = 3;
-  private defaultIcon = "";
-  private initialized: boolean = false;
+  private defaultIcon: string = "";
+  private iconWidth: number = 1;
   private extensionPalette: IconList = {};
   private basenamePalette: IconList = {};
   private directoryPalette: IconList = {};
 
   override async onInit(args: { denops: Denops }): Promise<void> {
-    if (this.initialized) return
-
-    await args.denops.eval("nerdfont#find()");
     this.extensionPalette = (await args.denops.eval(
       "extend(copy(g:nerdfont#path#extension#defaults), g:nerdfont#path#extension#customs,)",
     )) as IconList;
@@ -41,7 +34,7 @@ export class Filter extends BaseFilter<Params> {
       "extend(copy(g:nerdfont#directory#defaults), g:nerdfont#directory#customs,)",
     )) as IconList;
     this.defaultIcon = (await args.denops.eval("g:nerdfont#default")) as string;
-    this.initialized = true
+    this.iconWidth = new Blob([this.defaultIcon]).size;
   }
 
   filter(args: {
@@ -50,55 +43,67 @@ export class Filter extends BaseFilter<Params> {
     filterParams: Params;
     items: DduItem[];
   }): Promise<DduItem[]> {
-    const items = args.items.filter((item) => {
-      const action = item.action as ActionData
-      if (!action || !action.path || !item.word) return true
+    return Promise.resolve(
+      args.items.map((item) => {
+        const action = item.action as ActionData;
 
-      const prefix = this.makePrefix(action, action.path, args.filterParams);
+        if (!action || !action.path || !item.word) return item;
 
-      if (!item.highlights) item.highlights = [];
+        const prefix = this.makePrefix(action, action.path, args.filterParams);
 
-      const text = prefix + (item.display ?? item.word);
-
-      item.highlights.filter((i) =>
-        i.col = i.col + args.filterParams.padding + this.iconWidth + this.span
-      );
-
-      item.display = text;
-      return true;
-    });
-    return Promise.resolve(items);
+        return {
+          ...item,
+          display: prefix + (item.display ?? item.word),
+          highlights: (item.highlights ?? []).map((i) => {
+            return {
+              ...i,
+              col: i.col + args.filterParams.padding +
+                this.iconWidth +
+                args.filterParams.span,
+            };
+          }),
+        };
+      }),
+    );
   }
 
-  private makePrefix(action: ActionData, path: string,  columnParams: Params): string {
-    const isDir = isDirectory(action)
+  private makePrefix(
+    action: ActionData,
+    path: string,
+    filterParams: Params,
+  ): string {
+    const isDir = isDirectory(action);
     const fname: string = getFilename(path, isDir);
     const extention: string = extname(fname).substring(1) ?? "";
 
-    const getIcon = () => {
+    const icon = (() => {
       if (isDirectory(action)) {
-        return action.isLink
-          ? this.directoryPalette.symlink
-          : this.directoryPalette.close;
+        if (action.isLink) {
+          return this.directoryPalette.symlink;
+        } else {
+          return this.directoryPalette.close;
+        }
       } else {
-        return (fname in this.basenamePalette)
-          ? this.basenamePalette[fname]
-          : (extention in this.extensionPalette)
-          ? this.extensionPalette[extention]
-          : this.defaultIcon;
+        if (fname in this.basenamePalette) {
+          return this.basenamePalette[fname];
+        } else if (extention in this.extensionPalette) {
+          return this.extensionPalette[extention];
+        } else {
+          return this.defaultIcon;
+        }
       }
-    };
-    const icon = getIcon();
+    })();
 
     const whitespace = (count: number) => " ".repeat(Math.max(0, count));
-    const span = whitespace(this.span);
-    const padding = whitespace(columnParams.padding);
+    const span = whitespace(filterParams.span);
+    const padding = whitespace(filterParams.padding);
 
     return padding + icon + span;
   }
 
   params(): Params {
     return {
+      span: 2,
       padding: 2,
       highlights: {
         directoryName: "Function",
@@ -112,7 +117,7 @@ function getFilename(path: string, isDir: boolean): string {
 }
 
 function isDirectory(action: ActionData): boolean {
-  if (!action.path) return false
+  if (!action.path) return false;
   return (action.isDirectory) ||
-    (action.path[action.path.length - 1] == "/");
+    (/\/|\\/.test(action.path[action.path.length - 1]));
 }

@@ -33,6 +33,9 @@ vim.fn["ddu#custom#patch_global"](
       },
       github_issue     = {
         defaultAction = 'open'
+      },
+      ui_select        = {
+        defaultAction = 'select'
       }
     },
     kindParams = {
@@ -75,7 +78,7 @@ vim.fn["ddu#custom#patch_global"](
       buffer = { converters = { 'converter_highlight_filename', 'converter_nerdfont' } },
       grep = { converters = {}, },
       dirmark = { sorters = { { name = 'sorter_time', params = { force = true } }, { name = 'sorter_reversed' } }, converters = {}, },
-      tree = { sorters = { }, converters = { { name = 'converter_highlight_filename' }, { name = 'converter_nerdfont' }, { name = 'filter_hidden', params = { hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini', 'prh' } } } } },
+      tree = { sorters = {}, converters = { { name = 'converter_highlight_filename' }, { name = 'converter_nerdfont' }, { name = 'filter_hidden', params = { hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini', 'prh' } } } } },
       dein = { sorters = {} },
       text = { converters = {} },
       aerial = {
@@ -91,17 +94,26 @@ vim.fn["ddu#custom#patch_global"](
         converters = {}
       },
       miniyank = { converters = {} },
-      searchres = { matchers = { 'highlight_searchres', 'merge' } },
+      searchres = { matchers = { 'merge' }, converters = {} },
       file_old = { matchers = { 'converter_unique', 'matcher_fzy', }, converters = { 'converter_highlight_filename', }, },
       mr = {
         matchers = { 'merge' },
         converters = { 'converter_relative', 'converter_unique', 'converter_highlight_filename', 'converter_nerdfont' },
         sorters = {},
       },
+      lsp_diagnostic = {
+        defaultAction = 'open'
+      },
+      lsp_documentSymbol = {
+        converters = { 'converter_lsp_symbol' }
+      },
+      lsp_workspaceSymbol = {
+        converters = { 'converter_lsp_symbol' }
+      },
     },
     actionParams = {
       executeSystem = {
-        method = "windows-rundll32"
+        method = vim.uv.os_uname().sysname == "Windows_NT" and "windows-rundll32" or ""
       }
     },
     profile = false,
@@ -142,6 +154,7 @@ vim.fn["ddu#custom#patch_global"](
     uiOptions = {
       _ = {
         filterPrompt = '  # ',
+        filterUpdateCallback = 'DduFilterCallback',
       },
     },
     uiParams = {
@@ -149,6 +162,7 @@ vim.fn["ddu#custom#patch_global"](
         previewFloating = true,
         filterFloatingPosition = 'top',
         floatingBorder = 'none',
+        maxHighlightItems = 100000,
         highlights = {
           prompt = 'Function',
           selected = 'Visual',
@@ -210,6 +224,9 @@ vim.fn["ddu#custom#patch_global"](
       },
       filter_hidden = {
         hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini' }
+      },
+      converter_highlight_filename = {
+        maxItem = 0
       }
     },
     columnParams = {
@@ -235,6 +252,9 @@ vim.fn["ddu#custom#patch_global"](
       unzip = {
         quit = false,
       },
+      my_execute = {
+        quit = false,
+      },
       echoDiff = {
         quit = false,
       },
@@ -251,6 +271,7 @@ vim.fn["ddu#custom#patch_global"](
       rename = { quit = false },
       newFile = { quit = false },
       newDirectory = { quit = false },
+      git_log = { quit = false },
     },
   }
 )
@@ -352,6 +373,92 @@ vim.fn["ddu#custom#patch_local"](
       _ = {
         quit = true,
       },
+    }
+  }
+)
+
+vim.fn["ddu#custom#patch_local"](
+  'prev',
+  {
+    ui = 'ff',
+    uiParams = {
+      ff = {
+        startAutoAction = true,
+        autoAction = {
+          name = 'preview',
+          sync = false
+        }
+      }
+    }
+
+  }
+)
+
+vim.fn["ddu#custom#patch_local"](
+  'textlint', {
+    ui = 'ff',
+    sourceOptions = {
+      textlint = {
+        defaultAction = 'open'
+      }
+    },
+    actionParams = {
+      open = {
+        command = 'drop',
+      }
+    },
+    actionOptions = {
+      open = {
+        quit = false
+      }
+    },
+    uiParams = {
+      ff = {
+        split = 'vertical',
+        splitDirection = 'belowright',
+        startAutoAction = true,
+        autoAction = {
+          name = 'itemAction',
+          params = {
+            name = 'highlight'
+          }
+        }
+      }
+    }
+  }
+)
+
+vim.fn["ddu#custom#patch_local"](
+  'float', {
+    ui = 'ff',
+    uiParams = {
+      ff = {
+        split = 'floating',
+        winWidth = vim.o.columns - 10,
+        winCol = 5
+      }
+    }
+
+  }
+)
+vim.fn["ddu#custom#patch_local"](
+  'nocolumn', {
+    ui = 'ff',
+    sourceOptions = {
+      _ = {
+        columns = { 'icons' }
+      }
+    }
+  }
+)
+
+vim.fn["ddu#custom#patch_local"](
+  'ui-select', {
+    ui = 'ff',
+    uiParams = {
+      ff = {
+        split = 'floating'
+      }
     }
   }
 )

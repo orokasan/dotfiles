@@ -4,7 +4,9 @@ import { Denops } from "jsr:@denops/std";
 import { basename } from "jsr:@std/path";
 import { ActionData } from "jsr:@shougo/ddu-kind-file";
 
-type Params = Record<never, never>;
+type Params = {
+  maxItem: number;
+};
 
 function get_string_byte_count(str: string) {
   const blob = new Blob([str], { type: "text/plain" });
@@ -19,7 +21,10 @@ export class Filter extends BaseFilter<Params> {
     input: string;
     items: DduItem[];
   }): Promise<DduItem[]> {
-    if (args.items.length > 1000) return Promise.resolve(args.items);
+    if (
+      args.filterParams.maxItem &&
+      args.items.length > args.filterParams.maxItem
+    ) return Promise.resolve(args.items);
 
     return Promise.resolve(args.items.filter((v) => {
       const action = v.action as ActionData;
@@ -27,14 +32,14 @@ export class Filter extends BaseFilter<Params> {
       if (!v.highlights) v.highlights = [];
       const display = v.display ?? v.word;
       const width = get_string_byte_count(display) -
-        get_string_byte_count(basename(display)) - 1;
+        get_string_byte_count(basename(display));
       if (width > 0 || action.isDirectory) {
         v.highlights.push(
           {
             name: "hl_dirname",
             hl_group: "Function",
             col: 1,
-            width: width,
+            width: width - (action.isDirectory ? 1 : 0),
           },
         );
       }
@@ -43,6 +48,8 @@ export class Filter extends BaseFilter<Params> {
   }
 
   params(): Params {
-    return {};
+    return {
+      maxItem: 1000,
+    };
   }
 }

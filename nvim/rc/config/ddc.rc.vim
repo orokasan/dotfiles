@@ -12,6 +12,7 @@ call ddc#custom#patch_global('sourceOptions', {
   \ 'converters': ['converter_remove_overlap'],
 \     },
 \ 'skkeleton': {'mark': 'skk', 'matchers': [], 'sorters': [], 'isVolatile': v:true,'minAutoCompleteLength' :1},
+\ 'skkeleton_okuri': {'mark': 'skk', 'matchers': [], 'sorters': [], 'isVolatile': v:true,'minAutoCompleteLength' :1},
 \ 'vsnip': {'matchers': ['matcher_head'], 'minAutoCompleteLength' :2},
 \ })
 
@@ -65,6 +66,7 @@ if has('nvim')
 call ddc#custom#patch_global('sources', [
 \ 'vsnip',
 \ 'skkeleton',
+\ 'skkeleton_okuri',
 \ 'lsp',
 \ 'buffer',
 \ ])

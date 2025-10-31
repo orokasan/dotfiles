@@ -23,8 +23,7 @@ function! s:ddu_mapping() abort
       \ \| call <SID>startfilter()<CR>
   nnoremap <silent> s- <cmd>Ddu
       \ -name=default
-      \ dein
-      \ \| call <SID>startfilter()<CR>
+      \ dein<CR>
   nnoremap <silent> sN <cmd>Ddu
       \ -name=default
       \ mr -source-param-kind='mrw'<CR>
@@ -55,7 +54,7 @@ function! s:ddu_mapping() abort
   nnoremap <silent> sy <cmd>Ddu
       \ -name=word
       \ -name=float
-      \ yank-history<CR>
+      \ yanky<CR>
   nnoremap <silent> sl <cmd>Ddu
       \ ddu_history<CR>
 

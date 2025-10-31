@@ -26,7 +26,7 @@ export class Filter extends BaseFilter<Params> {
       i.highlights.push(
         {
           name: "word",
-          hl_group: "Function",
+          hl_group: "Error",
           col: `${action?.lineNr}:`.length + (action?.col ?? 0) + 1,
           width: get_string_byte_count(aword),
         },

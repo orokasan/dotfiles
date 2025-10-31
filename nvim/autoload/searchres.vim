@@ -19,3 +19,7 @@ function! searchres#getsearchresult(pattern)
   " echom result
   return result
 endfunction
+
+function! searchres#getTrimPos(str, bytelength)
+    return strchars(strpart(a:str, 0, a:bytelength))
+endfunction

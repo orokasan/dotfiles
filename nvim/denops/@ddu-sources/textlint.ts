@@ -64,6 +64,7 @@ export class Source extends BaseSource<Params> {
         action.lineNr,
         action.col,
       ]);
+      await args.denops.cmd(`windo normal zz`);
       return Promise.resolve(ActionFlags.Persist);
     },
 

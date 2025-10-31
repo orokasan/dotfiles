@@ -133,10 +133,9 @@ endfunction
 
 let s:mode_map = {
     \     'n': 'NORMAL', 'i': 'INSERT', 'R': 'REPLACE', 'v': 'VISUAL', 'V': 'V-LINE', "\<C-v>": 'V-BLOCK',
-    \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL'
+    \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL', 'r': '',
     \   }
 function! LLMode()
-
     return &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status') ? printf('%d/%d[%d]', line('.'), line('$'), w:ddu_ui_ff_status.maxItems) :
         \ &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'undotree' ? 'Undotree' :
@@ -265,12 +264,12 @@ endfunction
 
 let s:llgitbranch = ''
 let s:llgittrafic = ''
-augroup my_gin_component
-  autocmd!
-  autocmd User GinComponentPost redrawstatus
-  " Or if you use tabline instead
-  "autocmd User GinComponentPost redrawtabline
-augroup END
+"augroup my_gin_component
+"  autocmd!
+"  autocmd User GinComponentPost redrawstatus
+"  " Or if you use tabline instead
+"  "autocmd User GinComponentPost redrawtabline
+"augroup END
 function! LLgit() abort
     if s:ignore_window()
         return ''
@@ -283,7 +282,7 @@ function! LLgitUpstream()
     if s:ignore_window()
         return ''
     else
-      return gin#component#traffic#unicode()
+      return ''
     endif
 endfunction
 
@@ -296,7 +295,7 @@ function! s:llgitcache() abort
     if s:ignore_window()
         return ''
     else
-        let s:llgitbranch = ''. gin#component#branch#unicode()
+        let s:llgitbranch = ''. gitbranch#name()
         " return s:threshold(1) ? ' '. s:llgitbranch :
         " \ s:threshold(2) ? '' :''
     endif

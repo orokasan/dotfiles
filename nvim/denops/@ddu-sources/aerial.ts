@@ -69,7 +69,13 @@ export class Source extends BaseSource<Params> {
       `luaeval("require('aerial.ddu').get_labels()")`,
     ) as AerialItem[];
   }
-  async checkItems(args: {
+  // override async checkUpdated(args: {
+  //   denops: Denops;
+  // }): Promise<boolean> {
+  //   return !await args.denops.eval(`&modified`) as boolean
+  // }
+
+  override async onEvent(args: {
     denops: Denops;
   }): Promise<void> {
     this.aerialData = await args.denops.eval(
@@ -155,9 +161,9 @@ export class Source extends BaseSource<Params> {
     return {
       path: "",
       highlights: {
-        level0: "Constant",
-        level1: "Function",
-        level2: "Normal",
+        level0: "Title",
+        level1: "Constant",
+        level2: "Function",
         level3: "Normal",
       },
     };

@@ -211,6 +211,7 @@ au dein VimEnter * let g:glyph_palette#palette = copy(g:glyph_palette#defaults#p
 au dein VimEnter * let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
 au dein VimEnter * call nerdfont#find('.')
 endif
+ let g:nerdfont#autofix_cellwidths = 1
 let g:glyph_palette#palette = copy(g:glyph_palette#defaults#palette)
 let g:glyph_palette#palette['GlyphPaletteDirectory'] += ['','', '']
 let g:nerdfont#directory#customs = {
@@ -229,7 +230,12 @@ let g:nerdfont#path#extension#customs = {
     \'pptx' :  '',
     \'ppt' :  '',
     \'tex' :  '',
-    \'zip': ''
+    \'zip': '',
+    \'toml': '',
+    \'yaml': '',
+    \'yml': '',
+    \'scm': '󿭇',
+    \'xml': '',
     \}
 augroup my-glyph-palette
   autocmd! *
@@ -277,6 +283,11 @@ setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
 inoremap <buffer> z( (
 inoremap <buffer> z) )
 setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
+'''
+
+markdown = '''
+setlocal listchars=tab:^-,space:␣,extends:\ ,precedes:«,nbsp:%,eol:$
+set shiftwidth=2
 '''
 
 # [[plugins]]

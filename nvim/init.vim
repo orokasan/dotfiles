@@ -48,7 +48,8 @@ silent! call execute('source ' .. expand('~/local_vimrc'))
 
 if exists('neovide')
   let g:neovide_title_background_color = luaeval("string.format( '%x', vim.api.nvim_get_hl(0, {id=vim.api.nvim_get_hl_id_by_name('Normal')}).bg)")
-  set guifont=PlemolJP\ Console\ NF:h12.5:#e-subpixelantialias
+  " set guifont=PlemolJP\ Console\ NF:h12.5:#e-subpixelantialias
+  set guifont=Cica:h14:#e-subpixelantialias
   set linespace=1
   let g:neovide_padding_top = 0
   let g:neovide_padding_bottom = 0
@@ -94,43 +95,6 @@ else
 endif
 "---------------------------------------------------------------------
 let mapleader = "\<Space>"
-
-" const s:dpp_base = '~/.cache/dpp/'
-
-" " Set dpp source path (required)
-" const s:dpp_src = '~/.cache/dpp/repos/github.com/Shougo/dpp.vim'
-" const s:dpp_ext = [
-" \ 'Shougo/dpp-ext-installer',
-" \ 'Shougo/dpp-ext-lazy',
-" \ 'Shougo/dpp-ext-toml',
-" \ 'Shougo/dpp-ext-local',
-" \ 'Shougo/dpp-protocol-git',
-" \ ]
-" const s:denops_src = '~/.cache/dpp/repos/github.com/vim-denops/denops.vim'
-
-" " Set dpp runtime path (required)
-" execute 'set runtimepath^=' .. s:dpp_src
-" for item in s:dpp_ext
-"   execute 'set runtimepath+=~/.cache/dpp/repos/github.com/' . item
-" endfor
-
-" if dpp#min#load_state(s:dpp_base)
-"   " NOTE: dpp#make_state() requires denops.vim
-" endif
-"   execute 'set runtimepath^=' .. s:denops_src
-"   autocmd User DenopsReady
-"   \ call dpp#make_state(s:dpp_base, expand('~/dotfiles/nvim/dpp_config.ts'))
-
-" " Attempt to determine the type of a file based on its name and
-" " possibly its " contents. Use this to allow intelligent
-" " auto-indenting " for each filetype, and for plugins that are
-" " filetype specific.
-" filetype indent plugin on
-
-" " Enable syntax highlighting
-" if has('syntax')
-"   syntax on
-" endif
 
 let $CACHE = expand('~/.cache')
 if !isdirectory($CACHE)
@@ -186,7 +150,7 @@ endif
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-command! -nargs=? -complete=command UpdateConflictPlugin Gin ++wait stash | Gin ++wait pull | Gin ++wait stash pop
+command! -nargs=? -complete=command UpdateConflictPlugin Gina stash | Gina pull | Gina  stash pop
 if !v:vim_did_enter
   function! DeinLoader() abort
     source $MYVIMRC
@@ -347,6 +311,9 @@ vnoremap <S-l> g_
 vnoremap <S-h> ^
 onoremap <S-l> $
 onoremap <S-h> ^
+
+nnoremap <silent> } }j
+nnoremap <silent><expr> { getline(line('.') - 1) =~# '^\s*$' ? "2{j" : "{j"
 
 nnoremap <C-f> <Cmd>call <SID>zz_if_not_near_eof()<CR>
 nnoremap <C-b> <C-b><Cmd>call <SID>zz_C_B()<CR>
@@ -530,6 +497,7 @@ tnoremap <C-e> <END>
 nnoremap <silent> \ <Cmd>cd %:h<Bar>echo 'cd: ' . getcwd()<CR>
 nnoremap <silent> \| <Cmd>cd ..<Bar>echo 'cd: ' . getcwd()<CR>
 autocmd FileType help nnoremap <buffer> q <C-w>c
+autocmd FileType mail nnoremap <buffer> q <C-w>c
 " move between windows
 nnoremap <C-w>w <C-w>p
 nnoremap <C-w><C-w> <C-w>p
@@ -576,7 +544,7 @@ if has('GUI')
   let &guioptions = substitute(&guioptions, '[mTlLbeg]', '', 'g')
   set guioptions+=Mc!
   set renderoptions=type:directx,renmode:5,geom:1
-  set guifont:HackGen\ Console\ NFJ:h11
+  set guifont=HackGen\ Console\ NFJ:h11
   set imsearch=0
 endif
 
@@ -775,7 +743,7 @@ endfunction
 imap <C-h> <BS>
 nmap g<c-g> <Cmd>call Toggle_count_display_line()<CR>
 autocmd TabClosed * if tabpagenr('$') >= expand('<afile>') | execute('tabnext ' .. (expand('<afile>') -1 ? expand('<afile>') -1 : 1 )) | endif
-set splitkeep=cursor
+set splitkeep=topline
 let g:nerdfont#autofix_cellwidths = v:false
 
 function! WASD() abort
@@ -915,4 +883,7 @@ function! SplitTxt()
 endfunction
 
 set background=dark
+set messagesopt=hit-enter,history:500,wait:1000
+nnoremap <leader>p <Cmd>TermExec name=markdownserver cmd="gh markdown-preview --markdown-mode %"<CR>
+set nofixeol
 " vim:set foldmethod=marker:

@@ -37,6 +37,8 @@ function! s:lspdefinetoggleaucmd() abort
         echom "Lsp ON"
     endif
 endfunction
+nnoremap <leader><leader>l <Cmd>LspStart<CR>
+nnoremap <leader><leader>L <Cmd>LspStop<CR>
 lua require("lsp_rc")
 '''
 
@@ -152,9 +154,6 @@ require 'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = { "php" },
     disable = { "cpp", "toml", "help","vimdoc", "python", "gitcommit"},
   },
-  indent = {
-    enable = true
-  },
 }
 ''''
 lua_post_source= '''
@@ -194,13 +193,11 @@ au dein ColorScheme * hi! default link HlSearchLens Function
 au dein ColorScheme * hi! default link HlSearchLensNear Constant
 '''
 lua_source = '''
-if vim.call('has','mac') == 0 then
 require('hlslens').setup({
   calm_down = true,
   nearest_only = true,
   nearest_float_when = 'auto',
 })
-end
 '''
 [[plugins]]
 on_cmd = ["Linediff"]
@@ -668,9 +665,9 @@ require("dial.config").augends:register_group{
     augend.integer.alias.decimal,
    augend.integer.alias.hex,
    augend.date.alias["%Y/%m/%d"],
-   -- augend.date.alias["%Y年%-m月%-d日(%ja)"],
+   augend.date.alias["%Y年%-m月%-d日(%ja)"],
    augend.date.alias["%Y年%-m月%-d日"],
-   -- augend.date.alias["%Y年%-m月%-d日（%ja）"],
+   augend.date.alias["%Y年%-m月%-d日（%ja）"],
    -- augend.date.alias["%-m月%-d日（%ja）"],
     augend.constant.alias.ja_weekday,
     augend.constant.alias.ja_weekday_full,
@@ -878,7 +875,7 @@ repo = 'hrsh7th/nvim-insx'
 on_event = ['InsertEnter', 'CmdlineEnter']
 lua_source = '''
 require('insx.preset.standard').setup({
-  cmdline = {enabled = true},
+  cmdline = {enabled = false},
   fast_wrap = {enabled = true},
 })
 
@@ -1012,7 +1009,7 @@ insx.add(
 
 [[plugins]]
 repo = 'akinsho/toggleterm.nvim'
-lazy = 0
+lazy = 1
 hook_add = '''
 " autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted winfixheight winfixwidth
 " autocmd vimrc TermOpen * startinsert

@@ -8,11 +8,12 @@ import {
 } from "jsr:@shougo/ddu-vim/types";
 import { BaseSource } from "jsr:@shougo/ddu-vim/source";
 import { Denops } from "jsr:@denops/std";
-import { type ActionData } from "jsr:@shougo/ddu-kind-word";
-import { difference } from "jsr:@std/datetime";
-import { type DifferenceFormat } from "jsr:@std/datetime";
 
 type Params = Record<number | string | symbol, never>;
+
+export type ActionData = {
+  context: DduOptions;
+};
 
 type HistoryData = {
   timestamp: number;
@@ -25,8 +26,8 @@ export class Source extends BaseSource<Params> {
   override actions: Actions<Params> = {
     start: async (args: { denops: Denops; items: DduItem[] }) => {
       for (const item of args.items) {
-        const action = item.action?.text as ActionData;
-        await args.denops.call("ddu#start", action);
+        const ddu_context = (item.action as ActionData).context;
+        await args.denops.call("ddu#start", ddu_context);
       }
       return Promise.resolve(ActionFlags.None);
     },
@@ -45,38 +46,11 @@ export class Source extends BaseSource<Params> {
         ) as HistoryData[];
         let i = 0;
         for (const v of data) {
-          const gettime = (start: number) => {
-            const diff = difference(
-              new Date(),
-              new Date(Number(start) * 1000),
-              {
-                units: ["hours", "minutes", "seconds"],
-              },
-            ) as DifferenceFormat;
-            const h = diff.hours ?? 0;
-            const m = diff.minutes ? diff.minutes - h * 60 : 0;
-            const s = diff.seconds
-              ? diff.seconds - (diff.minutes ?? 0) * 60
-              : 0;
-            const time = h > 0
-              ? m > 0 ? `${h}h${m}` : `${s}s`
-              : m > 0
-              ? `${m}m${s}s`
-              : `${s}s`;
-
-            return time;
-          };
-          const source_name: string = v.option.sources[0]?.name;
+          const source = v.option.sources[0];
+          const source_name = typeof source === "string" ? source : source.name;
           if (source_name === "ddu_history") continue;
-          const path = v.option.sources[0]?.options?.path;
-          // const word = `[${gettime(v.timestamp).padStart(6, " ")}] Source: ${
-          //   source_name.padEnd(15, " ")
-          // }  Path: ${
-          //   path ? await args.denops.call("fnamemodify", path, ":~") : ""
-          // }`;
-          const word = `Source: ${
-            source_name.padEnd(15, " ")
-          }  Path: ${
+          const path = typeof source !== "string" ? source.options?.path : "";
+          const word = `Source: ${source_name.padEnd(15, " ")}  Path: ${
             path ? await args.denops.call("fnamemodify", path, ":~") : ""
           }`;
           i += 1;
@@ -84,7 +58,7 @@ export class Source extends BaseSource<Params> {
             word: word,
             display: word,
             action: {
-              text: v.option,
+              context: v.option,
             },
             highlights: [{
               name: "ddu_history_source_name",
