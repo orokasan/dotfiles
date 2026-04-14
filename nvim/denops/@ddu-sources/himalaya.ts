@@ -8,11 +8,12 @@ import { StringReader } from "https://deno.land/std@0.110.0/io/readers.ts";
 type Params = {
   args: string[];
   page: number;
+  display_receiver: boolean;
   folder: string;
 };
 
 export class Source extends BaseSource<Params> {
-  override kind = "himalaya";
+  kind = "himalaya";
 
   gather(args: {
     denops: Denops;
@@ -29,6 +30,7 @@ export class Source extends BaseSource<Params> {
           v: {
             flags: string[];
             has_attachment: boolean;
+            to: { name: string; addr: string };
             from: { name: string; addr: string };
             subject: string;
             date: string;
@@ -40,11 +42,11 @@ export class Source extends BaseSource<Params> {
           const answerd = v.flags.includes("Answered") ? "R" : " ";
           const att = v.has_attachment ? "A" : " ";
 
-          const from = `<${v.from.name ?? v.from.addr}>`;
+          const addr = args.sourceParams.display_receiver ? `<${v.to.name ?? v.to.addr}>` : `<${v.from.name ?? v.from.addr}>`
           const header =
-            `[${seen}${answerd}${att}] ${v.subject} ${from} ${v.date}`;
+            `[${seen}${answerd}${att}] ${v.subject} ${addr} ${v.date}`;
           const word =
-            `[${seen}${answerd}${att}] ${v.subject} ${from}<${v.from.addr}> ${v.date}`;
+            `[${seen}${answerd}${att}] ${v.subject} ${addr}<${v.from.addr}> ${v.date}`;
           return {
             word: word,
             display: header,
@@ -73,8 +75,8 @@ export class Source extends BaseSource<Params> {
                 name: "hl_himalaya_from",
                 hl_group: "Comment",
                 col: new StringReader(header).length -
-                  new StringReader(from + v.date).length,
-                width: new StringReader(from).length,
+                  new StringReader(addr + v.date).length,
+                width: new StringReader(addr).length,
               },
               {
                 name: "hl_himalaya_date",
@@ -94,6 +96,7 @@ export class Source extends BaseSource<Params> {
 
         const cmd = [
           "himalaya",
+          "--quiet",
           "--output",
           "json",
           "envelope",
@@ -134,6 +137,7 @@ export class Source extends BaseSource<Params> {
     return {
       args: [],
       folder: "INBOX",
+      display_receiver: false,
       page: 300,
     };
   }

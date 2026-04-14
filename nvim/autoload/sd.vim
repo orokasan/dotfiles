@@ -32,8 +32,9 @@ endwhile
 silent! %s/\v!\[(.*)\]\((.*)\)/\1\r\2
 
 silent! %s/\v\*\*(.{-})\*\*/〓太〓\1〓\/太〓/g
+silent! %s/\v\*(.{-})\*/〓斜〓\1〓\/斜〓/g
 
-silent! %s/\v^```.*\n(\_.{-})```/〓リ\/〓\r\1〓\\リ〓
+silent! %s/\v^```.*\n(\_.{-})```/〓リ\/〓\r\1〓\/リ〓
 
 silent! %s/\v\s*`(.{-})`\s*/〓等幅〓\1〓\/等幅〓/g
 silent! %s/\v《(.{-})》/〓ルビ〓\1〓\/ルビ〓/g
@@ -48,7 +49,7 @@ silent! %s/\v^　-----$/◆　◆　◆/
 call setline('$', getline('$') .. '〓SD〓')
 
 let &wrapscan = s
-call sd#deadlink()
+" echom sd#deadlink()
 endfunction
 
 
@@ -214,7 +215,9 @@ endfunction
 
 
 function! sd#deadlink()
+  let mes = []
   if search('\(https:\|http:\)', 'np') > 0
-    echom system(['textlint', '--no-textlintrc', '-f', 'compact', '--rule', 'textlint-rule-no-dead-link', expand('%')])
+      call insert(mes, system(['textlint', '--no-textlintrc', '-f', 'compact', '--rule', 'textlint-rule-no-dead-link', expand('%')]))
   endif
+  return mes
 endfunction

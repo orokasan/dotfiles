@@ -2,20 +2,65 @@ function! s:ddu_my_open(context) abort
   let mode = mode()
   let action = a:context.items[0].action
   let config = ddu#custom#get_current(a:context.options.name)
+  let is_insert = v:false
+
+  if w:ddu_ui_ff_status.input !=# ''
+    let key = nvim_replace_termcodes("<C-u><ESC>", v:true, v:false, v:true)
+    call nvim_feedkeys(key, 'n', v:false)
+    let is_insert = v:true
+  endif
 
   if !isdirectory(action.path)
     call ddu#ui#do_action('itemAction', {'name' : 'open'})
+
   elseif config.sources[0].name ==# 'file'
     call ddu#ui#do_action('itemAction', {'name' : 'narrow'})
   else
-    call ddu#start({'sources':[{'name':'file', 'options':{'path': fnamemodify(action.path,':p')}}], 'ui': config.ui, })
-    " call ddu#ui#do_action('updateOptions',{'sources':[{'name':'file', 'options':{'path': expand(action.path,':p')}}], 'ui': config.ui, })
+    call ddu#ui#do_action('updateOptions',{'sources':[{'name':'file', 'options':{'path': expand(action.path,':p')}}] , })
     call ddu#redraw(b:ddu_ui_name, {'method': 'refreshItems'})
   endif
-  redraw
+
+  " call ddu#ui#do_action('updateOptions',{'input': ''} )
+  if is_insert
+    call ddu#ui#do_action('openFilterWindow' )
+    call ddu#ui#do_action('openFilterWindow', {'input': ''} )
+  endif
+
   return
 
 endfunction
+
+function! MyDduChooseWin(args) abort
+  let l:path = a:args.items[0].action.path
+  let winid = win_gotoid(luaeval("require('window-picker').pick_window()"))
+  execute 'edit ' . l:path
+  call win_gotoid(winid)
+endfunction
+
+call ddu#custom#action('kind', 'file', 'choosewin', { args -> MyDduChooseWin(args) })
+
+function! s:ddu_copy_current_instance()
+  let item = ddu#ui#get_item()
+  let path = get(ddu#get_context(b:ddu_ui_name), 'path', '')
+  let source = path ? 'file' : ddu#ui#get_item().__sourceName
+  let config = {'name': 'split', 'sources': [{'name': source, 'options': {'path': path }}] }
+  call ddu#start(config)
+  return
+endfunction
+
+function! s:ddu_change_to_filer(context)
+
+  let item = a:context.items[0]
+  let path = get(a:context, 'path', '')
+  let source = path ? 'file' : item.__sourceName
+  let config = {'name': 'split1', 'sources': [{'name': source, 'options': {'path': path }}], 'uiParams': {'ff': {'split': 'tab'} }}
+  call ddu#start(config)
+  let config = {'name': 'split2', 'sources': [{'name': source, 'options': {'path': path }}] }
+  call ddu#start(config)
+endfunction
+
+call ddu#custom#action('kind', 'file', 'to_filer',
+    \  function('s:ddu_change_to_filer'))
 
  call ddu#custom#alias('default', 'source', 'file_rec_hidden', 'file_external' )
  call ddu#custom#patch_global('sourceParams', {
@@ -204,6 +249,8 @@ function! s:ddu_my_settings() abort
   nnoremap <buffer><silent> a
       \ <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>j
   nnoremap <buffer><silent> A
+      \ <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>k
+  nnoremap <buffer><silent> <C-a>
       \ <Cmd>call ddu#ui#do_action('toggleAllItems')<CR>
   nnoremap <buffer><silent> \
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'cd'})<CR>
@@ -244,14 +291,18 @@ function! s:ddu_my_settings() abort
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
   nnoremap <buffer><silent> <C-r>
   \ <cmd>call ddu#redraw(b:ddu_ui_name, {'method': 'refreshItems'})<CR>
-  nnoremap <buffer><silent> <c-l>
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'default'})<CR>
   nnoremap <buffer><silent> e
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'to_filer'})<CR>
   nnoremap <buffer><silent> u
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'undo'})<CR>
-  nnoremap <buffer><silent><nowait> r
-      \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR>
+  nnoremap <buffer><silent><nowait> r <Cmd>call <SID>myddu_mapping_r()<CR>
+  function! s:myddu_mapping_r()
+  if b:ddu_ui_name ==# 'mail' 
+    call ddu#ui#do_action('itemAction', {'name' : 'reply'}) 
+  else
+    call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})
+  endif
+  endfunction
   nnoremap <buffer><silent><nowait> <C-g>
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name' : 'grep'})<CR>
   nnoremap <buffer><silent> -
@@ -262,6 +313,8 @@ function! s:ddu_my_settings() abort
       \ <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer><silent> i
       \ <Cmd>call ddu#ui#do_action('openFilterWindow')<CR>
+  nnoremap <buffer><silent> I
+    \ <Cmd>call ddu#ui#do_action('openFilterWindow', {'input': ''} )<CR>
   nnoremap <buffer> o
       \ <Cmd>call ddu#ui#do_action('expandItem',{'mode': 'toggle', 'maxLevel': 0})<CR>
   nnoremap <buffer> O
@@ -270,7 +323,7 @@ function! s:ddu_my_settings() abort
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'copy'})<CR>
   nnoremap <buffer> D
-      \ <Cmd>call ddu#ui#sync_action('itemAction', {'name': 'trash'})<CR>
+      \ <Cmd>call ddu#ui#async_action('itemAction', {'name': 'trash'})<CR>
   nnoremap <buffer> yy
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'yank'})\|echom 'yanked: '..getreg('*')<CR>
@@ -285,6 +338,10 @@ function! s:ddu_my_settings() abort
       \ {'name': 'rename'})<CR>
 nnoremap <buffer> P <Cmd>call ddu#ui#do_action('itemAction', {'name': 'paste'})<CR>
 nnoremap <buffer> <leader>p <Cmd>call ddu#ui#do_action('itemAction', {'name': 'paste', 'params': {'path': input('Input target path:')}})<CR>
+nnoremap <buffer> o <Cmd>call ddu#ui#async_action('itemAction', {'name': 'driveLink'})<CR>
+nnoremap <buffer> O <Cmd>call ddu#ui#async_action('itemAction', {'name': 'driveLink', 'params': {'role': 1, 'permission': 1}})<CR>
+nnoremap <buffer> so <Cmd>call ddu#ui#async_action('itemAction', {'name': 'driveOpenLink'})<CR>
+
   nnoremap <buffer> K
       \ <Cmd>call ddu#ui#do_action('itemAction',
       \ {'name': 'newDirectory'})<CR>
@@ -298,8 +355,20 @@ nnoremap <buffer> <leader>p <Cmd>call ddu#ui#do_action('itemAction', {'name': 'p
       \ <Cmd>call <SID>ddu_swap_converter('matchers','matcher_hidden', '')<CR>
   nnoremap <buffer> w
       \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'replace'})<CR>j
+  nnoremap <buffer> sg
+      \ <Cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': ddu#get_context(b:ddu_ui_name).path, 'input': input('Pattern: ')}}]})<CR>
   nnoremap <buffer><silent><nowait> sf
-      \ <Cmd>call ddu#ui#do_action('updateOptions',{'sources': [{'name': 'file_external', 'options': {'path': ddu#custom#get_current(b:ddu_ui_name).sources[0].options.path}}]})<CR>
+      \ <Cmd>call ddu#ui#do_action('updateOptions',{'sources': [{'name': 'file_external', 'options': {'path': ddu#get_context(b:ddu_ui_name).sources[0].options.path}}]})<CR>
+  nnoremap <buffer><silent><nowait> sv
+      \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'to_filer'})<CR>j
+
+  nnoremap <buffer><silent><nowait> d
+      \ <Cmd>call ddu#ui#do_action('updateOptions',{'sources': [{'name': 'file', 'options': {'path': fnamemodify(<SID>check_valid_path(), ':h')}}]})\|call ddu#redraw(b:ddu_ui_name, {'method': 'refreshItems'})<CR>
+function! s:check_valid_path()
+  let item = ddu#ui#get_item()
+  let path = len(item.action.path) > 0 ? item.action.path : ddu#custom#get_current(b:ddu_ui_name).sources[0].option.path
+  return path
+endfunction
   nnoremap <buffer><expr> Y
       \ ddu#ui#get_item().kind ==# 'file' ? setreg('*', fnamemodify(ddu#ui#get_item().action.path, ':t')) : "Y"
   nnoremap <buffer><silent> !
@@ -368,20 +437,20 @@ function! s:ddu_filter_my_settings() abort
       \ <ESC><Cmd>call ddu#ui#do_action('itemAction', {'name' : 'file_rec'})<CR>
   cnoremap <silent>  <C-l>
       \ <ESC><Cmd>call ddu#ui#do_action('itemAction')<CR>
-  cnoremap <silent> <expr> <C-h>
-      \ len(w:ddu_ui_ff_status.input) > 0 ? "\<C-h>" : ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})
+  " cnoremap <silent> <expr> <C-h>
+  "     \ len(w:ddu_ui_ff_status.input) > 0 ? "\<C-h>" : ddu#ui#do_action('itemAction', {'name': 'narrow', 'params': {'path': ".."}})
   cnoremap <silent> <C-o> <ESC>
   cnoremap <silent> <C-d> <ESC><Cmd>call ddu#ui#do_action('quit')<CR>
+
 endfunction
 
 autocmd User Ddu:uiCloseFilterWindow
       \ call s:ddu_filter_cleanup()| echohl NONE
-function s:ddu_filter_cleanup() abort
-  set nocursorline
 
+function s:ddu_filter_cleanup() abort
   silent! call foreach(nvim_get_keymap("c"), {_, val -> nvim_del_keymap("c", val.lhs)})
   call ddu#ui#restore_cmaps()
-  echo ddu#custom#get_global().uiOptions._.filterPrompt .. w:ddu_ui_ff_status.input
+  " echom ddu#custom#get_global().uiOptions._.filterPrompt .. w:ddu_ui_ff_status.input
 endfunction
 
 function! s:ddu_swap_converter(type, before, after) abort
@@ -430,5 +499,10 @@ endfunction
 	  return a:input[1:]
 	endfunction
 
+if has('win32')
+  call ddu#custom#patch_global({'kindParams': {'file': {'trashCommand':['cmd', '/c', 'npx', 'trash']}}})
+else
+  call ddu#custom#patch_global({'kindParams': {'file': {'trashCommand':['gio', 'trash']}}})
+endif
 
 lua require("ddurc")

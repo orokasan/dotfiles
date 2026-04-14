@@ -31,10 +31,10 @@ export class Source extends BaseSource<Params> {
         for (const i of data) {
           const word = i.regcontents.replace(/\r?\n/g, "").slice(0, 300)
           const regtype = (i.regtype == "v")
-            ? "c"
+            ? "C"
             : (i.regtype == "V")
-            ? "l"
-            : "B"; // \<C-v> is Blockwise
+              ? "L"
+              : "B"; // \<C-v> is Blockwise
 
           if (word.length == 0) continue
 
@@ -47,12 +47,10 @@ export class Source extends BaseSource<Params> {
             },
             highlights: [
               {
-                name: "word",
+                name: "attr",
                 hl_group: "Function",
                 col: 1,
-                width: i.regtype !== "v"
-                  ? (new StringReader(word).length) + 3
-                  : 0,
+                width: 3,
               },
             ],
           });

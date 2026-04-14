@@ -275,7 +275,7 @@ on_cmd = ['Gina']
 repo =  'lambdalisue/gina.vim'
 hook_add = '''
 autocmd BufReadPre gina://* set noswapfile
-let g:gina#command#status#use_default_mappings=0
+let g:gina#command#status#use_default_mappings=1
 function! s:make_abbrev_rule(rules)
   let keys = uniq(sort(map(copy(a:rules), "v:val['from']")))
   for key in keys
@@ -303,6 +303,7 @@ call s:make_abbrev_rule([
 nnoremap <silent> <Leader>gg <Cmd>Gina status<CR>
 nnoremap <silent> <Leader>gA <Cmd>Gina changes HEAD<CR>
 nnoremap <silent> <Leader>ga <Cmd>call execute('Gina add -- ' .. luaeval('vim.fs.relpath(_A[1], _A[2])', [gina#core#get().worktree, expand('%')]))<CR>
+nnoremap <silent> <Leader>gi <Cmd>Gina init \|call sleep(100) \| Gina commit --allow-empty -m "init"<CR>
 nnoremap <silent> <Leader>gc <Cmd>Gina commit<CR>
 nnoremap <silent> <Leader>gC <Cmd>Gina commit --amend<CR>
 nnoremap <silent> <Leader>gb <Cmd>Gina branch -av<CR>
@@ -489,19 +490,18 @@ on_event = ['InsertEnter']
 on_source = ['ddc.nvim']
 repo = 'hrsh7th/vim-vsnip'
 hook_add = '''
-"let g:vsnip_snippet_dir = [expand('~/GoogleDrive/config/.vsnip')]
+let g:vsnip_snippet_dir = expand('~/GoogleDrive/config/.vsnip')
 let g:vsnip_choice_delay = 10
 let g:popup_preview_config = {
     \ 'supportVsnip' : v:true
       \ }
 '''
 
-[[plugins]]
-on_event = ['InsertEnter']
-repo = 'hrsh7th/vim-vsnip-integ'
-hook_post_source = '''
-au! vsnip_integ
-'''
+# [[plugins]]
+# on_event = ['InsertEnter']
+# repo = 'hrsh7th/vim-vsnip-integ'
+# hook_post_source = '''
+# '''
 
 [[plugins]]
 # on_source = ['vim-vsnip-integ']

@@ -12,7 +12,7 @@ import { TextLineStream } from "https://deno.land/std@0.186.0/streams/mod.ts";
 
 // based on https://github.com/shun/ddu-source-rg
 
-const enqueueSize1st = 1000;
+const enqueueSize1st = 100;
 
 type HighlightGroup = {
   path: string;
@@ -40,7 +40,7 @@ async function* iterLine(r: ReadableStream<Uint8Array>): AsyncIterable<string> {
 }
 
 export class Source extends BaseSource<Params> {
-  kind = "file";
+  override kind = "file";
 
   gather(args: {
     denops: Denops;
@@ -65,7 +65,8 @@ export class Source extends BaseSource<Params> {
       const path = jo.data.path.text;
       const lineNr = jo.data.line_number;
       const col = jo.data.submatches[0].start;
-      const text = jo.data.lines.text?.replace("\n", "");
+      const raw_text = jo.data.lines.text?.substring(0,1000)
+      const text = raw_text?.replace("\n", "");
       const header = `${path}:${lineNr}:${col}: `;
       return {
         word: header + text,
@@ -137,7 +138,7 @@ export class Source extends BaseSource<Params> {
           : await fn.getcwd(args.denops) as string;
 
         let items: Item<ActionData>[] = [];
-        const enqueueSize2nd = 100000;
+        const enqueueSize2nd = 1000;
         let enqueueSize = enqueueSize1st;
         let numChunks = 0;
 
@@ -209,7 +210,7 @@ export class Source extends BaseSource<Params> {
 
   params(): Params {
     return {
-      args: ["rg", "--column", "--no-heading", "--color", "never"],
+      args: ["rg", "--column", "--no-heading", "--json", "--color", "never"],
       input: "",
       path: "",
       highlights: {

@@ -77,6 +77,7 @@ export class Kind extends BaseKind<Params> {
       kind: "terminal",
       cmds: [
         "himalaya",
+        "--quiet",
         "message",
         "read",
         "--no-headers",

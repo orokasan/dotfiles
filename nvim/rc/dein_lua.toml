@@ -1010,13 +1010,17 @@ insx.add(
 [[plugins]]
 repo = 'akinsho/toggleterm.nvim'
 lazy = 1
+on_cmd = ["TermExec"]
 hook_add = '''
 " autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted winfixheight winfixwidth
 " autocmd vimrc TermOpen * startinsert
 autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>ToggleTermToggleAll<CR>
 autocmd vimrc TermOpen term://* nnoremap <buffer><silent> i I
 autocmd vimrc TermOpen term://* nnoremap <buffer><silent> <tab> <cmd>lua vim.api.nvim_win_set_height(0, vim.api.nvim_win_get_height(0) == 12 and math.floor(vim.o.lines / 2) or 12)<CR>
-nnoremap <silent> <leader>t <cmd>1ToggleTerm<CR>
+
+nnoremap <leader>p <Cmd>3TermExec name=markdownserver open=0 cmd="gh markdown-preview --markdown-mode %"<CR>
+nnoremap <leader>b <Cmd>2TermExec name=browser direction=vertical size=100 go_back=0 cmd="wsl"<CR>
+nnoremap <silent> <leader>t <cmd>1ToggleTerm name=default<CR>
 nnoremap <silent> <leader>T <cmd>ToggleTermToggleAll<CR>
 nnoremap <silent> # <Cmd>call execute('99TermExec cmd="' .. input('TermExec: ') .. '" dir=' .. expand('%:p:h') )<CR>
 '''
@@ -1162,3 +1166,75 @@ on_cmd = ['ZenMode']
 
 # [[plugins]]
 # repo = 'nvim-tree/nvim-web-devicons'
+#
+[[plugins]]
+repo = 'brianhuster/live-preview.nvim'
+on_cmd = ['LivePreview']
+lua_source = '''
+'''
+
+[[plugins]]
+repo = 's1n7ax/nvim-window-picker'
+on_lua = ["window-picker"]
+hook_add = '''
+nnoremap ` <Cmd>call win_gotoid(luaeval("require('window-picker').pick_window()"))<CR>
+'''
+lua_source = '''
+require 'window-picker'.setup({
+    selection_chars = 'FJDKSLA;CMRUEIWOQP',
+
+    -- This section contains picker specific configurations
+    picker_config = {
+        statusline_winbar_picker = {
+            use_winbar = 'always', -- "always" | "never" | "smart"
+        },
+    },
+
+    -- prompt message to show to get the user input
+    prompt_message = 'Pick window: ',
+
+    filter_rules = {
+        autoselect_one = true,
+        include_current_win = false,
+        -- whether to include windows marked as unfocusable
+        include_unfocusable_windows = false,
+
+        -- filter using buffer options
+        bo = {
+            -- if the file type is one of following, the window will be ignored
+            filetype = { 'NvimTree', 'neo-tree', 'notify', 'snacks_notif' },
+
+            -- if the file type is one of following, the window will be ignored
+            buftype = { 'terminal' },
+        },
+    },
+
+    highlights = {
+        enabled = true,
+        statusline = {
+            focused = {
+                fg = '#ededed',
+                bg = '#e35e4f',
+                bold = true,
+            },
+            unfocused = {
+                fg = '#3d425b',
+                bg = '#e2a478',
+                bold = true,
+            },
+        },
+        winbar = {
+            focused = {
+                fg = '#3d425b',
+                bg = '#e2a478',
+                bold = true,
+            },
+            unfocused = {
+                fg = '#3d425b',
+                bg = '#84a0c6',
+                bold = true,
+            },
+        },
+    },
+})
+'''

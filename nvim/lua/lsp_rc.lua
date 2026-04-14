@@ -3,8 +3,8 @@ local vim = vim
 vim.diagnostic.config({
   signs = {
     text = {
-          [vim.diagnostic.severity.ERROR] = ' ',
-          [vim.diagnostic.severity.WARN] = ' ',
+      [vim.diagnostic.severity.ERROR] = ' ',
+      [vim.diagnostic.severity.WARN] = ' ',
     },
     -- linehl = {
     --     [vim.diagnostic.severity.ERROR] = 'Error',
@@ -42,8 +42,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 vim.diagnostic.config({ virtual_text = false })
 
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-  vim.lsp.handlers.hover, {
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.buf.hover(
+  {
     border = "single"
   })
 
@@ -58,7 +58,6 @@ vim.api.nvim_exec2([[
 
 require("mason").setup {}
 
-local lspconfig = require('lspconfig')
 local servers = require('mason-lspconfig').get_installed_servers()
 
 vim.lsp.config('*', {
@@ -171,44 +170,11 @@ for _, server in pairs(servers) do
   elseif server == 'denols' then
     vim.lsp.config(server, {
       single_file_support = true,
-      root_markers = {
-        "deno.json",
-        "deno.jsonc",
-        "deps.ts",
-        "import_map.json"
-      },
-      init_options = {
-        enable = true,
-        lint = true,
-        unstable = true,
-        codeLens = {
-          implementations = true,
-          preferences = true,
-        },
-        suggest = {
-          imports = {
-            hosts = {
-                  ["https://deno.land"] = true,
-                  ["https://cdn.nest.land"] = true,
-                  ["https://crux.land"] = true
-            }
-          }
-        },
-        inlayHints = {
-          variableTypes = { enabled = true },
-          enumMemberValues = { enabled = true },
-          functionLikeReturnTypes = { enabled = true },
-          -- parameterNames= { enabled = 'all' },
-        },
-      },
-      filetypes = {
-        'typescript'
-      }
     })
   end
 end
 
-local not_autostart = {'efm'}
+local not_autostart = { 'efm' }
 
 vim.lsp.enable(servers)
 vim.lsp.enable(not_autostart, false)

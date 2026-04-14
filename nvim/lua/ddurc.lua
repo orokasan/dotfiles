@@ -39,9 +39,6 @@ vim.fn["ddu#custom#patch_global"](
       }
     },
     kindParams = {
-      file = {
-        trashCommand = vim.call("has", "Win32") and { 'cmd', '/c', 'npx', 'trash' } or { 'gio', 'trash' }
-      }
     },
     sourceOptions = {
       _ = {
@@ -77,12 +74,20 @@ vim.fn["ddu#custom#patch_global"](
       },
       buffer = { converters = { 'converter_highlight_filename', 'converter_nerdfont' } },
       grep = { converters = {}, },
-      dirmark = { sorters = { { name = 'sorter_time', params = { force = true } }, { name = 'sorter_reversed' } }, converters = {}, },
-      tree = { sorters = {}, converters = { { name = 'converter_highlight_filename' }, { name = 'converter_nerdfont' }, { name = 'filter_hidden', params = { hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini', 'prh' } } } } },
+      dirmark = {
+        sorters = { { name = 'sorter_time', params = { force = true } }, { name = 'sorter_reversed' } },
+        converters = {},
+      },
+      tree = {
+        sorters = {},
+        converters = { { name = 'converter_highlight_filename' }, { name = 'converter_nerdfont' },
+          { name = 'filter_hidden',               params = { hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini', 'prh' } } } }
+      },
       dein = { sorters = {} },
       text = { converters = {} },
       aerial = {
         converters = {},
+        sorters = {},
         defaultAction = 'highlight',
       },
       git_status = {
@@ -117,6 +122,8 @@ vim.fn["ddu#custom#patch_global"](
       }
     },
     profile = false,
+    matcherConcurrency = 8,
+    converterCache = false,
     ui = 'ff',
     sync = false,
     sourceParams = {
@@ -159,10 +166,12 @@ vim.fn["ddu#custom#patch_global"](
     },
     uiParams = {
       ff = {
+        cursorPos = 1,
         previewFloating = true,
         filterFloatingPosition = 'top',
         floatingBorder = 'none',
         maxHighlightItems = 100000,
+        overwriteStatusline = false,
         highlights = {
           prompt = 'Function',
           selected = 'Visual',
@@ -229,12 +238,36 @@ vim.fn["ddu#custom#patch_global"](
         maxItem = 0
       }
     },
+    filterOptions = {
+      matcher_kensaku = { highlightMatched = 'Title' },
+      merge = {
+        parallelSafe = true,
+      },
+      matcher_fzy = {
+        threshold = 0.1,
+      },
+      matcher_substring = {
+        highlightMatched = 'Title',
+      },
+      filter_hidden = {
+        hiddenPath = { 'NTUSER', 'ntuser', 'desktop.ini' }
+      },
+      converter_nerdfont = {
+        parallelSafe = true,
+      },
+      converter_no_empty = {
+        parallelSafe = false,
+      },
+      converter_highlight_filename = {
+        parallelSafe = true,
+      }
+    },
     columnParams = {
       filename = {
         highlights = { directoryName = 'Function', directoryIcon = 'Constant' },
-        collapsedIcon = '+',
-        expandedIcon = '-',
-        iconWidth = 1
+        collapsedIcon = '',
+        expandedIcon = '',
+        iconWidth = 0
       },
       icons = {
         isTree = true,
@@ -256,6 +289,9 @@ vim.fn["ddu#custom#patch_global"](
         quit = false,
       },
       echoDiff = {
+        quit = false,
+      },
+      trash = {
         quit = false,
       },
       preview = {
@@ -289,7 +325,6 @@ vim.fn["ddu#custom#patch_local"](
         winCol = 5,
       }
     }
-
   }
 )
 vim.fn["ddu#custom#patch_local"](
@@ -315,8 +350,8 @@ vim.fn["ddu#custom#patch_local"](
     },
     sourceOptions = {
       _ = {
-        columns = { 'icons' },
-        converters = {}
+        columns = { 'filename' },
+        converters = { 'converter_nerdfont' }
       }
     },
     columnParams = {
@@ -344,7 +379,7 @@ vim.fn["ddu#custom#patch_local"](
     uiOptions = {
       ff = {
         persist = false,
-        restoreCursor = true,
+        restoreCursor = false,
       },
     },
     uiParams = {
@@ -390,8 +425,36 @@ vim.fn["ddu#custom#patch_local"](
         }
       }
     }
-
   }
+)
+local split_config = {
+    ui = 'ff',
+    actionOptions = {
+      _ = {
+        quit = false
+      }
+    },
+    actionParams = {
+      open = {
+        command = 'tabnew',
+      }
+    },
+    uiParams = {
+      ff = {
+        split = 'vertical',
+        splitDirection = 'belowright',
+      }
+    }
+  }
+
+vim.fn["ddu#custom#patch_local"](
+  'split1',
+  split_config
+)
+
+vim.fn["ddu#custom#patch_local"](
+  'split2',
+  split_config
 )
 
 vim.fn["ddu#custom#patch_local"](
@@ -438,7 +501,6 @@ vim.fn["ddu#custom#patch_local"](
         winCol = 5
       }
     }
-
   }
 )
 vim.fn["ddu#custom#patch_local"](

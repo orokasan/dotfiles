@@ -295,7 +295,7 @@ function! s:llgitcache() abort
     if s:ignore_window()
         return ''
     else
-        let s:llgitbranch = ''. gitbranch#name()
+        let s:llgitbranch = len(gitbranch#name()) > 0 ?  ''. gitbranch#name() : ''
         " return s:threshold(1) ? ' '. s:llgitbranch :
         " \ s:threshold(2) ? '' :''
     endif

@@ -148,9 +148,14 @@ function! s:gethighlight(hi, which) abort
  let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
  return bg
 endfunction
-highlight link gihyoZw Comment
 call execute('hi textUnderline gui=underline guisp=' .. s:gethighlight('Comment', 'fg'))
 hi! link NonText Comment
 syntax sync minlines=100
+
+" highlight! UnderlineZW guifg=#6b7089 guisp=#6b7089
+" syntax match UnderlineZW '　' conceal cchar=＿
+" setlocal conceallevel=2
+" setlocal concealcursor=niv
+
 " vim:set et syntax=vim nowrap :
 

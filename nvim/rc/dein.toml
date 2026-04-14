@@ -36,7 +36,7 @@ function! My_iceberg_highlight()
 highlight! NormalFloat ctermfg=252 ctermbg=236 guifg=#c6c8d1 guibg=#272c42
 highlight! clear Search
 highlight! link Search Title
-highlight! link Conceal Title
+" highlight! link Conceal Title
 highlight! link WinBarNC Comment
 highlight! link StatusLine Normal
 highlight! MatchParen ctermfg=255 ctermbg=237 guifg=#cdd1e6 guibg=#3e445e
@@ -45,6 +45,7 @@ highlight! PmenuSelected gui=bold guifg=#e2a478 guibg=#3d425b blend=0
 highlight! link WhiteSpace Comment
 
 hi! link @markup.strong Special
+hi! link @markup.italic Number
 hi! link @markup.link Float
 hi! link @markup.link.label Function
 hi! link @markup.link.url Normal
@@ -246,9 +247,8 @@ augroup END
 [[plugins]]
 repo='Shougo/junkfile.vim'
 hook_add = '''
-nnoremap <silent> <C-T> <Cmd>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
+nnoremap <silent> <C-T> <Cmd>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.md'))<CR>
 nnoremap <silent> g<C-T> <Cmd>tabnew<bar>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
-nnoremap <silent> <C-T> <Cmd>call junkfile#open_immediately(strftime('%Y-%m-%d-%H%M%S.txt'))<CR>
 nnoremap <C-S> <Cmd>call junkfile#open(strftime('%Y-%m-%d-%H%M%S.'))<CR>
 '''
 
@@ -318,4 +318,10 @@ repo = 'itchyny/vim-qfedit'
 
 [[plugins]]
 repo = 'Shougo/cmdline.vim'
+
+[[plugins]]
+repo = 'dcampos/nvim-snippy'
+
+[[plugins]]
+repo = 'rickhowe/diffchar.vim'
 # vim:set foldmethod=marker:'

@@ -16,6 +16,20 @@ call ddc#custom#patch_global('sourceOptions', {
 \ 'vsnip': {'matchers': ['matcher_head'], 'minAutoCompleteLength' :2},
 \ })
 
+augroup myddc
+  autocmd!
+  autocmd User skkeleton-enable-pre call s:pum_as_toggle(1)
+  autocmd User skkeleton-disable-pre call s:pum_as_toggle(0)
+augroup END
+
+function! s:pum_as_toggle(bool)
+  if a:bool > 0
+    call pum#set_buffer_option({ 'auto_select': v:false })
+  else
+    call pum#set_buffer_option({ 'auto_select': v:true })
+  endif
+endfunction
+
 call ddc#custom#patch_global(#{
       \ sourceOptions: #{
       \   lsp: #{
@@ -51,9 +65,10 @@ call ddc#custom#patch_global('sourceParams', {
 \ })
 " Customize settings on a filetype
 call pum#set_option({
-\ 'use_setline': v:true,
 \ 'direction': 'below',
 \ 'scrollbar_char': '|',
+\ 'follow_cursor': v:false,
+\ 'auto_select': v:true,
 \ 'max_height': 12,
 \ 'blend': 15,
 \ 'highlight_scrollbar': 'Title',
@@ -104,23 +119,27 @@ endif
 " <TAB>: completion.
 " imap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
 " smap <expr> <C-k>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-k>'
-inoremap <silent><expr> <C-k> pum#visible() ?
-\ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#confirm() : "<C-k>"
+" inoremap <silent><expr> <C-k> pum#visible() ?
+" \ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#confirm() : "<C-k>"
 snoremap <silent><expr> <C-k> pum#visible() ?
-\ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#confirm() : "<C-k>"
+\ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#insert_relative(+1) : "<TAB>"
 snoremap <silent><expr> <TAB> pum#visible() ?
 \ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#map#insert_relative(+1) : "<TAB>"
 snoremap <silent><expr> <S-TAB>
 \ pum#visible()  ?  vsnip#available(-1) ? '<Plug>(vsnip-jump-prev)' : pum#map#insert_relative(-1) : "<S-TAB>"
-inoremap <silent><expr> <TAB> pum#visible() ? '<Cmd> call pum#map#confirm()<CR>' : '<TAB>'
+inoremap <silent><expr> <TAB> pum#visible() ? '<Cmd> call pum#map#confirm()<CR>' :vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<TAB>'
+" inoremap <silent><expr> <C-k> pum#visible() ? '<Cmd> call pum#map#confirm()<CR>' :vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-k>'
+inoremap <silent><expr> <C-k> pum#visible() ?
+\ vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : pum#_options().auto_select ? "<Cmd> call pum#map#confirm()<CR>" : "<Cmd> call pum#map#insert_relative(+1)<CR>" : "<C-k>"
+
 " inoremap <silent><expr> <S-TAB> pum#visible() ? '<Cmd> call pum#map#insert_relative(-1)<CR>' : '<S-TAB>'
 inoremap <silent><expr> <C-n> pum#visible() ? "<Cmd> call pum#map#insert_relative(+1)<CR>" : '<C-n>'
 inoremap <silent><expr> <C-p> pum#visible() ? "<Cmd> call pum#map#insert_relative(-1)<CR>" : '<C-p>'
+inoremap <silent><expr> <C-e> pum#visible() ? pum#map#cancel() : '<END>'
 
 " inoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
 " inoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
 inoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
-inoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
 
 " autocmd User PumCompleteDonePre echom g:pum#completed_item
 " autocmd User PumCompleteDonePre if complete_info(['mode']).mode !=? '' | call vsnip_integ#on_complete_done(g:pum#completed_item) | endif

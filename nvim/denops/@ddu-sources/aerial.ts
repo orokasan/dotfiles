@@ -115,21 +115,18 @@ export class Source extends BaseSource<Params> {
         };
 
         const tree = () => {
-          const items: Item<ActionData>[] = [];
-          for (const item of res) {
-            const word = item.name;
+          const items: Item<ActionData>[] = res.map((item) => {
             const lev = item.level > 3 ? 3 : item.level;
             const aerialLevel = `level${lev}`;
-            items.push({
-              word: makeTreepath(item, items).join("/"),
-              display: " ".repeat(item.level) + word,
+            return {
+              word: item.name,
+              display: " ".repeat(item.level) + item.name,
               action: {
                 path: bufname,
                 bufNr: bufnr,
                 lineNr: item.lnum,
                 col: item.col + 1,
               },
-              treePath: makeTreepath(item, items),
               highlights: [
                 {
                   name: `aerial_level${item.level}`,
@@ -141,8 +138,37 @@ export class Source extends BaseSource<Params> {
               isTree: true,
               isExpanded: true,
               level: item.level,
-            });
-          }
+            }
+          })
+
+          // for (const item of res) {
+          //   const word = item.name;
+          //   const lev = item.level > 3 ? 3 : item.level;
+          //   const aerialLevel = `level${lev}`;
+          //   console.log(items);
+          //   items.push({
+          //     word: makeTreepath(item, items).join("/"),
+          //     display: " ".repeat(item.level) + word,
+          //     action: {
+          //       path: bufname,
+          //       bufNr: bufnr,
+          //       lineNr: item.lnum,
+          //       col: item.col + 1,
+          //     },
+          //     treePath: makeTreepath(item, items),
+          //     highlights: [
+          //       {
+          //         name: `aerial_level${item.level}`,
+          //         hl_group: args.sourceParams.highlights[aerialLevel],
+          //         col: 1,
+          //         width: 200,
+          //       },
+          //     ],
+          //     isTree: true,
+          //     isExpanded: true,
+          //     level: item.level,
+          //   });
+          // }
           // if (args.sourceOptions.path) {
           //   return items.filter((i) => {
           //     return i.treePath.toString().startsWith(

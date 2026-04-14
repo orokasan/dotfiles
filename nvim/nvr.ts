@@ -29,7 +29,7 @@ function openVim(cmd: string[], args: string[]) {
   // console.log({ cmd, args });
   const cmdHead = cmd[0];
   const cmdTail = cmd.slice(1);
-  // console.log({ cmdHead, cmdTail, escapeArgs });
+  // console.log({ cmdHead, cmdTail,  });
   const command = new Deno.Command(cmdHead, {
     args: cmdTail.concat(args),
     detached: true,
@@ -45,10 +45,11 @@ function main() {
     .version("0.1.0")
     .useRawArgs()
     .action((_: never, ...args: string[]) => {
-      // console.log({ cmd, denoArgs, options, args });
+      // console.log({  args });
       const filename = args.map((v) => {
         return isAbsolute(v) ? v : join(Deno.cwd(), v);
       });
+
       if (isListening()) {
         if (args.length > 0) {
           openVim(["nvim", "--server", PIPE, "--remote-tab"], filename);

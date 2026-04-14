@@ -81,7 +81,6 @@ export class Source extends BaseSource<Params> {
               path: await args.denops.call("bufname", bufnr) as string,
               lineNr: i[0],
               col: i[1],
-              text: aword,
             },
             highlights: [
               {

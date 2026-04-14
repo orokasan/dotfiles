@@ -9,6 +9,7 @@ augroup END
 " language en_US
 filetype plugin indent off
 syntax off
+
 " don't load unused default plugins
 let g:did_load_ftplugin         = 1
 let g:skip_loading_mswin        = 1
@@ -48,8 +49,8 @@ silent! call execute('source ' .. expand('~/local_vimrc'))
 
 if exists('neovide')
   let g:neovide_title_background_color = luaeval("string.format( '%x', vim.api.nvim_get_hl(0, {id=vim.api.nvim_get_hl_id_by_name('Normal')}).bg)")
-  " set guifont=PlemolJP\ Console\ NF:h12.5:#e-subpixelantialias
-  set guifont=Cica:h14:#e-subpixelantialias
+  " set guifont=PlemolJP\ Console\ NF:h12:#e-subpixelantialias:#h-none
+  set guifont=Cica:h14:w0.1:#e-subpixelantialias
   set linespace=1
   let g:neovide_padding_top = 0
   let g:neovide_padding_bottom = 0
@@ -162,7 +163,6 @@ endif
 
 filetype plugin indent on
 syntax on
-
 " for dein dein#util#_check_vimrcs() bug workaround
 au! dein BufWritePost
 if s:dein_is_initializing
@@ -208,6 +208,7 @@ set cinwords=
 set list
 set listchars=tab:^-,trail:␣,extends:\ ,precedes:«,nbsp:%
 set modelines=5
+set modeline
 set termguicolors
 set t_Co=256
 set synmaxcol=1500
@@ -244,7 +245,7 @@ set autoindent
 set nosmartindent
 set shiftwidth=2
 set formatoptions=roqn2M1mj]
-set iskeyword+=-,:
+set iskeyword+=-
 set ignorecase
 set smartcase
 set incsearch
@@ -345,8 +346,8 @@ vnoremap <C-o> <ESC>m><C-O>m<gvo
 nnoremap S :%s/
 vnoremap S :s/
 " moving around buffers
-nnoremap <silent><Leader>h <Cmd>bprev!<CR>
-nnoremap <silent><Leader>l <Cmd>bnext!<CR>
+" nnoremap <silent><Leader>h <Cmd>bprev!<CR>
+" nnoremap <silent><Leader>l <Cmd>bnext!<CR>
 " moving around tabpages
 nnoremap <silent> <C-L> <Cmd>tabnext<CR>
 nnoremap <silent> <C-H> <Cmd>tabprevious<CR>
@@ -388,7 +389,7 @@ xnoremap , @q
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap <C-a> <HOME>
-inoremap <C-e> <END>
+" inoremap <C-e> <END>
 inoremap <C-l> <NOP>
 nnoremap Y y$
 xnoremap Y y$`]
@@ -441,6 +442,16 @@ inoremap zz6 ⑥
 inoremap zz7 ⑦
 inoremap zz8 ⑧
 inoremap zz9 ⑨
+inoremap zk0 ⓿
+inoremap zk1 ❶
+inoremap zk2 ❷
+inoremap zk3 ❸
+inoremap zk4 ❹
+inoremap zk5 ❺
+inoremap zk6 ❻
+inoremap zk7 ❼
+inoremap zk8 ❽
+inoremap zk9 ❾
 inoremap z( （
 inoremap z) ）
 inoremap z[ 「
@@ -553,7 +564,7 @@ if s:is_nvim
   set display=lastline,msgsep,truncate
   set wildoptions=pum
   set pumblend=5
-  au vimrc TextYankPost * silent! lua vim.highlight.on_yank()
+  au vimrc TextYankPost * silent! lua vim.hl.on_yank()
   set inccommand=nosplit
   set winblend=20
   function! s:gethighlight(hi, which) abort
@@ -770,8 +781,8 @@ set diffopt=internal,context:10,algorithm:histogram,vertical,foldcolumn:0,indent
 set jumpoptions=stack,view
 endif
 silent! iunmap <C-W>
-nnoremap ` <cmd>call <SID>setqfhint()<CR>
-nnoremap  <Leader>` <cmd>call <SID>openqfhint()<CR>
+" nnoremap ` <cmd>call <SID>setqfhint()<CR>
+" nnoremap  <Leader>` <cmd>call <SID>openqfhint()<CR>
 
 function! s:setqfhint()
 let input = input('Enter: ')
@@ -835,7 +846,7 @@ let path = expand('%:h')
 endfunction
 
 nnoremap <silent> + :call OpenBrowserSearch(input('Search: '))<CR>
-nnoremap <Leader>l <Cmd>echo getloclist(winbufnr(bufnr('%')))->filter({_,val -> val.lnum ==# line('.')})->map({_, val -> 'qf: ' .. val.text})->join("\n")<CR>
+nnoremap <Leader>l ?\d\{4}年<CR>dgn<Cmd>call histdel("/", -1)<CR>
 " echom call getqflist()
 "  call denops_shared_server#runtray#_execute_script_command('start')
 " autocmd vimrc WinClosed * if nvim_win_get_config(0).focusable && !nvim_win_get_config(0).relative | wincmd p | endif
@@ -854,10 +865,11 @@ call cmdline#set_option(#{
   \ })
 " autocmd User Ddu:ui:ff:openFilterWindow call cmdline#enable()
 " autocmd User Ddu:ui:ff:closeFilterWindow call cmdline#disable()
-" let g:hey_model_name = 'gpt-4o'
+let g:chat_gpt_lang = 'jp'
 
 nnoremap <silent> <leader>d <cmd>HimalayaWrite<CR>
 
+let g:hey_model_name = 'gpt-5.1'
 call execute('source ' .. stdpath('config') .. '/rc/config/ddu_mapping.rc.vim')
 call execute('source ' .. stdpath('config') .. '/rc/config/ddu.rc.vim')
 au vimrc CmdlineLeave * mode
@@ -884,6 +896,26 @@ endfunction
 
 set background=dark
 set messagesopt=hit-enter,history:500,wait:1000
-nnoremap <leader>p <Cmd>TermExec name=markdownserver cmd="gh markdown-preview --markdown-mode %"<CR>
 set nofixeol
+
+let g:hey_message_style = 'window'
+nnoremap <leader>n <Cmd>Hey 文章中の用語に誤りがあるかどうかを調べてください。誤りがある場合は、どこに誤りがあるのかと、正しい表記を端的に指摘してください。誤りがない場合は「誤りはありません」と回答してください<CR>
+
+function! Make_diffHTML() abort
+  let s = getcwd()
+  let filename = input({'prompt': 'filename: ', 'default': 'diff.html' })
+  let title = input({'prompt': 'title: ', 'default': 'diff' })
+  let hashbefore = input({'prompt': 'from: ', 'default': 'head~' })
+  let hashafter = input({'prompt': 'to: ', 'default': 'head' })
+  silent cd %:h
+  call system("git diff " .. hashbefore .. " " .. hashafter .. " | diff2html --input stdin --style side --file " .. filename .. " --title " .. title)
+  silent call execute('cd ' .. s)
+endfunction
+
+function! DriveLinkPermission()
+let link =  input('link: ')
+call system('gws drive permissions create --json "{ \"role\": \"commenter\", \"type\": \"anyone\" }" --params "{ \"fileId\": \"' .. link .. '\" }"')
+call setreg('*', link)
+return link
+endfunction
 " vim:set foldmethod=marker:

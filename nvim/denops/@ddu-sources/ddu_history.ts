@@ -9,7 +9,9 @@ import {
 import { BaseSource } from "jsr:@shougo/ddu-vim/source";
 import { Denops } from "jsr:@denops/std";
 
-type Params = Record<number | string | symbol, never>;
+type Params = {
+  source: string;
+};
 
 export type ActionData = {
   context: DduOptions;
@@ -41,6 +43,8 @@ export class Source extends BaseSource<Params> {
     return new ReadableStream({
       async start(controller) {
         const items: Item<ActionData>[] = [];
+        const param = args.sourceParams;
+
         const data = await args.denops.call(
           "ddu_history#get_history",
         ) as HistoryData[];
@@ -49,6 +53,11 @@ export class Source extends BaseSource<Params> {
           const source = v.option.sources[0];
           const source_name = typeof source === "string" ? source : source.name;
           if (source_name === "ddu_history") continue;
+
+          if (param.source.length > 0){
+              if ( param.source !== source_name ) continue
+          }
+
           const path = typeof source !== "string" ? source.options?.path : "";
           const word = `Source: ${source_name.padEnd(15, " ")}  Path: ${
             path ? await args.denops.call("fnamemodify", path, ":~") : ""
@@ -76,6 +85,8 @@ export class Source extends BaseSource<Params> {
   }
 
   params(): Params {
-    return {};
+    return {
+      source: "",
+    };
   }
 }

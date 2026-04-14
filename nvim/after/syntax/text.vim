@@ -151,8 +151,8 @@ function! s:gethighlight(hi, which) abort
     let bg = synIDattr(synIDtrans(hlID(a:hi)), a:which)
     return bg
 endfunction
-" syntax match gihyoZw '　' conceal cchar=□
-highlight link gihyoZw Comment
+" syntax match gihyoZw '　'
+" highlight link gihyoZw UnderlineZW
 call execute('hi textUnderline gui=underline guisp=' .. s:gethighlight('Comment', 'fg'))
 " syntax region txtDialog matchgroup=Normal start=+「+ end=+」+ contains=txtDialog
 " hi link txtDialog Constant
