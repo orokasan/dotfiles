@@ -12,33 +12,6 @@ repo = 'neovim/nvim-lspconfig'
 # depend = ['mason.nvim', 'mason-lspconfig.nvim']
 # plugins = ['mason.nvim', 'mason-lspconfig.nvim', 'nvim-lspconfig']
 hook_post_source = '''
-let s:lsptoggle_switch = v:false
-let s:bufnr = 0
-command! -nargs=? -complete=command LspToggle call s:lspdefinetoggleaucmd()
-function! s:lspdefinetoggleaucmd() abort
-    if s:bufnr != bufnr('%')
-      let s:lsptoggle_switch = v:false
-      let s:bufnr = bufnr('%')
-    endif
-    if !s:lsptoggle_switch
-        let s:lsptoggle_switch = v:true
-        augroup lsptoggle
-            au!
-            au BufEnter * LspStop
-        augroup END
-        edit %
-        echom "Lsp OFF"
-    else
-        augroup lsptoggle
-            au!
-        augroup END
-        LspStart
-        let s:lsptoggle_switch = v:false
-        echom "Lsp ON"
-    endif
-endfunction
-nnoremap <leader><leader>l <Cmd>LspStart<CR>
-nnoremap <leader><leader>L <Cmd>LspStop<CR>
 lua require("lsp_rc")
 '''
 
@@ -46,10 +19,9 @@ lua require("lsp_rc")
 # repo = 'nvim-lua/popup.nvim'
 # on_lua = 'popup'
 
-[[plugins]]
-repo = 'nvim-lua/plenary.nvim'
-on_lua = ["plenary"]
-
+# [[plugins]]
+# repo = 'nvim-lua/plenary.nvim'
+# on_lua = ["plenary"]
 
 [[plugins]]
 repo = 'lukas-reineke/indent-blankline.nvim'
@@ -72,35 +44,6 @@ require("ibl").setup {
 repo = 'norcalli/nvim-colorizer.lua'
 on_cmd = ['ColorizerToggle']
 
-# [[plugins]]
-# repo = 'bfredl/nvim-miniyank'
-# on_map = {nxo = '<Plug>(miniyank-'}
-# on_event = ["FocusLost"]
-# hook_add = '''
-# let g:miniyank_maxitems = 100
-# map p <Plug>(miniyank-autoput)
-# map P <Plug>(miniyank-autoPut)
-# map <leader>n <Plug>(miniyank-cycle)
-# map <leader>N <Plug>(miniyank-cycleback)
-# " doesnt work
-# " map <Leader>pc <Plug>(miniyank-tochar)
-# " map <Leader>pl <Plug>(miniyank-toline)
-# " map <Leader>pb <Plug>(miniyank-toblock)
-# function! To_miniyank_on_focused() abort
-#     let data = {}
-#     let data = {
-# 		\ 'regcontents': [getreg('*')],
-# 		\ 'visual': v:false,
-# 		\ 'inclusive': v:false,
-# 		\ 'regname': '',
-# 		\ 'operator': 'y',
-# 		\ 'regtype': 'V',
-# 		\ }
-#     call miniyank#on_yank(data)
-# endfunction
-# au dein FocusGained * call To_miniyank_on_focused()
-# '''
-
 [[plugins]]
 lazy = 0
 repo = 'gbprod/yanky.nvim'
@@ -115,6 +58,9 @@ vim.keymap.set("n", "<Leader>pl", "<Plug>(YankyPutIndentAfterLinewise)")
 vim.keymap.set("n", "<Leader>pc", "<Plug>(YankyPutIndentAfterCharwise)")
 vim.keymap.set("n", "<Leader>Pl", "<Plug>(YankyPutIndentBeforeLinewise)")
 vim.keymap.set("n", "<Leader>Pc", "<Plug>(YankyPutIndentBeforeCharwise)")
+
+'''
+lua_post_source= '''
 require("yanky").setup({
   ring = {
     history_length = 100,
@@ -134,52 +80,25 @@ require("yanky").setup({
 })
 '''
 
-# [[plugins]]
-# repo = "sindrets/diffview.nvim"
-
 [[plugins]]
 repo = 'nvim-treesitter/nvim-treesitter'
 lazy = 0
-# frozen = 1
-# on_event = ['BufRead','BufNew']
 lua_add = '''
-vim.opt.runtimepath:prepend(vim.fn.stdpath("data") .. '/site' )
-require 'nvim-treesitter.configs'.setup {
-  ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
-  parser_install_dir = vim.fn.stdpath("data") .. '/site',
--- tree_docs = { enable = false },
-    -- [options]
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = { "php" },
-    disable = { "cpp", "toml", "help","vimdoc", "python", "gitcommit"},
-  },
-}
+-- vim.opt.runtimepath:prepend(vim.fn.stdpath("data") .. '/site' )
+-- require 'nvim-treesitter.configs'.setup {
+--   ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+--  parser_install_dir = vim.fn.stdpath("data") .. '/site',
+-- -- tree_docs = { enable = false },
+--     -- [options]
+--   highlight = {
+--     enable = true,
+--     additional_vim_regex_highlighting = { "php" },
+--     disable = { "cpp", "toml", "help","vimdoc", "python", "gitcommit"},
+--   },
+-- }
 ''''
 lua_post_source= '''
 '''
-
-# [[plugins]]
-# repo = 'nvim-lua/lsp-status.nvim'
-
-# [[plugins]]
-# repo = 'delphinus/hop.nvim'
-# rev = 'feature/migemo'
-# on_cmd = ["HopChar2"]
-# hook_add = '''
-# nnoremap  sa :HopChar2<CR>
-# "highlight! clear HopUnmatched
-# "highlight! HopNextKey1 gui=bold guifg=#ff007c guibg=#c6c8d1
-# "highlight! HopNextKey2 gui=bold guifg=#2b8db3 guibg=#c6c8d1
-# "highlight! HopNextKey gui=bold guifg=#ff007c guibg=#c6c8d1
-# '''
-# lua_source = '''
-# require 'hop'.setup {
-#   use_migemo = true;
-#   migemo_dict = vim.g.migemo_dict;
-#   migemo_debug = false;
-# }
-# '''
 
 [[plugins]]
 repo = 'kevinhwang91/nvim-hlslens'
@@ -230,58 +149,6 @@ require'treesitter-context'.setup{
   on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
 }
 '''
-
-# [[plugins]]
-# on_source = ['nvim-lspconfig']
-# repo = 'lvimuser/lsp-inlayhints.nvim'
-
-# [[plugins]]
-# repo = 'nvim-treesitter/nvim-treesitter-textobjects'
-# on_source = ['nvim-treesitter']
-# lua_source = '''
-# require'nvim-treesitter.configs'.setup {
-#   textobjects = {
-#     select = {
-#       enable = true,
-#       -- Automatically jump forward to textobj, similar to targets.vim
-#       lookahead = true,
-#       keymaps = {
-#         -- You can use the capture groups defined in textobjects.scm
-#         -- ["af"] = "@function.outer",
-#         -- ["if"] = "@function.inner",
-#         -- ["ac"] = "@class.outer",
-#         -- -- You can optionally set descriptions to the mappings (used in the desc parameter of
-#         -- -- nvim_buf_set_keymap) which plugins like which-key display
-#         -- ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-#         -- -- You can also use captures from other query groups like `locals.scm`
-#         -- ["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
-#       },
-#       -- You can choose the select mode (default is charwise 'v')
-#       --
-#       -- Can also be a function which gets passed a table with the keys
-#       -- * query_string: eg '@function.inner'
-#       -- * method: eg 'v' or 'o'
-#       -- and should return the mode ('v', 'V', or '<c-v>') or a table
-#       -- mapping query_strings to modes.
-#       selection_modes = {
-#         ['@parameter.outer'] = 'v', -- charwise
-#         ['@function.outer'] = 'V', -- linewise
-#         ['@class.outer'] = '<c-v>', -- blockwise
-#       },
-#       -- If you set this to `true` (default is `false`) then any textobject is
-#       -- extended to include preceding or succeeding whitespace. Succeeding
-#       -- whitespace has priority in order to act similarly to eg the built-in
-#       -- `ap`.
-#       --
-#       -- Can also be a function which gets passed a table with the keys
-#       -- * query_string: eg '@function.inner'
-#       -- * selection_mode: eg 'v'
-#       -- and should return true or false
-#       include_surrounding_whitespace = true,
-#     },
-#   },
-# }
-# '''
 
 [[plugins]]
 repo = 'David-Kunz/treesitter-unit'
@@ -517,27 +384,22 @@ lua_source = '''
 require("cellwidths").setup {
   name = "user/custom",
   fallback = function(cw)
-    -- 特定のテンプレートから追加・削除を行いたい場合は最初に load() を呼んで下さい。
-    -- cw.load "default"
-    -- 好きな設定を追加します。以下のどの書式でも構いません。
     cw.add {
-      -- { 0x00d7, 0x00d7, 2 },
-      -- { 0x03b1, 0x03c9, 2 },
       { 0x201c, 0x201d, 2 },
       { 0x2015, 0x2015, 2 },
       { 0x2018, 0x2018, 2 },
       { 0x2020, 0x2020, 2 },
-      { 0x2024, 0x203f, 2 },
+      -- { 0x2024, 0x203f, 2 },
       { 0x2100, 0x2103, 2 },
       { 0x2120, 0x2123, 2 },
-      { 0x2160, 0x2169, 2 },
-      { 0x2170, 0x2179, 2 },
-      { 0x2190, 0x2193, 2 },
-      { 0x21d2, 0x21d2, 2 },
-      { 0x21d4, 0x21d4, 2 },
-      { 0x2212, 0x2212, 2 },
-      { 0x2252, 0x2252, 2 },
-      { 0x2266, 0x2267, 2 },
+      -- { 0x2160, 0x2169, 2 },
+      -- { 0x2170, 0x2179, 2 },
+      -- { 0x2190, 0x2193, 2 },
+      -- { 0x21d2, 0x21d2, 2 },
+      -- { 0x21d4, 0x21d4, 2 },
+      -- { 0x2212, 0x2212, 2 },
+      -- { 0x2252, 0x2252, 2 },
+      -- { 0x2266, 0x2267, 2 },
       { 0x2460, 0x24ff, 2 },
       { 0x25a0, 0x25a1, 2 },
       { 0x25b2, 0x25b3, 2 },
@@ -549,17 +411,18 @@ require("cellwidths").setup {
       { 0x2690, 0x269c, 2 },
       { 0x26a0, 0x26ad, 2 },
       { 0x26b0, 0x26b1, 2 },
-      { 0x26b9, 0x26b9, 2 },
+      -- { 0x26b9, 0x26b9, 2 },
       { 0x2701, 0x2709, 2 },
       { 0x270c, 0x2712, 2 },
       { 0x2714, 0x2727, 2 },
       { 0x2729, 0x274d, 2 },
       { 0x274f, 0x2752, 2 },
       { 0x2756, 0x2756, 2 },
-      { 0x2758, 0x275e, 2 },
-      { 0x2761, 0x2794, 2 },
-      { 0x2798, 0x279f, 2 },
-      { 0x27f5, 0x27f7, 2 },
+      -- { 0x2758, 0x275e, 2 },
+      -- { 0x2761, 0x2775, 2 },
+      { 0x2776, 0x2794, 2 },
+      -- { 0x2798, 0x279f, 2 },
+      -- { 0x27f5, 0x27f7, 2 },
       { 0x2b05, 0x2b0d, 2 },
       { 0x303f, 0x303f, 2 },
       { 0xe62e, 0xe62e, 2 },
@@ -567,14 +430,12 @@ require("cellwidths").setup {
       { 0xf31b, 0xf31c, 2 },
       { 0xf62e, 0xf62e, 2 },
       { 0xe0a0, 0xe0a3, 2 },
-      { 0xe0b0, 0xe0c8, 2 },
-      { 0xe0ca, 0xe0ca, 2 },
-      { 0xe0cc, 0xe0d2, 2 },
-      { 0xe0d4, 0xe0d4, 2 },
+      -- { 0xe0b0, 0xe0c8, 2 },
+      -- { 0xe0ca, 0xe0ca, 2 },
+      -- { 0xe0cc, 0xe0d2, 2 },
+      -- { 0xe0d4, 0xe0d4, 2 },
       { 0xe725, 0xe725, 2 },
     }
-    -- 削除も出来ます。設定に存在しないコードポイントを指定してもエラーになりません。
-    -- cw.delete(0x2103)
   end,
 }
 '''
@@ -744,104 +605,6 @@ on_attach = function(bufnr)
 '''
 
 # [[plugins]]
-# repo = 'Decodetalkers/csv-tools.lua'
-# on_ft = ['csv', 'tsv']
-# lua_source = '''
-# require("csvtools").setup({
-#     before = 10,
-#     after = 10,
-#     clearafter = true,
-#     -- this will clear the highlight of buf after move
-#     showoverflow = false,
-#     -- this will provide a overflow show
-#     titelflow = true,
-#     -- add an alone title
-
-# })
-# '''
-
-# [[plugins]]
-# repo = 'gen740/SmoothCursor.nvim'
-# lazy = 1
-# on_event = ['BufRead','BufNew']
-# lua_source = '''
-# vim.o.signcolumn = 'number'
-# vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1'})
-# require('smoothcursor').setup({
-#     autostart = true,
-#     cursor = "▶",              -- cursor shape (need nerd font)
-#     texthl = "SmoothCursor",   -- highlight group, default is { bg = nil, fg = "#FFD400" }
-#     linehl = nil,              -- highlight sub-cursor line like 'cursorline', "CursorLine" recommended
-#     type = "default",          -- define cursor movement calculate function, "default" or "exp" (exponential).
-#     flyin_effect = "bottom",        -- "bottom" or "top"
-#     speed = 100,                -- max is 100 to stick to your current position
-#     intervals = 20,            -- tick interval
-#     priority = 1,             -- set marker priority
-#     timeout = 3000,            -- timout for animation
-#     threshold = 3,             -- animate if threshold lines jump
-#     disable_float_win = false, -- disable on float window
-#     enabled_filetypes = nil,   -- example: { "lua", "vim" }
-#     disabled_filetypes = {'ddu-ff', 'ddu-filer', 'help'},  -- this option will be skipped if enabled_filetypes is set. example: { "TelescopePrompt", "NvimTree" }
-# })
-# vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
-# local autocmd = vim.api.nvim_create_autocmd
-# local augroup = vim.api.nvim_create_augroup
-# autocmd({ 'ModeChanged' }, {
-#   group = 'dein',
-#   callback = function()
-#     local current_mode = vim.fn.mode()
-#     if current_mode == 'n' then
-#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#c6c8d1' })
-#       -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
-#     elseif current_mode == 'v' or current_mode == 'V' then
-#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#b4be82' })
-#     elseif current_mode == 'i' then
-#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#84a0c6' })
-#     end
-#   end,
-# })
-# autocmd({ 'User' }, {
-#   pattern = 'skkeleton-mode-changed',
-#   group = 'dein',
-#   callback = function()
-#     local current_mode = vim.api.nvim_eval('g:skkeleton#mode')
-#     if current_mode == 'hira' then
-#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#84a0c6' })
-#       -- vim.fn.sign_define('smoothcursor', { text = 'V' }) -- you can also change the cursor shape.
-#     elseif current_mode == 'kata' then
-#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#DF81A2' })
-#     elseif current_mode == 'abbrev' then
-#       vim.api.nvim_set_hl(0, 'SmoothCursor', { fg = '#149116' })
-#     end
-#   end,
-# })
-# '''
-
-# [[plugins]]
-# repo = 'cshuaimin/ssr.nvim'
-# on_lua = ["ssr"]
-# lua_add = '''
-# vim.keymap.set({ "n", "x" }, "<space>r", function() require("ssr").open() end)
-# '''
-# lua_post_source = '''
-# require("ssr").setup {
-#       border = "rounded",
-#       min_width = 50,
-#       min_height = 5,
-#       max_width = 120,
-#       max_height = 25,
-#       keymaps = {
-#         close = "q",
-#         next_match = "n",
-#         prev_match = "N",
-#         replace_confirm = "<cr>",
-#         replace_all = "<leader><cr>",
-#         help = "?",
-#       },
-#     }
-# '''
-
-# [[plugins]]
 # repo = 'kensleDev/persistent-macros.nvim'
 # on_lua = ["persistent-macros"]
 # lua_post_source = '''
@@ -849,25 +612,6 @@ on_attach = function(bufnr)
 #     vim.keymap.set("n", "<leader>m", function()
 #         vim.cmd([[:ShowMacros()]])
 #     end, { noremap = true, silent = true })
-# '''
-
-# [[plugins]]
-# repo = 'uga-rosa/ugaterm.nvim'
-# on_cmd = ['UgatermOpen']
-# lua_add = '''
-# vim.keymap.set("n", "<leader>t", function()
-#     vim.cmd([[:UgatermOpen]])
-# end, { noremap = true, silent = true })
-# '''
-# lua_source = '''
-# require("ugaterm").setup({
-#   ---@type string The terminal buffer name prefix.
-#   prefix = "terminal://",
-#   ---@type string The filetype for a terminal buffer.
-#   filetype = "ugaterm",
-#   ---@type string|function The command/function to open a teminal window.
-#   open_cmd = "botright 15sp",
-# })
 # '''
 
 [[plugins]]
@@ -892,125 +636,11 @@ insx.add(
 )
 '''
 
-# [[plugins]]
-# lazy = 0
-# repo = 'Bekaboo/dropbar.nvim'
-# lua_post_source = '''
-# '''
-
-# [[plugins]]
-# lazy = 0
-# repo = "epwalsh/obsidian.nvim"
-# lua_post_source = '''
-# local opts = {
-#     dir = "~/GoogleDrive/obsidian_memo",
-# }
-# require("obsidian").setup(opts)
-
-# vim.keymap.set("n", "gf", function()
-#   if require("obsidian").util.cursor_on_markdown_link() then
-#     return "<cmd>ObsidianFollowLink<CR>"
-#   else
-#     return "gf"
-#   end
-# end, { noremap = false, expr = true })
-# '''
-
-# [[plugins]]
-# repo = "rcarriga/nvim-notify"
-
-# [[plugins]]
-# repo = "IwasakiYuuki/ai-assistant.nvim"
-# lua_add = '''
-# vim.keymap.set('n', '<leader>c', "<cmd>AIAssistantToggle<cr>")
-# '''
-
-# [[plugins]]
-# repo = 'tzachar/highlight-undo.nvim'
-# on_event = ['BufRead','BufNew']
-# lua_post_source = '''
-# require('highlight-undo').setup({
-#     hlgroup = 'HighlightUndo',
-#     duration = 200,
-#     keymaps = {
-#       {'n', 'u', 'undo', {}},
-#       {'n', '<C-r>', 'redo', {}},
-#     }
-# })
-# '''
-# [[plugins]]
-# on_event = ['BufRead','BufNew']
-# repo = 'lewis6991/satellite.nvim'
-# lua_source = '''
-# require('satellite').setup {
-#   current_only = true,
-#   winblend = 50,
-#   zindex = 40,
-#   excluded_filetypes = {},
-#   width = 2,
-#   handlers = {
-#     cursor = {
-#       enable = true,
-#       -- Supports any number of symbols
-#       symbols = { '⎺', '⎻', '⎼', '⎽' }
-#       -- symbols = { '⎻', '⎼' }
-#       -- Highlights:
-#       -- - SatelliteCursor (default links to NonText
-#     },
-#     search = {
-#       enable = true,
-#       -- Highlights:
-#       -- - SatelliteSearch (default links to Search)
-#       -- - SatelliteSearchCurrent (default links to SearchCurrent)
-#     },
-#     diagnostic = {
-#       enable = false,
-#       signs = {'-', '=', '≡'},
-#       min_severity = vim.diagnostic.severity.HINT,
-#       -- Highlights:
-#       -- - SatelliteDiagnosticError (default links to DiagnosticError)
-#       -- - SatelliteDiagnosticWarn (default links to DiagnosticWarn)
-#       -- - SatelliteDiagnosticInfo (default links to DiagnosticInfo)
-#       -- - SatelliteDiagnosticHint (default links to DiagnosticHint)
-#     },
-#     gitsigns = {
-#       enable = false,
-#       signs = { -- can only be a single character (multibyte is okay)
-#         add = "│",
-#         change = "│",
-#         delete = "-",
-#       },
-#       -- Highlights:
-#       -- SatelliteGitSignsAdd (default links to GitSignsAdd)
-#       -- SatelliteGitSignsChange (default links to GitSignsChange)
-#       -- SatelliteGitSignsDelete (default links to GitSignsDelete)
-#     },
-#     marks = {
-#       enable = true,
-#       show_builtins = false, -- shows the builtin marks like [ ] < >
-#       key = 'm'
-#       -- Highlights:
-#       -- SatelliteMark (default links to Normal)
-#     },
-#     quickfix = {
-#       signs = { '-', '=', '≡' },
-#       -- Highlights:
-#       -- SatelliteQuickfix (default links to WarningMsg)
-#     }
-#   },
-# }
-# '''
-# [[plugins]]
-# repo = 'uga-rosa/ddc-nvim-lsp-setup'
-# on_source = ['ddc.vim']
-# lua_source = '''
-# require("ddc_nvim_lsp_setup").setup()
-# require("lspconfig").denols.setup()
-
 [[plugins]]
 repo = 'akinsho/toggleterm.nvim'
-lazy = 1
+on_lua = ['toggleterm']
 on_cmd = ["TermExec"]
+lazy = 0
 hook_add = '''
 " autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted winfixheight winfixwidth
 " autocmd vimrc TermOpen * startinsert
@@ -1020,60 +650,13 @@ autocmd vimrc TermOpen term://* nnoremap <buffer><silent> <tab> <cmd>lua vim.api
 
 nnoremap <leader>p <Cmd>3TermExec name=markdownserver open=0 cmd="gh markdown-preview --markdown-mode %"<CR>
 nnoremap <leader>b <Cmd>2TermExec name=browser direction=vertical size=100 go_back=0 cmd="wsl"<CR>
-nnoremap <silent> <leader>t <cmd>1ToggleTerm name=default<CR>
-nnoremap <silent> <leader>T <cmd>ToggleTermToggleAll<CR>
+nnoremap <silent> <leader>t <cmd>ToggleTerm name=default<CR>
+nnoremap <silent> <leader>T <cmd>TermExec open=1 go_back=0 direction=vertical size=100 cmd="copilot --screen-reader --no-mouse --allow-all-urls --model gpt-5-mini"<CR>
 nnoremap <silent> # <Cmd>call execute('99TermExec cmd="' .. input('TermExec: ') .. '" dir=' .. expand('%:p:h') )<CR>
 '''
 lua_post_source = '''
 require("toggleterm").setup({})
 '''
-
-# [[plugins]]
-# lazy = 1
-# repo = 'rebelot/terminal.nvim'
-# on_lua = ["terminal"]
-# # on_cmd = ["TermToggle", "TermRun"]
-# hook_add = '''
-# autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted winfixheight winfixwidth
-# autocmd vimrc TermOpen * startinsert
-# autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>TermClose<CR>
-# '''
-# lua_add = '''
-# local term_map = require("terminal.mappings")
-# vim.keymap.set({ "n", "x" }, "<leader>ts", term_map.operator_send, { expr = true })
-# vim.keymap.set("n", "<leader>to", term_map.toggle)
-# vim.keymap.set("n", "<leader>tO", term_map.toggle({ open_cmd = "enew" }))
-# vim.keymap.set("n", "<leader>tr", term_map.run)
-# vim.keymap.set("n", "<leader>tR", term_map.run(nil, { layout = { open_cmd = "enew" } }))
-# vim.keymap.set("n", "<leader>tk", term_map.kill)
-# vim.keymap.set("n", "<leader>t]", term_map.cycle_next)
-# vim.keymap.set("n", "<leader>t[", term_map.cycle_prev)
-# vim.keymap.set("n", "<leader>tl", term_map.move({ open_cmd = "belowright vnew" }))
-# vim.keymap.set("n", "<leader>tL", term_map.move({ open_cmd = "botright vnew" }))
-# vim.keymap.set("n", "<leader>th", term_map.move({ open_cmd = "belowright new" }))
-# vim.keymap.set("n", "<leader>tH", term_map.move({ open_cmd = "botright new" }))
-# vim.keymap.set("n", "<leader>tf", term_map.move({ open_cmd = "float" }))
-# '''
-
-# lua_source = '''
-# require('terminal').setup(
-#   {
-#     layout = { open_cmd = "belowright15 new" },
-#     cmd = { vim.o.shell },
-#     autoclose = true,
-#   }
-# )
-# '''
-# '''
-
-# [[plugins]]
-# repo = 'dstein64/nvim-scrollview'
-# on_event = ['BufRead','BufNew']
-# lua_post_source = '''
-# require('scrollview').setup({
-#   signs_on_startup = {'conflicts', 'marks', 'search', 'trail'},
-# })
-# '''
 
 [[plugins]]
 repo = 'm00qek/baleia.nvim'
@@ -1084,89 +667,10 @@ command! BaleiaColorize call s:baleia.once(bufnr('%'))
 autocmd! BufEnter * if &ft ==# 'quickrun' | silent call s:baleia.once(bufnr('%')) | endif
 '''
 
-# [[plugins]]
-# repo = 'mvllow/modes.nvim'
-# lua_post_source = '''
-# require('modes').setup()
-# '''
-
 [[plugins]]
 repo = 'folke/zen-mode.nvim'
 on_cmd = ['ZenMode']
 
-# [[plugins]]
-# repo = 'pwntester/octo.nvim'
-# on_event = ["BufRead"]
-# lua_source = '''
-# require"octo".setup({
-#   use_local_fs = false,                    -- use local files on right side of reviews
-#   enable_builtin = false,                  -- shows a list of builtin actions when no action is provided
-#   default_remote = {"upstream", "origin"}; -- order to try remotes
-#   default_merge_method = "commit",         -- default merge method which should be used for both `Octo pr merge` and merging from picker, could be `commit`, `rebase` or `squash`
-#   default_delete_branch = false,           -- whether to delete branch when merging pull request with either `Octo pr merge` or from picker (can be overridden with `delete`/`nodelete` argument to `Octo pr merge`)
-#   ssh_aliases = {},                        -- SSH aliases. e.g. `ssh_aliases = {["github.com-work"] = "github.com"}`. The key part will be interpreted as an anchored Lua pattern.
-#   picker = "telescope",                    -- or "fzf-lua"
-#   picker_config = {
-#     use_emojis = false,                    -- only used by "fzf-lua" picker for now
-#     mappings = {                           -- mappings for the pickers
-#       open_in_browser = { lhs = "<C-b>", desc = "open issue in browser" },
-#       copy_url = { lhs = "<C-y>", desc = "copy url to system clipboard" },
-#       checkout_pr = { lhs = "<C-o>", desc = "checkout pull request" },
-#       merge_pr = { lhs = "<C-r>", desc = "merge pull request" },
-#     },
-#   },
-#   comment_icon = "?",                      -- comment marker
-#   outdated_icon = "!",                    -- outdated indicator
-#   resolved_icon = "x",                    -- resolved indicator
-#   reaction_viewer_hint_icon = "*";        -- marker for user reactions
-#   users = "search",                        -- Users for assignees or reviewers. Values: "search" | "mentionable" | "assignable"
-#   user_icon = "Y";                        -- user icon
-#   timeline_marker = "→";                  -- timeline marker
-#   timeline_indent = "2";                   -- timeline indentation
-#   right_bubble_delimiter = ")";            -- bubble delimiter
-#   left_bubble_delimiter = "(";             -- bubble delimiter
-#   github_hostname = "";                    -- GitHub Enterprise host
-#   snippet_context_lines = 4;               -- number or lines around commented lines
-#   gh_cmd = "gh",                           -- Command to use when calling Github CLI
-#   gh_env = {},                             -- extra environment variables to pass on to GitHub CLI, can be a table or function returning a table
-#   timeout = 5000,                          -- timeout for requests between the remote server
-#   default_to_projects_v2 = false,          -- use projects v2 for the `Octo card ...` command by default. Both legacy and v2 commands are available under `Octo cardlegacy ...` and `Octo cardv2 ...` respectively.
-#   ui = {
-#     use_signcolumn = false,                -- show "modified" marks on the sign column
-#     use_signstatus = true,                 -- show "modified" marks on the status column
-#   },
-#   issues = {
-#     order_by = {                           -- criteria to sort results of `Octo issue list`
-#       field = "CREATED_AT",                -- either COMMENTS, CREATED_AT or UPDATED_AT (https://docs.github.com/en/graphql/reference/enums#issueorderfield)
-#       direction = "DESC"                   -- either DESC or ASC (https://docs.github.com/en/graphql/reference/enums#orderdirection)
-#     }
-#   },
-#   reviews = {
-#     auto_show_threads = true,              -- automatically show comment threads on cursor move
-#     focus             = "right",           -- focus right buffer on diff open
-#   },
-#   pull_requests = {
-#     order_by = {                           -- criteria to sort the results of `Octo pr list`
-#       field = "CREATED_AT",                -- either COMMENTS, CREATED_AT or UPDATED_AT (https://docs.github.com/en/graphql/reference/enums#issueorderfield)
-#       direction = "DESC"                   -- either DESC or ASC (https://docs.github.com/en/graphql/reference/enums#orderdirection)
-#     },
-#     always_select_remote_on_create = false -- always give prompt to select base remote repo when creating PRs
-#   },
-#   file_panel = {
-#     size = 10,                             -- changed files panel rows
-#     use_icons = true                       -- use web-devicons in file panel (if false, nvim-web-devicons does not need to be installed)
-#   },
-#   mappings_disable_default = false,        -- disable default mappings if true, but will still adapt user mappings
-# })
-# '''
-
-# [[plugins]]
-# repo = 'nvim-telescope/telescope.nvim'
-
-
-# [[plugins]]
-# repo = 'nvim-tree/nvim-web-devicons'
-#
 [[plugins]]
 repo = 'brianhuster/live-preview.nvim'
 on_cmd = ['LivePreview']
@@ -1236,5 +740,52 @@ require 'window-picker'.setup({
             },
         },
     },
+})
+'''
+[[plugins]]
+repo = 'linrongbin16/lsp-progress.nvim'
+on_source = ['nvim-lspconfig']
+lua_source = '''
+require("lsp-progress").setup({
+  decay = 1200,
+  series_format = function(title, message, percentage, done)
+    local builder = {}
+    local has_title = false
+    local has_message = false
+    if type(title) == "string" and string.len(title) > 0 then
+      table.insert(builder, title)
+      has_title = true
+    end
+    if type(message) == "string" and string.len(message) > 0 then
+      table.insert(builder, message)
+      has_message = true
+    end
+    if percentage and (has_title or has_message) then
+      table.insert(builder, string.format("(%.0f%%)", percentage))
+    end
+    return { msg = table.concat(builder, " "), done = done }
+  end,
+  client_format = function(client_name, spinner, series_messages)
+    if #series_messages == 0 then
+      return nil
+    end
+    local builder = {}
+    local done = true
+    for _, series in ipairs(series_messages) do
+      if not series.done then
+        done = false
+      end
+      table.insert(builder, series.msg)
+    end
+    if done then
+      spinner = "✓" -- replace your check mark
+    end
+    return "["
+      .. client_name
+      .. "] "
+      .. spinner
+      .. " "
+      .. table.concat(builder, ", ")
+  end,
 })
 '''

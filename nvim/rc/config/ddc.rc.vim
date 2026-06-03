@@ -1,4 +1,5 @@
-call ddc#custom#patch_global('ui', 'pum')
+call ddc#custom#patch_global('ui', 'native')
+
 " call ddc#custom#patch_global('ui', 'inline')
 " inoremap <expr><C-t>       ddc#map#insert_item(0, "\<C-e>")
 call ddc#custom#patch_global({
@@ -11,24 +12,32 @@ call ddc#custom#patch_global('sourceOptions', {
   \ 'ignoreCase': v:true,
   \ 'converters': ['converter_remove_overlap'],
 \     },
-\ 'skkeleton': {'mark': 'skk', 'matchers': [], 'sorters': [], 'isVolatile': v:true,'minAutoCompleteLength' :1},
-\ 'skkeleton_okuri': {'mark': 'skk', 'matchers': [], 'sorters': [], 'isVolatile': v:true,'minAutoCompleteLength' :1},
+\ 'skkeleton': {'mark': 'skk', 'matchers': [], 'sorters': [], 'isVolatile': v:true,'minAutoCompleteLength' :2},
+\ 'skkeleton_okuri': {'mark': 'skk', 'matchers': [], 'sorters': [], 'isVolatile': v:true,'minAutoCompleteLength' :2},
 \ 'vsnip': {'matchers': ['matcher_head'], 'minAutoCompleteLength' :2},
 \ })
 
-augroup myddc
-  autocmd!
-  autocmd User skkeleton-enable-pre call s:pum_as_toggle(1)
-  autocmd User skkeleton-disable-pre call s:pum_as_toggle(0)
-augroup END
+" augroup myddc
+"   autocmd!
+"   autocmd User skkeleton-enable-pre call s:pum_as_toggle(1)
+"   autocmd User skkeleton-disable-pre call s:pum_as_toggle(0)
+" augroup END
 
-function! s:pum_as_toggle(bool)
-  if a:bool > 0
-    call pum#set_buffer_option({ 'auto_select': v:false })
-  else
-    call pum#set_buffer_option({ 'auto_select': v:true })
-  endif
-endfunction
+" function! s:pum_as_toggle(bool)
+"   if a:bool > 0
+"     call pum#set_buffer_option({ 'auto_select': v:false })
+"   else
+"     call pum#set_buffer_option({ 'auto_select': v:true })
+"   endif
+" endfunction
+"
+lua << EOF
+vim.lsp.config('*', {
+  -- 共通設定
+  capabilities = require("ddc_source_lsp").make_client_capabilities(),
+})
+EOF
+
 
 call ddc#custom#patch_global(#{
       \ sourceOptions: #{

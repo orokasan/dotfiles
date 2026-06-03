@@ -2,28 +2,21 @@ function! s:ddu_my_open(context) abort
   let mode = mode()
   let action = a:context.items[0].action
   let config = ddu#custom#get_current(a:context.options.name)
-  let is_insert = v:false
-
-  if w:ddu_ui_ff_status.input !=# ''
-    let key = nvim_replace_termcodes("<C-u><ESC>", v:true, v:false, v:true)
-    call nvim_feedkeys(key, 'n', v:false)
-    let is_insert = v:true
-  endif
+  let is_insert = mode ==# 'c'
 
   if !isdirectory(action.path)
     call ddu#ui#do_action('itemAction', {'name' : 'open'})
-
+    if is_insert
+      let key = nvim_replace_termcodes("<C-u><ESC>", v:true, v:false, v:true)
+      call nvim_feedkeys(key, 'n', v:false)
+    endif
   elseif config.sources[0].name ==# 'file'
     call ddu#ui#do_action('itemAction', {'name' : 'narrow'})
+    if is_insert
+      call ddu#ui#do_action('openFilterWindow' )
+    endif
   else
-    call ddu#ui#do_action('updateOptions',{'sources':[{'name':'file', 'options':{'path': expand(action.path,':p')}}] , })
-    call ddu#redraw(b:ddu_ui_name, {'method': 'refreshItems'})
-  endif
-
-  " call ddu#ui#do_action('updateOptions',{'input': ''} )
-  if is_insert
-    call ddu#ui#do_action('openFilterWindow' )
-    call ddu#ui#do_action('openFilterWindow', {'input': ''} )
+    call ddu#start({'name': a:context.options.name, 'sources':[{'name':'file', 'options':{'path': expand(action.path,':p')}}] , 'input': '' })
   endif
 
   return
@@ -312,7 +305,7 @@ function! s:ddu_my_settings() abort
   nnoremap <buffer><silent> q
       \ <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer><silent> i
-      \ <Cmd>call ddu#ui#do_action('openFilterWindow')<CR>
+      \ gg<Cmd>call ddu#ui#do_action('openFilterWindow')<CR>
   nnoremap <buffer><silent> I
     \ <Cmd>call ddu#ui#do_action('openFilterWindow', {'input': ''} )<CR>
   nnoremap <buffer> o
@@ -430,7 +423,7 @@ function! s:ddu_filter_my_settings() abort
   cnoremap <silent>  <C-k>
         \ <Cmd>call ddu#ui#do_action('cursorPrevious', {'loop': v:true })<CR>
   cnoremap <silent>  <CR>
-      \ <ESC><Cmd>call ddu#ui#do_action('itemAction')<CR>
+      \ <Cmd>call ddu#ui#do_action('itemAction')<CR>
   cnoremap <silent>   <C-t>
       \ <ESC><Cmd>call ddu#ui#do_action('itemAction', {'name' : 'open', 'params': {'command': 'tabedit'}})<CR><ESC>
   cnoremap <silent>   <C-r>

@@ -1,17 +1,4 @@
 [[plugins]]
-# lazy = 1
-repo =  'itchyny/lightline.vim'
-hook_add = '''
-" if v:vim_did_enter
-"   set laststatus=0
-" endif
-" autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
-" autocmd vimrc VimEnter * call timer_start(0, { -> dein#source('lightline.vim') })
-call execute('source ' .. stdpath('config') .. '/rc/config/lightline.rc.vim')
-" let &laststatus = has('nvim') ? 2 : 2
-'''
-
-[[plugins]]
 depends = ['lightline.vim', 'nvim-lspconfig']
 on_source = ['nvim-lspconfig']
 lazy = 1
@@ -22,6 +9,10 @@ hook_add = '''
     let g:lightline#lsp#indicator_warnings = ' '
     let g:lightline#lsp#indicator_errors = ' '
     let g:lightline#lsp#indicator_hints = ' '
+
+'''
+hook_source = '''
+call lightline#lsp#register()
 '''
 
 [[plugins]]
@@ -506,7 +497,6 @@ let g:popup_preview_config = {
 [[plugins]]
 # on_source = ['vim-vsnip-integ']
 lazy = 0
-merged = 0
 repo = 'rafamadriz/friendly-snippets'
 
 [[plugins]]
@@ -531,16 +521,15 @@ let g:sonictemplate_postfix_key = "<C-z>"
 [[plugins]]
 repo = 'haya14busa/vim-asterisk'
 on_map = { nx = '<Plug>(asterisk-' }
-lua_add = '''
+depends = ['nvim-hlslens']
+lua_source = '''
 local kopts = { noremap = true, silent = true }
-
 vim.api.nvim_set_keymap('n', 'n',
   [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>zz]],
   kopts)
 vim.api.nvim_set_keymap('n', 'N',
   [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>zz]],
   kopts)
-
 vim.api.nvim_set_keymap('x', '*', [[<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>]], {})
 vim.api.nvim_set_keymap('x', 'g*', [[<Plug>(asterisk-gz*)<Cmd>lua require('hlslens').start()<CR>]], {})
 vim.api.nvim_set_keymap('n', '*', [[<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>]], {})
@@ -884,22 +873,24 @@ nnoremap g== <Plug>(crunch-operator-line)
 on_source = ['vim-crunch']
 repo = 'arecarn/vim-selection'
 
-[[plugins]]
-repo = 'andymass/vim-matchup'
-on_event = ["BufRead", "BufNew"]
-hook_add = '''
-let g:matchup_mappings_enabled = 1
-nmap <TAB> %
-xmap <TAB> %
-omap <TAB> %
-let g:matchup_transmute_enabled = 1
-let g:matchup_matchparen_offscreen = { "method":"popup" }
-let g:matchup_matchparen_enabled = 1
-let g:matchup_matchparen_pumvisible = 1
-let g:matchup_matchparen_end_sign = "◀"
-" let g:matchup_surround_enabled = 0
-" let g:matchup_matchparen_deferred = 1
-'''
+# [[plugins]]
+# repo = 'andymass/vim-matchup'
+# on_event = ["BufRead", "BufNew"]
+# hook_add = '''
+# let g:matchup_mappings_enabled = 1
+# nmap <TAB> %
+# xmap <TAB> %
+# omap <TAB> %
+# let g:matchup_treesitter_enabled = v:true
+# let g:matchup_matchparen_offscreen = { "method":"popup" }
+# let g:matchup_matchparen_enabled = 1
+# let g:matchup_matchparen_pumvisible = 0
+# let g:matchup_matchparen_end_sign = "◀"
+# let g:matchup_matchparen_deferred_show_delay = 0
+# " let g:matchup_surround_enabled = 0
+# " let g:matchup_matchparen_deferred = 1
+# '''
+
 [[plugins]]
 on_cmd = ["Wrapwidth"]
 repo = 'rickhowe/wrapwidth'

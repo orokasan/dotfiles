@@ -1,4 +1,3 @@
-
 set laststatus=2
 let g:lightline = {
     \ 'active': {
@@ -6,7 +5,7 @@ let g:lightline = {
     \ 'right': [
     \ ['lineinfo','lsp_status'],
     \ ['charcount','denitebuffer'],
-    \ ['linter_errors', 'linter_warnings', 'quickrun', 'percent', 'progress','IMEstatus','searchcount', 'lsp_info', 'lsp_hints', 'lsp_errors', 'lsp_warnings', 'deniteinput','ddu' ]
+    \ ['linter_errors', 'linter_warnings', 'quickrun', 'percent', 'IMEstatus','searchcount', 'lsp_info', 'lsp_hints', 'lsp_errors', 'lsp_warnings', 'deniteinput','ddu', 'progress', ]
     \ ]
     \ },
     \ 'inactive': {
@@ -42,10 +41,10 @@ let g:lightline = {
     \ 'searchres': 'LLsearchres',
     \ 'denitebuffer' : 'LLDeniteBuffer',
     \ 'denitefilter' : 'LLDeniteFilter',
-    \ 'progress': 'LLLspProgress',
     \ 'ddu': 'LLddu',
     \ 'quickrun': 'LL_quickrun_running',
     \ 'searchcount': 'LastSearchCount',
+    \ 'progress': 'LLLspProgress',
     \ },
     \ 'component_expand': {
     \ 'buffers': 'lightline#bufferline#buffers',
@@ -66,7 +65,6 @@ let g:lightline = {
 " https://github.com/neovim/neovim/issues/8796
 " autocmd dein User LspDiagnosticsChanged if mode() is# 'n' | call VimLspCacheDiagnosticsCounts() | call lightline#update() | endif
 
-call lightline#lsp#register()
 let g:lightline.colorscheme = 'iceberg'
 " autocmd dein ColorScheme,VimEnter * call <SID>lightline_set_colorscheme()
 let g:lightline.tab_component_function = {
@@ -291,15 +289,22 @@ endfunction
 autocmd dein BufEnter,CmdlineLeave,FileWritePre * call <SID>llgitcache()
 autocmd dein SourcePost $MYVIMRC call <SID>llgitcache()
 
-function! s:llgitcache() abort
-    if s:ignore_window()
-        return ''
-    else
-        let s:llgitbranch = len(gitbranch#name()) > 0 ?  ''. gitbranch#name() : ''
-        " return s:threshold(1) ? ' '. s:llgitbranch :
-        " \ s:threshold(2) ? '' :''
-    endif
-endfunction
+
+if !exists('gitbranch#name')
+  function! s:llgitcache() abort
+    return ''
+  endfunction
+else
+  function! s:llgitcache() abort
+      if s:ignore_window()
+          return ''
+      else
+          let s:llgitbranch = len(gitbranch#name()) > 0 ?  ''. gitbranch#name() : ''
+          " return s:threshold(1) ? ' '. s:llgitbranch :
+          " \ s:threshold(2) ? '' :''
+      endif
+  endfunction
+endif
 
 function! s:llanzu()
     let s:anzu = substitute(anzu#search_status(), '\v^(\\v|\\V)', "" , "")
@@ -389,6 +394,12 @@ endfunction
 function! LLtabnum(n)
     return a:n .. ':'
 endfunction
+
+let s:lsp_progress = ''
+autocmd dein User LspProgressStatusUpdated let s:lsp_progress =  luaeval('require("lsp-progress").progress()')
+function! LLLspProgress()
+  return s:lsp_progress
+endfunction
 " function! s:lastSearchCount() abort
 "   let result = searchcount(#{recompute: 0})
 "   if empty(result)
@@ -431,8 +442,16 @@ function! LLsearchres() abort
 endfunction
 
 function! LLicon(n) abort
+if v:vim_did_enter == v:false
+  return 
+endif 
 let buflist = tabpagebuflist(a:n)
 let winnr = tabpagewinnr(a:n)
+
+if expand('#'.buflist[winnr - 1].':t') == ''
+  return ' '
+endif
+
 let icon = nerdfont#find(expand('#'.buflist[winnr - 1].':t'))
 return icon !=# '' ? ' ' .. icon : '[No Name]'
 endfunction

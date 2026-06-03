@@ -304,10 +304,13 @@ vim.fn["ddu#custom#patch_global"](
       narrow = { quit = false },
       cd = { quit = false },
       replace = { quit = false },
-      rename = { quit = false },
+      rename = { quit = true },
       newFile = { quit = false },
       newDirectory = { quit = false },
       git_log = { quit = false },
+      copy = { quit = false },
+      move = { quit = false },
+      highlight = { quit = false },
     },
   }
 )
@@ -428,24 +431,24 @@ vim.fn["ddu#custom#patch_local"](
   }
 )
 local split_config = {
-    ui = 'ff',
-    actionOptions = {
-      _ = {
-        quit = false
-      }
-    },
-    actionParams = {
-      open = {
-        command = 'tabnew',
-      }
-    },
-    uiParams = {
-      ff = {
-        split = 'vertical',
-        splitDirection = 'belowright',
-      }
+  ui = 'ff',
+  actionOptions = {
+    _ = {
+      quit = false
+    }
+  },
+  actionParams = {
+    open = {
+      command = 'tabnew',
+    }
+  },
+  uiParams = {
+    ff = {
+      split = 'vertical',
+      splitDirection = 'belowright',
     }
   }
+}
 
 vim.fn["ddu#custom#patch_local"](
   'split1',
@@ -472,6 +475,9 @@ vim.fn["ddu#custom#patch_local"](
     },
     actionOptions = {
       open = {
+        quit = false
+      },
+      highlights = {
         quit = false
       }
     },

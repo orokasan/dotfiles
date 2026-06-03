@@ -69,6 +69,7 @@ if exists('neovide')
   let g:neovide_remember_window_position=v:true
   let g:neovide_cursor_animation_length=0
   let g:neovide_window_blurred=v:false
+  let g:neovide_progress_bar_enabled = v:false
   " let g:neovide_scale_factor=1.0
   " let g:neovide_refresh_rate_idle = 5
 endif
@@ -117,7 +118,7 @@ endif
 let g:dein#install_progress_type = "floating"
 
 if s:is_nvim
-let g:dein#default_options = { 'merged': v:true }
+let g:dein#default_options = { 'merged': v:false }
 else
 let g:dein#default_options = { 'merged': v:false }
 endif
@@ -148,32 +149,37 @@ if !has('vim_starting')
   call dein#call_hook('source')
   call dein#call_hook('post_source')
 endif
+
 command! -nargs=? -complete=command DeinInstall  call dein#install()
 command! -nargs=? -complete=command DeinUpdate call dein#update()
 command! -nargs=? -complete=command DeinRecache call dein#recache_runtimepath() |echo "Recache Done"
-command! -nargs=? -complete=command UpdateConflictPlugin Gina stash | Gina pull | Gina  stash pop
-if !v:vim_did_enter
-  function! DeinLoader() abort
-    source $MYVIMRC
-    call dein#install()
-    echo "Recache"
-    call dein#recache_runtimepath()
-  endfunction
-endif
+command! -nargs=? -complete=command UpdateConflictPlugin Gina stash | Gina pull | Gina stash pop
 
-filetype plugin indent on
-syntax on
 " for dein dein#util#_check_vimrcs() bug workaround
 au! dein BufWritePost
+
 if s:dein_is_initializing
   call dein#install()
   let s:dein_is_initializing = 0
   source $myvimrc
 endif
+
 autocmd vimrc VimEnter * call s:vimrc_VimEnter_hook()
 function! s:vimrc_VimEnter_hook() abort
 call dein#call_hook('post_source')
 endfunction
+
+call execute('source ' .. stdpath('config') .. '/rc/config/lightline.rc.vim')
+if has('nvim')
+  colorscheme iceberg
+else
+  au VimEnter * colorscheme iceberg
+endif
+
+filetype plugin indent on
+syntax on
+"---------------------------------------------------------------------
+
 set fileformats=unix,dos,mac
 set fileencodings=utf-8,cp932,iso-2022-jp,euc-jp,sjis,utf-16le
 
@@ -394,7 +400,7 @@ inoremap <C-l> <NOP>
 nnoremap Y y$
 xnoremap Y y$`]
 xnoremap y ygv<ESC>
-nnoremap <leader>j o<ESC>k
+nnoremap <nowait> <leader>j o<ESC>k
 nnoremap <leader>k O<ESC>j
 nnoremap <silent> <C-q> <cmd>tabclose!<CR>
 vnoremap < <gv
@@ -498,7 +504,8 @@ cnoremap z/ ・
 cnoremap z, ●
 cnoremap z<space>  　
 "terminal
-tnoremap <ESC> <c-\><c-n><Plug>(esc)
+tnoremap <ESC> <c-\><c-n><Plug>(esc)0
+tnoremap <C-[> <c-\><c-n><Plug>(esc)0
 nnoremap <Plug>(esc)<ESC> i<ESC>
 tnoremap <C-f> <Right>
 tnoremap <C-b> <Left>
@@ -580,12 +587,13 @@ if s:is_nvim
   " hi! link DiagnosticsVirtualTextWarning Question
   " sign define DiagnosticSignError text= texthl=DiagnosticVirtualTextError linehl= numhl=
   " sign define DiagnosticSignWarn text= texthl=DiagnosticVirtualTextWarn linehl= numhl=
+  " autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted nowrap
   set winbar=%F%m
 else
   set viminfo=!,'200,<100,s10,h,n~/.vim/.viminfo
   set rtp+=C:/tools/vim/vim90
   packadd! editexisting
-  autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted
+  " autocmd vimrc TerminalOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted nowrap
   autocmd vimrc WinEnter * if &buftype ==# 'terminal' | normal i | endif
 endif
 
@@ -870,8 +878,6 @@ let g:chat_gpt_lang = 'jp'
 nnoremap <silent> <leader>d <cmd>HimalayaWrite<CR>
 
 let g:hey_model_name = 'gpt-5.1'
-call execute('source ' .. stdpath('config') .. '/rc/config/ddu_mapping.rc.vim')
-call execute('source ' .. stdpath('config') .. '/rc/config/ddu.rc.vim')
 au vimrc CmdlineLeave * mode
 let g:_ts_force_sync_parsing = v:true
 
@@ -918,4 +924,31 @@ call system('gws drive permissions create --json "{ \"role\": \"commenter\", \"t
 call setreg('*', link)
 return link
 endfunction
+lua require("sk")
+
+autocmd LspProgress * redrawstatus
+lua << EOF
+
+vim.keymap.set('n', '<Leader>jc', require("sk").open_compose, {noremap=true, silent=true})
+vim.keymap.set('t', '<C-j>', require("sk").open_compose, {noremap=true, silent=true})
+
+
+        vim.api.nvim_create_autocmd('LspProgress', { buffer = buf, callback = function(ev)
+            local value = ev.data.params.value
+            vim.api.nvim_echo({ { value.message or 'done' } }, false, {
+              id = 'lsp.' .. ev.data.params.token,
+              kind = 'progress',
+              source = 'vim.lsp',
+              title = value.title,
+              status = value.kind ~= 'end' and 'running' or 'success',
+              percent = value.percentage,
+            })
+          end,
+        })
+EOF
+" autocmd vimrc BufWinEnter * if &buftype ==# 'terminal' | call execute('CellWidthsOff') | endif
+" autocmd vimrc BufWinLeave * if &buftype ==# 'terminal' | call execute('CellWidthsOn') | endif
+set notitle
+
+" autocmd vimrc TermOpen term://* syntax match 200b "​"  conceal |syntax match 200b "⁠" conceal |  setlocal conceallevel=1 concealcursor=niv
 " vim:set foldmethod=marker:

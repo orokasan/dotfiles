@@ -1,11 +1,6 @@
 [[plugins]]
 repo = 'vim-denops/denops.vim'
 
-# [[plugins]]
-# lazy = 1
-# on_cmd = ['GhostStart']
-# repo = 'gamoutatsumi/dps-ghosttext.vim'
-
 [[plugins]]
 repo = 'lambdalisue/guise.vim'
 depends = ['denops.vim']
@@ -97,10 +92,10 @@ depends = ['denops.vim']
 
 [[plugins]]
 repo = 'Shougo/ddc.vim'
-# lazy = 1
-# depends = ['denops.vim', 'pum.vim']
+lazy = 0
+depends = ['denops.vim', 'pum.vim']
 # on_event = ['InsertEnter', 'CmdlineEnter']
-hook_add = "call execute('source ' .. stdpath('config') .. '/rc/config/ddc.rc.vim')"
+hook_post_source = "call execute('source ' .. stdpath('config') .. '/rc/config/ddc.rc.vim')"
 
 [[plugins]]
 repo = 'Shougo/ddc-cmdline-history'
@@ -324,7 +319,9 @@ repo = 'Shougo/ddu.vim'
 # merged = 0
 hook_add = '''
 '''
-hook_source = '''
+hook_post_source = '''
+call execute('source ' .. stdpath('config') .. '/rc/config/ddu_mapping.rc.vim')
+call execute('source ' .. stdpath('config') .. '/rc/config/ddu.rc.vim')
 '''
 
 [[plugins]]

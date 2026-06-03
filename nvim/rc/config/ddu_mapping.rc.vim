@@ -71,7 +71,7 @@ function! s:ddu_mapping() abort
   " nnoremap <silent> sd <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', }], resume: v:true, name: 'mail'})\|call ddu#redraw('mail', {'input': '', 'method': 'refreshItems' })<CR>
   nnoremap <silent> sD <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', }], sync: v:true, resume: v:false, name: 'mail' })<CR>
   " nnoremap <silent> g/ <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', params: #{args: [ input('query: ')], folder: "[Gmail]/すべてのメール", page:100} }], name: 'mail'})<CR>
-  nnoremap <silent> g/ <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', params: #{ folder: "[Gmail]/送信済みメール", page:100, display_receiver: v:true} }], name: 'mail'})<CR>
+  nnoremap <silent> g/ <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', params: #{ folder: "[Gmail]/送信済みメール", page:200, display_receiver: v:true} }], name: 'mail'})<CR>
   nnoremap <silent> sg <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': input('Pattern: ')}}]})<CR>
   " nnoremap <silent> sg <cmd>call ddu#start({'sources': [{'name': 'jvgrep', 'params': {'path': <SID>find_gitdir(),'input': input('Pattern: ')}}]})<CR>
   nnoremap <silent> s* <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': expand('<cword>')}}]})<CR>
