@@ -36,7 +36,15 @@ function openVim(cmd: string[], args: string[]) {
     stdout: "null",
     stderr: "null",
   });
-  command.output();
+  try {
+    // Spawn without awaiting; log PID for debugging.
+    const child = command.spawn();
+    if (child && typeof (child as any).pid === "number") {
+      console.log(`${cmdHead} started (pid=${(child as any).pid})`);
+    }
+  } catch (e) {
+    console.error(`Failed to start ${cmdHead}:`, e);
+  }
 }
 
 function main() {

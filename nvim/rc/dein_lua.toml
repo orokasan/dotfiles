@@ -84,7 +84,7 @@ require("yanky").setup({
 repo = 'nvim-treesitter/nvim-treesitter'
 lazy = 0
 lua_add = '''
--- vim.opt.runtimepath:prepend(vim.fn.stdpath("data") .. '/site' )
+vim.opt.runtimepath:prepend(vim.fn.stdpath("data") .. '/site' )
 -- require 'nvim-treesitter.configs'.setup {
 --   ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
 --  parser_install_dir = vim.fn.stdpath("data") .. '/site',

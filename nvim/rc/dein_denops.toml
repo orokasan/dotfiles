@@ -425,6 +425,7 @@ repo = 'Milly/ddc-source-register'
 
 [[plugins]]
 repo = 'Milly/ddu-filter-kensaku'
+rev = 'af71472'
 
 [[plugins]]
 repo = 'lambdalisue/kensaku.vim'
