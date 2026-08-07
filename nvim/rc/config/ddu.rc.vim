@@ -4,6 +4,21 @@ function! s:ddu_my_open(context) abort
   let config = ddu#custom#get_current(a:context.options.name)
   let is_insert = mode ==# 'c'
 
+  if len(glob(action.path)) == 0
+    if input( action.path .. ' does not exist. create? (y/n): ',  ) !=# 'y'
+      call ddu#ui#do_action('itemAction', {'name' : 'open'})
+      return config.ui ==# 'filer' ? 4 : 0
+    endif
+
+    if len(fnamemodify(action.path, ':e')) > 0
+      call ddu#ui#do_action('itemAction', {'name' : 'open'})
+    else
+      call mkdir(expand(action.path), 'p')
+      call ddu#ui#do_action('itemAction', {'name' : 'my_open'})
+    endif
+    return config.ui ==# 'filer' ? 4 : 0
+  endif
+
   if !isdirectory(action.path)
     call ddu#ui#do_action('itemAction', {'name' : 'open'})
     if is_insert
@@ -19,7 +34,7 @@ function! s:ddu_my_open(context) abort
     call ddu#start({'name': a:context.options.name, 'sources':[{'name':'file', 'options':{'path': expand(action.path,':p')}}] , 'input': '' })
   endif
 
-  return
+  return config.ui ==# 'filer' ? 4 : 0
 
 endfunction
 
@@ -308,9 +323,9 @@ function! s:ddu_my_settings() abort
       \ gg<Cmd>call ddu#ui#do_action('openFilterWindow')<CR>
   nnoremap <buffer><silent> I
     \ <Cmd>call ddu#ui#do_action('openFilterWindow', {'input': ''} )<CR>
-  nnoremap <buffer> o
+  nnoremap <buffer><nowait> o
       \ <Cmd>call ddu#ui#do_action('expandItem',{'mode': 'toggle', 'maxLevel': 0})<CR>
-  nnoremap <buffer> O
+  nnoremap <buffer><nowait> O
       \ <Cmd>call ddu#ui#do_action('expandItem',{ 'maxLevel': -1})<CR>
   nnoremap <buffer> c
       \ <Cmd>call ddu#ui#do_action('itemAction',
@@ -331,7 +346,7 @@ function! s:ddu_my_settings() abort
       \ {'name': 'rename'})<CR>
 nnoremap <buffer> P <Cmd>call ddu#ui#do_action('itemAction', {'name': 'paste'})<CR>
 nnoremap <buffer> <leader>p <Cmd>call ddu#ui#do_action('itemAction', {'name': 'paste', 'params': {'path': input('Input target path:')}})<CR>
-nnoremap <buffer> o <Cmd>call ddu#ui#async_action('itemAction', {'name': 'driveLink'})<CR>
+nnoremap <buffer> <leader>o <Cmd>call ddu#ui#async_action('itemAction', {'name': 'driveLink'})<CR>
 nnoremap <buffer> O <Cmd>call ddu#ui#async_action('itemAction', {'name': 'driveLink', 'params': {'role': 1, 'permission': 1}})<CR>
 nnoremap <buffer> so <Cmd>call ddu#ui#async_action('itemAction', {'name': 'driveOpenLink'})<CR>
 

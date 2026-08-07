@@ -65,7 +65,7 @@ export class Source extends BaseSource<Params> {
         action.col,
       ]);
       await args.denops.cmd(`windo normal zz`);
-      return Promise.resolve(ActionFlags.Persist);
+      return Promise.resolve(ActionFlags.NONE);
     },
 
     replace: async (args: { denops: Denops; items: DduItem[] }) => {
@@ -95,7 +95,7 @@ export class Source extends BaseSource<Params> {
           break;
         }
       }
-      return Promise.resolve(ActionFlags.Persist);
+      return Promise.resolve(ActionFlags.NONE);
     },
   };
 

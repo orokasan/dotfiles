@@ -134,7 +134,7 @@ let s:mode_map = {
     \     'c': 'COMMAND', 's': 'SELECT', 'S': 'S-LINE', "\<C-s>": 'S-BLOCK', 't': 'TERMINAL', 'r': '',
     \   }
 function! LLMode()
-    return &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status') ? printf('%d/%d[%d]', line('.'), line('$'), w:ddu_ui_ff_status.maxItems) :
+    return &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status') ? printf('ddu:%d[%d]', line('$'), w:ddu_ui_ff_status.maxItems) :
         \ &filetype is# 'help' ? 'Help' :
         \ &filetype is# 'undotree' ? 'Undotree' :
         \ &previewwindow ? 'preview' :
@@ -317,7 +317,11 @@ function! LLDeniteFilter()
 endfunction
 
 function! LLDeniteBuffer() abort
-    return s:denite_statusline()
+    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
+        return printf('%s:%s', &filetype, w:ddu_ui_ff_status.name)
+    else
+        return ''
+    endif
 endfunction
 
 au FileType ddu-* call <SID>llddustatus()
@@ -353,13 +357,6 @@ function! LLddupath()
     endif
 endfunction
 
-function! s:denite_statusline() abort
-    if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status')
-        return printf('%s:%s', &filetype, w:ddu_ui_ff_status.name)
-    else
-        return ''
-    endif
-endfunction
 
 " function! Deniteinput() abort
 "     if &filetype =~# '^ddu' && exists('w:ddu_ui_ff_status') && w:ddu_ui_ff_status.done
@@ -398,7 +395,11 @@ endfunction
 let s:lsp_progress = ''
 autocmd dein User LspProgressStatusUpdated let s:lsp_progress =  luaeval('require("lsp-progress").progress()')
 function! LLLspProgress()
-  return s:lsp_progress
+  if &filetype =~# s:ignore_filetype
+      return ''
+  else
+    return s:lsp_progress
+  endif
 endfunction
 " function! s:lastSearchCount() abort
 "   let result = searchcount(#{recompute: 0})

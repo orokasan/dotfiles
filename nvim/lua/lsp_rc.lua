@@ -91,7 +91,7 @@ vim.api.nvim_exec2([[
 require("mason").setup {}
 
 local servers = require('mason-lspconfig').get_installed_servers()
-table.insert(servers, 'denols')
+-- table.insert(servers, 'denols')
 
 vim.lsp.semantic_tokens.enable(false)
 

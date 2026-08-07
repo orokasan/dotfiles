@@ -209,6 +209,7 @@ set cmdheight=1
 set noshowcmd
 set noshowmode
 set cursorline
+set showbreak=
 set cursorlineopt=screenline,number
 set cinwords=
 set list
@@ -348,6 +349,7 @@ nnoremap M m
 vnoremap m `
 vnoremap M m
 vnoremap <C-o> <ESC>m><C-O>m<gvo
+nnoremap <TAB> %
 
 nnoremap S :%s/
 vnoremap S :s/
@@ -901,7 +903,7 @@ function! SplitTxt()
 endfunction
 
 set background=dark
-set messagesopt=hit-enter,history:500,wait:1000
+set messagesopt=history:500,wait:1000,hit-enter
 set nofixeol
 
 let g:hey_message_style = 'window'
@@ -931,8 +933,6 @@ lua << EOF
 
 vim.keymap.set('n', '<Leader>jc', require("sk").open_compose, {noremap=true, silent=true})
 vim.keymap.set('t', '<C-j>', require("sk").open_compose, {noremap=true, silent=true})
-
-
         vim.api.nvim_create_autocmd('LspProgress', { buffer = buf, callback = function(ev)
             local value = ev.data.params.value
             vim.api.nvim_echo({ { value.message or 'done' } }, false, {
@@ -949,6 +949,11 @@ EOF
 " autocmd vimrc BufWinEnter * if &buftype ==# 'terminal' | call execute('CellWidthsOff') | endif
 " autocmd vimrc BufWinLeave * if &buftype ==# 'terminal' | call execute('CellWidthsOn') | endif
 set notitle
-
+command! Profile call s:command_profile()
+function! s:command_profile() abort
+  profile start ~/profile.txt
+  profile func *
+  profile file *
+endfunction
 " autocmd vimrc TermOpen term://* syntax match 200b "​"  conceal |syntax match 200b "⁠" conceal |  setlocal conceallevel=1 concealcursor=niv
 " vim:set foldmethod=marker:

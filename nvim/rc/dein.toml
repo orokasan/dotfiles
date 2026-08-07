@@ -62,17 +62,16 @@ hi! link Winbar Function
 hi! link DiagnosticUnderlineError Error
 hi! NormalNC ctermfg=252 guifg=#c6c8d1
 endfunction
-
 '''
 
 [[plugins]]
 repo =  'kmnk/denite-dirmark'
 
-# [[plugins]]
-# repo = 'itchyny/vim-parenmatch'
-# hook_add = '''
-# hi! link ParenMatch MatchParen
-# '''
+[[plugins]]
+repo = 'itchyny/vim-parenmatch'
+hook_add = '''
+hi! link ParenMatch MatchParen
+'''
 
 # [[plugins]]
 # repo = 'glacambre/firenvim'
@@ -197,6 +196,7 @@ hook_add = '''
 let g:mr#threshold = 300
 let g:mr_mrw_disabled = v:true
 let g:mr_mrr_disabled = v:true
+let g:mr_mrd_disabled = v:true
 let g:mr#mru#predicates = [{ filename -> filename !~# '\(doc[\\\/].*txt\|COMMIT_EDITMSG\|mail.google.*\)' }]
 '''
 
@@ -257,6 +257,10 @@ typescript = '''
 setlocal tabstop=2
 '''
 
+mail = '''
+set formatoptions=roqn2M1mj]
+'''
+
 json = '''
 setlocal conceallevel=0
 '''
@@ -293,11 +297,11 @@ set shiftwidth=2
 # [[plugins]]
 # repo = 'eihigh/vim-aomi-grayscale'
 
-# [[plugins]]
-# repo = 'farmergreg/vim-lastplace'
-# hook_add = '''
-# let g:lastplace_ignore = "gitcommit,gitrebase,hgcommit,svn,xxd,mail"
-# '''
+[[plugins]]
+repo = 'farmergreg/vim-lastplace'
+hook_add = '''
+let g:lastplace_ignore = "gitcommit,gitrebase,hgcommit,svn,xxd,mail"
+'''
 
 # [[plugins]]
 # repo = 'theHamsta/nvim-treesitter-pairs'

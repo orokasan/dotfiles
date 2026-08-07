@@ -60,14 +60,14 @@ function main() {
 
       if (isListening()) {
         if (args.length > 0) {
-          openVim(["nvim", "--server", PIPE, "--remote-tab"], filename);
-          openVim([
-            "nvim",
-            "--server",
-            PIPE,
-            "--remote-send",
-            "<C-\><C-N>:NeovideFocus<CR>",
-          ], []);
+          openVim(["nvim", "--server", PIPE, "--remote-send", `<C-\><C-N>:tabnew ${filename}<CR>`]);
+          // openVim([
+          //   "nvim",
+          //   "--server",
+          //   PIPE,
+          //   "--remote-send",
+          //   "<C-\><C-N>:NeovideFocus<CR>",
+          // ], []);
           Deno.exit();
         } else {
           openVim([

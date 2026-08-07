@@ -48,12 +48,14 @@ export class Filter extends BaseFilter<Params> {
         const action = item.action as ActionData;
 
         if (!action || !action.path || !item.word) return item;
+        // console.log(item)
 
+        const indent = " ".repeat(Math.max(0, item.__level));
         const prefix = this.makePrefix(action, action.path, args.filterParams);
 
         return {
           ...item,
-          display: prefix + (item.display ?? item.word),
+          display: indent + prefix + (item.display ?? item.word),
           highlights: (item.highlights ?? []).map((i) => {
             return {
               ...i,

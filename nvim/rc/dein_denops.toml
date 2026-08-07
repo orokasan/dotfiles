@@ -5,90 +5,90 @@ repo = 'vim-denops/denops.vim'
 repo = 'lambdalisue/guise.vim'
 depends = ['denops.vim']
 
-# [[plugins]]
-# # lazy = 1
-# on_cmd = ['Gin']
-# repo = 'lambdalisue/gin.vim'
-# hook_add = '''
-# nnoremap <silent> <Leader>gg
-# \ <Cmd>GinStatus<CR>
-# nnoremap <silent> <Leader>gb
-# \ <Cmd>GinBranch --all<CR>
-# nnoremap <silent> <Leader>gl
-# \ <Cmd>GinLog ++opener=botright\ vsplit<CR>
+[[plugins]]
+# lazy = 1
+on_cmd = ['Gin']
+repo = 'lambdalisue/gin.vim'
+hook_add = '''
+nnoremap <silent> <Leader>gg
+\ <Cmd>GinStatus<CR>
+nnoremap <silent> <Leader>gb
+\ <Cmd>GinBranch --all<CR>
+nnoremap <silent> <Leader>gl
+\ <Cmd>GinLog ++opener=belowright\ vsplit<CR>
+nnoremap <silent> <Leader>ga
+\ <Cmd>Gin ++wait add %:p<CR>
+nnoremap <silent> <Leader>gA
+\ <Cmd>Gin ++wait add %:p<bar>Gin commit<CR>
 
-# nnoremap <silent> <Leader>gl
-# \ <Cmd>GinLog ++opener=botright\ vsplit<CR>
-# nnoremap <silent> <Leader>ga
-# \ <Cmd>Gin ++wait add %:p<bar>Gin commit<CR>
+nnoremap <silent> <Leader>ge
+\ <Cmd>call execute('GinEdit ' .. '++opener=tabedit ' .. expand(input('Commit Hash: ')) .. ' %:p')<CR>
 
-# nnoremap <silent> <Leader>ge
-# \ <Cmd>call execute('GinEdit ' .. '++opener=tabedit ' .. expand(input('Commit Hash: ')) .. ' %:p')<CR>
+let g:gin_proxy_editor_opener='split'
+"nnoremap <silent> <Leader>gc
+"\ <Cmd>GinBuffer ++opener=botright\ split commit<CR>
+nnoremap <silent> <Leader>gc <Cmd>Gin commit<CR>
+nnoremap <silent> <Leader>gC <Cmd>Gin commit --amend<CR>
+nnoremap <silent> <Leader>gd <Cmd>call <SID>compare_commitish(0)<CR>
+nnoremap <silent> <Leader>gD <Cmd>call <SID>compare_commitish(1)<CR>
+" nnoremap <silent> <Leader>gD <Cmd>call execute('let @* = "'.. input('commitish: ') ..'"\|GinEdit ++opener=tabedit ' .. expand(@*) .. ' %:p \|diffthis\|GinEdit ++opener=vsplit ' .. expand(@*).. '^  %\|diffthis')<CR>
 
-# let g:gin_proxy_editor_opener='split'
-# "nnoremap <silent> <Leader>gc
-# "\ <Cmd>GinBuffer ++opener=botright\ split commit<CR>
-# nnoremap <silent> <Leader>gc <Cmd>Gin commit<CR>
-# nnoremap <silent> <Leader>gC <Cmd>Gin commit --amend<CR>
-# nnoremap <silent> <Leader>gd <Cmd>call <SID>compare_commitish(0)<CR>
-# nnoremap <silent> <Leader>gD <Cmd>call <SID>compare_commitish(1)<CR>
-# " nnoremap <silent> <Leader>gD <Cmd>call execute('let @* = "'.. input('commitish: ') ..'"\|GinEdit ++opener=tabedit ' .. expand(@*) .. ' %:p \|diffthis\|GinEdit ++opener=vsplit ' .. expand(@*).. '^  %\|diffthis')<CR>
+function! s:compare() abort
+tabedit %
+setlocal scrolloff=999
+diffthis
+GinEdit! %:p ++opener=vsplit
+setlocal scrolloff=999
+diffthis
+wincmd p
+norm! ]c
+endfunction
 
-# function! s:compare() abort
-# tabedit %
-# setlocal scrolloff=999
-# diffthis
-# GinEdit! %:p ++opener=vsplit
-# setlocal scrolloff=999
-# diffthis
-# wincmd p
-# norm! ]c
-# endfunction
+function! s:compare_commitish(flag) abort
+if a:flag ==# 0
+  call s:compare()
+  return
+endif
+let commitish = input('commitish(default: head): ', "head")
+call execute('GinEdit ' .. '++opener=tabedit ' .. expand(commitish) .. ' %:p')
+setlocal scrolloff=999
+diffthis
+let from = input('diff_from(default: head^): ', "head^")
+call execute('GinEdit ' .. '++opener=vsplit ' .. expand(from)  .. ' %')
+setlocal scrolloff=999
+diffthis
+wincmd p
+norm! ]c
+endfunction
+let g:gin_log_persistent_args = ['++emojify', '--graph', '--abbrev-commit', '--pretty=format:%Cred%h%Creset %s %d %cr %C(blue)<%an>%Creset']
+"'--pretty=format:%Cred%h%Creset %s %C(yellow)%d%Creset %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+let g:gin_status_persistent_args = ['++opener=botright 15split']
+let g:gin_branch_persistent_args = ['++opener=botright 15split']
+let g:gin_proxy_apply_without_confirm = 1
 
-# function! s:compare_commitish(flag) abort
-# if a:flag ==# 0
-#   call s:compare()
-#   return
-# endif
-# let commitish = input('commitish(default: head): ', "head")
-# call execute('GinEdit ' .. '++opener=tabedit ' .. expand(commitish) .. ' %:p')
-# setlocal scrolloff=999
-# diffthis
-# let from = input('diff_from(default: head^): ', "head^")
-# call execute('GinEdit ' .. '++opener=vsplit ' .. expand(from)  .. ' %')
-# setlocal scrolloff=999
-# diffthis
-# wincmd p
-# norm! ]c
-# endfunction
-# let g:gin_log_persistent_args = ['++emojify', '--graph', '--abbrev-commit', '--pretty=format:%Cred%h%Creset %s %d %cr %C(blue)<%an>%Creset']
-# "'--pretty=format:%Cred%h%Creset %s %C(yellow)%d%Creset %Cgreen(%cr) %C(bold blue)<%an>%Creset'
-# let g:gin_status_persistent_args = ['++opener=botright 15split']
-# let g:gin_branch_persistent_args = ['++opener=botright 15split']
-# let g:gin_proxy_apply_without_confirm = 1
+au vimrc BufEnter * if &ft =~# 'gin-.*' | call <SID>gin_mapping() | endif
+function! s:gin_mapping() abort
+  nnoremap <buffer> q <cmd>close<CR>
+  nnoremap <buffer> gs <Plug>(gin-action-show)
+endfunction
 
-# au vimrc BufEnter * if &ft =~# 'gin-.*' | call <SID>gin_mapping() | endif
-# function! s:gin_mapping() abort
-#   nnoremap <buffer> q <cmd>close<CR>
-# endfunction
+function! s:define_gin_local() abort
+  setlocal bufhidden=hide
+  setlocal buftype=nofile
+  setlocal nobuflisted
+  setlocal noswapfile
+  command! -buffer -bar GinLocal call execute('GinEdit ' .. '++opener=edit ' .. input('hash: ') .. ' %:p')
+  nnoremap <buffer> e <cmd>close<CR>
+  nnoremap <buffer> q <cmd>close<CR>
+endfunction
 
-# function! s:define_gin_local() abort
-#   setlocal bufhidden=hide
-#   setlocal buftype=nofile
-#   setlocal nobuflisted
-#   setlocal noswapfile
-#   command! -buffer -bar GinLocal call execute('GinEdit ' .. '++opener=edit ' .. input('hash: ') .. ' %:p')
-#   nnoremap <buffer> e <cmd>close<CR>
-#   nnoremap <buffer> q <cmd>close<CR>
-# endfunction
-
-# augroup my-gin-local
-#   autocmd BufReadCmd ginedit://* call s:define_gin_local()
-#   autocmd BufReadCmd gindiff://* call s:define_gin_local()
-#   autocmd FileType gin call s:define_gin_local()
-#   " autocmd BufReadCmd ginlog://* call s:define_gin_local()
-# augroup END
-# '''
+augroup my-gin-local
+  autocmd BufReadCmd ginedit://* call s:define_gin_local()
+  autocmd BufReadCmd gindiff://* call s:define_gin_local()
+  autocmd FileType gin call s:define_gin_local()
+  " autocmd BufReadCmd ginlog://* call s:define_gin_local()
+augroup END
+'''
 
 [[plugins]]
 repo = 'Shougo/ddc.vim'

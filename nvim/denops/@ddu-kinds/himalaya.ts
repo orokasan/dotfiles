@@ -32,7 +32,7 @@ export const HimalayaActions: Actions<Params> = {
         "himalaya#domain#email#read",
         action.id,
         action.folder,
-        params.command ?? "edit",
+        params.command ?? "drop",
       );
       return ActionFlags.None;
     },

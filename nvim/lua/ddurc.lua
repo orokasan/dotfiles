@@ -39,6 +39,9 @@ vim.fn["ddu#custom#patch_global"](
       }
     },
     kindParams = {
+      open = {
+        command = 'drop',
+      }
     },
     sourceOptions = {
       _ = {
@@ -62,7 +65,10 @@ vim.fn["ddu#custom#patch_global"](
       jump = {
         defaultAction = 'jump'
       },
-      textlint = { defaultAction = 'highlight', converters = {} },
+      textlint = {
+        defaultAction = 'highlight',
+        converters = {},
+      },
       markdown = {
         defaultAction = 'open',
       },
@@ -196,7 +202,7 @@ vim.fn["ddu#custom#patch_global"](
       filer = {
         previewFloating = true,
         split = 'vertical',
-        direction = 'botright',
+        splitDirection = 'botright',
         winWidth = 40,
         displaySourceName = 'no',
         statusline = false,
@@ -264,9 +270,13 @@ vim.fn["ddu#custom#patch_global"](
     },
     columnParams = {
       filename = {
-        highlights = { directoryName = 'Function', directoryIcon = 'Constant' },
-        collapsedIcon = '',
-        expandedIcon = '',
+        highlights = {
+        directoryName = 'NONE',
+        directoryIcon = 'NONE'
+        },
+        collapsedIcon = ' ',
+        expandedIcon = ' ',
+        indentationWidth = 1,
         iconWidth = 0
       },
       icons = {
@@ -338,29 +348,30 @@ vim.fn["ddu#custom#patch_local"](
     sources = { {
       name = 'file'
     } },
-    uiOptions = {
-      filer = {
-        persist = true,
-        restoreCursor = true,
-      }
-    },
     uiParams = {
       filer = {
-        sort = 'filename',
+        sort = 'TIME',
         sortTreesFirst = true,
+        displayRoot = true,
         focus = true,
       }
     },
     sourceOptions = {
       _ = {
         columns = { 'filename' },
-        converters = { 'converter_nerdfont' }
-      }
+        converters = { 'converter_no_empty', 'converter_nerdfont', 'converter_highlight_filename' },
+      },
+      dirmark = {
+        sorters = { { name = 'sorter_time', params = { force = true } }, { name = 'sorter_reversed' } },
+        columns = {},
+        converters = {},
+      },
     },
-    columnParams = {
-      icons = {
+    filterParams = {
+      converter_nerdfont = {
         isTree = true,
-        padding = 2,
+        padding = 0,
+        span = 0,
       }
     },
     actionOptions = {

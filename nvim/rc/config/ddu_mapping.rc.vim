@@ -71,7 +71,7 @@ function! s:ddu_mapping() abort
   " nnoremap <silent> sd <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', }], resume: v:true, name: 'mail'})\|call ddu#redraw('mail', {'input': '', 'method': 'refreshItems' })<CR>
   nnoremap <silent> sD <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', }], sync: v:true, resume: v:false, name: 'mail' })<CR>
   " nnoremap <silent> g/ <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', params: #{args: [ input('query: ')], folder: "[Gmail]/すべてのメール", page:100} }], name: 'mail'})<CR>
-  nnoremap <silent> g/ <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', params: #{ folder: "[Gmail]/送信済みメール", page:200, display_receiver: v:true} }], name: 'mail'})<CR>
+  nnoremap <silent> g/ <Cmd>call ddu#start(#{sources: [#{name: 'himalaya', params: #{ folder: "[Gmail]/送信済みメール", page:400, display_receiver: v:true} }], name: 'mail'})<CR>
   nnoremap <silent> sg <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': input('Pattern: ')}}]})<CR>
   " nnoremap <silent> sg <cmd>call ddu#start({'sources': [{'name': 'jvgrep', 'params': {'path': <SID>find_gitdir(),'input': input('Pattern: ')}}]})<CR>
   nnoremap <silent> s* <cmd>call ddu#start({'sources': [{'name': 'grep', 'params': {'path': <SID>find_gitdir(),'input': expand('<cword>')}}]})<CR>
@@ -98,8 +98,22 @@ augroup dduconf
   " nnoremap <silent> <space>E <cmd>call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': expand(input('Input target path: '),'%:p:h')}}]})<CR>
   " nnoremap <silent> <space>e <cmd>Ddu -name=filer -path=`expand('%:h:p')` file<CR>
   nnoremap <silent> st <cmd> call ddu#start({'name': 'tree',  'options':{'searchPath': ''}, 'sources': [{'name': 'text'}],'resume': v:true, 'refresh':v:true}})<CR>
-  " nnoremap <silent> <C-e> <cmd> if ddu#ui#visible('filer') \| call execute(['wincmd',  win_id2win(ddu#ui#winids('filer')[0]),  'w']->join(' ')) \| else \|
-  " \ call ddu#start({'name': 'filer', 'sources': [{'name': 'file'}]}) \| endif<CR>
+  nnoremap <silent> <C-e> <cmd>call <SID>ddu_filer_open()<CR>
+
+  function! s:ddu_filer_open() abort
+    if ddu#ui#visible('filer')
+      if exists('b:ddu_ui_name') && b:ddu_ui_name ==# 'filer'
+        wincmd p
+      else
+        call execute(['wincmd',  win_id2win(ddu#ui#winids('filer')[0]),  'w']->join(' '))
+        if b:ddu_ui_filer_path !=# getcwd()
+          call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': getcwd()}}]})
+        endif
+      endif
+    else
+      call ddu#start({'name': 'filer', 'sources': [{'name': 'file', 'options': {'path': getcwd()}}]})
+    endif
+  endfunction
 
   inoremap <C-q> <Cmd>call ddu#start(#{
   \   name: 'file',

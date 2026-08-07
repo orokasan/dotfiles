@@ -389,7 +389,7 @@ require("cellwidths").setup {
       { 0x2015, 0x2015, 2 },
       { 0x2018, 0x2018, 2 },
       { 0x2020, 0x2020, 2 },
-      -- { 0x2024, 0x203f, 2 },
+      { 0x2024, 0x203f, 2 },
       { 0x2100, 0x2103, 2 },
       { 0x2120, 0x2123, 2 },
       -- { 0x2160, 0x2169, 2 },
@@ -644,14 +644,14 @@ lazy = 0
 hook_add = '''
 " autocmd vimrc TermOpen term://* setlocal nonumber scrolloff=0 signcolumn=no nobuflisted winfixheight winfixwidth
 " autocmd vimrc TermOpen * startinsert
-autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>ToggleTermToggleAll<CR>
+autocmd vimrc TermOpen term://* nnoremap <buffer><silent> q <Cmd>close<CR>
 autocmd vimrc TermOpen term://* nnoremap <buffer><silent> i I
 autocmd vimrc TermOpen term://* nnoremap <buffer><silent> <tab> <cmd>lua vim.api.nvim_win_set_height(0, vim.api.nvim_win_get_height(0) == 12 and math.floor(vim.o.lines / 2) or 12)<CR>
 
 nnoremap <leader>p <Cmd>3TermExec name=markdownserver open=0 cmd="gh markdown-preview --markdown-mode %"<CR>
 nnoremap <leader>b <Cmd>2TermExec name=browser direction=vertical size=100 go_back=0 cmd="wsl"<CR>
-nnoremap <silent> <leader>t <cmd>ToggleTerm name=default<CR>
-nnoremap <silent> <leader>T <cmd>TermExec open=1 go_back=0 direction=vertical size=100 cmd="copilot --screen-reader --no-mouse --allow-all-urls --model gpt-5-mini"<CR>
+nnoremap <silent> <leader>t <cmd>1ToggleTerm name=default split=horizontal<CR>
+nnoremap <silent> <leader>T <cmd>2TermExec name=agent open=1 go_back=0 direction=vertical size=100 cmd="copilot --screen-reader --no-mouse --allow-all-urls --model gpt-5-mini"<CR>
 nnoremap <silent> # <Cmd>call execute('99TermExec cmd="' .. input('TermExec: ') .. '" dir=' .. expand('%:p:h') )<CR>
 '''
 lua_post_source = '''
@@ -742,50 +742,144 @@ require 'window-picker'.setup({
     },
 })
 '''
+# [[plugins]]
+# repo = 'linrongbin16/lsp-progress.nvim'
+# on_source = ['nvim-lspconfig']
+# lua_source = '''
+# require("lsp-progress").setup({
+#   decay = 10000,
+#   series_format = function(title, message, percentage, done)
+#     local builder = {}
+#     local has_title = false
+#     local has_message = false
+#     if type(title) == "string" and string.len(title) > 0 then
+#       table.insert(builder, title)
+#       has_title = true
+#     end
+#     if type(message) == "string" and string.len(message) > 0 then
+#       table.insert(builder, message)
+#       has_message = true
+#     end
+#     if percentage and (has_title or has_message) then
+#       table.insert(builder, string.format("(%.0f%%)", percentage))
+#     end
+#     return { msg = table.concat(builder, " "), done = done }
+#   end,
+#   client_format = function(client_name, spinner, series_messages)
+#     if #series_messages == 0 then
+#       return nil
+#     end
+#     local builder = {}
+#     local done = true
+#     for _, series in ipairs(series_messages) do
+#       if not series.done then
+#         done = false
+#       end
+#       table.insert(builder, series.msg)
+#     end
+#     if done then
+#       spinner = "✓" -- replace your check mark
+#     end
+#     return "["
+#       .. client_name
+#       .. "] "
+#       .. spinner
+#       .. " "
+#       .. table.concat(builder, ", ")
+#   end,
+# })
+# '''
 [[plugins]]
-repo = 'linrongbin16/lsp-progress.nvim'
-on_source = ['nvim-lspconfig']
-lua_source = '''
-require("lsp-progress").setup({
-  decay = 1200,
-  series_format = function(title, message, percentage, done)
-    local builder = {}
-    local has_title = false
-    local has_message = false
-    if type(title) == "string" and string.len(title) > 0 then
-      table.insert(builder, title)
-      has_title = true
-    end
-    if type(message) == "string" and string.len(message) > 0 then
-      table.insert(builder, message)
-      has_message = true
-    end
-    if percentage and (has_title or has_message) then
-      table.insert(builder, string.format("(%.0f%%)", percentage))
-    end
-    return { msg = table.concat(builder, " "), done = done }
+repo = 'carlos-algms/agentic.nvim'
+on_source = ['agentic']
+on_event = ['BufRead','BufNew']
+hook_add = '''
+nnoremap <silent> <leader>a <Cmd>lua require('agentic').toggle({auto_add_to_context = false})<CR>
+nnoremap <silent> <leader>A <Cmd>lua require('agentic').restore_session()<CR>
+'''
+lua_post_source = '''
+require("agentic").setup({
+    provider = "copilot-acp",
+    diagnostic_icons = { error = "E", warn = "W", info = "I", hint = "H" },
+    acp_providers = {
+      ["copilot-acp"] = {
+        initial_model = "gpt-5.6-luna", -- 使いたいモデルID
+      },
+    },
+    status_icons = {
+      pending = "...",
+      in_progress = "...",
+      completed = "ok",
+      failed = "!",
+    },
+    permission_icons = {
+      allow_once = "y",
+      allow_always = "Y",
+      reject_once = "n",
+      reject_always = "N",
+    },
+    chat_icons = {
+      user = " ",
+      agent = "A ",
+    },
+    message_icons = {
+      thinking = "...",
+      finished = "ok",
+      stopped = "X",
+      error = "!",
+    },
+    spinner_chars = {
+      generating = { "  .", " ..", "..." },
+      thinking   = { "  .", " ..", "..." },
+      searching  = { "  .", " ..", "..." },
+      busy       = { "-", "\\", "|", "/" },
+    },
+    settings = {
+      move_cursor_to_chat_on_submit = false,
+    },
+headers = {
+  chat = function(_, session_state)
+    local model = session_state and session_state:get_model_name() or "-"
+    local used  = session_state and session_state:get_context_used() or "-"
+    local size  = session_state and session_state:get_context_size() or "-"
+    local cost  = session_state and session_state:get_cost_amount() or "-"
+    local ccy   = session_state and session_state:get_cost_currency() or ""
+    local cost_text = (cost ~= "-" and (ccy ~= "" and (ccy .. " " .. cost) or cost)) or "-"
+    return string.format("model:%s | usage:%s/%s | cost:%s", model, used, size, cost_text)
   end,
-  client_format = function(client_name, spinner, series_messages)
-    if #series_messages == 0 then
-      return nil
-    end
-    local builder = {}
-    local done = true
-    for _, series in ipairs(series_messages) do
-      if not series.done then
-        done = false
-      end
-      table.insert(builder, series.msg)
-    end
-    if done then
-      spinner = "✓" -- replace your check mark
-    end
-    return "["
-      .. client_name
-      .. "] "
-      .. spinner
-      .. " "
-      .. table.concat(builder, ", ")
-  end,
+  input       = { title = "Prompt" },
+  code        = { title = "Selected Code Snippets" },
+  files       = { title = "Referenced Files" },
+  diagnostics = { title = "Diagnostics" },
+  todos       = { title = "Tasks list" },
+},
+windows = {
+  chat = {
+    buffer_name = function(_, session_state)
+      local model = session_state and session_state:get_model_name() or "-"
+      local used  = session_state and session_state:get_context_used() or "-"
+      local size  = session_state and session_state:get_context_size() or "-"
+      return string.format("Agentic [%s %s/%s]", model, used, size)
+    end,
+  },
+  position = "right",  -- "right", "left", or "bottom"
+  width = "30%",
+  input       = { buffer_name = "Agentic Prompt" },
+  code        = { buffer_name = "Code Snippets" },
+  files       = { buffer_name = "Referenced Files" },
+  diagnostics = { buffer_name = "Diagnostics" },
+  todos       = { buffer_name = "Tasks" },
+},
+  keymaps = {
+    agent = {
+      -- switch_model = "<Leader><Leader>m", -- 変更したいならここ
+    },
+  },
 })
+
+local cfg = require("agentic.config")
+cfg.spinner_chars.generating = { "  .", " ..", "..." }
+cfg.spinner_chars.thinking   = { "  .", " ..", "..." }
+cfg.spinner_chars.searching  = { "  .", " ..", "..." }
+cfg.spinner_chars.busy       = { "-", "\\", "|", "/" }
 '''
